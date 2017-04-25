@@ -1,0 +1,6 @@
+* EmbToolit
+   EmbToolkit，这里是指嵌入式系统工具包。
+EmbToolkit简化了嵌入式linux系统开发所需工具的设置，包括根文件系统生成。
+它基于传统的GNU工具（GCC，Binutils等）和/或更新的clang / llvm编译器基础架构生成工具链/ SDK。 
+
+https://www.embtoolkit.org/index.html

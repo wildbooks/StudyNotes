@@ -1,0 +1,148 @@
+* 参考文档
+  + code
+    kernel/drivers/input/keyboard/gpio_keys.c
+  + sysfs
+    /sys/devices/soc.0/gpio_keys.102/
+    /proc/bus/input/devices
+  + Doc
+    kernel/Documentation/devicetree/bindings/pinctrl/msm-pinctrl.txt
+    kernel/Documentation/devicetree/bindings/gpio/gpio_keys.txt
+* devicetree
+  + gpio_keys
+    #+begin_src cpp
+    gpio_keys {
+           compatible = "gpio-keys";
+           input-name = "gpio-keys";//输入设备名
+           pinctrl-names = "tlmm_gpio_key_active","tlmm_gpio_key_suspend";
+           pinctrl-0 = <&gpio_key_active>;
+           pinctrl-1 = <&gpio_key_suspend>;
+ 
+           camera_focus {
+               label = "camera_focus";
+               gpios = <&msm_gpio 87 0x1>;/*第一个为引脚号,第二个为值*/
+               linux,input-type = <1>;//input类型为EV_KEY
+               linux,code = <0x210>; //键码
+               debounce-interval = <15>;//去抖动时间间隔ms
+           };
+ 
+           camera_snapshot {
+               label = "camera_snapshot";
+               gpios = <&msm_gpio 86 0x1>;
+               linux,input-type = <1>;
+               linux,code = <0x2fe>;
+               debounce-interval = <15>;
+               };
+                                                                                                                              
+           vol_up {
+               label = "volume_up";
+               gpios = <&msm_gpio 85 0x1>;
+               linux,input-type = <1>;
+               linux,code = <115>;
+               debounce-interval = <15>;
+           };
+
+           boom_key {
+               label = "boom_key";
+               gpios = <&msm_gpio 62 0x1>;
+               linux,input-type = <1>;
+               linux,code = <550>;
+               gpio-key,wakeup;//按键能唤醒系统
+               debounce-interval = <15>;
+           }
+    };
+    #+end_src
+  + tlmm_gpio_key
+    #+begin_src cpp
+    tlmm_gpio_key {
+        qcom,pins = <&gp 62>, <&gp 85>, <&gp 86>, <&gp 87>;//指定io引脚
+        qcom,pin-func = <0>;   //引脚组的功能设置
+        qcom,num-grp-pins = <4>;//这组引脚个数
+        label = "tlmm_gpio_key";
+        gpio_key_active: gpio_key_active {
+                drive-strength = <2>;//驱动电流能力 2ma
+                bias-pull-up;      //上拉引脚
+        };
+        gpio_key_suspend: gpio_key_suspend {
+                drive-strength = <2>;//驱动电流能力 2ma
+                bias-pull-up;//上拉引脚
+        };
+    };
+    #+end_src
+  + gp: gp
+    #+begin_src cpp
+    /*General purpose pins*/
+    gp: gp {
+            qcom,num-pins = <134>;//给定类型的引脚个数134个pin
+            #qcom,pin-cells = <1>;//pin类型说明符中单元的个数
+            msm_gpio: msm_gpio {
+                    compatible = "qcom,msm-tlmm-gp";
+                    gpio-controller;
+                    #gpio-cells = <2>;//第一个单元为引脚号,第二个单元为可选参数
+                    interrupt-controller;
+                    #interrupt-cells = <2>;//第一个单元为中断引脚号,第二个单元为可选参数
+                    num_irqs = <134>;//中断源的中断号
+            };
+    };
+    #+end_src
+* 关键结构体
+  + gpio_keys_platform_data
+    #+begin_src cpp
+    struct gpio_keys_platform_data {
+        struct gpio_keys_button *buttons;
+        int nbuttons;               /*按键数目*/
+        unsigned int poll_interval;	/* 轮询间隔(毫秒) - 仅仅轮训驱动时有效*/
+        unsigned int rep:1;		/* enable input subsystem auto repeat */
+        int (*enable)(struct device *dev);
+        void (*disable)(struct device *dev);
+        const char *name;		/* 输入设备名 */
+    };
+    #+end_src
+  + gpio_keys_button
+    #+begin_src cpp
+    struct gpio_keys_button {
+      /* Configuration parameters */
+      unsigned int code;	/* input event code (KEY_*, SW_*) */
+      int gpio;		/* 不存在gpio时为-1 */
+      int active_low;
+      const char *desc;   /*按键label名*/
+      unsigned int type;	/* input事件类型(EV_KEY, EV_SW, EV_ABS) */
+      int wakeup;		/* 将按键配置成唤醒源 */
+      int debounce_interval;	/* debounce ticks interval in msecs */
+      bool can_disable;
+      int value;		/* axis value for EV_ABS */
+      unsigned int irq;	/* 按键中断号 */
+    };
+    #+end_src
+  + gpio_button_data
+    按键数据
+    #+begin_src cpp
+    struct gpio_button_data {
+      const struct gpio_keys_button *button;
+      struct input_dev *input;      /**/
+      struct timer_list timer;      /* 定时器 */
+      struct work_struct work;      /* 工作队列 */
+      unsigned int timer_debounce;	/* 定时器去抖 毫秒*/
+      unsigned int irq;  /* 中断号 */
+      spinlock_t lock;   /* 自旋锁 */
+      bool disabled;     
+      bool key_pressed;
+    };
+    #+end_src
+  + gpio_keys_drvdata
+    驱动数据
+    #+begin_src cpp
+    struct gpio_keys_drvdata {
+        const struct gpio_keys_platform_data *pdata;/*按键平台数据*/
+        struct pinctrl *key_pinctrl;/*GPIO配置*/
+        struct input_dev *input;  /*input设备*/
+        struct mutex disable_lock;/*互斥锁*/
+        struct gpio_button_data data[0];
+    };
+    #+end_src
+* code
+  见源代码
+* 总结
+  input中的按键报点是这样的:如果有gpio外部中断,它会进入中断处理函数
+  gpio_keys_gpio_isr(),然后在这里重启启按键消抖定时器,定时器时间到后，
+  会进入定时器处理函数gpio_keys_gpio_timer();在这里对按键进行上报
+  

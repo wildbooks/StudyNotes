@@ -1,0 +1,63 @@
+* gpio和pinctrl子系统参考文档
+  + *Doc*
+    Documentation/gpio.txt
+    Documentation/pinctrl.txt
+  + *Dts*
+    *SPMI*:Documentation/devicetree/bindings/gpio/qpnp-pin.txt
+    Documentation/devicetree/bindings/gpio/gpio-msm.txt
+    Documentation/devicetree/bindings/pinctrl/msm-pinctrl.txt
+    Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+  + *Code*:
+    + drivers/gpio/
+      *devres.c*:针对gpio api增加的devres机制的支持
+      *gpiolib.c*:gpio子系统的核心实现
+      *gpiolib-of.c*:对设备树的支持
+      *gpiolib-acpi.c*:和acpi(高级配置和电源管理接口)相关
+      *gpio-xxx.c*:gpio平台相关代码
+    + drivers/pinctrl/
+    include/linux/gpio.h
+    include/linux/pinctrl/
+  + *sysfs*
+    *debugfs*:/sys/kernel/debug/gpio
+    *sysfs*:/sys/class/gpio/
+* gpio子系统
+** 申请一个/一组gpio
+*** int gpio_request(unsigned gpio, const char *label)
+    申请一个gpio引脚,没注册进设备中
+*** int devm_gpio_request(struct device *dev, unsigned gpio, const char *label)
+    申请一个gpio引脚,注册到设备中,相当于gpio_request()的封装
+*** int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
+    申请一个gpio引脚,并做初始化,但没注册到设备中
+    + *flags*:
+      GPIOF_DIR_IN          - 配置方向为输入,等价于: GPIOF_IN
+      GPIOF_DIR_OUT         - 配置方向为输出
+      GPIOF_INIT_LOW        - 在作为输出时,初始值为低电平
+      GPIOF_INIT_HIGH       - 在作为输出时,初始值为高电平
+      GPIOF_OUT_INIT_LOW    - 配置为输出,并初始化为低电平
+      GPIOF_OUT_INIT_HIGH   - 配置为输出,并初始化为高电平
+      + *注意*:用到的函数:gpiod_direction_input()或gpiod_direction_output()
+        设置gpio的输入输出方向
+      GPIOF_OPEN_DRAIN      - gpio引脚为开漏信号
+      GPIOF_OPEN_SOURCE     - gpio引脚为源极开路信号
+     
+      GPIOF_EXPORT_DIR_FIXED        - 将 gpio 导出到 sysfs，并保持方向
+      GPIOF_EXPORT_DIR_CHANGEABLE   - 同样是导出, 但允许改变方向
+      *注意*:用到了gpiod_export(),将gpio导出到用户空间
+*** int devm_gpio_request_one(struct device *dev, unsigned gpio, unsigned long flags, const char *label)
+    申请一个gpio引脚,并做初始化,并注册到设备中,相当于gpio_request_one()封装
+*** int gpio_request_array(const struct gpio *array, size_t num)
+    是对int devm_gpio_request_one()的一个封装
+** 设置gpio方向为输入/输出
+*** int gpio_direction_output(unsigned gpio, int value)
+    设置gpio为输出方向,输出值
+*** int gpio_direction_input(unsigned gpio)
+    设置gpio为输入方向
+** 将gpio通过sys文件系统导出
+*** int gpio_export(unsigned gpio, bool direction_may_change)
+    主要用于调试，它会将该gpio的信息通过sys文件系统导出，这样应用层可以
+    直接查看状态、设置状态等
+** 如果为输入，获取该gpio的值，如果为输出，设置该gpio的值
+*** static inline int gpio_get_value(unsigned int gpio)
+*** static inline void gpio_set_value(unsigned int gpio, int value)
+** 获取该gpio对应的中断号,这个需要设备树里的该gpio节点描述使用哪个中断号
+*** static inline int gpio_to_irq(unsigned int gpio)

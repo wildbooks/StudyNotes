@@ -1,0 +1,3 @@
+* 参考文档
+  [[http://wiki.jikexueyuan.com/project/raspberry-pi-funny/][极客学院:Raspberry pi 一个好玩的派]]
+  [[http://wiki.jikexueyuan.com/project/raspberry-pi/][树莓派使用指南]]

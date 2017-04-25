@@ -1,0 +1,912 @@
+* 简介
+  [[./Linux PMIC Software Architecture.png][PMIC软件框架]]
+  参考资料:
+  driver:kernel/drivers/power/qpnp-smbcharger.c
+  DTS:kernel/arch/arm/boot/dts/qcom/msm-pmi8950.dtsi
+  DTSI documentation – kernel/Documentation/devicetree/bindings/power/qpnp-smbcharger.txt
+* 电源常识
+  PMIC
+  SPMI (System Power Management Interface)
+1. 电池管理的部分包括Linux电池驱动、Android电池服务、电池属性和参数、电池
+   曲线优化四个部分
+* 关键结构体
+1. spmi_driver
+   功能：管理SPMI通用/从设备驱动
+  #+begin_src cpp
+  struct spmi_driver {
+    int				(*probe)(struct spmi_device *dev);//绑定本驱动到SPMI设备
+    int				(*remove)(struct spmi_device *dev);//从SPMI设备取消绑定驱动
+    void				(*shutdown)(struct spmi_device *dev); //在关机掉电期间使用的标准关闭回调
+    //在系统挂起期间使用的标准挂起回调函数
+    int				(*suspend)(struct spmi_device *dev, pm_message_t pmesg);
+    int				(*resume)(struct spmi_device *dev);//系统恢复期间使用的标准恢复回调
+
+    struct device_driver		driver; //SPMI设备驱动程序应初始化此结构的名称和所有者字段
+    const struct spmi_device_id	*id_table;//此驱动程序支持的SPMI设备列表
+  };
+  #+end_src
+2. spmi_device  设备
+  #+begin_src cpp
+  struct spmi_device {
+    struct device		dev;  //设备
+    const char		*name;   //使用此设备的驱动名称
+    struct spmi_controller	*ctrl;//SPMI设备控制管理托管此总线的设备
+    struct spmi_resource	res;  //资源
+    struct spmi_resource	*dev_node;
+    u32			num_dev_node;  //设备号
+    u8			sid;   //从设备ID
+    int			id;  //唯一标识符，避免于其他SPMI设备重名
+  };
+  #+end_src
+3. device_driver
+   功能：基本设备驱动结构体,主要用于设备驱动匹配用
+  #+begin_src cpp
+  struct device_driver {
+   const char * name;     //设备驱动名
+   struct bus_type * bus; //此驱动所属于的总线
+
+   struct module * owner;  //模块所有者
+   const char		*mod_name; //内联模块使用
+   bool suppress_bind_attrs; //禁止绑定/取消绑定 via sysfs
+
+   const struct of_device_id	*of_match_table; //打开的固件表
+   const struct acpi_device_id	*acpi_match_table;//ACPI匹配表
+
+   int (*probe) (struct device * dev);//驱动绑定到特定设备上
+   int (*remove) (struct device * dev);//取消驱动绑定
+   void (*shutdown) (struct device * dev);//关机
+   //用于睡眠模式，通常用于低功耗
+   int (*suspend) (struct device * dev, pm_message_t state);
+   int (*resume) (struct device * dev);//从睡眠模式中唤醒
+   //由驱动程序核心自动创建的没入属性
+   const struct attribute_group **groups;
+
+   const struct dev_pm_ops *pm; //于此驱动匹配的硬件电源管理操作
+
+   //驱动核心的私有数据，除了驱动核心之外没有人可以触及这个。
+   struct driver_private *p;
+  };
+  #+end_src
+4. dev_pm_ops
+   功能：设备电源管理回调函数
+  #+begin_src cpp
+  struct dev_pm_ops {
+    int (*prepare)(struct device *dev);
+    void (*complete)(struct device *dev);
+    int (*suspend)(struct device *dev);
+    int (*resume)(struct device *dev);
+    int (*freeze)(struct device *dev);
+    int (*thaw)(struct device *dev);
+    int (*poweroff)(struct device *dev);
+    int (*restore)(struct device *dev);
+    int (*suspend_late)(struct device *dev);
+    int (*resume_early)(struct device *dev);
+    int (*freeze_late)(struct device *dev);
+    int (*thaw_early)(struct device *dev);
+    int (*poweroff_late)(struct device *dev);
+    int (*restore_early)(struct device *dev);
+    int (*suspend_noirq)(struct device *dev);
+    int (*resume_noirq)(struct device *dev);
+    int (*freeze_noirq)(struct device *dev);
+    int (*thaw_noirq)(struct device *dev);
+    int (*poweroff_noirq)(struct device *dev);
+    int (*restore_noirq)(struct device *dev);
+    int (*runtime_suspend)(struct device *dev);
+    int (*runtime_resume)(struct device *dev);
+    int (*runtime_idle)(struct device *dev);
+  };
+  #+end_src
+* 充电驱动
+  INIT_WORK(&bq->irq_work, bq2589x_charger_irq_workfunc);
+	INIT_WORK(&bq->adapter_in_work, bq2589x_adapter_in_workfunc);
+	INIT_WORK(&bq->adapter_out_work, bq2589x_adapter_out_workfunc);
+  /*监听电池电压,充电电流,*/
+	INIT_DELAYED_WORK(&bq->monitor_work, bq2589x_monitor_workfunc);
+	INIT_DELAYED_WORK(&bq->ico_work, bq2589x_ico_workfunc);
+	INIT_DELAYED_WORK(&bq->pe_volt_tune_work, bq2589x_tune_volt_workfunc);
+	INIT_DELAYED_WORK(&bq->check_pe_tuneup_work, bq2589x_check_pe_tuneup_workfunc);
+** 设备树
++ pm8950设备的设备树
+  设备树路径 msm-pm8950.dtsi
+   #+begin_src cpp
+   pmi8950_charger: qcom,qpnp-smbcharger {
+      spmi-dev-container;
+      compatible = "qcom,qpnp-smbcharger";
+      #address-cells = <1>;
+      #size-cells = <1>;
+
+      qcom,iterm-ma = <100>;
+      qcom,float-voltage-mv = <4400>;
+      qcom,resume-delta-mv = <200>;
+      qcom,chg-inhibit-fg;
+      qcom,rparasitic-uohm = <100000>;
+      qcom,bms-psy-name = "bms";
+      qcom,thermal-mitigation = <2000 1500 1000 0>;
+      qcom,fastchg-current-ma = <2000>;
+      qcom,autoadjust-vfloat;
+      qcom,pmic-revid = <&pmi8950_revid>;
+      qcom,charging-timeout-mins = <0>;
+      qcom,jeita-temp-hard-limit = <1>;
+
+      qcom,fastchg-current-comp = <700>;
+      qcom,float-voltage-comp = <16>;
+      qcom,xo-vadc = <&pm8950_vadc>;
+
+      qcom,chgr@1000 {
+        reg = <0x1000 0x100>;
+        interrupts =	<0x2 0x10 0x0>,
+            <0x2 0x10 0x1>,
+            <0x2 0x10 0x2>,
+            <0x2 0x10 0x3>,
+            <0x2 0x10 0x4>,
+            <0x2 0x10 0x5>,
+            <0x2 0x10 0x6>,
+            <0x2 0x10 0x7>;
+
+      interrupt-names =	"chg-error",
+            "chg-inhibit",
+            "chg-prechg-sft",
+            "chg-complete-chg-sft",
+            "chg-p2f-thr",
+            "chg-rechg-thr",
+            "chg-taper-thr",
+            "chg-tcc-thr";
+      };
+
+      qcom,otg@1100 {
+        reg = <0x1100 0x100>;
+        interrupts =	<0x2 0x11 0x0>,
+            <0x2 0x11 0x1>,
+            <0x2 0x11 0x3>;
+        interrupt-names =	"otg-fail",
+              "otg-oc",
+            "usbid-change";
+      };
+
+      qcom,bat-if@1200 {
+        reg = <0x1200 0x100>;
+        interrupts =	<0x2 0x12 0x0>,
+            <0x2 0x12 0x1>,
+            <0x2 0x12 0x2>,
+            <0x2 0x12 0x3>,
+            <0x2 0x12 0x4>,
+            <0x2 0x12 0x5>,
+            <0x2 0x12 0x6>,
+            <0x2 0x12 0x7>;
+
+        interrupt-names =	"batt-hot",
+              "batt-warm",
+              "batt-cold",
+              "batt-cool",
+              "batt-ov",
+              "batt-low",
+              "batt-missing",
+              "batt-term-missing";
+      };
+
+      qcom,usb-chgpth@1300 {
+        reg = <0x1300 0x100>;
+        interrupts =	<0x2 0x13 0x0>,
+            <0x2 0x13 0x1>,
+          <0x2 0x13 0x2>,
+            <0x2 0x13 0x5>;
+
+        interrupt-names =	"usbin-uv",
+              "usbin-ov",
+              "usbin-src-det",
+              "aicl-done";
+      };
+
+      qcom,dc-chgpth@1400 {
+        reg = <0x1400 0x100>;
+        interrupts =	<0x2 0x14 0x0>,
+            <0x2 0x14 0x1>;
+        interrupt-names =	"dcin-uv",
+              "dcin-ov";
+      };
+
+      qcom,chgr-misc@1600 {
+        reg = <0x1600 0x100>;
+        interrupts =	<0x2 0x16 0x0>,
+            <0x2 0x16 0x1>,
+            <0x2 0x16 0x2>,
+            <0x2 0x16 0x3>,
+            <0x2 0x16 0x4>,
+            <0x2 0x16 0x5>;
+
+        interrupt-names =	"power-ok",
+              "temp-shutdown",
+              "wdog-timeout",
+              "flash-fail",
+              "otst2",
+              "otst3";
+      };
+    };
+   #+end_src
+   #+begin_src cpp
+   pm8950_vadc: vadc@3100 {
+           compatible = "qcom,qpnp-vadc";
+           reg = <0x3100 0x100>;
+           #address-cells = <1>;
+           #size-cells = <0>;
+           interrupts = <0x0 0x31 0x0>;
+           interrupt-names = "eoc-int-en-set";
+           qcom,adc-bit-resolution = <15>;
+           qcom,adc-vdd-reference = <1800>;
+           qcom,vadc-poll-eoc;
+           qcom,pmic-revid = <&pm8950_revid>;
+
+           chan@5 {
+                   label = "vcoin";
+                   reg = <5>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <1>;
+                   qcom,calibration-type = "absolute";
+                   qcom,scale-function = <0>;
+                   qcom,hw-settle-time = <0>;
+                   qcom,fast-avg-setup = <0>;
+           };
+
+           chan@7 {
+                   label = "vph_pwr";
+                   reg = <7>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <1>;
+                   qcom,calibration-type = "absolute";
+                   qcom,scale-function = <0>;
+                   qcom,hw-settle-time = <0>;
+                   qcom,fast-avg-setup = <0>;
+           };
+
+           chan@8 {
+                   label = "die_temp";
+                   reg = <8>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <0>;
+                   qcom,calibration-type = "absolute";
+                   qcom,scale-function = <3>;
+                   qcom,hw-settle-time = <0>;
+                   qcom,fast-avg-setup = <0>;
+           };
+
+           chan@9 {
+                   label = "ref_625mv";
+                   reg = <9>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <0>;
+                   qcom,calibration-type = "absolute";
+                   qcom,scale-function = <0>;
+                   qcom,hw-settle-time = <0>;
+                   qcom,fast-avg-setup = <0>;
+           };
+
+           chan@a {
+                   label = "ref_1250v";
+                   reg = <0xa>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <0>;
+                   qcom,calibration-type = "absolute";
+                   qcom,scale-function = <0>;
+                   qcom,hw-settle-time = <0>;
+                   qcom,fast-avg-setup = <0>;
+           };
+
+           chan@c {
+                   label = "ref_buf_625mv";
+                   reg = <0xc>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <0>;
+                   qcom,calibration-type = "absolute";
+                   qcom,scale-function = <0>;
+                   qcom,hw-settle-time = <0>;
+                   qcom,fast-avg-setup = <0>;
+           };
+
+           chan@36 {
+                   label = "pa_therm0";
+                   reg = <0x36>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <0>;
+                   qcom,calibration-type = "ratiometric";
+                   qcom,scale-function = <2>;
+                   qcom,hw-settle-time = <2>;
+                   qcom,fast-avg-setup = <0>;
+           };
+
+           chan@11 {
+                   label = "pa_therm1";
+                   reg = <0x11>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <0>;
+                   qcom,calibration-type = "ratiometric";
+                   qcom,scale-function = <2>;
+                   qcom,hw-settle-time = <2>;
+                   qcom,fast-avg-setup = <0>;
+                   qcom,vadc-thermal-node;
+           };
+
+           chan@32 {
+                   label = "xo_therm";
+                   reg = <0x32>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <0>;
+                   qcom,calibration-type = "ratiometric";
+                   qcom,scale-function = <4>;
+                   qcom,hw-settle-time = <2>;
+                   qcom,fast-avg-setup = <0>;
+                   qcom,vadc-thermal-node;
+           };
+
+           chan@3c {
+                   label = "xo_therm_buf";
+                   reg = <0x3c>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <0>;
+                   qcom,calibration-type = "ratiometric";
+                   qcom,scale-function = <4>;
+                   qcom,hw-settle-time = <2>;
+                   qcom,fast-avg-setup = <0>;
+                   qcom,vadc-thermal-node;
+           };
+
+           chan@13 {
+                   label = "case_therm";
+                   reg = <0x13>;
+                   qcom,decimation = <0>;
+                   qcom,pre-div-channel-scaling = <0>;
+                   qcom,calibration-type = "ratiometric";
+                   qcom,scale-function = <2>;
+                   qcom,hw-settle-time = <2>;
+                   qcom,fast-avg-setup = <0>;
+                   qcom,vadc-thermal-node;
+           };
+   };
+   #+end_src
++ pm8950设备的设备树
+  设备树路径 msm-pm8950.dtsi
++ msm-pmi8950.dtsi
++ 适配器设备树
+  设备树路径 msm8952-regulator.dtsi(好像是这个)
+** qpnp-smbcharger.c
+   1. 注册设备
+     #+begin_src cpp
+     static int __init smbchg_init(void)
+     {
+        return spmi_driver_register(&smbchg_driver);//注册驱动
+      }
+
+      static void __exit smbchg_exit(void)
+      {
+        return spmi_driver_unregister(&smbchg_driver);//注销驱动
+      }
+     #+end_src
+   2. 填充smbchg_driver结构体
+      #+begin_src cpp
+      static struct spmi_driver smbchg_driver = {
+        .driver		= {
+          .name		= "qpnp-smbcharger",
+          .owner		= THIS_MODULE,
+          .of_match_table	= smbchg_match_table,  //设备树靠这个进行匹配
+          .pm		= &smbchg_pm_ops,  //此结构体不知道在哪填充
+        },
+        .probe		= smbchg_probe,
+        .remove		= smbchg_remove,
+      };
+      #+end_src
+   3. smbchg_probe
+      #+begin_src cpp
+      static int smbchg_probe(struct spmi_device *spmi)
+      {
+          //在/sys/class/power_supply/中寻找usb,判断是否支持usb
+          usb_psy = power_supply_get_by_name("usb");
+          ...
+          //判断设备树中该节点是否存在
+          if (of_find_property(spmi->dev.of_node, "qcom,xo-vadc", NULL)) {
+
+          //由节点qcom,xo-vadc获取pm8950_vadc节点,该节点在
+            xo_vadc_dev = qpnp_get_vadc(&spmi->dev, "xo");
+          }
+
+          //分配内存
+          chip = devm_kzalloc(&spmi->dev, sizeof(*chip), GFP_KERNEL);
+
+          //分配空间并填充fcc_votable变量, 设置快速电流充电
+          chip->fcc_votable = create_votable(&spmi->dev, "SMBCHG: fcc", VOTE_MIN, NUM_FCC_VOTER, 2000, set_fastchg_current_vote_cb);
+          //同上，设置usb充电最大电量限制
+          chip->usb_icl_votable = create_votable(&spmi->dev, "SMBCHG: usb_icl", VOTE_MIN, NUM_ICL_VOTER, 3000, set_usb_current_limit_vote_cb);
+          //设置dc充电电量限制
+          chip->dc_icl_votable = create_votable(&spmi->dev, "SMBCHG: dcl_icl", VOTE_MIN, NUM_ICL_VOTER, 3000, set_dc_current_limit_vote_cb);
+          //设置usb suspend(休眠)
+          chip->usb_suspend_votable = create_votable(&spmi->dev, "SMBCHG: usb_suspend", VOTE_SET_ANY, NUM_EN_VOTERS, 0, usb_suspend_vote_cb);
+          //设置dc suspend(休眠)
+          chip->dc_suspend_votable = create_votable(&spmi->dev, "SMBCHG: dc_suspend", VOTE_SET_ANY, NUM_EN_VOTERS, 0, dc_suspend_vote_cb);
+          //设置电池休眠状态
+          chip->battchg_suspend_votable = create_votable(&spmi->dev, "SMBCHG: battchg_suspend", VOTE_SET_ANY, NUM_BATTCHG_EN_VOTERS, 0, charging_suspend_vote_cb);
+
+          //加入工作队列
+          INIT_WORK(&chip->usb_set_online_work, smbchg_usb_update_online_work);
+          //加入有延时功能的工作队列
+          INIT_DELAYED_WORK(&chip->parallel_en_work, smbchg_parallel_usb_en_work);
+          INIT_DELAYED_WORK(&chip->vfloat_adjust_work, smbchg_vfloat_adjust_work);
+          INIT_DELAYED_WORK(&chip->hvdcp_det_work, smbchg_hvdcp_det_work);
+
+          //内核中的同步机制completion
+          init_completion(&chip->src_det_lowered);
+          init_completion(&chip->src_det_raised);
+          init_completion(&chip->usbin_uv_lowered);
+          init_completion(&chip->usbin_uv_raised);
+
+          chip->vadc_dev = vadc_dev;//这俩不存在，没这个设备
+          chip->vchg_vadc_dev = vchg_vadc_dev;//这俩不存在，没这个设备
+          chip->xo_vadc_dev = xo_vadc_dev;//这个设备我们有，前面分析过:qpnp-adc-voltage.c
+          chip->spmi = spmi;
+          chip->dev = &spmi->dev;
+          chip->usb_psy = usb_psy;
+          chip->fake_battery_soc = -EINVAL;
+          chip->usb_online = -EINVAL;
+          dev_set_drvdata(&spmi->dev, chip); //把chip值付给spmi->dev中的私有数据中
+
+          //自旋锁互斥锁初始化
+          spin_lock_init(&chip->sec_access_lock);
+          mutex_init(&chip->therm_lvl_lock);
+          mutex_init(&chip->usb_set_online_lock);
+          mutex_init(&chip->parallel.lock);
+          mutex_init(&chip->taper_irq_lock);
+          mutex_init(&chip->pm_lock);
+          mutex_init(&chip->wipower_config);
+          mutex_init(&chip->usb_status_lock);
+
+          //唤醒设备
+          device_init_wakeup(chip->dev, true);
+
+          //外设资源解析
+          rc = smbchg_parse_peripherals(chip);
+
+          //检测PMI版本
+          rc = smbchg_check_chg_version(chip);
+
+          //解析设备树
+          rc = smb_parse_dt(chip);
+
+          //调节器初始化  暂时不懂，先跳过
+          rc = smbchg_regulator_init(chip);
+
+          //硬件初始化     没看
+          rc = smbchg_hw_init(chip);
+
+          //初始化充电状态
+          rc = determine_initial_status(chip);
+
+          //电池设备注册
+          rc = power_supply_register(chip->dev, &chip->batt_psy);
+
+          //dc设备注册
+          rc = power_supply_register(chip->dev, &chip->dc_psy);
+          //我们不满足，不看
+          if (chip->dc_psy_type != -EINVAL) {
+          {
+          ...
+          }
+
+          chip->psy_registered = true;
+
+          //不支持灯，我们不看
+          if (chip->cfg_chg_led_support && chip->schg_version == QPNP_SCHG_LITE)
+          {
+          ...
+          }
+
+          //各种中断注册
+          rc = smbchg_request_irqs(chip);
+
+          //我们不满足，忽略
+          if (!chip->skip_usb_notification)
+          {
+          ...
+          }
+
+          //寄存器的一些打印信息
+          dump_regs(chip);
+
+          //创建debugfs文件
+          create_debugfs_entries(chip);
+
+          //
+      }
+      #+end_src
+   4. qpnp_get_vadc()
+      #+begin_src cpp
+      struct qpnp_vadc_chip *qpnp_get_vadc(struct device *dev, const char *name)
+      {
+        struct qpnp_vadc_chip *vadc;
+        struct device_node *node = NULL;
+        char prop_name[QPNP_MAX_PROP_NAME_LEN];
+
+        snprintf(prop_name, QPNP_MAX_PROP_NAME_LEN, "qcom,%s-vadc", name);
+
+        //获取设备节点
+        //根据qcom,xo-vadc = <&pm8950_vadc>得到设备节点"	pm8950_vadc: vadc@3100"
+        node = of_parse_phandle(dev->of_node, prop_name, 0);
+        if (node == NULL)
+          return ERR_PTR(-ENODEV);
+
+          if (vadc->adc->spmi->dev.of_node == node)
+            return vadc;
+        return ERR_PTR(-EPROBE_DEFER);
+      }
+      #+end_src
+   6. smbchg_parse_peripherals()
+      #+begin_src cpp
+      static int smbchg_parse_peripherals(struct smbchg_chip *chip)
+      {
+        int rc = 0;
+        struct resource *resource;
+        struct spmi_resource *spmi_resource;
+        u8 subtype;
+        struct spmi_device *spmi = chip->spmi;
+
+        //spmi_resource遍历,这是个循环,相当于for
+        spmi_for_each_container_dev(spmi_resource, chip->spmi) {
+
+        //获取资源
+          resource = spmi_get_resource(spmi, spmi_resource,
+                  IORESOURCE_MEM, 0);
+          if (!(resource && resource->start)) {
+            dev_err(chip->dev, "node %s IO resource absent!\n",
+              spmi->dev.of_node->full_name);
+            return rc;
+          }
+
+          //读取寄存器中的值到subtype,用来判断子系统类型
+          rc = smbchg_read(chip, &subtype, resource->start + SUBTYPE_REG, 1);
+
+          switch (subtype) {
+
+                //chgr
+              case SMBCHG_CHGR_SUBTYPE:
+              case SMBCHG_LITE_CHGR_SUBTYPE:
+                chip->chgr_base = resource->start;
+                break;
+
+                //if
+              case SMBCHG_BAT_IF_SUBTYPE:
+              case SMBCHG_LITE_BAT_IF_SUBTYPE:
+                chip->bat_if_base = resource->start;
+                break;
+
+                //USB_CHGPTH
+              case SMBCHG_USB_CHGPTH_SUBTYPE:
+              case SMBCHG_LITE_USB_CHGPTH_SUBTYPE:
+                chip->usb_chgpth_base = resource->start;
+                break;
+
+                //dc_chgpth
+              case SMBCHG_DC_CHGPTH_SUBTYPE:
+              case SMBCHG_LITE_DC_CHGPTH_SUBTYPE:
+                chip->dc_chgpth_base = resource->start;
+                break;
+
+                //misc
+              case SMBCHG_MISC_SUBTYPE:
+              case SMBCHG_LITE_MISC_SUBTYPE:
+                chip->misc_base = resource->start;
+                break;
+
+                //otg
+              case SMBCHG_OTG_SUBTYPE:
+              case SMBCHG_LITE_OTG_SUBTYPE:
+                chip->otg_base = resource->start;
+                break;
+          }
+        }
+
+        //log打印
+        REQUIRE_BASE(chip, chgr_base, rc);
+        REQUIRE_BASE(chip, bat_if_base, rc);
+        REQUIRE_BASE(chip, usb_chgpth_base, rc);
+        REQUIRE_BASE(chip, dc_chgpth_base, rc);
+        REQUIRE_BASE(chip, misc_base, rc);
+
+        return rc;
+      }
+      #+end_src
+   7. smbchg_check_chg_version()
+      #+begin_src cpp
+      static int smbchg_check_chg_version(struct smbchg_chip *chip)
+      {
+      //由"qcom,pmic-revid"确定设备节点为"pmi8950_revid"
+      revid_dev_node = of_parse_phandle(chip->spmi->dev.of_node, "qcom,pmic-revid", 0);
+
+      //返回PMIC的修订版本
+      pmic_rev_id = get_revid_data(revid_dev_node);
+
+      //根据版本进行判断
+      switch (pmic_rev_id->pmic_subtype) {
+        case PMI8994:
+          ...
+          break;
+        case PMI8950:
+          chip->wa_flags |= SMBCHG_BATT_OV_WA;
+          if (pmic_rev_id->rev4 < 2) /* PMI8950 1.0 */ {
+            chip->wa_flags |= SMBCHG_AICL_DEGLITCH_WA;
+          } else	{ /* rev > PMI8950 v1.0 */
+            chip->wa_flags |= SMBCHG_HVDCP_9V_EN_WA
+                | SMBCHG_USB100_WA;
+          }
+
+          //表格
+          use_pmi8994_tables(chip);
+          chip->tables.aicl_rerun_period_table =
+              aicl_rerun_period_schg_lite;
+          chip->tables.aicl_rerun_period_len =
+            ARRAY_SIZE(aicl_rerun_period_schg_lite);
+
+          chip->schg_version = QPNP_SCHG_LITE;
+          break;
+        case PMI8996:
+              ...
+          break;
+        default:
+          pr_err("PMIC subtype %d not supported, WA flags not set\n",
+              pmic_rev_id->pmic_subtype);
+        }
+        chip->allow_hvdcp3_detection = true;
+
+        pr_smb(PR_STATUS, "pmic=%s, wa_flags=0x%x\n",
+            pmic_rev_id->pmic_name, chip->wa_flags);
+
+        return 0;
+      }
+      #+end_src
+   8. smb_parse_dt()  设备树解析
+      #+begin_src cpp
+      static int smb_parse_dt(struct smbchg_chip *chip)
+      {
+          //设备节点
+          struct device_node *node = chip->dev->of_node;
+
+          //retval = of_property_read_u32(chip->spmi->dev.of_node,	"qcom,ibat-ocp-threshold-ua", &ocp_thresh);
+          // 但设备树中不存在该节点,所以ocp_thresh<0,
+          //  smbchg_ibat_ocp_threshold_ua = 4500000(这是它的默认值)
+          OF_PROP_READ(chip, ocp_thresh, "ibat-ocp-threshold-ua", rc, 1);
+          if (ocp_thresh >= 0)
+              smbchg_ibat_ocp_threshold_ua = ocp_thresh;
+
+          //chip->iterm_ma = 100;
+          OF_PROP_READ(chip, chip->iterm_ma, "iterm-ma", rc, 1);
+
+          //chip->cfg_fastchg_current_ma = 2000;
+          OF_PROP_READ(chip, chip->cfg_fastchg_current_ma, "fastchg-current-ma", rc, 1);
+
+          //chip->vfloat_mv = 4400
+          OF_PROP_READ(chip, chip->vfloat_mv, "float-voltage-mv", rc, 1);
+
+          //chip->safety_time = 0
+          OF_PROP_READ(chip, chip->safety_time, "charging-timeout-mins", rc, 1);
+
+          //该属性不存在,使用默认值
+          //chip->vled_max_uv = 3500000
+          OF_PROP_READ(chip, chip->vled_max_uv, "vled-max-uv", rc, 1);
+          if (chip->vled_max_uv < 0)
+              chip->vled_max_uv = DEFAULT_VLED_MAX_UV;//3500000
+
+          //chip->rpara_uohm = 100000
+          OF_PROP_READ(chip, chip->rpara_uohm, "rparasitic-uohm", rc, 1);
+
+          //chip->prechg_safety_time = -EINVAL
+          OF_PROP_READ(chip, chip->prechg_safety_time, "precharging-timeout-mins", rc, 1);
+
+          //chip->fastchg_current_comp = 700
+          OF_PROP_READ(chip, chip->fastchg_current_comp, "fastchg-current-comp", rc, 1);
+
+          //chip->float_voltage_comp = 16
+          OF_PROP_READ(chip, chip->float_voltage_comp, "float-voltage-comp", rc, 1);
+
+          // (0 != -EINVAL)  && (  0   >    chg_time[3]=1536 )  不成立
+          if (chip->safety_time != -EINVAL &&
+            (chip->safety_time > chg_time[ARRAY_SIZE(chg_time) - 1])) {
+            dev_err(chip->dev, "Bad charging-timeout-mins %d\n",
+                    chip->safety_time);
+            return -EINVAL;
+          }
+
+          // (-EINVAL != -EINVAL) && (-EINVAL > chg_time[3]=192)   不成立
+          if (chip->prechg_safety_time != -EINVAL &&
+            (chip->prechg_safety_time >
+             prechg_time[ARRAY_SIZE(prechg_time) - 1])) {
+                dev_err(chip->dev, "Bad precharging-timeout-mins %d\n",
+                        chip->prechg_safety_time);
+                return -EINVAL;
+          }
+
+          //chip->resume_delta_mv = 200
+          OF_PROP_READ(chip, chip->resume_delta_mv, "resume-delta-mv", rc, 1);
+
+          //chip->parallel.min_current_thr_ma = -EINVAL
+          OF_PROP_READ(chip, chip->parallel.min_current_thr_ma, "parallel-usb-min-current-ma", rc, 1);
+
+          //chip->parallel.min_9v_current_thr_ma = -EINVAL
+          OF_PROP_READ(chip, chip->parallel.min_9v_current_thr_ma, "parallel-usb-9v-min-current-ma", rc, 1);
+
+          //chip->parallel.allowed_lowering_ma = -EINVAL
+          OF_PROP_READ(chip, chip->parallel.allowed_lowering_ma, "parallel-allowed-lowering-ma", rc, 1);
+
+          //(-EINVAL != -EINVAL) && (-EINVAL != -EINVAL)  不成立
+          if (chip->parallel.min_current_thr_ma != -EINVAL
+              && chip->parallel.min_9v_current_thr_ma != -EINVAL)
+                   chip->parallel.avail = true;
+
+          //smbchg_main_chg_fcc_percent =  不存在,值不变
+          of_property_read_u32(chip->spmi->dev.of_node, "qcom,parallel-main-chg-fcc-percent", &smbchg_main_chg_fcc_percent);
+
+          //smbchg_main_chg_icl_percent = -EINVAL 不存在
+          of_property_read_u32(chip->spmi->dev.of_node, "qcom,parallel-main-chg-icl-percent", &smbchg_main_chg_icl_percent);
+
+          //chip->jeita_temp_hard_limit = 1
+          OF_PROP_READ(chip, chip->jeita_temp_hard_limit, "jeita-temp-hard-limit", rc, 1);
+
+          //chip->aicl_rerun_period_s = -EINVAL
+          OF_PROP_READ(chip, chip->aicl_rerun_period_s, "aicl-rerun-period-s", rc, 1);
+
+          //chip->vchg_adc_channel = -EINVAL
+          OF_PROP_READ(chip, chip->vchg_adc_channel, "vchg-adc-channel-id", rc, 1);
+
+          //chip->disable_parallel_uv = -EINVAL
+          OF_PROP_READ(chip, chip->disable_parallel_uv, "disable-parallel-uv", rc, 1);
+
+          /*读取布尔变量*/
+
+          //chip->use_vfloat_adjustments = true
+          chip->use_vfloat_adjustments = of_property_read_bool(node, "qcom,autoadjust-vfloat");
+
+          //chip->bmd_algo_disabled = false
+          chip->bmd_algo_disabled = of_property_read_bool(node, "qcom,bmd-algo-disabled");
+
+          //chip->iterm_disabled = false
+          chip->iterm_disabled = of_property_read_bool(node, "qcom,iterm-disabled");
+
+          //chip->soft_vfloat_comp_disabled = false
+          chip->soft_vfloat_comp_disabled = of_property_read_bool(node, "qcom,soft-vfloat-comp-disabled");
+
+          //chip->chg_enabled = false
+          chip->chg_enabled = !(of_property_read_bool(node, "qcom,charging-disabled"));
+
+          //chip->charge_unknown_battery = false
+          chip->charge_unknown_battery = of_property_read_bool(node, "qcom,charge-unknown-battery");
+
+          //chip->chg_inhibit_en = false
+          chip->chg_inhibit_en = of_property_read_bool(node, "qcom,chg-inhibit-en");
+
+          //chip->chg_inhibit_source_fg = true
+          chip->chg_inhibit_source_fg = of_property_read_bool(node, "qcom,chg-inhibit-fg");
+
+          //chip->low_volt_dcin = false
+          chip->low_volt_dcin = of_property_read_bool(node, "qcom,low-volt-dcin");
+
+          //chip->force_aicl_rerun = false
+          chip->force_aicl_rerun = of_property_read_bool(node, "qcom,force-aicl-rerun");
+
+          /*解析电池缺失检测引脚源*/
+          //设备树中没有该属性，所以使用默认值
+          // chip->bmd_pin_src = BPD_TYPE_DEFAULT; //4
+          rc = of_property_read_string(chip->spmi->dev.of_node, "qcom,bmd-pin-src", &bpd);
+          if (rc) {
+            /* Select BAT_THM as default BPD scheme */
+            chip->bmd_pin_src = BPD_TYPE_DEFAULT;
+            rc = 0;
+          } else {
+            chip->bmd_pin_src = get_bpd(bpd);
+            if (chip->bmd_pin_src < 0) {
+              dev_err(chip->dev,
+                "failed to determine bpd schema %d\n", rc);
+              return rc;
+            }
+          }
+
+          /*解析dc(直流)电源配置*/
+          //不存在，所以
+          //chip->dc_psy_type = -EINVAL;
+          rc = of_property_read_string(node, "qcom,dc-psy-type", &dc_psy_type);
+          if (rc) {
+            chip->dc_psy_type = -EINVAL;
+            rc = 0;
+          } else {
+            if (strcmp(dc_psy_type, "Mains") == 0)
+              chip->dc_psy_type = POWER_SUPPLY_TYPE_MAINS;
+            else if (strcmp(dc_psy_type, "Wireless") == 0)
+              chip->dc_psy_type = POWER_SUPPLY_TYPE_WIRELESS;
+            else if (strcmp(dc_psy_type, "Wipower") == 0)
+              chip->dc_psy_type = POWER_SUPPLY_TYPE_WIPOWER;
+          }
+
+          /*无线充电解析忽略*/
+          if (chip->dc_psy_type == POWER_SUPPLY_TYPE_WIPOWER)
+               smb_parse_wipower_dt(chip);
+
+
+          //读取电池电源名称
+          //chip->bms_psy_name = "bms"
+          rc = of_property_read_string(node, "qcom,bms-psy-name", &chip->bms_psy_name);
+
+          /*获取充电灯支持属性*/
+
+          //chip->cfg_chg_led_sw_ctrl = false
+          chip->cfg_chg_led_sw_ctrl = of_property_read_bool(node, "qcom,chg-led-sw-controls");
+
+          //chip->cfg_chg_led_support = false
+          chip->cfg_chg_led_support = of_property_read_bool(node, "qcom,chg-led-support");
+
+
+          if (of_find_property(node, "qcom,thermal-mitigation", &chip->thermal_levels)) { //判断是否有这个属性,成立
+              chip->thermal_mitigation = devm_kzalloc(chip->dev, chip->thermal_levels, GFP_KERNEL);
+
+              chip->thermal_levels /= sizeof(int);   //=4
+
+              //chip->thermal_mitigation  ==> = {2000,1500,1000,0}
+              rc = of_property_read_u32_array(node, "qcom,thermal-mitigation", chip->thermal_mitigation, chip->thermal_levels);
+              if (rc) {
+                dev_err(chip->dev, "Couldn't read threm limits rc = %d\n", rc);
+                return rc;
+              }
+          }
+
+          //chip->skip_usb_notification =  false
+          chip->skip_usb_notification = of_property_read_bool(node, "qcom,skip-usb-notification");
+
+          //chip->cfg_override_usb_current = false
+          chip->cfg_override_usb_current = of_property_read_bool(node, "qcom,override-usb-current");
+      }
+      #+end_src
+   9. OF_PROP_READ(chip, ocp_thresh, "ibat-ocp-threshold-ua", rc, 1);
+      #+begin_src cpp
+      #define OF_PROP_READ(chip, prop, dt_property, retval, optional)		\
+      do {									\
+        if (retval)							\
+          break;							\
+        if (optional)							\
+          prop = -EINVAL;						\
+                        \
+        retval = of_property_read_u32(chip->spmi->dev.of_node,		\
+                "qcom," dt_property	,	\
+                &prop);				\
+                        \
+        if ((retval == -EINVAL) && optional)				\
+          retval = 0;						\
+        else if (retval)						\
+          dev_err(chip->dev, "Error reading " #dt_property	\
+              " property rc = %d\n", rc);		\
+      } while (0)
+
+      // ====>> 等价于
+
+        if (retval)
+          break;
+        if (optional)
+          prop = -EINVAL;
+        retval = of_property_read_u32(chip->spmi->dev.of_node,
+                "qcom," dt_property	,
+                &prop);
+
+        if ((retval == -EINVAL) && optional)
+          retval = 0;
+        else if (retval)
+          dev_err(chip->dev, "Error reading " #dt_property " property rc = %d\n", rc);
+      #+end_src
+   10. smbchg_regulator_init()  调节器初始化
+       #+begin_src cpp
+       static int smbchg_regulator_init(struct smbchg_chip *chip)
+       {
+       regulator_node = of_get_child_by_name(chip->dev->of_node, "qcom,smbcharger-boost-otg");
+       }
+       #+end_src
+   11.
+             #+begin_src cpp
+             #+end_src
+   12.
+        #+begin_src cpp
+        #+end_src
+   13. smbchg_remove
+   14.
+计算电量
+温度
+** qpnp-adc-voltage.c

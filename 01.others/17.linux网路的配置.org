@@ -1,0 +1,20 @@
+* 修改ip
+    if从覅个eth0192.168.2.10 netmask 255.255.255.0
+* 修改网关
+    route add default gw 192.168.0.1 #添加默认网关
+    route del default gw 192.168.0.1 #删除默认网关
+* 修改DNS
+    /etc/resolv.conf
+* 重启网卡
+   systemctl restart networking.service 
+
+*
+    DEVICE=<name>　　　<name>表示物理设备的名字
+    IPADDR=<address>　　　<address>表示赋给该网卡的IP地址
+    NETMASK=<mask>　　<mask>表示子网掩码
+    BROADCAST=<address>　<address>表示广播地址
+    NBOOT=yes/no　　启动时是否激活该卡
+    BOOTPROTO=none  none：无须启动协议；bootp：使用bootp协议；dhcp：使用dhcp协议
+    GATEWAY=<address> <address>表示默认网关
+    MACADDR=<MAC-address> <MAC-address>表示指定一个MAC地址
+    USERCTL=yes/no　　　　是否允许非root用户控制该设备

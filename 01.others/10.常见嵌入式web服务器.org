@@ -1,0 +1,11 @@
+* 常见嵌入式web服务器
+  lighttpd
+  shttpd
+  thttpd
+  boa
+  mathopd
+  minihttpd
+  appweb
+  goahead
+* CGI
+  [[https://boutell.com/cgic/][CGIC]] 是一个支持CGI开发的开放源码的标准C库，可以免费使用，只需要在开发的站点和程序文档中有个公开声明即可，表明程序使用了CGIC库，用户也可以购买商业授权而无需公开声明。

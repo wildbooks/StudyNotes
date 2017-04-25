@@ -1,0 +1,29 @@
+* 简介
+* 闹钟
+  ALARM_INT (alarm interrupt) 闹钟中断
+  ALARM_WK (alarm wake-up)  闹钟唤醒
+* 寄存器地图
+  + INTP  Specifies the interrupt pending register
+    闹钟中断和TIC中断状态
+  + RTCCON  Specifies the RTC control register
+    配置寄存器
+    更改BCDxx时间时，要先设置PTCON=0x1,结束之后要禁止控制
+  + TICCNT  Specifies the tick time count register
+    计时寄存器
+  + RTCALM  Specifies the RTC alarm control register
+    闹钟控制寄存器
+  + ALMSEC  秒
+  + ALMMIN  分
+  + ALMHOUR 时
+  + ALMDAY  天
+  + ALMMON  月
+  + ALMYEAR 年
+
+  + BCDSEC  秒
+  + BCDMIN  分
+  + BCDHOUR 时
+  + BCDDAYWEEK 星期
+  + BCDDAY  天
+  + BCDMON  月
+  + BCDYEAR  年
+  + CURTICCNT  Specifies the current tick time counter register

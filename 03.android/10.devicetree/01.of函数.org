@@ -1,0 +1,121 @@
+* 函数讲解
+1. void * of_get_property(device, "compatible", &cplen);
+   通过所给的名字找到相应节点的属性
+2. struct property* of_find_property(np, name, lenp);
+   这个函数与of_get_property()不同的是返回值变为property。
+3. for_each_compatible_node(np, NULL, "atmel,at91rm9200-gpio")
+   //对每个节点进行属性的查询操作
+4. of_device_is_compatible(np, compatible) && of_node_get(np))
+   核查所给的"compat" 字符串能否匹配某个device node中的"compatible" 属性。
+5. of_find_compatible_node(NULL, type, compatible)
+   通过type参数找到相应类型的节点，并且节点的一个tokens在参数compatible属性中。
+* 从device_node中获取信息：
+1. 从设备结点np中读取属性名为propname，类型为8、16、32、位整型数组的属性值，并放入out_values，sz指明了要读取的个数。
+   int of_property_read_u8_array(const struct device_node *np, const char *propname,u8 *out_values, size_t sz);
+   int of_property_read_u16_array(const struct device_node *np, const char *propname,u16 *out_values, size_t sz);
+   int of_property_read_u32_array(const struct device_node *np, const char *propname,u32 *out_values, size_t sz);
+2. 从设备结点np中读取属性名为propname，类型为8、16、32位的属性值，并放入out_values。实际上这里调用的就是sz为1的XXX_array函数。
+   static inline int of_property_read_u8(const struct device_node *np,const char *propname,u8 *out_value)
+   static inline int of_property_read_u16(const struct device_node *np,const char *propname,u8 *out_value)
+   static inline int of_property_read_u32(const struct device_node *np,const char *propname,u8 *out_value)
+   1. 返回值，成功0,失败-EINVAL
+3. 从设备结点np中读取属性名为propname的属性值中第index个u32数值给out_value
+   int of_property_read_u32_index(const struct device_node *np,const char*propname,u32 index, u32 *out_value)
+4. 从设备结点np中读取属性名为propname，类型为64位的属性值，并放入out_values
+   int of_property_read_u64(conststruct device_node *np, const char *propname,u64 *out_value)
+5. 从设备结点np中读取属性名为propname的字符串型属性值
+   int of_property_read_string(struct device_node *np, const char *propname,const char**out_string)
+6. 从设备结点np中读取属性名为propname的字符串型属性值数组中的第index个字符串
+   int of_property_read_string_index(struct device_node *np, const char *propname,intindex, const char **output)
+7. 从设备结点np中读取属性名为propname的字符串型属性值的个数
+   int of_property_count_strings(struct device_node *np, const char *propname)
+8. 从设备节点dev中读取第index个irq号
+   unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
+9. 从设备节点dev中读取第index个irq号，并填充一个irq资源结构体
+   int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
+10. 获取设备节点dev的irq个数
+    int of_irq_count(struct device_node *dev)
+11. 如果设备结点np含有propname属性，则返回true，否则返回false。一般用于检查空属性是否存在。
+    static inline bool of_property_read_bool(const struct device_node *np,const char *propname);
+12. 根据name参数，在指定的设备结点np中查找匹配的property，并返回这个property
+    struct property* of_find_property(const struct device_node *np,const char *name,int *lenp)
+13. 根据name参数，在指定的设备结点np中查找匹配的property，并返回这个property的属性值
+    const void * of_get_property(const struct device_node *np, const char *name,int *lenp)
+14. 获得node节点的父节点的device node
+    struct device_node* of_get_parent(const struct device_node *node)
+15. 判断设备结点device的compatible属性是否包含compat指定的字符串
+    int of_device_is_compatible(const struct device_node *device,const char *compat);
+* 从of_allnodes中查找信息：
+1. 根据路径参数，在全局链表of_allnodes中，查找匹配的device_node
+   struct device_node* of_find_node_by_path(const char *path)
+2. 则根据name在全局链表of_allnodes中查找匹配的device_node,若from=NULL表示从头开始查找
+   struct device_node* of_find_node_by_name(struct device_node *from,const char *name)
+3. 根据设备类型在全局链表of_allnodes中查找匹配的device_node
+   struct device_node* of_find_node_by_type(struct device_node *from,const char *type)
+4. 根据compatible的属性值在全局链表of_allnodes中查找匹配的device_node，大多数情况下，from、type为NULL。
+   struct device_node * of_find_compatible_node(struct device_node *from, const char*type, const char，*compatible);
+5. 根据节点属性的name在全局链表of_allnodes中查找匹配的device_node
+   struct device_node* of_find_node_with_property(struct device_node *from,const char *prop_name)
+6. 根据phandle在全局链表of_allnodes中查找匹配的device_node
+   struct device_node* of_find_node_by_phandle(phandle handle)
+7. 将一个phandle属性解析为device_node指针
+   struct device_node *of_parse_phandle(const struct device_node *np, const char *phandle_name, int index)
+   #+begin_src cpp
+    Example:
+    phandle1: node1 {
+      #list-cells = <2>;
+    }
+
+    node2 {
+      list = <&phandle1>;
+    }
+    struct device_node *node;
+    node = of_parse_phandle(np, "list", 0)
+
+   #+end_src
+9. int of_parse_phandle_with_args(const struct device_node *np, const char *list_name, const char *cells_name, int index, struct of_phandle_args *out_args)
+   #+begin_src cpp
+   * Caller is responsible to call of_node_put() on the returned out_args->node
+   * pointer.
+   *
+   * Example:
+   *
+   * phandle1: node1 {
+   * 	#list-cells = <2>;
+   * }
+   *
+   * phandle2: node2 {
+   * 	#list-cells = <1>;
+   * }
+   *
+   * node3 {
+   * 	list = <&phandle1 1 2 &phandle2 3>;
+   * }
+   *
+   * To get a device_node of the `node2' node you may call this:
+   * of_parse_phandle_with_args(node3, "list", "#list-cells", 1, &args);
+   */
+   #+end_src
+* 杂：
+1. 通过设备结点直接进行设备内存区间的 ioremap()，index是内存段的索引。若设备结点的reg属性有多段，可通过index标示要ioremap的是哪一段，只有1段的情况，index为0
+   void __iomem* of_iomap(struct device_node *node, int index);
+2. 用来查找在dtb中的根节点，好像返回的都是0
+   unsigned long __init of_get_flat_dt_root(void)
+3. 获取节点np对应的aliasid号
+   int of_alias_get_id(struct device_node *np, const char *stem)
+4. device node计数增加/减少
+   struct device_node* of_node_get(struct device_node *node)
+   void of_node_put(struct device_node *node)
+5. 将matches数组中of_device_id结构的name和type与device node的compatible和type匹配，返回匹配度最高的of_device_id结构
+   const struct of_device_id* of_match_node(const struct of_device_id *matches,const struct device_node*node)
+* platform_device和resource相关：
+1. 根据设备节点dev的reg属性值，填充资源结构体r。Index参数指明了使用reg属性中第几个属性值，一般设置为0，表示第一个。
+   int of_address_to_resource(struct device_node *dev, int index,struct resource *r)
+2. 根据device node，bus_id以及父节点创建该设备的platform_device结构，同时会初始化它的resource成员。
+   struct platform_device* of_device_alloc(struct device_node *np,const char *bus_id,struct device *parent)
+3. 遍历of_allnodes中的节点挂接到of_platform_bus_type总线上,由于此时of_platform_bus_type总线上还没有驱动,所以此时不进行匹配
+   int of_platform_bus_probe(struct device_node *root,const struct of_device_id *matches,struct device *parent)
+4. 遍历of_allnodes中的所有节点，生成并初始化所以节点的platform_device结构
+   int of_platform_populate(struct device_node *root,const struct of_device_id *matches,const struct of_dev_auxdata *lookup,struct device *parent)
+5. 根据device_node查找返回该设备对应的platform_device结构
+   struct platform_device* of_find_device_by_node(struct device_node *np)

@@ -1,0 +1,154 @@
+I2C_MINORS	i2c-dev.c	57
+POLY	i2c-core.c	1837
+RECOVERY_CLK_CNT	i2c-core.c	166
+RECOVERY_NDELAY	i2c-core.c	165
+__i2c_add_numbered_adapter	i2c-core.c	/^static int __i2c_add_numbered_adapter(struct i2c_a/
+__i2c_check_addr_busy	i2c-core.c	/^static int __i2c_check_addr_busy(struct device *de/
+__i2c_transfer	i2c-core.c	/^int __i2c_transfer(struct i2c_adapter *adap, struc/
+__process_new_adapter	i2c-core.c	/^static int __process_new_adapter(struct device_dri/
+__process_new_driver	i2c-core.c	/^static int __process_new_driver(struct device *dev/
+__process_removed_adapter	i2c-core.c	/^static int __process_removed_adapter(struct device/
+__process_removed_driver	i2c-core.c	/^static int __process_removed_driver(struct device /
+__unregister_client	i2c-core.c	/^static int __unregister_client(struct device *dev,/
+__unregister_dummy	i2c-core.c	/^static int __unregister_dummy(struct device *dev, /
+adap	i2c-dev.c	53
+arg	i2c-core.c	1409
+board_info	i2c-core.h	25
+busnum	i2c-core.h	24
+cmd	i2c-core.c	1408
+crc8	i2c-core.c	/^static u8 crc8(u16 data)$/
+dev	i2c-dev.c	54
+dummy_driver	i2c-core.c	724
+dummy_id	i2c-core.c	708
+dummy_probe	i2c-core.c	/^static int dummy_probe(struct i2c_client *client,$/
+dummy_remove	i2c-core.c	/^static int dummy_remove(struct i2c_client *client)/
+get_free_i2c_dev	i2c-dev.c	/^static struct i2c_dev *get_free_i2c_dev(struct i2c/
+get_scl_gpio_value	i2c-core.c	/^static int get_scl_gpio_value(struct i2c_adapter */
+get_sda_gpio_value	i2c-core.c	/^static int get_sda_gpio_value(struct i2c_adapter */
+i2c_adapter_attr_group	i2c-core.c	908
+i2c_adapter_attr_groups	i2c-core.c	912
+i2c_adapter_attrs	i2c-core.c	901
+i2c_adapter_compat_class	i2c-core.c	941
+i2c_adapter_depth	i2c-core.c	/^static inline unsigned int i2c_adapter_depth(struc/
+i2c_adapter_dev_release	i2c-core.c	/^static void i2c_adapter_dev_release(struct device /
+i2c_adapter_type	i2c-core.c	917
+i2c_add_adapter	i2c-core.c	/^int i2c_add_adapter(struct i2c_adapter *adapter)$/
+i2c_add_numbered_adapter	i2c-core.c	/^int i2c_add_numbered_adapter(struct i2c_adapter *a/
+i2c_bus_type	i2c-core.c	445
+i2c_check_addr_busy	i2c-core.c	/^static int i2c_check_addr_busy(struct i2c_adapter /
+i2c_check_addr_validity	i2c-core.c	/^static int i2c_check_addr_validity(unsigned short /
+i2c_check_client_addr_validity	i2c-core.c	/^static int i2c_check_client_addr_validity(const st/
+i2c_check_mux_children	i2c-core.c	/^static int i2c_check_mux_children(struct device *d/
+i2c_check_mux_parents	i2c-core.c	/^static int i2c_check_mux_parents(struct i2c_adapte/
+i2c_client_dev_release	i2c-core.c	/^static void i2c_client_dev_release(struct device */
+i2c_client_type	i2c-core.c	56
+i2c_client_type	i2c-core.c	455
+i2c_clients_command	i2c-core.c	/^void i2c_clients_command(struct i2c_adapter *adap,/
+i2c_cmd	i2c-core.c	/^static int i2c_cmd(struct device *dev, void *_arg)/
+i2c_cmd_arg	i2c-core.c	1407
+i2c_default_probe	i2c-core.c	/^static int i2c_default_probe(struct i2c_adapter *a/
+i2c_del_adapter	i2c-core.c	/^void i2c_del_adapter(struct i2c_adapter *adap)$/
+i2c_del_driver	i2c-core.c	/^void i2c_del_driver(struct i2c_driver *driver)$/
+i2c_detect	i2c-core.c	/^static int i2c_detect(struct i2c_adapter *adapter,/
+i2c_detect_address	i2c-core.c	/^static int i2c_detect_address(struct i2c_client *t/
+i2c_dev	i2c-dev.c	51
+i2c_dev_attr_group	i2c-core.c	422
+i2c_dev_attr_groups	i2c-core.c	426
+i2c_dev_attrs	i2c-core.c	415
+i2c_dev_exit	i2c-dev.c	/^static void __exit i2c_dev_exit(void)$/
+i2c_dev_get_by_minor	i2c-dev.c	/^static struct i2c_dev *i2c_dev_get_by_minor(unsign/
+i2c_dev_init	i2c-dev.c	/^static int __init i2c_dev_init(void)$/
+i2c_device_match	i2c-core.c	/^static int i2c_device_match(struct device *dev, st/
+i2c_device_pm_freeze	i2c-core.c	/^static int i2c_device_pm_freeze(struct device *dev/
+i2c_device_pm_freeze	i2c-core.c	387
+i2c_device_pm_ops	i2c-core.c	431
+i2c_device_pm_poweroff	i2c-core.c	/^static int i2c_device_pm_poweroff(struct device *d/
+i2c_device_pm_poweroff	i2c-core.c	389
+i2c_device_pm_restore	i2c-core.c	/^static int i2c_device_pm_restore(struct device *de/
+i2c_device_pm_restore	i2c-core.c	390
+i2c_device_pm_resume	i2c-core.c	/^static int i2c_device_pm_resume(struct device *dev/
+i2c_device_pm_resume	i2c-core.c	386
+i2c_device_pm_suspend	i2c-core.c	/^static int i2c_device_pm_suspend(struct device *de/
+i2c_device_pm_suspend	i2c-core.c	385
+i2c_device_pm_thaw	i2c-core.c	/^static int i2c_device_pm_thaw(struct device *dev)$/
+i2c_device_pm_thaw	i2c-core.c	388
+i2c_device_probe	i2c-core.c	/^static int i2c_device_probe(struct device *dev)$/
+i2c_device_remove	i2c-core.c	/^static int i2c_device_remove(struct device *dev)$/
+i2c_device_shutdown	i2c-core.c	/^static void i2c_device_shutdown(struct device *dev/
+i2c_device_uevent	i2c-core.c	/^static int i2c_device_uevent(struct device *dev, s/
+i2c_devinfo	i2c-core.h	22
+i2c_do_add_adapter	i2c-core.c	/^static int i2c_do_add_adapter(struct i2c_driver *d/
+i2c_do_del_adapter	i2c-core.c	/^static void i2c_do_del_adapter(struct i2c_driver */
+i2c_exit	i2c-core.c	/^static void __exit i2c_exit(void)$/
+i2c_for_each_dev	i2c-core.c	/^int i2c_for_each_dev(void *data, int (*fn)(struct /
+i2c_generic_gpio_recovery	i2c-core.c	/^int i2c_generic_gpio_recovery(struct i2c_adapter */
+i2c_generic_recovery	i2c-core.c	/^static int i2c_generic_recovery(struct i2c_adapter/
+i2c_generic_scl_recovery	i2c-core.c	/^int i2c_generic_scl_recovery(struct i2c_adapter *a/
+i2c_get_adapter	i2c-core.c	/^struct i2c_adapter *i2c_get_adapter(int nr)$/
+i2c_get_gpios_for_recovery	i2c-core.c	/^static int i2c_get_gpios_for_recovery(struct i2c_a/
+i2c_init	i2c-core.c	/^static int __init i2c_init(void)$/
+i2c_legacy_resume	i2c-core.c	/^static int i2c_legacy_resume(struct device *dev)$/
+i2c_legacy_suspend	i2c-core.c	/^static int i2c_legacy_suspend(struct device *dev, /
+i2c_lock_adapter	i2c-core.c	/^void i2c_lock_adapter(struct i2c_adapter *adapter)/
+i2c_master_recv	i2c-core.c	/^int i2c_master_recv(const struct i2c_client *clien/
+i2c_master_send	i2c-core.c	/^int i2c_master_send(const struct i2c_client *clien/
+i2c_match_id	i2c-core.c	/^static const struct i2c_device_id *i2c_match_id(co/
+i2c_new_device	i2c-core.c	/^i2c_new_device(struct i2c_adapter *adap, struct i2/
+i2c_new_dummy	i2c-core.c	/^struct i2c_client *i2c_new_dummy(struct i2c_adapte/
+i2c_new_probed_device	i2c-core.c	/^i2c_new_probed_device(struct i2c_adapter *adap,$/
+i2c_probe_func_quick_read	i2c-core.c	/^int i2c_probe_func_quick_read(struct i2c_adapter */
+i2c_put_adapter	i2c-core.c	/^void i2c_put_adapter(struct i2c_adapter *adap)$/
+i2c_put_gpios_for_recovery	i2c-core.c	/^static void i2c_put_gpios_for_recovery(struct i2c_/
+i2c_recover_bus	i2c-core.c	/^int i2c_recover_bus(struct i2c_adapter *adap)$/
+i2c_register_adapter	i2c-core.c	/^static int i2c_register_adapter(struct i2c_adapter/
+i2c_register_driver	i2c-core.c	/^int i2c_register_driver(struct module *owner, stru/
+i2c_release_client	i2c-core.c	/^void i2c_release_client(struct i2c_client *client)/
+i2c_scan_static_board_info	i2c-core.c	/^static void i2c_scan_static_board_info(struct i2c_/
+i2c_smbus_add_pec	i2c-core.c	/^static inline void i2c_smbus_add_pec(struct i2c_ms/
+i2c_smbus_check_pec	i2c-core.c	/^static int i2c_smbus_check_pec(u8 cpec, struct i2c/
+i2c_smbus_msg_pec	i2c-core.c	/^static u8 i2c_smbus_msg_pec(u8 pec, struct i2c_msg/
+i2c_smbus_pec	i2c-core.c	/^static u8 i2c_smbus_pec(u8 crc, u8 *p, size_t coun/
+i2c_smbus_read_block_data	i2c-core.c	/^s32 i2c_smbus_read_block_data(const struct i2c_cli/
+i2c_smbus_read_byte	i2c-core.c	/^s32 i2c_smbus_read_byte(const struct i2c_client *c/
+i2c_smbus_read_byte_data	i2c-core.c	/^s32 i2c_smbus_read_byte_data(const struct i2c_clie/
+i2c_smbus_read_i2c_block_data	i2c-core.c	/^s32 i2c_smbus_read_i2c_block_data(const struct i2c/
+i2c_smbus_read_word_data	i2c-core.c	/^s32 i2c_smbus_read_word_data(const struct i2c_clie/
+i2c_smbus_write_block_data	i2c-core.c	/^s32 i2c_smbus_write_block_data(const struct i2c_cl/
+i2c_smbus_write_byte	i2c-core.c	/^s32 i2c_smbus_write_byte(const struct i2c_client */
+i2c_smbus_write_byte_data	i2c-core.c	/^s32 i2c_smbus_write_byte_data(const struct i2c_cli/
+i2c_smbus_write_i2c_block_data	i2c-core.c	/^s32 i2c_smbus_write_i2c_block_data(const struct i2/
+i2c_smbus_write_word_data	i2c-core.c	/^s32 i2c_smbus_write_word_data(const struct i2c_cli/
+i2c_smbus_xfer	i2c-core.c	/^s32 i2c_smbus_xfer(struct i2c_adapter *adapter, u1/
+i2c_smbus_xfer_emulated	i2c-core.c	/^static s32 i2c_smbus_xfer_emulated(struct i2c_adap/
+i2c_sysfs_delete_device	i2c-core.c	/^i2c_sysfs_delete_device(struct device *dev, struct/
+i2c_sysfs_new_device	i2c-core.c	/^i2c_sysfs_new_device(struct device *dev, struct de/
+i2c_transfer	i2c-core.c	/^int i2c_transfer(struct i2c_adapter *adap, struct /
+i2c_trylock_adapter	i2c-core.c	/^static int i2c_trylock_adapter(struct i2c_adapter /
+i2c_unlock_adapter	i2c-core.c	/^void i2c_unlock_adapter(struct i2c_adapter *adapte/
+i2c_unregister_device	i2c-core.c	/^void i2c_unregister_device(struct i2c_client *clie/
+i2c_use_client	i2c-core.c	/^struct i2c_client *i2c_use_client(struct i2c_clien/
+i2c_verify_adapter	i2c-core.c	/^struct i2c_adapter *i2c_verify_adapter(struct devi/
+i2c_verify_client	i2c-core.c	/^struct i2c_client *i2c_verify_client(struct device/
+i2cdev_attach_adapter	i2c-dev.c	/^static int i2cdev_attach_adapter(struct device *de/
+i2cdev_check	i2c-dev.c	/^static int i2cdev_check(struct device *dev, void */
+i2cdev_check_addr	i2c-dev.c	/^static int i2cdev_check_addr(struct i2c_adapter *a/
+i2cdev_check_mux_children	i2c-dev.c	/^static int i2cdev_check_mux_children(struct device/
+i2cdev_check_mux_parents	i2c-dev.c	/^static int i2cdev_check_mux_parents(struct i2c_ada/
+i2cdev_detach_adapter	i2c-dev.c	/^static int i2cdev_detach_adapter(struct device *de/
+i2cdev_fops	i2c-dev.c	529
+i2cdev_ioctl	i2c-dev.c	/^static long i2cdev_ioctl(struct file *file, unsign/
+i2cdev_ioctl_rdrw	i2c-dev.c	/^static noinline int i2cdev_ioctl_rdrw(struct i2c_c/
+i2cdev_ioctl_smbus	i2c-dev.c	/^static noinline int i2cdev_ioctl_smbus(struct i2c_/
+i2cdev_notifier	i2c-dev.c	615
+i2cdev_notifier_call	i2c-dev.c	/^static int i2cdev_notifier_call(struct notifier_bl/
+i2cdev_open	i2c-dev.c	/^static int i2cdev_open(struct inode *inode, struct/
+i2cdev_read	i2c-dev.c	/^static ssize_t i2cdev_read(struct file *file, char/
+i2cdev_release	i2c-dev.c	/^static int i2cdev_release(struct inode *inode, str/
+i2cdev_write	i2c-dev.c	/^static ssize_t i2cdev_write(struct file *file, con/
+list	i2c-core.h	23
+list	i2c-dev.c	52
+return_i2c_dev	i2c-dev.c	/^static void return_i2c_dev(struct i2c_dev *i2c_dev/
+set_scl_gpio_value	i2c-core.c	/^static void set_scl_gpio_value(struct i2c_adapter /
+show_adapter_name	i2c-dev.c	/^static ssize_t show_adapter_name(struct device *de/
+show_modalias	i2c-core.c	/^show_modalias(struct device *dev, struct device_at/
+show_name	i2c-core.c	/^show_name(struct device *dev, struct device_attrib/

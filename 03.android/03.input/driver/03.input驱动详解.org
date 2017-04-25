@@ -1,0 +1,45 @@
+* 流程分析
++ input_init()
+  #+begin_src cpp
+  static int __init input_init(void)
+  {
+    int err;
+
+    err = class_register(&input_class);//在/sys/class下创建类input
+
+    //proc文件系统的input初始化
+    err = input_proc_init();
+
+    //申请设备号
+    err = register_chrdev_region(MKDEV(INPUT_MAJOR, 0),
+               INPUT_MAX_CHAR_DEVICES, "input");
+    return 0;
+   fail2:	input_proc_exit();
+   fail1:	class_unregister(&input_class);
+    return err;
+  }
+  #+end_src
+  + input_proc_init();
+    #+begin_src cpp
+    static int __init input_proc_init(void)
+    {
+      struct proc_dir_entry *entry;
+
+      //在/proc/bus/下创建input文件夹
+      proc_bus_input_dir = proc_mkdir("bus/input", NULL);
+
+      //在/proc/bus/input创建文件devices，操作方法在input_devices_fileops
+      entry = proc_create("devices", 0, proc_bus_input_dir, &input_devices_fileops);
+
+      //在/proc/bus/input创建文件handlers，操作方法在input_handlers_fileops
+      entry = proc_create("handlers", 0, proc_bus_input_dir, &input_handlers_fileops);
+
+      return 0;
+
+     fail2:	remove_proc_entry("devices", proc_bus_input_dir);
+     fail1: remove_proc_entry("bus/input", NULL);
+      return -ENOMEM;
+    }
+    #+end_src
+* 遇到的问题
+/home/wildbook/Code/n8976/kernel/include/linux/

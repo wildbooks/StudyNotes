@@ -1,0 +1,175 @@
+#+TITLE: android usb之MTP(SecondDay)
+#+AUTHOR: wildbook-杨玉春
+#+EMAIL: www762268@foxmail.com
+#+DESCRIPTION:
+* MTP简介
+MTP,全称是Ｍedia Transfer Protocol(媒体传输协议)。它是微软的一个为计算机
+和便捷式设备之间传图像，音乐等所制定的协议
++ Android从3.0开始支持MTP。MTP的应用分两种角色，一个是作为Initiator，另一
+  个作为Responder。以"Android平板电脑"连接"PC"为例，他们的关系如图1-01所示
+  + Initiator
+    在MTP中所有的请求都有Initiator发起。例如，PC请求获取Android平板电脑上的
+    文件数据。
+  + Responder
+    它会处理Initiator的请求；除此之外，Responder也会发送Event事件
+* MTP框架
+file:./mtp框架.jpg
+
++ Kernel层
+  在Kernel层，USB驱动负责数据交换，而MTP驱动负责和上层进行通信，同时也和USB驱动进行通信。
+  1. USB驱动负责数据交换，是指Android设备和PC通过USB数据线连接之后，实际的数据交换是经过USB数据线发送给USB驱动的。
+  2. 对于"MTP请求"而言，MTP驱动会从USB驱动中解析出的MTP请求数据，然后传递给上层。而对于上层传来的"MTP反馈"，MTP驱动也会将反馈内容打包好之后，通过传递给USB驱动。
++ JNI层
+  #+begin_src cpp
+  MtpServer会不断地监听Kernel的消息"MTP请求"，并对相应的消息进行相关处理。
+  同时，MTP的Event事件也是通过MtpServer发送给MTP驱动的。MtpStorage对应一
+  个"存储单元"；例如，SD卡就对应一个MtpStorage。MtpPacket和MtpEventPacket
+  负责对MTP消息进行打包。android_mtp_MtpServer是一个JNI类，它是"JNI层的
+  MtpServer 和 Java层的MtpServer"沟通的桥梁。android_mtp_MtpDatabase也是
+  一个JNI类，JNI层通过它实现了对MtpDatabase(Framework层)的操作。
+  #+end_src
++ Framework层
+  #+begin_src cpp
+  MtpServer相当于一个服务器，它通过和底层进行通信从而提供了MTP的相关服务。
+  MtpDatabase充当着数据库的功能，但它本身并没有数据库对数据进行保存，本质
+  上是通过MediaProvider数据库获取所需要的数据。MtpStorage对应一个"存储单
+  元"，它和"JNI层的MtpStorage"相对应。
+  #+end_src
++ Application层
+  #+begin_src cpp
+  MtpReceiver负责接收广播，接收到广播后会启动/关闭MtpService；例如，
+  MtpReceiver收到"Android设备 和 PC连上"的消息时，会启动MtpService。
+  MtpService的作用是提供管理MTP的服务，它会启动MtpServer，以及将本地
+  存储内容和MTP的内容同步。 MediaProvider在MTP中的角色，是本地存储内
+  容查找和本地内容同步；例如，本地新增一个文件时，MediaProvider会通知
+  MtpServer从而进行MTP数据同步。
+  #+end_src
+* MTP启动流程
+#+begin_src cpp
+该部分对MTP服务的启动流程进行详细介绍。我们先通过时序图对MTP启动流程有个
+整体印象，然后再通过代码进行详细分析。其中，涉及的内容，包括Java层、JNI
+层和Kernel。
+#+end_src
+* 代码路径
++ packages/providers/MediaProvider/src/com/android/providers/media/MtpReceiver.java
+  MtpReceiver的onReceive()中会处理Intent.ACTION_BOOT_COMPLETED和UsbManager.ACTION_USB_STATE 这两个广播。
+  + 功能小结
+    #+begin_src cpp
+    MtpReceiver会监听"Android设备开机完成广播" 和 "USB连接/断开广播"的
+    处理。到收到广播时，会根据"USB的连接状态，MTP/PTP的Enable状态"决定
+    对MTP的处理。如果是连上状态，而且MTP服务是Enable的，则启动MtpService
+    服务；并且通知MediaProvider。
+    #+end_src
+  + Intent.ACTION_BOOT_COMPLETED
+    #+begin_src cpp
+    是Android设备开机完成后发出的广播,
+    MtpReceiver通过该广播，来处理开机时Android设备和PC就已经是连接状态的情况
+    #+end_src
+  + UsbManager.ACTION_USB_STATE
+    #+begin_src cpp
+    是USB连接状态发生变化时产生的广播
+    MtpReceiver通过该广播，来处理Android设备和PC之间通过USB线热插拔的情况。
+    的处理流程一样，最终都是通过handleUsbState()来处理的。下面的是基于UsbManager.ACTION_USB_STATE广播。
+    #+end_src
+  + handleUsbState()
+    #+begin_src cpp
+    功能： 如果USB链接和允许(MTP或PTP)时，启动MTP服务(MTP service),并通知
+    MediaProvider MTP是连接的，因此可以绑定到service;否则停止service,并通知
+    MediaProvider,MTP是断开的，因此解除绑定服务器
+    #+end_src
++ packages/providers/MediaProvider/src/com/android/providers/media/MtpService.java
+  + 功能小结
+    #+begin_src cpp
+    在"Android设备与PC连上，并且MTP是Enable"的情况下，MtpService会被启动。
+    在"Android设备与PC断开"时，MtpService会被终止。MtpService的作用是提供
+    管理MTP的服务。例如，MtpService启动时，它会遍历Android设备上所有的存
+    储设备，如果该存储设备是挂载的，则创建该存储设备对应的MtpStorage对象，
+    并将该MtpStorage对象添加到MtpDatabase和MtpServer中。在Android设备中存
+    储结构发生变化时，会收到MediaProvider发来的消息，进而将消息转发给
+    MtpServer，进行MTP同步。下面，通过代码对MtpService进行介绍。
+
+    MtpService服务的主要工作是搜索出Android设备上所有"挂载"的存储设备，
+    然后根据这些挂载的存储设备分别创建MtpStorage对象；随后，将MtpStorage
+    对象添加到MtpDatabase中进行数据转换和同步，同时也将MtpStorage添加
+    MtpServer，随后的"Android设备和PC之间的通信和数据同步等工作"就交由
+    MtpServer主导进行。
+    #+end_src
++ packages/providers/MediaProvider/src/com/android/providers/media/MediaProvider.java
+  + 功能小结
+    #+begin_src cpp
+    MediaProvider在MtpService启动时和MtpService绑定，在MtpService终止时
+    解除绑定。而绑定的目的是为了实现MTP同步功能
+    #+end_src
++ frameworks/base/media/java/android/mtp/MtpServer.java
+  MtpServer是一个实现Runnable接口，它相当于一个线程；并且在MtpService中被启动。
+  MtpServer在MTP的Framework层中，充当着服务器的角色。例如，当MTP服务启动时，它会通知底层；当Android设备中新增文件时，它会收到MtpService的消息，并将该消息转发给底层。
++ frameworks/base/media/java/android/mtp/MtpDatabase.java
+  在MtpService的onStartCommand()中，会通过new MtpDatabase()创建MtpDatabase对象。
+  MtpDatabase在MTP中，充当着数据库的功能。但它本身并没有数据库对数据进
+  行保存，本质上是通过MediaProvider数据库获取所需要的数据。例如，当在
+  PC上，需要读取某个文件时，MtpDatabase会在MediaProvider数据库中查询出
+  文件的相关信息(包括文件名、大小、扩展名等)；然后将这些信息交给
+  MtpServer，MtpServer将消息传递给JNI，在JNI中会通过文件名打开，然后再
+  文件句柄等信息传递给Kernel；Kernel根据文件句柄读取文件信息，并传给PC。
++ frameworks/base/media/java/android/mtp/MtpStorage.java
+  一个MtpStorage对象代表一个MTP存储单元。当Android设备和PC连上时，可能有几个存储单元：例如，内部存储分区，SD卡分区等。
++ frameworks/base/media/jni/android_mtp_MtpServer.cpp
+  + android_mtp_MtpServer_setup()
+    + fd是文件"/dev/mtp_usb"的句柄。实际上，MTP是通过"/dev/mtp_usb"去监听PC的请求和向PC发送数据的。
+    + getMtpDatabase(env, javaDatabase)返回的是MtpDatabase对象。
+    + 根据fd和getMtpDatabase()返回的MtpDatabase对象，创建server对象；然后通过SetIntFiel()将server对象保存到field_MtpServer_nativeContext这个域中。
++ frameworks/base/media/jni/android_mtp_MtpDatabase.cpp
+  + MtpDatabase.java中的"native_setup"  对应于   (void *)android_mtp_MtpDatabase_setup
++ frameworks/av/media/mtp/MtpServer.h
++ frameworks/av/media/mtp/MtpServer.cpp
+  + 其中比较重要的两则信息：
+    1. mFD是"/dev/mtp_usb"的文件句柄。
+    2. mDatabase是上一步getMtpDatabase()返回的MtpDatabase对象。
++ frameworks/av/media/mtp/MtpDatabase.h
+* 调试技巧及心得
+经过这几天的折腾，我卖出了关键的一步，在学习新模块时，不要眼闭着search和看
+source,以mtp为例
+1) 首先
+   #+begin_src cpp
+   adb logcat | grep -i "mtp" > mtplog.txt
+   #+end_src
+2) 然后设置为USB for file Transfer files(MTP)
+   #+begin_src cpp
+   下拉菜单  -->  USB for file transfer  ->  Transfer file(MTP)
+   #+end_src
+3) 根据log查看源代码
+   #+begin_src cpp
+   01-01 12:00:40.425  1357  1381 D UsbDeviceManager: setEnabledFunctions functions=mtp, forceRestart=false
+   01-01 12:01:28.518  1357  1381 D UsbDeviceManager: setEnabledFunctions functions=mtp, forceRestart=false
+   01-01 12:02:34.812  1357  1381 D UsbDeviceManager: setEnabledFunctions functions=mtp, forceRestart=false
+   01-01 12:02:34.813  1357  1381 I UsbDeviceManager: Setting USB config to mtp,adb
+   01-01 12:02:34.867  1357  1381 D UsbDeviceManager: setUsbConfig(mtp,adb)
+   01-01 12:02:35.664  4723  4723 D MtpService: starting MTP server in MTP mode
+   01-01 12:02:35.667  4723  4723 D MtpService: Adding MTP storage 0x10001 at /storage/emulated/0
+   01-01 12:03:27.763  8494  8494 D cyl     : function = mtp
+   01-01 12:03:31.896  4723  4723 D MtpService: starting MTP server in PTP mode
+   #+end_src
+   + log分析
+     #+begin_src java
+     01-01 12:00:40.425  1357  1381 D UsbDeviceManager: setEnabledFunctions functions=mtp, forceRestart=false
+     UsbDeviceManager 指的是一个类，即通常是一个文件名，你查找UsbDeviceManager
+     可以找到具体文件，而UsbDeviceManager:... 你可以确定log是哪行打印出来的
+     #+end_src
+     #+begin_src java
+     private static final String TAG = "UsbDeviceManager";
+     if (DEBUG) Slog.d(TAG, "setEnabledFunctions functions=" + functions + ", "
+                    + "forceRestart=" + forceRestart);
+     #+end_src
+   + 通过看log的方式,我们可以大致能搞明白函数的调用关系,通过log方式很好
+4) 代码修改之后
+   我们只需要编译我们需要的module，然后利用adb push到相应的位置，手机重启，
+   然后接着打log，这就是调试的大致过程
+* 研究完后的感受
+MTP它涉及到4层(app层,Framework,JNI,Kernel),在研究它们的过程中，我明白了通过
+打log的方式追踪它们的启动流程，在研究它们的启动流程时，我对JNI机制理解的更
+深了，比如MtpDatabase.java中的"native_setup"对应于android_mtp_MtpServer.cpp中
+的(void *)android_mtp_MtpDatabase_setup,我以前以为"native_setup"都是一样的，
+然而不是，看到了USB中驱动代码在android目录结构具体哪个位置，搞明白这四层之间
+怎么进行交互互
+* 参考文档
+[[http://www.cnblogs.com/skywang12345/p/3474206.html#part2][<<Android之MTP框架和流程分析>>]]

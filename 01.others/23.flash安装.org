@@ -1,0 +1,11 @@
+* For Fedora 32-bit x86
+  rpm -ivh http://linuxdownload.adobe.com/adobe-release/adobe-release-i386-1.0-1.noarch.rpm
+  rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux
+
+* For Fedora 64-bit x86_64
+  rpm -ivh http://linuxdownload.adobe.com/adobe-release/adobe-release-x86_64-1.0-1.noarch.rpm
+  rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux
+
+* 刷新及安装
+dnf update
+dnf install flash-plugin nspluginwrapper alsa-plugins-pulseaudio libcurl

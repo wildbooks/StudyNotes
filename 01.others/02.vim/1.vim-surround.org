@@ -1,0 +1,9 @@
+1.  改变
+    cs"'
+    "Hello world!"  =>  'Hello world!'
+    cs'<q>
+    'Hello world!'  =>  <q>Hello world!</q>
+2.  删除
+    ds"
+    "Hello world!"  =>  Hello world!
+    <q>Hello world!</q>

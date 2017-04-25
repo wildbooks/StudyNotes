@@ -1,0 +1,47 @@
+/*
+* 点的参数
+        shape
+            record     由横的和竖的矩形组成的图形
+	    Mrecord    角是圆的，看例题
+	    polygon    多边形
+	    plaintext
+	    box
+	rankdir       默认时图中的线是从上到下的，值：LR，RL，TB(默认)，BT   
+	sides 设置边数
+	peripheries 设置多边形的外框的层数
+	regular = true可以让多边形是一个规则的多边形
+	orientation=15 可以让你的多边形旋转一个角度 如15度
+	color
+	style
+	skew 值-1.0～1.0能让多边形斜切一个角度
+	label
+	distortion 让图形产生透视效果
+	
+	decorate      决定每条线的label与所属线的连接值：true,false
+	labelfontcolor决定headlabel和taillabel的颜色
+	fontcolor     决定label颜色
+	headlabel     起始点标签
+	taillabel     终点标签
+	label
+	rank       当图中时间表之类的东西时，我们会需要点能排在一行（列），这时要用到rank，用花括号把rank=same然后把需要并排的点一次输入          
+* 
+*
+****/
+/*
+设立一条边时，我们可以制定这条边从起点的那个位置射出和从哪个位置结束。控制符有
+"n", "ne","e", "se", "s", "sw", "w" 和"nw"，具体效果见下：
+n是北；s是南；w是西；e是东
+
+*/
+digraph html{              /* digraph为有向图，graph为无向图 */
+	node[shape=box];
+	c:n -> d[label=n];
+	c1:ne -> d1[label=ne];
+	c2:e -> d2[label=e];
+	b:se -> a[label=se];
+	c3:s -> d3[label=s];
+	c4:sw -> d4[label=sw];
+	c5:w -> d5[label=w];
+	c6:nw -> d6[label=nw];
+	
+}

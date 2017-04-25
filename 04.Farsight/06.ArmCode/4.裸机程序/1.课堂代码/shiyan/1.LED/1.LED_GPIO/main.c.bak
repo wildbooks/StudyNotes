@@ -1,0 +1,48 @@
+/*
+ *@file		Gpio_LedBlinky.c
+ *@brief	This example describes how to use GPIO to drive LEDs
+ *@date:	02. June. 2014
+ *@author	liujh@farsight.com.cn
+ *@Contact 	Us: http://dev.hqyj.com
+ *Copyright(C) 2014, Farsight
+*/
+
+#include "exynos_4412.h"
+
+
+/**********************************************************************
+ * @brief		mydelay_ms program body
+ * @param[in]	int (ms)
+ * @return 		None
+ **********************************************************************/
+void mydelay_ms(int ms)
+{
+	int i, j;
+	while(ms--)
+	{
+		for (i = 0; i < 5; i++)
+			for (j = 0; j < 514; j++);
+	}
+}
+
+/*-------------------------MAIN FUNCTION------------------------------*/
+/**********************************************************************
+ * @brief		Main program body
+ * @param[in]	None
+ * @return 		int
+ **********************************************************************/
+int main(void)
+{
+	GPX2.CON = 0x1 << 28;
+	while(1)
+	{
+		//Turn on
+		GPX2.DAT = GPX2.DAT | 0x1 << 7;
+		mydelay_ms(1000);
+
+		//Turn off
+		GPX2.DAT = GPX2.DAT & ~(0x1 << 7);
+		mydelay_ms(1000);
+	}
+	return 0;
+}

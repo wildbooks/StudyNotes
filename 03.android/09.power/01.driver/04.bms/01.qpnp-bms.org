@@ -1,0 +1,40 @@
+* bms
+  + *Code*:\\
+    kernel/drivers/power/qpnp-bms.c   ==> bms\\
+  + *dts*:\\
+    kernel/arch/arm/boot/dts/msm-pm8941.dtsi => 搜索:"qcom,qpnp-bms"\\
+  + *docs*\\
+    kernel/Documentation/devicetree/bindings/power/qpnp-bms.txt
+  + *sysfs*:\\
+    *sysfs*:/sys/class/power_supply/bms
+    *debugfs*:/sys/kernel/debug/wakeup_sources 查看所有唤醒源
+    *proc*:\\
+  + *debug*
+* bms
+* bms dts说明
+
+  #+begin_src cpp
+      qcom,r-sense-uohm = <10000>;//传感器电阻 微欧姆
+      qcom,v-cutoff-uv = <3500000>;//电池的截止电压 微伏特
+      qcom,max-voltage-uv = <4200000>;//电池的最大电压
+      qcom,r-conn-mohm = <0>;  //链接器电阻
+      qcom,shutdown-soc-valid-limit = <100>;//
+      qcom,adjust-soc-low-threshold = <15>;//判断低电量充电百分比阀值15%
+      qcom,ocv-voltage-high-threshold-uv = <3750000>;//放电曲线“平坦部分"的高电压阀值
+      qcom,ocv-voltage-low-threshold-uv = <3650000>;//放电曲线“平坦部分”的低电压阈值
+      qcom,low-soc-calculate-soc-threshold = <15>;//当周期性calculate_soc工作加速时的Soc阀值
+      qcom,low-voltage-calculate-soc-ms = <1000>;
+      qcom,low-soc-calculate-soc-ms = <5000>;
+      qcom,calculate-soc-ms = <20000>;
+      qcom,chg-term-ua = <100000>;//充电电流结束阀值
+      qcom,batt-type = <0>;//
+      qcom,low-voltage-threshold = <3520000>;
+      qcom,tm-temp-margin = <5000>;
+      qcom,low-ocv-correction-limit-uv = <100>;
+      qcom,high-ocv-correction-limit-uv = <250>;
+      qcom,hold-soc-est = <3>;
+      qcom,bms-vadc = <&pm8941_vadc>;//采集电压的设备句柄
+      qcom,bms-iadc = <&pm8941_iadc>;//采集电流的设备句柄
+      qcom,bms-adc_tm = <&pm8941_adc_tm>;//用于重复测量并接收温度和电池电压的通知的器件
+      
+  #+end_src

@@ -1,0 +1,116 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 area             first, code, readonly
+    2 00000000                 code32
+    3 00000000                 entry
+    4 00000000         start
+    5 00000000         ; mov mvn 
+    6 00000000         ; Êý¾Ý´¦ÀíÖ¸ÁîµÄ»ù±¾Ó¦ÓÃ
+    7 00000000 E3A00001        mov              r0, #1
+    8 00000004 E3A01002        mov              r1, #2
+    9 00000008         
+   10 00000008         ; 1. add 
+   11 00000008 E0802001        add              r2, r0, r1  ; r2 = r0 + r1
+   12 0000000C E2802004        add              r2, r0, #4
+   13 00000010 E0802101        add              r2, r0, r1, lsl #2 ;  r2 = r0¡¡
+                                                            £«¡¡£Ò£±£¼£¼£²£»¡¡£
+                                                            ¨£Ò£°¡¡£«¡¡£Ò£±¡¡£ª
+                                                            ¡¡£´£©
+   14 00000014         
+   15 00000014 E3A00000        mov              r0, #0
+   16 00000018 E3E01000        mov              r1, #0xffffffff
+   17 0000001C E3A02000        mov              r2, #0
+   18 00000020 E3A03001        mov              r3, #0x1
+   19 00000024         ; 2. adc  64Î»¼Ó·¨ r0, r1 =  r0, r1 + r2, r3¡¡¡¡
+   20 00000024 E0911003        adds             r1, r1, r3  ; r1 = r1 + r3  ±ØÐ
+                                                            ë¼ÓSºó×º
+   21 00000028 E0A00002        adc              r0, r0, r2  ; r0 = r0 + r2 + c
+   22 0000002C         
+   23 0000002C         ; 3. sub  rd = rn - op2 
+   24 0000002C E3A00001        mov              r0, #1
+   25 00000030 E2400001        sub              r0, r0, #1  ; r0 = r0 - 1
+   26 00000034         
+   27 00000034         ; 4. sbc  64Î»¼õ·¨ r0, r1 =  r0, r1 - r2, r3¡¡
+   28 00000034         ; cpsr c ¶ÔÓÚ¼Ó·¨ÔËËã C = 1 Ôò´ú±íÓÐ½øÎ»£¬ C = 0 ÎÞ½øÎ»
+   29 00000034         ;   ¶ÔÓÚ¼õ·¨ÔËËã C = 1 Ôò´ú±íÎÞ½èÎ»£¬ C = 0 ÓÐ½èÎ»
+   30 00000034 E3A00000        mov              r0, #0
+   31 00000038 E3A01000        mov              r1, #0x0
+   32 0000003C E3A02000        mov              r2, #0
+   33 00000040 E3A03001        mov              r3, #0x1
+   34 00000044 E0511003        subs             r1, r1, r3
+   35 00000048 E0C00002        sbc              r0, r0, r2
+   36 0000004C         
+   37 0000004C         ; 5. rsb   subÖ¸Áî  rd = rn - op2  rsb = op2 - rn
+   38 0000004C         ; eg Çó R1 ¼Ä´æÆ÷µÄ¸ºÊý
+   39 0000004C E3A00000        mov              r0, #0
+   40 00000050 E0401001        sub              r1, r0, r1
+   41 00000054         ; rsb ×÷ÎªSUBÖ¸ÁîµÄ²¹³ä£¬RSB Ê¹ÓÃ OP2×÷Îª±»¼õÊý£¬¸üÁé»î
+   42 00000054 E2611000        rsb              r1, r1, #0  ; r1 = 0 - r1
+   43 00000058         
+   44 00000058         ; 6... rsc ´ø½èÎ»µÄÄæÏò¼õ·¨£¬Ð§¹ûÍ¬ SBCÖ¸Áî
+   45 00000058         
+   46 00000058         ; 7. and 
+   47 00000058 E2000001        and              r0, r0, #0x01 ; È¡×îµÍÎªµÄÖµ
+   48 0000005C E3C00001        and              r0, r0, #0xfffffffe 
+                                                            ; ½«×îµÍÎ»ÇåÁã
+   49 00000060         
+   50 00000060         ; 8. orr
+   51 00000060 E3800001        orr              r0, r0, #0x01 ; ½«×îµÍÎ»ÉèÖÃ1 
+   52 00000064         
+   53 00000064         ; 9. eor
+   54 00000064         
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   55 00000064         
+   56 00000064         ; 10. bic Î»Çå³ý 
+   57 00000064 E3E00000        mov              r0, #0xffffffff
+   58 00000068 E3C000FF        bic              r0, r0, #0xff ; and r0, r0, #0x
+                                                            ffffff00 
+   59 0000006C         
+   60 0000006C         
+   61 0000006C         stop
+   62 0000006C EAFFFFFE        b                stop
+   63 00000070                 end
+Command Line: --debug --xref --cpu=ARM920T --apcs=interwork --depend=start.d -o
+start.o -IC:\Keil\ARM\INC -IC:\Keil\ARM\INC\Samsung --predefine="__EVAL SETA 1"
+ --list=start.lst start.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+first 00000000
+
+Symbol: first
+   Definitions
+      At line 1 in file start.s
+   Uses
+      None
+Comment: first unused
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 4 in file start.s
+   Uses
+      None
+Comment: start unused
+stop 0000006C
+
+Symbol: stop
+   Definitions
+      At line 61 in file start.s
+   Uses
+      At line 62 in file start.s
+Comment: stop used once
+3 symbols
+328 symbols in table

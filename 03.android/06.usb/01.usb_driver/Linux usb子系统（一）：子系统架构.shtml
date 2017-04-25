@@ -1,0 +1,2021 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script type="text/javascript">
+        if (window.location.toString().indexOf("shtml?") > 0) {
+            self.location = window.location.toString().replace(window.location.search.toString(), "");
+        }
+        function doccheckart(json) {
+            if (json[0].result == "1") {
+                self.location = "http://www.360doc.com/noarticle.aspx";
+            }
+        }
+    </script>
+    <script src="/js/jquery1.js" type="text/javascript" charset="utf-8"></script>
+
+    <script type="text/javascript">
+        if (navigator.userAgent.indexOf("iPhone") > 0 || navigator.userAgent.indexOf("Android") > 0 || navigator.userAgent.indexOf("iPod") > 0) {  //手机端跳转
+            var patt1 = new RegExp("[0-9]*_[0-9]*");
+            var url = patt1.exec(location.href);
+            if (url != "") {
+                self.location = "http://www.360doc.cn/article/" + url + ".html";
+            }
+        }
+    </script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="360doc" name="classification" /><link rel="alternate" media="only screen and (max-width: 640px)" href="http://www.360doc.cn/article/22854460_471598740.html"/><meta content="usb,hub,dev" name=keywords><meta content="Linux  usb子系统（一）：子系统架构" name=description><meta name="mobile-agent" content="format=html5;url=http://www.360doc.cn/article/22854460_471598740.html"/><meta content="blocking_notifier_call_chain(&amp;usb_notifier_list, USB_DEVICE_ADD, udev)：通知有usb设备增加　　blocking_notifier_call_chain(&amp;usb_notifier_list,USB_DEVICE_REMOVE, udev)：通知有usb设备移除　　blocking_notifier_call_chain(&amp;usb_notifier_list, USB_BUS_ADD, ubus)：通知有usb总线增加　　blocking_notifier_call_chain(&amp;usb_notifier_list, USB_BUS_REMOVE, ubus)：通知有usb总线移除。struct usb_driver *usb_drv;" name=360docabstract><meta content="www.360doc.com" name="author" /><title>
+	Linux  usb子系统（一）：子系统架构
+</title>
+ 
+    <script src="/js/showarticlefollow20160329.js?t=2017010403" type="text/javascript" charset="utf-8"></script>
+    <script src="http://www.360doc.com/js/jQuery.md5.min.js?t=2016041501" type="text/javascript" charset="utf-8"></script>
+    
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?d86954201130d615136257dde062a503";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+    <link rel="stylesheet" type="text/css" href="http://css.360doc.com/wzhead-cleaned.css?t=2016011601" /><link rel="stylesheet" type="text/css" href="http://css.360doc.com/newArticle20160509.css?t=2016123001" />
+    <script type="text/javascript" language="javascript">
+        window.onerror = ignoreError;
+        function ignoreError() {
+            return true;
+        }
+    </script>
+    <link href="http://css.360doc.com/index7/newheader.css?t=2016123003" rel="stylesheet" type="text/css" /></head>
+<body onmouseup="setDragEnd()" onclick="delAllDiv(event)">
+    
+    <script type="text/javascript">
+        var baiduImagePlus = {
+            noLogo: true,
+            unionId: 'u2617463',
+            maxMiniAdCount: 0,
+            formList: [{ formId: 10 }]
+        };
+    </script>
+    <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/i.js"></script>
+    
+    <span id="LayerLogin"></span>
+
+       
+    <div style="position:fixed; width:100%; z-index:1000;">
+        <div class="header" style="background-color:#ffffff;">
+        <div class="header_1">
+            <a href="http://www.360doc.com/index.html"><img src="http://pubimage.360doc.com/index7/nlogo.jpg" class="f_left" /></a>
+            <div class="mylibrary">
+                <a id="userInfoUrl" href="http://www.360doc.com/my360doc.aspx" class="a1">
+                    <div class="h_user"><img id="divuserinfonew" src="http://pubimage.360doc.com/index7/dingtu.gif" /><span></span></div>我的图书馆
+                </a>
+                <ul class="hm_list hm_account" style="display:none;">
+                        <li><a href="http://www.360doc.com/myindex.aspx">首页</a></li>
+                        <li><a href="http://www.360doc.com/myfiles.aspx?app=1&type=3">馆藏</a></li>
+                        <li><a href="http://www.360doc.com/myreadroom.aspx">阅览室</a></li>
+                        <li><a href="http://www.360doc.com/mycontacts.aspx">通讯录</a></li>
+                        <li><a href="javascript:void(0);" onclick="displaylogin();">退出帐号</a></li>
+                    </ul>
+            </div>
+            <div class="headmail f_left" style="display: none;">
+                <p class="h_icon1" id="newMsg"></p>
+                <span class="h_border"></span>
+                <ul class="hm_list" id="msgtips">
+                    <li id="msgicon"><a href="/mymsg.aspx?app=2">查看信箱</a></li>
+                    <li id="sysmsgicon"><a href="/mymsg.aspx?app=9">系统消息</a></li>
+                    <li id="sysicon"><a href="/mymsg.aspx?app=4">官方通知</a></li>
+                    <li class="hm_color2" style="background-color:#f4f4f4"><a href="/mymsg.aspx?app=6">设置</a></li>
+                </ul>
+            </div>
+            <div class="headtalker f_left" style="display: none;">
+                <p class="h_icon1" id="newDialog"></p>
+                <span class="h_border"></span>
+                <ul class="hm_list">
+                    <li id="li1chat"><a href="javascript:void(0)" onclick="initchatnew()">开始对话</a></li>
+                    <li id="li2chat" style="display:none;"><a href="javascript:void(0)" style="color:#141414;">有<span>11</span>人和你对话，<span onclick="initchatnew()" style="color:#4578b4">查看</span>&nbsp;<span onclick="clearinfochat()" style="color:#4578b4">忽略</span></a></li>
+                    <li><a href="http://www.360doc.com/mycontacts.aspx?app=8">历史对话记录</a></li>
+                    <li class="hm_color2" style="background-color:#f4f4f4"><a href="http://www.360doc.com/mycontacts.aspx?app=7">通知设置</a></li>
+                </ul>
+            </div>
+            <a href="http://www.360doc.com/advice.html" target="_blank" class="head_talk f_right">留言交流</a>
+            <div class="headsearch f_right">
+                <div class="zcomdiv">
+                    <input type="text" class="headsearch_inp f_left" value="搜文章 找馆友" />
+                    <span class="headsearch_btn f_right" id="searchlinkid"></span>
+                </div>
+                <div class="headsearch_select">
+                    <p class="hs_title">请选择搜索范围</p>
+                    <a href="javascript:goSearch();" class="cur">含&nbsp;<span></span>&nbsp;的文章</a>
+                    <a href="javascript:goSearch();">昵称为&nbsp;<span></span>&nbsp;的馆友</a>
+                    <a href="javascript:goSearch();">兴趣为&nbsp;<span></span>&nbsp;的馆友</a>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="arti_type_shadow"></div>
+    </div>
+    <div style=" height:68px;_height:0px;width:100%;"></div> 
+
+    <div class="clear360doc"></div>
+
+    <div class="doc360article_content">
+
+        <div style="height: 90px; padding-top: 13px;">
+            <div id="ADAboveArtContent">
+            </div>
+        </div>
+        <p class="clearboth"></p>
+        <div class="a_left">
+            <div id="bgchange">
+                <div class="fontsize_bgcolor_controler">
+                    <div class="a_bgcolor">
+                        <img src="http://pubimage.360doc.com/NewArticle/bgcolor.jpg" />
+                        <div class="a_colorlist">
+                            <span class="a_color1" onclick="artStatistics('20-11-1');">
+                                <img src="http://pubimage.360doc.com/NewArticle/yes.gif" /></span>
+                            <span class="a_color2" onclick="artStatistics('20-11-2');">
+                                <img src="http://pubimage.360doc.com/NewArticle/yes.gif" /></span>
+                            <span class="a_color3" onclick="artStatistics('20-11-3');">
+                                <img src="http://pubimage.360doc.com/NewArticle/yes.gif" /></span>
+                            <span class="a_color4" onclick="artStatistics('20-11-4');">
+                                <img src="http://pubimage.360doc.com/NewArticle/yes.gif" /></span>
+                            <span class="a_color5" onclick="artStatistics('20-11-5');">
+                                <img src="http://pubimage.360doc.com/NewArticle/yes.gif" /></span>
+                            <span class="a_color6 cur" onclick="artStatistics('20-11-6');">
+                                <img src="http://pubimage.360doc.com/NewArticle/yes.gif" /></span>
+                        </div>
+                    </div>
+                    <div class="a_fontsize">
+                        <img src="http://pubimage.360doc.com/NewArticle/fontSize.jpg" />
+                        <div class="fschange">
+                            <label>
+                                <input type="radio" name="font_Size" id="" value="18" onclick="artStatistics('20-10-1');" />大
+                           
+                            </label>
+                            &nbsp;
+                           
+                            <label>
+                                <input type="radio" name="font_Size" id="" value="16" onclick="artStatistics('20-10-2');" />中
+                           
+                            </label>
+                            &nbsp;
+                           
+                            <label>
+                                <input type="radio" name="font_Size" id="" value="14" onclick="artStatistics('20-10-3');" />小
+                           
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <h2 id="titiletext">Linux  usb子系统（一）：子系统架构</h2>
+                <div class="article_data">
+                    <div class="article_data_left">
+                        2015-05-19
+                        <span class="a_username">&nbsp;<a href="http://www.360doc.com/userhome/22854460" id="savernickname" target="_blank" onclick="artStatistics(&#39;20-7-1&#39;);">嵌粉</a>
+                        </span>
+                        <span id="articleinfo">
+                            <span id="docsource" class="a_from"></span><span id="360doc_Readnum"></span><span id="360docResaveCount"><span onclick="ShowSaverUser();artStatistics('20-13');" id="360doc_saverNum" style="cursor: pointer;"></span>
+                                <span id="360doc_saverUser">
+                                    <div style="position: absolute; height: 305px; width: 144px; left: 0px; z-index: 2;" id="sameArtOuter">
+                                        <div onclick="event.cancelBubble=true;" style="overflow-y: auto; height: 300px; overflow-x: hidden; z-index: 100; right: 0px; margin-top: -10px;" id="sameArt">
+                                        </div>
+                                    </div>
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+                    <div id="resavelayer1" class="bdsharebuttonbox article_data_right">
+                    </div>
+                </div>
+                
+                <div id="articlecontent" class="article_container" onmousedown="newhighlight = true;" onmouseup="NewHighlight(event);">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td id="artContent" width="656">
+                                    <div style="width: 656px; margin: 0; padding: 0; height: 0;"></div>
+                                    <p><span style="font-size: 16px;"><strong>一、USB协议基础知识&nbsp;&nbsp;</strong></span></p>
+<p><strong>前序：USB概念概述</strong></p>
+<p>　　USB1.0版本速度1.5Mbps（低速USB） USB1.1版本速度12Mbps（全速USB）&nbsp; USB2.0版本速度480Mbps（高速USB）。</p>
+<p>　　USB 分为主从两大体系，一般而言， PC 中的 USB 系统就是作主，而一般的 USB 鼠标， U 盘则是典型的 USB 从系统。</p>
+<p>　　USB主控制器这一块，我们至少要开发出 USB 的主控制器与从控制器，鼠标是低速设备，所需的是最简单的一类从控制器。主控制器则复杂得多，因为太过于复杂了，所以就形成了一些标准。在一个复杂的系统中，标准的好处就是可以让开发者把精力集中在自己负责的一块中来，只需要向外界提供最标准的接口，而免于陷于技术的汪洋大海中。 </p>
+<p>　　USB 主控制器主要有 1.1 时代的 OHCI 和 UHCI ， 2.0 时代的 EHCI ，这些标准规定了主控制器的功能和接口（寄存器的序列及功能），对我们驱动工程师而言，这样的好处就是只要你的驱动符合标某一标准，你就能轻而易举的驱动所有这个标准的主控制器。要想把主控制器驱动起来，本来是一件很难的事情，估计全球的 IT 工程师没几个能有这样的水平，但有了标准，我们就可以轻松的占有这几个高水平的 IT 工程师的劳动成果。 </p>
+<p>　　主控制器和驱动有了，我们还需要 USB 协议栈，这就是整个 USB 系统的软件部分的核心（有的资料中直接把其称为 USB 核心）， USB 协议栈一方面向使用 USB 总线的设备驱动提供操作 USB 总线的 API ，另一方面则管理上层驱动传下来的的数据流，按 USB 主控制器的要求放在控制器驱动规定的位置， USB 主控制器会调度这些数据。</p>
+<p>　　我们这里用到了调度这个词， USB 主控制器的调度其实和火车的调度 CPU 的调度有相似之处，物理上的通路只有一条，但 USB 中规定的逻辑上的通路却有许多条，有时一个设备就会占用几条逻辑通道，而 USB 系统中又会有多个设备同时运行。这就好像是只有一条铁路线，但来来往往的火车却有许多， USB 主控制器的作用就是调度这些火车，而 USB 协议栈的作用则向上层的 USB 设备驱动提供不同的车次。 </p>
+<p>　　有了以上的这些模块，才能为 USB 鼠标设计驱动，这一点上 ps/2 鼠标的驱动和 USB 鼠标的驱动结构基本一样，只不过我们的数据通路是 USB 总线。 </p>
+<p>　　USB 系统甚至把设备驱动都给标准化了，只要是支持 USB 的主机，就可以支持任何一个厂商的 USB 鼠标，任何一个厂商的 U 盘，只要是被 USB 系统包函的设备，只要这些设备支持相应的标准，就无需重新设计驱动而直接使用。 </p>
+<p>　　下是简单的列出了 USB 设备类型，理想的情况 USB 系统要对这些设备作完整的支持，设备也必须符合 USB 规范中的要求。</p>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td valign="top">
+<p>1 － audio ：表示一个音频设 &nbsp; 备。 </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>2 － communication&nbsp;&nbsp; device ：通讯设备，如电话， moden 等等。 </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>3 － HID ：人机交互设备，如键盘，鼠标等。 </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>6 － image 图象设备，如扫描仪，摄像头等，有时数码相 &nbsp;&nbsp; 机也可归到这一类。 </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>7 －打印机类。如单向，双向打印机等。 </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>8 － mass&nbsp;&nbsp; storage 海量存储类。所有带有一定存储功能的都可以归到这一类。如数码相机大多数都归这一类。 </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>9 － hub 类。 </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>11 － chip&nbsp;&nbsp; card/smart&nbsp;&nbsp; card 。 </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>13 －－ Content Security </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>14 －－ Video&nbsp; （ Interface ） </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>15 －－ Personal Healthcare </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>220 －－ Diagnostic Device </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>224 －－ Wireless Controller&nbsp; （ Interface ） </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>239 －－ Miscellaneous </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>254 －－ Application Specific&nbsp; （ Interface ） </p>
+</td>
+<td>&nbsp; </td>
+</tr>
+<tr>
+<td valign="top">
+<p>255 － vendor&nbsp;&nbsp; specific. 厂家的自定义类，主要用于一些特殊的设备。如接口转接卡等。</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>　　随着 USB 技术的发展， USB 系统中的一些不足也逐渐被承认， OTG 就是这种情况下的主要产物。 </p>
+<p>　　现在市面上有些设备（比如一些 MP4 ）即能插上电脑当 U 盘使，也能被 U 盘插上读取 U 盘。这样的设备在 USB 系统中是作主还是作从呢？ </p>
+<p>　　这就是 OTG(On-The-Go), 即可以作主也可以作从，传说中的雌雄同体。这主要是为嵌入式设备准备的，因为 USB 是一种主从系统，不能支持点对点平等的传输数据， OTG 正是在这种需求下产生的， OTG 不仅支持控制器的主从切换，在一定层度上，也支持相同设备之间的数据交换。&nbsp;</p>
+<p><strong>1、USB的传输线结构</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 一条USB的传输线分别由地线、电源线、D+、D-四条线构成，D+和D-是差分输入线(<span style="color: #ff0000;">抗干扰</span>)，它使用的是3.3V的电压，而电源线和地线可向设备提供5V电压，最大电流为500MA。OTG 的做法就是增来一个 ID pin 来判断设备是接入设备的是主还是从。vbus 主要是供电， D+/D- 则是用来传输数据，就是我们前面所讲的主设备和从设备间唯一的一条铁路。</p>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td valign="top">
+<p align="left">&nbsp; </p>
+</td>
+<td valign="top">
+<p align="left"><span style="background-color: #ff6600;">信号线名称 </span></p>
+</td>
+<td valign="top">
+<p align="left"><span style="background-color: #ffcc00;">颜色 </span></p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p align="left">1 </p>
+</td>
+<td valign="top">
+<p align="left">Vbus </p>
+</td>
+<td valign="top">
+<p align="left">红 </p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p align="left">2 </p>
+</td>
+<td valign="top">
+<p align="left">D- </p>
+</td>
+<td valign="top">
+<p align="left">白 </p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p align="left">3 </p>
+</td>
+<td valign="top">
+<p align="left">D+ </p>
+</td>
+<td valign="top">
+<p align="left">绿 </p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p align="left">4 </p>
+</td>
+<td valign="top">
+<p align="left">GNU </p>
+</td>
+<td valign="top">
+<p align="left">黑 </p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p align="left">shell （金属壳） </p>
+</td>
+<td valign="top">
+<p align="left">屏敝层 </p>
+</td>
+<td valign="top">
+<p align="left">&nbsp; </p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2、USB可以热插拔的硬件原理</strong></p>
+<p>　　USB主机是如何检测到设备的插入的呢？首先，在USB集线器的每个下游端口的D+和D-上，分别接了一个15K欧姆的下拉电阻到地。这样，在集线器的端口悬空时，就被这两个下拉电阻拉到了低电平。而在USB设备端，在D+或者D-上接了1.5K欧姆上拉电阻。对于全速和高速设备，上拉电阻是接在D+上；而低速设备则是上拉电阻接在D-上。这样，当设备插入到集线器时，由1.5K的上拉电阻和15K的下拉电阻分压，结果就将差分数据线中的一条拉高了。集线器检测到这个状态后，它就报告给USB主控制器（或者通过它上一层的集线器报告给USB主控制器），这样就检测到设备的插入了。USB高速设备先是被识别为全速设备，然后通过HOST和DEVICE两者之间的确认，再切换到高速模式的。在高速模式下，是电流传输模式，这时将D+上的上拉电阻断开。</p>
+<p><strong>3、USB主机控制器</strong></p>
+<p>　　USB主机控制器属于南桥芯片的一部分，通过PCI总线和处理器通信。USB主机控制器分为<span style="color: #ff0000;">UHCI</span>（英特尔提出）、<span style="color: #ff0000;">OHCI</span>（康柏和微软提出）、 <span style="color: #ff0000;">EHCI</span>。其中OHCI驱动程序用来为非PC系统上以及带有SiS和ALi芯片组的PC主办上的USB芯片提供支持。UHCI驱动程序多用来为大多数其他PC主板（包括Intel和Via）上的USB芯片提供支持。ENCI兼容OHCI和UHCI。UHCI的硬件线路比OHCI简单，所以成本较低，但需要较复杂的驱动程序，CPU负荷稍重。主机控制器驱动程序完成的功能主要包括：解析和维护URB，根据不同的端点进行分类缓存URB；负责不同USB传输类型的调度工作；负责USB数据的实际传输工作；实现虚拟跟HUB的功能。</p>
+<p><strong>4、USB设备的构成</strong></p>
+<p>　　<span style="color: #ff0000;">USB设备的构成包括了配置，接口和端点。</span></p>
+<p><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_1.gif" alt=""></p>
+<p>　　1.&nbsp;设备通常具有一个或者更多个配置</p>
+<p>　　2.&nbsp;配置经常具有一个或者更多个接口</p>
+<p>　　3.&nbsp;接口通常具有一个或者更多个设置</p>
+<p>　　4.&nbsp;接口没有或者具有一个以上的端点</p>
+<p>　　<span style="color: #ff0000;">需要注意的是，驱动是绑定到</span><span style="color: #ff0000;">USB接口上，而不是整个设备。</span></p>
+<p><strong>5、主控制怎么正确访问各种不同的USB设备</strong></p>
+<p>　　每一个USB设备接入PC时，USB总线驱动程序都会使用<span style="color: #ff0000;">默认的地址0(仅未分配地址的设备可以使用)</span>跟USB设备通信，然后给它分配一个编号，接在USB总线上的每一个USB设备都有自己的编号(地址)，PC机想访问某个USB设备时，发出的命令都含有对应的编号(地址)就可以了。</p>
+<p>　　<span lang="EN-US"><span style="font-family: Tahoma;">USB总线</span></span>驱动程序获取USB设置信息。<span lang="EN-US"><span style="font-family: Tahoma;">USB</span></span>设备里都会有一个叫<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;EEPROM</span></span>的东东，它就是用来存储设备本身信息的。它与<span lang="EN-US"><span style="font-family: Tahoma;">Flash</span></span>虽说都是要电擦除的，但它可以按字节擦除，<span lang="EN-US"><span style="font-family: Tahoma;">Flash</span></span>只能一次擦除一个<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;block</span></span>。</p>
+<p><strong>6、usb-firmware简易框架</strong></p>
+<p>&nbsp;</p>
+<p><strong>　</strong>　usb firmware主要工作是满足usb 协议所定义的标准请求（usb协议第9章第4节），不同的firmware因为硬件不同而操作有所不同，但目的都是完成主控制器对设备的标准请求，大致框图如下：</p>
+<p>&nbsp;</p>
+<p><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_2.jpg" alt=""></p>
+<p>&nbsp;</p>
+<p><strong>7、USB传输事务</strong></p>
+<p><strong>　　</strong>USB通信最基本的形式是通过一个名为端点（endpoint）的东西。它是真实存在的。</p>
+<p>　　端点只能往一个方向传送数据（端点0除外，端点0使用message管道，它既可以IN又可以OUT），或者IN，或者OUT。除了端点0，低速设备只能有2个端点，高速设备也只能有15个IN端点和15个OUT端点。</p>
+<p>　　主机和端点之间的数据传输是通过管道。</p>
+<p>　　端点只有在device上才有，协议说端点代表在主机和设备端点之间移动数据的能力。</p>
+<p>　　USB通信都是由host端发起的。<br></p>
+<p><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_3.gif" alt=""></p>
+<p>　　首先明确一点USB协议规定所有的数据传输都必须由主机发起。所以这个传输的一般格式：<span style="color: #ff0000;">令牌包</span>(表明传输的类型)，<span style="color: #ff0000;">数据包</span>(实际传输的数据)，<span style="color: #ff0000;">握手包</span>(数据的正确性)。<span style="color: #ff0000;">首先</span>是由主机控制器发出<span style="color: #ff0000;">令牌包</span>，<span style="color: #ff0000;">然后</span>主机/设备发送<span style="color: #ff0000;">数据包</span>，甚至可以没有，<span style="color: #ff0000;">最后</span>设备/主机发送<span style="color: #ff0000;">握手包</span>，这么一个过程就叫做一个<span style="color: #ff0000;">USB传输事务</span>。一个USB传输事务就实现了一次从主机和设备间的通讯。<span style="color: #ff0000;">USB的事务有：OUT、IN、SETUP事务。</span></p>
+<p>　　<span style="color: #ff0000;">令牌包：可分为<span lang="EN-US"><span style="font-family: Tahoma;">OUT</span></span>包、<span lang="EN-US"><span style="font-family: Tahoma;">IN</span></span>包、<span lang="EN-US"><span style="font-family: Tahoma;">SetUp</span></span>包和帧起始包</span>，<span lang="EN-US"><span style="font-family: Tahoma;">OUT</span></span>包就是说明接下来的数据包的方向时从主机到设备。<span style="font-family: Tahoma;"><span lang="EN-US">&nbsp;</span></span></p>
+<p>　　数据包：里面包含的就是我们实际要传输的东东了<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;&nbsp;</span></span>。</p>
+<p>　　握手包：发送方发送了数据，接受方收没收到是不是该吱个声呀。</p>
+<p>　　一个数据包里面包含有很多的域，里面包含了很多信息，一般有同步的域，数据包的核心信息的域，数据校验的域。</p>
+<p>　　<span style="color: #ff0000;">令牌包：</span><span lang="EN-US"><span style="font-family: Tahoma;">SYNC + PID + ADDR + ENDP + CRC5 :</span></span>（同步<span lang="EN-US"><span style="font-family: Tahoma;">) + (IN/OUT/SetUp) + (</span></span>设备地址）<span lang="EN-US"><span style="font-family: Tahoma;">+</span></span>（设备端点<span lang="EN-US"><span style="font-family: Tahoma;">) + (</span></span>校验）</p>
+<p>　　<span style="color: #ff0000;">数据包：</span>分为<span lang="EN-US"><span style="font-family: Tahoma;">DATA0</span></span>包和<span lang="EN-US"><span style="font-family: Tahoma;">DATA1</span></span>包，当<span lang="EN-US"><span style="font-family: Tahoma;">USB</span></span>发送数据的时候，当一次发送的数据长度大于相应端点的容量时，就需要把数据包分为好几个包，分批发送，<span lang="EN-US"><span style="font-family: Tahoma;">DATA0</span></span>包和<span lang="EN-US"><span style="font-family: Tahoma;">DATA1</span></span>包交替发送，即如果第一个数据包是<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;DATA0</span></span>，那第二个数据包就是<span lang="EN-US"><span style="font-family: Tahoma;">DATA1</span></span>。</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　　　SYNC + PID + DATA0/1 + CRC5:</span></span>（同步<span lang="EN-US"><span style="font-family: Tahoma;">) + (DATA0/1) + (</span></span>数据<span lang="EN-US"><span style="font-family: Tahoma;">) + (</span></span>校验）。</p>
+<p>　　　　　　但也有例外情况，在同步传输中（四类传输类型中之一），所有的数据包都是为<span lang="EN-US"><span style="font-family: Tahoma;">DATA0</span></span>，格式如下：<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;SYNC + PID + 0~1023</span></span>字节&nbsp;<span lang="EN-US"><span style="font-family: Tahoma;">+ CRC16:</span></span>（同步<span lang="EN-US"><span style="font-family: Tahoma;">) + (DATA0) + (</span></span>数据<span lang="EN-US"><span style="font-family: Tahoma;">) + (</span></span>校验）。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #ff0000;">握手包：</span>SYNC+PID:(同步)+（HandShake）</p>
+<p><strong>8、USB协议的四种传输类型</strong></p>
+<p>　　因为usb支持的设备实在是太多，而且不同的设备对于传输数据各有各的要求和这就导致了我们需要不同的传输方式。USB支持4种传输方式：<span style="color: #ff0000;">控制传输；批量传输；中断传输；实(等)时传输</span>。</p>
+<p><span style="color: #ff0000;">　　控制传输</span>：首先发送<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;Setup&nbsp;</span></span>传输事务，然后<span lang="EN-US"><span style="font-family: Tahoma;">IN/OUT</span></span>传输事务，最后是<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;STATUS transaction</span></span>，向主机汇报前面<span lang="EN-US"><span style="font-family: Tahoma;">SETUP&nbsp;</span></span>和<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;IN/OUT</span></span>阶段的结果。控制传输主要用于向设备发送配置信息、获取设备信息、发送命令道设备，或者获取设备的状态报告。控制传输一般发送的数据量较小，当USB设备插入时，USB核心使用端点0对设备进行配置，另外，端口0与其他端点不一样，端点0可以双向传输。</p>
+<p><span style="color: #ff0000;">　　批量传输</span>：由<span lang="EN-US"><span style="font-family: Tahoma;">OUT</span></span>事务和<span lang="EN-US"><span style="font-family: Tahoma;">IN</span></span>事务构成，用于大容量数据传输，没有固定的传输速率，也不占用带宽，当总线忙时，<span lang="EN-US"><span style="font-family: Tahoma;">USB</span></span>会优先进行其他类型的数据传输，而暂时停止批量转输。批量传输通常用在数据量大、对数据实时性要求不高的场合，例如USB打印机、扫描仪、大容量存储设备、U盘等。</p>
+<p><span style="color: #ff0000;">　　中断传输</span>：由<span lang="EN-US"><span style="font-family: Tahoma;">OUT</span></span>事务和<span lang="EN-US"><span style="font-family: Tahoma;">IN</span></span>事务构成，中断传输就是中断端点以一个固定的速度来传输较少的数据，USB键盘和鼠标就是使用这个传输方式。这里说的中断和硬件上下文中的中断不一样，它不是设备主动发送一个中断请求，而是主机控制器在保证不大于某个时间间隔内安排一次传输。中断传输对时间要求比较严格，所以可以用中断传输来不断地检测某个设备，当条件满足后再使用批量传输传输大量的数据。</p>
+<p><span style="color: #ff0000;">　　等时传输</span>：由<span lang="EN-US"><span style="font-family: Tahoma;">OUT</span></span>事务和<span lang="EN-US"><span style="font-family: Tahoma;">IN</span></span>事务构成，有两个特殊地方，第一，在同步传输的<span lang="EN-US"><span style="font-family: Tahoma;">IN</span></span>和<span lang="EN-US"><span style="font-family: Tahoma;">OUT</span></span>事务中是没有握手阶段；第二，在数据包阶段所有的数据包都为<span lang="EN-US"><span style="font-family: Tahoma;">DATA0 。</span></span>等时传输同样可以传输大批量数据，但是对数据是否到达没有保证，它对实时性的要求很高，例如音频、视频等设备（USB摄像头，USB话筒）。</p>
+<div>
+<p>　　这4种传输方式由4个事务组成：</p>
+<p>　　<span style="color: #ff0000;">IN事务：</span>IN事务为host输入服务，当host需要从设备获得数据的时候，就需要IN事务。</p>
+<p>　　<span style="color: #ff0000;">OUT事务：</span>OUT事务为host输出服务，当host需要输出数据到设备的时候，就需要OUT事务。</p>
+<p>　　<span style="color: #ff0000;">SETUP事务：</span>SETUP事务为host控制服务，当host希望传输一些USB规范的默认操作的时候就需要使用setup事务。</p>
+<p>　　<span style="color: #ff0000;">SOF事务：</span>这个用于帧同步。</p>
+<p>　　然后这4种事务又由3类包<span style="color: #ff0000;">(token包，handshake包，data包)</span>组成，每类又分几种：</p>
+<p><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_4.gif" alt="" width="424" height="274"></p>
+<p>　　<span style="color: #ff0000;">in包：</span>in包用于指明当前的事务为in类型的。</p>
+<p>　　<span style="color: #ff0000;">out包:</span>&nbsp;out包用于指明当前事务为out类型的。</p>
+<p>　　<span style="color: #ff0000;">setup包:</span>&nbsp;setup包指明当前事务为setup类型的。</p>
+<p>　　<span style="color: #ff0000;">sof包:&nbsp;</span>sof包指明当前事务为setup类型的。</p>
+<p>&nbsp;<img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_5.gif" alt="" width="442" height="219"></p>
+<p>　　<span style="color: #ff0000;">ack包：</span>ack握手包指明当前的事务的数据包传输是成功的。</p>
+<p>　<span style="color: #ff0000;">　nak包：</span>nak握手包指明当前设备忙，不能处理数据包，请主机稍后再次发送。</p>
+<p>　　<span style="color: #ff0000;">stall包：</span>stall握手包指明当前设备不能接受或者传输数据，表示一个严重的错误。</p>
+<p>&nbsp;<img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_6.gif" alt="" width="425" height="174"></p>
+<p>　　<span style="color: #ff0000;">data0包：</span>该数据包的类型为0。</p>
+<p>　　<span style="color: #ff0000;">data1包：</span>该数据包的类型为1。</p>
+<p>　　下图是一个USB鼠标插入Linux系统时完整的枚举过程，一共发生了11次传输，每次传输包括几个事务，每个事务又包括几个包，每个包包括几个域。</p>
+<p><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_7.gif" alt=""></p>
+<p>　　这里有一个概念需要注意，这里的中断传输与硬件中断那个中断是不一样的，这个中断传输实际是靠USB host control轮询usb device来实现的，而USB host control对于CPU则是基于中断的机制。</p>
+<p>　　拿USB鼠标为例，USB host control对USB鼠标不断请求，这个请求的间隔是很短的，在USB spec Table 9-13端点描述符中的bInterval域中指定的，当鼠标发生过了事件之后，鼠标会发送数据回host，这时USB host control中断通知CPU，于是usb_mouse_irq被调用，在usb_mouse_irq里，就可以读取鼠标发回来的数据，当读完之后，驱动再次调用usb_submit_urb发出请求，就这么一直重复下去，一个usb鼠标的驱动也就完成了。</p>
+<p>　　下面是USB鼠标中断传输图，可以看到USB host control向usb device发送了IN包，没有数据的时候device回复的是NAK,有数据的时候才向host control发送DATA包。</p>
+<p>&nbsp;<img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_8.gif" alt=""></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+<p><strong><span lang="EN-US"><span style="font-family: Tahoma;">9、USB设备被识别的过程</span></span></strong></p>
+<p>　　当<span lang="EN-US"><span style="font-family: Tahoma;">USB</span></span>设备插上主机时，主机就通过一系列的动作来对设备进行枚举配置。</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　1</span></span>、<span style="color: #ff0000;">接入态</span>（<span lang="EN-US"><span style="font-family: Tahoma;">Attached</span></span>）：设备接入主机后，主机通过检测信号线上的电平变化来发现设备的接入；</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　2</span></span>、<span style="color: #ff0000;">供电态</span>（<span lang="EN-US"><span style="font-family: Tahoma;">Powered</span></span>）：就是给设备供电，分为设备接入时的默认供电值，配置阶段后的供电值（按数据中要求的最大值，可通过编程设置）</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　3</span></span>、<span style="color: #ff0000;">缺省态</span>（<span lang="EN-US"><span style="font-family: Tahoma;">Default</span></span>）：<span lang="EN-US"><span style="font-family: Tahoma;">USB</span></span>在被配置之前，通过缺省地址<span lang="EN-US"><span style="font-family: Tahoma;">0</span></span>与主机进行通信；</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　4</span></span>、<span style="color: #ff0000;">地址态</span>（<span lang="EN-US"><span style="font-family: Tahoma;">Address</span></span>）：经过了配置，<span lang="EN-US"><span style="font-family: Tahoma;">USB</span></span>设备被复位后，就可以按主机分配给它的唯一地址来与主机通信，这种状态就是地址态；</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　5</span></span>、<span style="color: #ff0000;">配置态</span>（<span lang="EN-US"><span style="font-family: Tahoma;">Configured</span></span>）：通过各种标准的<span lang="EN-US"><span style="font-family: Tahoma;">USB</span></span>请求命令来获取设备的各种信息，并对设备的某此信息进行改变或设置。</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　6</span></span>、<span style="color: #ff0000;">挂起态</span>（<span lang="EN-US"><span style="font-family: Tahoma;">Suspended</span></span>）：总线供电设备在<span lang="EN-US"><span style="font-family: Tahoma;">3ms</span></span>内没有总线动作，即<span lang="EN-US"><span style="font-family: Tahoma;">USB</span></span>总线处于空闲状态的话，该设备就要自动进入挂起状态，在进入挂起状态后，总的电流功耗不超过<span lang="EN-US"><span style="font-family: Tahoma;">280UA</span></span>。</p>
+<p><strong><span lang="EN-US"><span style="font-family: Tahoma;">10</span></span>、标准的<span lang="EN-US"><span style="font-family: Tahoma;">USB</span></span>设备请求命令</strong></p>
+<p><span lang="EN-US"><span style="color: #ff0000; font-family: Tahoma;">　　USB</span></span><span style="color: #ff0000;">设备请求命令</span>是在<span style="color: #ff0000;">控制传输</span>的第一个阶段：<span lang="EN-US"><span style="font-family: Tahoma;">setup</span></span>事务传输的数据传输阶段发送给设备的。</p>
+<p>　　标准USB设备请求命令共有11个，大小都是8个字节，具有相同的结构，由5 个字段构成。通过<span style="color: #ff0000;">标准USB准设备请求</span>，我们可以<span style="color: #ff0000;">获取存储在设备EEPROM里面的信息</span>；知道设备有哪些的<span style="color: #ff0000;">设置或功能</span>；<span style="color: #ff0000;">获得设备的运行状态</span>；<span style="color: #ff0000;">改变设备的配置</span>等。</p>
+<p>　　标准<span lang="EN-US"><span style="font-family: Tahoma;">USB</span></span>准设备请求&nbsp;<span lang="EN-US"><span style="font-family: Tahoma;">= <strong>bmRequestType(1)&nbsp;</strong>+ <strong>bRequest(2)&nbsp;</strong></span></span><span lang="EN-US"><span style="font-family: Tahoma;">+&nbsp;<strong>wvalue(2)&nbsp;</strong></span></span><span lang="EN-US"><span style="font-family: Tahoma;">+&nbsp;<strong>wIndex(2)&nbsp;</strong></span></span><span lang="EN-US"><span style="font-family: Tahoma;">+&nbsp;<strong>wLength(2)</strong></span></span><br></p>
+<p>　<span style="color: #ff0000;">　</span><span style="color: #ff0000;"><strong><span lang="EN-US"><span style="font-family: Tahoma;">bmRequestType</span></span></strong>：</span></p>
+<p>　　　　<span lang="EN-US"><span style="font-family: Tahoma;">[7 bit]= 0</span></span>主机到设备；<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;1</span></span>设备到主机<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;</span></span></p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　[6-5 bit]= 00</span></span>标准请求命令；<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;01</span></span>类请求命令；<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;10</span></span>用户定义命令；<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;11</span></span>保留</p>
+<p>　　　　<span lang="EN-US"><span style="font-family: Tahoma;">[4-0 bit]= 00000&nbsp;</span></span>接收者为设备；&nbsp;<span lang="EN-US"><span style="font-family: Tahoma;">00001&nbsp;</span></span>接收者为接口；<span style="font-family: Tahoma;">&nbsp;<span lang="EN-US">00010&nbsp;</span></span>接收者为端点；<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;00011&nbsp;</span></span>接收者为其他接收者；<span style="font-family: Tahoma;">&nbsp;</span>其他<span style="font-family: Tahoma;">&nbsp;</span>其他值保留</p>
+<p><span style="font-family: Tahoma;"><span lang="EN-US">　<span style="color: #ff0000;">　<strong>bRequest</strong></span></span><span style="color: #ff0000;" lang="EN-US">:</span></span></p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　0</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;0 GET_STATUS</span></span>：用来返回特定接收者的状态</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　1</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;1 CLEAR_FEATURE</span></span>：用来清除或禁止接收者的某些特性</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　2</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;3 SET_FEATURE</span></span>：用来启用或激活命令接收者的某些特性</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　3</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;5 SET_ADDRESS</span></span>：用来给设备分配地址</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　4</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;6 GET_DEscriptOR</span></span>：用于主机获取设备的特定描述符</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　5</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;7 SET_DEscriptOR</span></span>：修改设备中有关的描述符，或者增加新的描述符</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　6</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;8 GET_CONFIGURATION</span></span>：用于主机获取设备当前设备的配置值、</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　7</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;9 SET_CONFIGURATION</span></span>：用于主机指示设备采用的要求的配置</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　8</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;10 GET_INTERFACE</span></span>：用于获取当前某个接口描述符编号</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　9</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;11 SET_INTERFACE</span></span>：用于主机要求设备用某个描述符来描述接口</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　　　10</span></span>）<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;12 SYNCH_FRAME</span></span>：用于设备设置和报告一个端点的同步</p>
+<p><span style="font-family: Tahoma;"><span lang="EN-US">　　<span style="color: #ff0000;"><strong>wvalue</strong></span></span><span style="color: #ff0000;" lang="EN-US">:&nbsp;</span></span>这个字段是<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;request&nbsp;</span></span>的参数，<span lang="EN-US"><span style="font-family: Tahoma;">request&nbsp;</span></span>不同，<span lang="EN-US"><span style="font-family: Tahoma;">wValue</span></span>就不同。</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　<span style="color: #ff0000;"><strong>wIndex</strong></span></span></span>：<span lang="EN-US"><span style="font-family: Tahoma;">wIndex</span></span>，也是<span lang="EN-US"><span style="font-family: Tahoma;">request&nbsp;</span></span>的参数，<span lang="EN-US"><span style="font-family: Tahoma;">bRequestType</span></span>指明<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;request&nbsp;</span></span>针对的是设备上的某个接口或端点的时候，<span lang="EN-US"><span style="font-family: Tahoma;">wIndex&nbsp;</span></span>就用来指明是哪个接口或端点。</p>
+<p><span lang="EN-US"><span style="font-family: Tahoma;">　　<span style="color: #ff0000;"><strong>wLength</strong></span></span></span><span style="color: #ff0000;">：</span>控制传输中<span lang="EN-US"><span style="font-family: Tahoma;">&nbsp;DATA transaction&nbsp;</span></span>阶段的长度。</p>
+<p>二<strong>、Linux&nbsp;USB系统架构</strong></p>
+<p>这个是USB系统的拓扑图，4个部分构成：USB主机控制器，根集线器，集线器，设备。其中Root Hub与USB主机控制器是绑定在一起的。</p>
+<p><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_9.gif" alt=""></p>
+<p>　　在机箱的尾部面板上,物理上存在一,二或四个USB端口。端口可以用来连接一个普通设备或者一个hub，hub是一个USB设备，可以用来扩展连接USB设备的端口数量。最大连接USB设备数量是减去连在总线上的hub数量(如果有50个hub,那么最多77(=127-50)个设备能够连接)，剩下的就是能够连接USB设备的数量。Hub总是高速的，如果一个hub是自供电的,那么任何设备都能够附着到上面。但是如果hub是总线供电的，那么仅仅低供电(最大100mA)设备能够附着到上面，一个总线供电的hub不应该连接到另一个总线供电的hub-你应该在总线供电和自供电间交替.</p>
+<p>　　通常情况下主机控制器的物理端口由一个虚拟的root hub脸管理。这个hub是有主机控制器(host controller)的设备驱动虚拟的，用来统一管理总线拓扑，因此USB子系统的驱动能够用同样的方法管理每个端口。</p>
+<p>　　USB通信都是由host端发起的。USB设备驱动程序分配并初始化一个URB发给USB Core,USB Core改一改，发给USB主机控制器驱动，USB主机控制器驱动把它解析成包，在总线上进行传送。</p>
+<p>　　USB Core是由内核实现的，其实也就是把host control driver里的功能更集中的向上抽象了一层，它是用来对最上层的USB设备驱动屏蔽掉host control的不同。</p>
+<p>　　USB通信最基本的形式是通过一个名为端点（endpoint）的东西。它是真实存在的。端点只能往一个方向传送数据（端点0除外，端点0使用message管道，它既可以IN又可以OUT），或者IN，或者OUT（前面已经介绍过）。除了端点0，低速设备只能有2个端点，高速设备也只能有15个IN端点和15个OUT端点。主机和端点之间的数据传输是通过管道。端点只有在device上才有，协议说端点代表在主机和设备端点之间移动数据的能力。</p>
+<p>&nbsp;　　<span lang="EN-US">Linux</span>系统下的<span lang="EN-US">usb</span>部分分为四个部门或者叫做四大家族，他们是<span style="color: #0000ff;"><span lang="EN-US">host</span>控制器驱动、<span lang="EN-US">hub</span>驱动、<span lang="EN-US">usb core</span>、设备类驱动</span><span style="color: #0000ff;">，</span>他们共同配合着完成了对<span lang="EN-US">usb</span>设备的访问操作。</p>
+<p><strong>枚举和设备描述符</strong></p>
+<p>　　每当一个USB设备附着到总线上,它将会被USB子系统枚举.也就是分配唯一的设备号(1-127)然后读取设备描述符.描述符是一个包含关于设备的信息和属性的数据结构.USB标准定义了一个描述符层次结构，下图所示：</p>
+<div align="center"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_10.gif" alt=""><br><br></div>
+<p><strong>&nbsp;标准描述符</strong></p>
+<p>　　<span style="color: #ff0000;">设备描述符：</span> 描述USB设备的大概信息，其中包括适用于设备的全局信息，所有设备的配置。一个USB设备只有一个设备描述符。</p>
+<p>　　<span style="color: #ff0000;">配置描述符：</span> 
+描述了特定的设备配置信息。一个USB设备可以有一或多个配置描述符。每个配置有一个或多个接口(interface)，并且每个接口有零或多个端点(endpoint)。一个端点在一个单独的配置下，是不和其他的接口共享的，但是一个单独的接口对于同一个端点能够有几种可选的配置。端点可以没有限制的在一部分不同的配置下的接口间共享。配置仅仅能够通过标准的控制传输set_configuration来激活。不同的配置能够用来全局配置信息，例如供电消耗。</p>
+<p>　　<span style="color: #ff0000;">接口描述符：</span> 
+描述了一个配置内的特定接口。一个配置提供一个或多个接口，每个接口带有零个或多个端点描述符描述了在配置内的唯一配置。一个可以包含可选的配置的接口使得配置好的端点和/或他们的特性能够多种多样。默认的接口设置总是设置为零。可替换的设置能够在标准控制传输的set_interface来选择一个。例如一个多功能设备带有话筒的摄像头，可以有三种可用的配置来改变分配在总线上的带宽。</p>
+<table border="0">
+<tbody>
+<tr>
+<td>Camera activated</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>Microphone activated</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>Camera and microphone activated</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</table>
+<p>　　<span style="color: #ff0000;">端点描述符：</span> 
+包含主机用来决定每个端点带宽的信息。一个端点象征一个USB设备的逻辑数据源或接收端(logic data source or 
+sink)。端点零是用来所有的控制传输并且该端点没有设备描述符。USB spec交替使用pipe和endpoint术语。</p>
+<p>　　<span style="color: #ff0000;">字符串描述符：</span> 是可选项，提供了unicode编码的额外的可读信息。他们可以是厂商和设备名称或序列号。</p>
+<p><strong>设备类型</strong></p>
+<p>　　标准的设备和接口描述符包含有关分类的内容：<strong>class</strong>, 
+<strong>sub-class</strong>和<strong>protocol</strong>。这些字段主机可以用来设备或接口和驱动联系。依赖于分类说明是如何指定的？对于class字段和接口描述符的合法字段是由USB 
+Device Working Group来定义的。</p>
+<p>　　在Class 
+Specification中将设备或接口分组归类并指定特性，这样就使得主机开发软件能够基于这个类别进行管理多种多样的实现。这样的主机软件通过设备中的描述信息将操作方法绑定到指定的设备。一个类别规格作为所有的该类别的设备或接口的最小操作框架服务。(PS：也就是说，所有该类别的设备或接口，都是以类别规格定义为接口框架。)</p>
+<p><strong>人机接口设备</strong></p>
+<p>
+　　HID分类，主要是包含人们控制计算机系统的设备。典型的HID分类设备包含:&nbsp;</p>
+<p>　　键盘和鼠标设备例如:标准的鼠标设备，追踪球，游戏手柄。</p>
+<p>　　前端面板控制&nbsp;&nbsp; 例如:旋钮，开关，按键，滚动器。</p>
+<p>　　可能在电话设备，远端控制VCR，游戏或模拟设备上存在控制器。</p>
+<p><strong>再了解一下USB驱动框架：</strong></p>
+<p>&nbsp;<img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_11.gif" alt="" width="538" height="452">&nbsp;</p>
+<div>
+<p>　　USB总线和USB设备使用软件进行抽象描述起来是非常复杂的，一方面是协议使然，一方面也是因为它们使用太广泛了，抽象时考虑很太多情况。幸运的是，内核开发者们抽象出来的内核USB 子系统把很多复杂性都隐藏了。</p>
+<p>针对上面这幅图，为了理解什么是USB子系统，我们要做以下说明：<br><span style="color: #0000ff;">　　a) USB 驱动都是夸kernel子系统的，因为最终USB设备是要通过BLCOCK 或CHAR设备的方式呈现给我们的，所以USB Driver之上还有一层。</span><br><span style="color: #0000ff;">　　b) USB driver利用USB Core提供的API来简单优雅的完成驱动工作，这里USB Core抽象了复杂的USB协议。</span><br><span style="color: #0000ff;">　　c) 主机控制器驱动位于USB软件的最下层，提供主机控制器硬件的抽象，隐藏硬件的细节，在主机控制器之下是物理的USB及所有与之连接的USB设备。主机控制器驱动只和USB Core进行关联，USB Core将用户的请求映射到相关的主机控制器驱动，从而使用户无需去访问主机控制器。</span><br><span style="color: #0000ff;">　　d) USB Core和USB主机控制器驱动就构成了我们的USB子系统，USB Core负责实现一些核心的功能，例如协议之类，提供一个用于访问和控制USB硬件的接口，使设备驱动不用去考虑系统当前使用哪种主机控制器。自从有了USB子系统，写USB驱动的时候，只需要调用USB Core export的接口，就几乎能完成所有工作。</span><br><span style="color: #0000ff;">　　e) USB总线将USB设备和USB驱动关联起来。</span></p>
+<p><strong>USB子系统初始化</strong></p>
+<p><strong>　　</strong>usb初始化函数定义在内核源码（2.6.37）drivers/usb/core/usb.c:</p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #008000;">/*</span><span style="color: #008000;">
+ * Init
+ </span><span style="color: #008000;">*/</span>
+<span style="color: #0000ff;">static</span> <span style="color: #0000ff;">int</span> __init usb_init(<span style="color: #0000ff;">void</span>)
+{
+    <span style="color: #0000ff;">int</span> retval;
+    <span style="color: #0000ff;">if</span> (nousb) {
+        pr_info(<span style="color: #800000;">"</span><span style="color: #800000;">%s: USB support disabled\n</span><span style="color: #800000;">"</span>, usbcore_name);
+        <span style="color: #0000ff;">return</span> <span style="color: #800080;">0</span>;
+    }
+
+    retval = usb_debugfs_init();
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> <span style="color: #0000ff;">out</span>;
+
+    retval = <span style="color: #ff0000;"><strong>bus_register</strong></span>(&amp;usb_bus_type);
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> bus_register_failed;
+    retval = <strong><span style="color: #ff0000;">bus_register_notifier</span></strong>(&amp;usb_bus_type, &amp;usb_bus_nb);
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> bus_notifier_failed;
+    retval =<span style="color: #ff0000;"> usb_major_init</span>();
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> major_init_failed;
+    retval = <span style="color: #ff0000;"><strong>usb_register</strong></span>(&amp;usbfs_driver);
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> driver_register_failed;
+    retval =<span style="color: #ff0000;"> usb_devio_init</span>();
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> usb_devio_init_failed;
+    retval =<span style="color: #ff0000;"> usbfs_init</span>();
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> fs_init_failed;
+    retval =<span style="color: #ff0000;"><strong> usb_hub_init</strong></span>();
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> hub_init_failed;
+    retval = <span style="color: #ff0000;"><strong>usb_register_device_driver</strong></span>(&amp;usb_generic_driver, THIS_MODULE);
+    <span style="color: #0000ff;">if</span> (!retval)
+        <span style="color: #0000ff;">goto</span> <span style="color: #0000ff;">out</span>;
+
+    usb_hub_cleanup();
+hub_init_failed:
+    usbfs_cleanup();
+fs_init_failed:
+    usb_devio_cleanup();
+usb_devio_init_failed:
+    usb_deregister(&amp;usbfs_driver);
+driver_register_failed:
+    usb_major_cleanup();
+major_init_failed:
+    bus_unregister_notifier(&amp;usb_bus_type, &amp;usb_bus_nb);
+bus_notifier_failed:
+    bus_unregister(&amp;usb_bus_type);
+bus_register_failed:
+    usb_debugfs_cleanup();
+<span style="color: #0000ff;">out</span>:
+    <span style="color: #0000ff;">return</span> retval;
+}
+
+subsys_initcall(usb_init);</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p><strong>usb_debugfs_init():</strong></p>
+<p>　　DebugFS，顾名思义，是一种用于内核调试的虚拟文件系统，内核开发者通过debugfs和用户空间交换数据。类似的虚拟文件系统还有procfs和sysfs等，这几种虚拟文件系统都并不实际存储在硬盘上，而是Linux内核运行起来后，执行<strong>mount -t debugfs none /media/mmcblk0p2/</strong>&nbsp;才建立起来。在/media/mmcblk0p2/目录下创建usb目录并在下面创建devices文件。</p>
+<p>　　当我们执行<strong>cat devices</strong>会调用<span style="color: #ff0000;">usbfs_devices_fops</span>-&gt;read(<strong>usb_device_read</strong>)函数去搜寻<strong>usb_bus_list</strong>链表下的usb设备信息，也就是所有总线下的设备。</p>
+<p><strong>bus_register：</strong><strong><br></strong></p>
+<p>　　是将<span lang="EN-US">usb</span>总线注册到系统中，总线可是<span lang="EN-US">linux</span>设备模型中的领导者，不管是多大的领导，也是领导，如<span lang="EN-US">PCI</span>、<span lang="EN-US">USB</span>、<span lang="EN-US">I2C</span>，即使他们在物理上有从属关系，但是在模型的世界里，都是总线，拥有一样的待遇，所以任何一个子系统只要管理自己的设备和驱动，就需要向内核注册一个总线，注册报到。</p>
+<p><strong>bus_register_notifier：</strong></p>
+<p>　　大多数内核子系统都是相互独立的，因此某个子系统可能对其它子系统产生的事件感兴趣。为了满足这个需求，也即是让某个子系统在发生某个事件时通知其它的子系统，Linux内核提供了通知链的机制。通知链表只能够在内核的子系统之间使用，而不能够在内核与用户空间之间进行事件的通知。</p>
+<p>　　通知链表是一个函数链表，链表上的每一个节点都注册了一个函数。当某个事情发生时，链表上所有节点对应的函数就会被执行。所以对于通知链表来说有一个通知方与一个接收方。在通知这个事件时所运行的函数由被通知方决定，实际上也即是被通知方注册了某个函数，在发生某个事件时这些函数就得到执行。其实和系统调用signal的思想差不多。</p>
+<p>　　bus_register-&gt;BLOCKING_INIT_NOTIFIER_HEAD(&amp;priv-&gt;bus_notifier)，已经初始化了usb_bus_type-&gt;p-&gt;bus_notifier通过blocking_notifier_chain_register函数注册到通知链表。</p>
+<p>　　那什么时候usb总线收到通知呢？</p>
+<p>　　当总线发现新的设备调用<span style="color: #ff0000;">device_add</span>-&gt;blocking_notifier_call_chain(&amp;dev-&gt;bus-&gt;p-&gt;bus_notifier,&nbsp;<span style="color: #ff0000;">BUS_NOTIFY_ADD_DEVICE</span>, dev)</p>
+<p>　　当总线卸载设备时调用device_del-&gt;blocking_notifier_call_chain(&amp;dev-&gt;bus-&gt;p-&gt;bus_notifier,<span style="color: #ff0000;">BUS_NOTIFY_DEL_DEVICE</span>, dev);</p>
+<p>　　则调用usb_bus_nb的回调成员函数<span style="color: #ff0000;">notifier_call</span>(usb_bus_notify)，函数定义如下：</p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #008000;">/*</span><span style="color: #008000;">
+ * Notifications of device and interface registration
+ </span><span style="color: #008000;">*/</span>
+<span style="color: #0000ff;">static</span> <span style="color: #0000ff;">int</span> usb_bus_notify(<span style="color: #0000ff;">struct</span> notifier_block *nb, unsigned <span style="color: #0000ff;">long</span> action,
+        <span style="color: #0000ff;">void</span> *data)
+{
+    <span style="color: #0000ff;">struct</span> device *dev = data;
+
+    <span style="color: #0000ff;">switch</span> (action) {
+    <span style="color: #0000ff;">case</span><span style="color: #ff0000;"> BUS_NOTIFY_ADD_DEVICE</span>:
+        <span style="color: #0000ff;">if</span> (dev-&gt;type == &amp;usb_device_type)<span style="color: #008000;">//</span><span style="color: #008000;">usb 设备   </span>
+            (<span style="color: #0000ff;">void</span>) usb_create_sysfs_dev_files(to_usb_device(dev)); <span style="color: #008000;">//</span><span style="color: #008000;">创建descriptors文件</span>
+        <span style="color: #0000ff;">else</span> <span style="color: #0000ff;">if</span> (dev-&gt;type == &amp;usb_if_device_type) <span style="color: #008000;">//</span><span style="color: #008000;">usb接口</span>
+            (<span style="color: #0000ff;">void</span>) usb_create_sysfs_intf_files(
+                    to_usb_interface(dev));<span style="color: #008000;">//</span><span style="color: #008000;">创建interface文件</span>
+        <span style="color: #0000ff;">break</span>;
+
+    <span style="color: #0000ff;">case</span><span style="color: #ff0000;"> BUS_NOTIFY_DEL_DEVICE</span>:
+        <span style="color: #0000ff;">if</span> (dev-&gt;type == &amp;usb_device_type)<span style="color: #008000;">//</span><span style="color: #008000;">usb设备</span>
+            usb_remove_sysfs_dev_files(to_usb_device(dev));<span style="color: #008000;">//</span><span style="color: #008000;">删除descriptors文件</span>
+        <span style="color: #0000ff;">else</span> <span style="color: #0000ff;">if</span> (dev-&gt;type == &amp;usb_if_device_type)<span style="color: #008000;">//</span><span style="color: #008000;">usb接口</span>
+            usb_remove_sysfs_intf_files(to_usb_interface(dev));<span style="color: #008000;">//</span><span style="color: #008000;">删除interface文件</span>
+        <span style="color: #0000ff;">break</span>;
+    }
+    <span style="color: #0000ff;">return</span> <span style="color: #800080;">0</span>;
+}</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p><strong>&nbsp;usb_major_init：</strong>注册字符设备，主设备号180。</p>
+<p><strong>&nbsp;usb_register(&amp;usbfs_driver):</strong></p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #0000ff;">struct</span> usb_driver usbfs_driver = {  
+    .name =     <span style="color: #800000;">"</span><span style="color: #800000;">usbfs</span><span style="color: #800000;">"</span>,  
+    .probe =    driver_probe,  
+    .disconnect =   driver_disconnect,  
+    .suspend =  driver_suspend,  
+    .resume =   driver_resume,  
+}; </pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p><strong>　</strong>　usb_register-&gt;usb_register_driver():</p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #008000;">/*</span><span style="color: #008000;">*
+ * usb_register_driver - register a USB interface driver
+ * @new_driver: USB operations for the interface driver
+ * @owner: module owner of this driver.
+ * @mod_name: module name string
+ *
+ * Registers a USB interface driver with the USB core.  The list of
+ * unattached interfaces will be rescanned whenever a new driver is
+ * added, allowing the new driver to attach to any recognized interfaces.
+ * Returns a negative error code on failure and 0 on success.
+ *
+ * NOTE: if you want your driver to use the USB major number, you must call
+ * usb_register_dev() to enable that functionality.  This function no longer
+ * takes care of that.
+ </span><span style="color: #008000;">*/</span>
+<span style="color: #0000ff;">int</span> usb_register_driver(<span style="color: #0000ff;">struct</span> usb_driver *new_driver, <span style="color: #0000ff;">struct</span> module *owner,
+            <span style="color: #0000ff;">const</span> <span style="color: #0000ff;">char</span> *mod_name)
+{
+    <span style="color: #0000ff;">int</span> retval = <span style="color: #800080;">0</span>;
+
+    <span style="color: #0000ff;">if</span> (usb_disabled())
+        <span style="color: #0000ff;">return</span> -ENODEV;
+
+    new_driver-&gt;drvwrap.for_devices = <span style="color: #800080;">0</span>;
+    new_driver-&gt;drvwrap.driver.name = (<span style="color: #0000ff;">char</span> *) new_driver-&gt;name;
+    new_driver-&gt;drvwrap.driver.bus = &amp;usb_bus_type;
+    new_driver-&gt;drvwrap.driver.probe = usb_probe_interface;
+    new_driver-&gt;drvwrap.driver.remove = usb_unbind_interface;
+    new_driver-&gt;drvwrap.driver.owner = owner;
+    new_driver-&gt;drvwrap.driver.mod_name = mod_name;
+    spin_lock_init(&amp;new_driver-&gt;dynids.<span style="color: #0000ff;">lock</span>);
+    INIT_LIST_HEAD(&amp;new_driver-&gt;dynids.list);
+
+    retval = <span style="color: #ff0000;">driver_register</span>(&amp;new_driver-&gt;drvwrap.driver);
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> <span style="color: #0000ff;">out</span>;
+
+    <span style="color: #ff0000;">usbfs_update_special</span>();
+
+    retval =<span style="color: #ff0000;"> usb_create_newid_file</span>(new_driver);
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> out_newid;
+
+    retval =<span style="color: #ff0000;"> usb_create_removeid_file</span>(new_driver);
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">goto</span> out_removeid;
+
+    pr_info(<span style="color: #800000;">"</span><span style="color: #800000;">%s: registered new interface driver %s\n</span><span style="color: #800000;">"</span>,
+            usbcore_name, new_driver-&gt;name);
+
+<span style="color: #0000ff;">out</span>:
+    <span style="color: #0000ff;">return</span> retval;
+
+out_removeid:
+    usb_remove_newid_file(new_driver);
+out_newid:
+    driver_unregister(&amp;new_driver-&gt;drvwrap.driver);
+
+    printk(KERN_ERR <span style="color: #800000;">"</span><span style="color: #800000;">%s: error %d registering interface </span><span style="color: #800000;">"</span>
+            <span style="color: #800000;">"</span><span style="color: #800000;">    driver %s\n</span><span style="color: #800000;">"</span>,
+            usbcore_name, retval, new_driver-&gt;name);
+    <span style="color: #0000ff;">goto</span> <span style="color: #0000ff;">out</span>;
+}
+EXPORT_SYMBOL_GPL(usb_register_driver);</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>其余功能如下：</p>
+<p>　　1&gt;&nbsp;<strong>driver_register</strong>实现。后面会详细分析。</p>
+<p>　　2&gt; <strong>usbfs_update_special</strong>(): 跟usb文件系统相关，看下面的usbfs_init分析。</p>
+<p>　　3&gt; <strong>usb_create_newid_file</strong>():&nbsp;创建newid属性文件，在/sys/bus/usb/drivers/usbfs/下面可以看到此文件。根据传入的ID值，增加一个新的动态usb设备到驱动(这里是usbfs)，引起驱动重新探测所有的设备。</p>
+<p>　　4&gt; <strong>usb_create_removeid_file</strong>():创建removeid属性文件，在/sys/bus/usb/drivers/usbfs/下面可以看到此文件。根据传入的ID值，删除驱动（这里是usbfs）里的一个usb设备。</p>
+<p>　　5&gt; 输出信息：usbcore: registered new interface driver usbfs</p>
+<p>现在分析<strong>driver_register</strong>功能：</p>
+<p>　　1&gt;&nbsp;首先判断，些驱动所属bus的subsys_private结构有没有初始化。如果没有，报bug信息。</p>
+<p>　　2&gt; 判断需要注册的driver和driver所属的bus是否都有probe, remove, shutdown函数。如有，打印kernel warning信息。</p>
+<p>　　3&gt; 判断此driver已经在driver所属的bus上面注册过了。如果注册过了，打印错误信息，并返回。</p>
+<p>　　4&gt; 调用bus_add_driver来注册driver。</p>
+<p>　　5&gt; 调用driver_add_groups来添加组属性。</p>
+<p>最后对bus_add_driver进行分析。</p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #008000;">/*</span><span style="color: #008000;">*
+ * bus_add_driver - Add a driver to the bus.
+ * @drv: driver.
+ </span><span style="color: #008000;">*/</span>
+<span style="color: #0000ff;">int</span> bus_add_driver(<span style="color: #0000ff;">struct</span> device_driver *drv)
+{
+    <span style="color: #0000ff;">struct</span> bus_type *bus;
+    <span style="color: #0000ff;">struct</span> driver_private *priv;
+    <span style="color: #0000ff;">int</span> error = <span style="color: #800080;">0</span>;
+
+    bus = bus_get(drv-&gt;bus);
+    <span style="color: #0000ff;">if</span> (!bus)
+        <span style="color: #0000ff;">return</span> -EINVAL;
+
+    pr_debug(<span style="color: #800000;">"</span><span style="color: #800000;">bus: '%s': add driver %s\n</span><span style="color: #800000;">"</span>, bus-&gt;name, drv-&gt;name);
+
+    priv = kzalloc(<span style="color: #0000ff;">sizeof</span>(*priv), GFP_KERNEL);
+    <span style="color: #0000ff;">if</span> (!priv) {
+        error = -ENOMEM;
+        <span style="color: #0000ff;">goto</span> out_put_bus;
+    }
+    klist_init(&amp;priv-&gt;klist_devices, NULL, NULL);
+    priv-&gt;driver = drv;
+    drv-&gt;p = priv;
+    priv-&gt;kobj.kset = bus-&gt;p-&gt;drivers_kset;
+    error = <span style="color: #ff0000;">kobject_init_and_add</span>(&amp;priv-&gt;kobj, &amp;driver_ktype, NULL,
+                     <span style="color: #800000;">"</span><span style="color: #800000;">%s</span><span style="color: #800000;">"</span>, drv-&gt;name);
+    <span style="color: #0000ff;">if</span> (error)
+        <span style="color: #0000ff;">goto</span> out_unregister;
+
+    <span style="color: #0000ff;">if</span> (drv-&gt;bus-&gt;p-&gt;<span style="color: #ff0000;">drivers_autoprobe</span>) {
+        error = driver_attach(drv);
+        <span style="color: #0000ff;">if</span> (error)
+            <span style="color: #0000ff;">goto</span> out_unregister;
+    }
+    klist_add_tail(&amp;priv-&gt;knode_bus, &amp;bus-&gt;p-&gt;klist_drivers);
+    module_add_driver(drv-&gt;owner, drv);
+
+    error = <span style="color: #ff0000;">driver_create_file</span>(drv, &amp;driver_attr_uevent);
+    <span style="color: #0000ff;">if</span> (error) {
+        printk(KERN_ERR <span style="color: #800000;">"</span><span style="color: #800000;">%s: uevent attr (%s) failed\n</span><span style="color: #800000;">"</span>,
+            __func__, drv-&gt;name);
+    }
+    error =<span style="color: #ff0000;"> driver_add_attrs</span>(bus, drv);
+    <span style="color: #0000ff;">if</span> (error) {
+        <span style="color: #008000;">/*</span><span style="color: #008000;"> How the hell do we get out of this pickle? Give up </span><span style="color: #008000;">*/</span>
+        printk(KERN_ERR <span style="color: #800000;">"</span><span style="color: #800000;">%s: driver_add_attrs(%s) failed\n</span><span style="color: #800000;">"</span>,
+            __func__, drv-&gt;name);
+    }
+
+    <span style="color: #0000ff;">if</span> (!drv-&gt;suppress_bind_attrs) {
+        error = add_bind_files(drv);
+        <span style="color: #0000ff;">if</span> (error) {
+            <span style="color: #008000;">/*</span><span style="color: #008000;"> Ditto </span><span style="color: #008000;">*/</span>
+            printk(KERN_ERR <span style="color: #800000;">"</span><span style="color: #800000;">%s: add_bind_files(%s) failed\n</span><span style="color: #800000;">"</span>,
+                __func__, drv-&gt;name);
+        }
+    }
+
+    <span style="color: #ff0000;">kobject_uevent</span>(&amp;priv-&gt;kobj, KOBJ_ADD);
+    <span style="color: #0000ff;">return</span> <span style="color: #800080;">0</span>;
+
+out_unregister:
+    kobject_put(&amp;priv-&gt;kobj);
+    kfree(drv-&gt;p);
+    drv-&gt;p = NULL;
+out_put_bus:
+    bus_put(bus);
+    <span style="color: #0000ff;">return</span> error;
+}</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>其功能是向bus中添加一个driver。</p>
+<p>　　1&gt; bus_get()：bus的计数加1;</p>
+<p>　　2&gt; kzalloc，分配driver_private内存空间。</p>
+<p>　　3&gt; 初始化此driver的klist_devices链表。</p>
+<p>　　4&gt; kobject_init_and_add()：在/sys/bus/usb/drivers/下面创建usbfs文件夹。</p>
+<p>　　5&gt; 如果总线支持drivers_autoprobe，调用driver_attach。（USB 总线支持）</p>
+<p>　　6&gt; driver_create_file： 在/sys/bus/usb/drivers/usbfs下面创建uevent属性文件。</p>
+<p>　　7&gt; driver_add_attrs()：将总线的属性也加到/sys/bus/usb/drivers/usbfs</p>
+<p>　　8&gt; add_bind_files()：在/sys/bus/usb/drivers/usbfs创建bind和unbind属性文件。</p>
+<p>　　9&gt; kobject_uevent()：发送一个KOBJ_ADD的事件。</p>
+<p>在/sys/bus/usb/drivers/usbfs下面的文件：</p>
+<p>bind&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; module&nbsp;&nbsp;&nbsp;&nbsp; new_id&nbsp;&nbsp;&nbsp;&nbsp; remove_id &nbsp; &nbsp;uevent&nbsp;&nbsp;&nbsp;&nbsp; unbind</p>
+<p><strong>usb_devio_init：</strong>注册字符设备，主设备189。</p>
+<p><strong>usbfs_init:</strong></p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #0000ff;">int</span> __init usbfs_init(<span style="color: #0000ff;">void</span>)
+{
+    <span style="color: #0000ff;">int</span> retval;
+
+    retval = <span style="color: #ff0000;">register_filesystem</span>(&amp;usb_fs_type);
+    <span style="color: #0000ff;">if</span> (retval)
+        <span style="color: #0000ff;">return</span> retval;
+
+    <span style="color: #ff0000;">usb_register_notify</span>(&amp;usbfs_nb);
+
+    <span style="color: #008000;">/*</span><span style="color: #008000;"> create mount point for usbfs </span><span style="color: #008000;">*/</span>
+    usbdir = <span style="color: #ff0000;">proc_mkdir</span>(<span style="color: #800000;">"</span><span style="color: #800000;">bus/usb</span><span style="color: #800000;">"</span>, NULL);
+
+    <span style="color: #0000ff;">return</span> <span style="color: #800080;">0</span>;
+}</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>函数功能：</p>
+<p>　　1&gt;&nbsp;register_filesystem注册usbfs文件系统，当应用程序执行mount命令的时候，挂载文件系统到相应的目录。</p>
+<p>　　2&gt;&nbsp;usb_register_notify函数注册到内核通知链表，当收到其他子系统通知，调用notifier_call回调函数usbfs_notify：</p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #0000ff;">static</span> <span style="color: #0000ff;">int</span> usbfs_notify(<span style="color: #0000ff;">struct</span> notifier_block *self, unsigned <span style="color: #0000ff;">long</span> action, <span style="color: #0000ff;">void</span> *dev)
+{
+    <span style="color: #0000ff;">switch</span> (action) {
+    <span style="color: #0000ff;">case</span> USB_DEVICE_ADD:
+        usbfs_add_device(dev);<span style="color: #008000;">//</span><span style="color: #008000;">在bus号创建的目录下，根据设备号创建设备文件</span>
+        <span style="color: #0000ff;">break</span>;
+    <span style="color: #0000ff;">case</span> USB_DEVICE_REMOVE:
+        usbfs_remove_device(dev);<span style="color: #008000;">//</span><span style="color: #008000;">删除bus号创建的目录下的设备文件</span>
+        <span style="color: #0000ff;">break</span>;
+    <span style="color: #0000ff;">case</span> USB_BUS_ADD:
+        usbfs_add_bus(dev);<span style="color: #008000;">//</span><span style="color: #008000;">根据bus号创建目录</span>
+        <span style="color: #0000ff;">break</span>;
+    <span style="color: #0000ff;">case</span> USB_BUS_REMOVE:
+        usbfs_remove_bus(dev);<span style="color: #008000;">//</span><span style="color: #008000;">删除bus号创建的目录</span>
+    }
+
+    usbfs_update_special();<span style="color: #008000;">//</span><span style="color: #008000;">更新文件系统节点</span>
+    usbfs_conn_disc_event();
+
+    <span style="color: #0000ff;">return</span> NOTIFY_OK;
+}</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>　　static BLOCKING_NOTIFIER_HEAD(<span style="color: #0000ff;">usb_notifier_list</span>);usb_notifier_list通知链表初始化</p>
+<p>　　usb_register_notify-&gt;<strong>blocking_notifier_chain_register</strong>(&amp;<span style="color: #0000ff;">usb_notifier_list</span>, nb)：向usb_notifier_list通知链表注册</p>
+<p>　　blocking_notifier_call_chain(&amp;<span style="color: #0000ff;">usb_notifier_list</span>, <span style="color: #ff0000;">USB_DEVICE_ADD</span>, udev)：通知有usb设备增加<br>　　blocking_notifier_call_chain(&amp;<span style="color: #0000ff;">usb_notifier_list</span>,<span style="color: #ff0000;">USB_DEVICE_REMOVE</span>, udev)：通知有usb设备移除<br>　　blocking_notifier_call_chain(&amp;<span style="color: #0000ff;">usb_notifier_list</span>, <span style="color: #ff0000;">USB_BUS_ADD</span>, ubus)：通知有usb总线增加<br>　　blocking_notifier_call_chain(&amp;<span style="color: #0000ff;">usb_notifier_list</span>, <span style="color: #ff0000;">USB_BUS_REMOVE</span>, ubus)：通知有usb总线移除</p>
+<p>　　3&gt;&nbsp;proc_mkdir在/proc/bus/目录下创建usb目录。</p>
+<p><strong>usb_register_device_driver：</strong></p>
+<p><strong>在了解</strong>usb_generic_driver驱动前，<strong>先分析usb总线的match函数：</strong></p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #0000ff;">static</span> <span style="color: #0000ff;">int</span> usb_device_match(<span style="color: #0000ff;">struct</span> device *dev, <span style="color: #0000ff;">struct</span> device_driver *drv)
+{
+    <span style="color: #008000;">/*</span><span style="color: #008000;"> devices and interfaces are handled separately </span><span style="color: #008000;">*/</span>
+    <span style="color: #0000ff;">if</span> (is_usb_device(dev)) {
+
+        <span style="color: #008000;">/*</span><span style="color: #008000;"> interface drivers never match devices </span><span style="color: #008000;">*/</span>
+        <span style="color: #0000ff;">if</span> (!is_usb_device_driver(drv))
+            <span style="color: #0000ff;">return</span> <span style="color: #800080;">0</span>;
+
+        <span style="color: #008000;">/*</span><span style="color: #008000;"> TODO: Add real matching code </span><span style="color: #008000;">*/</span>
+        <span style="color: #0000ff;">return</span> <span style="color: #800080;">1</span>;
+
+    } <span style="color: #0000ff;">else</span> <span style="color: #0000ff;">if</span> (is_usb_interface(dev)) {
+        <span style="color: #0000ff;">struct</span> usb_interface *intf;
+        <span style="color: #0000ff;">struct</span> usb_driver *usb_drv;
+        <span style="color: #0000ff;">const</span> <span style="color: #0000ff;">struct</span> usb_device_id *id;
+
+        <span style="color: #008000;">/*</span><span style="color: #008000;"> device drivers never match interfaces </span><span style="color: #008000;">*/</span>
+        <span style="color: #0000ff;">if</span> (is_usb_device_driver(drv))
+            <span style="color: #0000ff;">return</span> <span style="color: #800080;">0</span>;
+
+        intf = to_usb_interface(dev);
+        usb_drv = to_usb_driver(drv);
+
+        id = usb_match_id(intf, usb_drv-&gt;id_table);
+        <span style="color: #0000ff;">if</span> (id)
+            <span style="color: #0000ff;">return</span> <span style="color: #800080;">1</span>;
+
+        id = usb_match_dynamic_id(intf, usb_drv);
+        <span style="color: #0000ff;">if</span> (id)
+            <span style="color: #0000ff;">return</span> <span style="color: #800080;">1</span>;
+    }
+
+    <span style="color: #0000ff;">return</span> <span style="color: #800080;">0</span>;
+}</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>　　函数中我们分成两类判断：</p>
+<p>　　<strong>is_usb_device</strong>()，根据设备类型dev-&gt;type == &amp;usb_device_type 来判断是否是usb设备，然后在通过for_devices（<strong>usb_register_device_driver函数注册的时候设置为1</strong>）&nbsp;判断驱动是否是usb设备设备驱动，如果成功，则设备和设备驱动匹配，调用相应的驱动的probe函数（因为usb总线没有probe成员函数）。</p>
+<p>　　<strong>is_usb_interface</strong>()，根据设备类型dev-&gt;type == &amp;usb_if_device_type 来判断是否是接口，然后在通过for_devices（<strong>usb_register函数注册的时候设置为0</strong>）&nbsp;判断驱动是否是接口驱动，如果是接口驱动（所以调用usb_register都是注册的接口驱动，因为一个设备可以有多个接口，每个接口必须独立驱动），接着usb_match_id这个函数就是用来判断这个接口是否在id table中得到了match，一旦得到，就进入了具体接口驱动的probe函数了。。</p>
+<p>　　到这里我们不禁要思索驱动找到了注册的地方，那设备来自哪里？这里也有两个函数要分析：</p>
+<p>　　<strong>usb_alloc_dev</strong>()：dev-&gt;dev.type = &amp;usb_device_type，这里就表示了是usb设备，这个函数主要有两个地方调用。一个就是usb_init-&gt;usb_hub_init-&gt;hub_thread-&gt;hub_events-&gt;hub_port_connect_change，这个会在下面进行详细的分析；另外一个musb_probe-&gt;musb_init_controller-&gt;usb_add_hcd，DM8168芯片注册主控器的时候用到（或者其他芯片主控器注册）。</p>
+<p>　　<strong>usb_set_configuration</strong>():&nbsp;intf-&gt;dev.type = &amp;usb_if_device_type，这里就表示了是接口。</p>
+<p><strong>　　这里我们知道usb_register&nbsp;</strong>和&nbsp;<strong>usb_register_device_driver</strong>，一个是设备驱动的注册，一个是接口驱动的注册，match的时候通过for_devices来区分。接口指的就是一种具体的功能。</p>
+<p>&nbsp; &nbsp; &nbsp; 上面我们提过每种类型的总线都有一套自己的驱动函数，看来在usb的世界里更特殊一些，usb总线下的设备驱动有一套，接口驱动也有一套：usb_probe_interface。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;不管是设备还是接口都是挂在总线上的，一个总线只有一个match函数，usb_device_match。</p>
+<p>　　在这个usb的match函数里，首先是对usb设备的match，设备的match很简单的，只要是个usb设备就认为match了，因为现在进来的usb设备统统都认为是usb_generic_driver的，都和他match。上面我们提到过这个，所有的usb设备首先都会经过筛选这一关，处理之后，才有重生的机会。接口就不一样了，如果进来的dev不是设备，就认为是个接口，然后判断drv是否为接口驱动，如果是，那么就继续判断，这个判断机制就是usb特有的了：Id。每个接口驱动注册的时候都会有一个id&nbsp;的，加到了id table表中。</p>
+<p><span style="color: #f00000;">　　看了上面分析，usb match函数中涉及到的设备和接口驱动两条判断路线，在usb的世界里，真正的驱动是针对接口的，针对设备的其实是刚开始没有配置之前，一个通用的usb设备驱动，用来处理所有的usb设备，将其进入配置态，获取该配置下的各种接口，并将接口作为一种特殊的usb设备(接口设备)添加到设备模型中。</span></p>
+<p><span style="color: #f00000;">　　<span style="color: #333333;">下面我们分析</span></span><strong>usb_generic_driver</strong>：</p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #0000ff;">struct</span> usb_device_driver <span style="color: #ff0000;">usb_generic_driver</span> = {
+    .name =    <span style="color: #800000;">"</span><span style="color: #800000;">usb</span><span style="color: #800000;">"</span>,
+    .probe = generic_probe,
+    .disconnect = generic_disconnect,
+#ifdef    CONFIG_PM
+    .suspend = generic_suspend,
+    .resume = generic_resume,
+<span style="color: #0000ff;">#endif</span>
+    .supports_autosuspend = <span style="color: #800080;">1</span>,
+};</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>　　当USB设备(只有设备先被注册之后才会分析接口，才会注册接口) 被探测并被注册到系统后(用device_add)，会调用usb_bus_type.mach()（只要是usb设备，都会跟usb_generic_driver匹配上），之后会调用usb_probe_device()，从而引发usb_generic_driver的 probe()调用，也就是generic_probe函数。</p>
+<p><span style="color: #f00000;">　　下面将会对generic_probe函数进行分析：</span></p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #0000ff;">static</span> <span style="color: #0000ff;">int</span> generic_probe(<span style="color: #0000ff;">struct</span> usb_device *udev)
+{
+    <span style="color: #0000ff;">int</span> err, c;
+
+    <span style="color: #0000ff;">if</span> (udev-&gt;authorized == <span style="color: #800080;">0</span>)
+        dev_err(&amp;udev-&gt;dev, <span style="color: #800000;">"</span><span style="color: #800000;">Device is not authorized for usage\n</span><span style="color: #800000;">"</span>);
+    <span style="color: #0000ff;">else</span> {
+        c =<span style="color: #008000;"> usb_choose_configuration</span>(udev);
+        <span style="color: #0000ff;">if</span> (c &gt;= <span style="color: #800080;">0</span>) {
+            err =<span style="color: #008000;"> usb_set_configuration</span>(udev, c);
+            <span style="color: #0000ff;">if</span> (err) {
+                dev_err(&amp;udev-&gt;dev, <span style="color: #800000;">"</span><span style="color: #800000;">can't set config #%d, error %d\n</span><span style="color: #800000;">"</span>,
+                    c, err);
+                <span style="color: #008000;">/*</span><span style="color: #008000;"> This need not be fatal.  The user can try to
+                 * set other configurations. </span><span style="color: #008000;">*/</span>
+            }
+        }
+    }
+    usb_notify_add_device(udev);
+    <span style="color: #0000ff;">return</span> <span style="color: #800080;">0</span>;
+}</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>　　<strong>usb_generic_driver</strong>中的<strong>generic_probe</strong>函数，这个函数是一个usb设备的第一个匹配的driver。Generic通用，只要是个usb设备就得先跟他来一段，usb设备驱动界的老大。他的probe干啥了呢？很简单！找个合适的配置，配置一下。从此usb设备就进入配置的时代了。(前期的工作谁做的呢，到这都已经设置完地址了，当然是hub了，hub发现设备后，会进行前期的枚举过程，获得配置，最终调用device_add将该usb设备添加到总线上。这个过程可以专门来一大段，是hub的主要工作，所以需要把hub单独作为一个家族来对待，人家可是走在第一线的默默无闻的工作者，默默的将设备枚举完成后，将这个设备添加到usb总线上，多伟大)。</p>
+<p>　　注意：设备setconfig时参数只能为0或者合理的配置值，0就代表不配置，仍然是寻址态。不过有些设备就是拿配置0作为配置值得。</p>
+<p>　　<strong>usb_choose_configuration</strong>从设备可能的众多配置(udev-&gt;descriptor.bNumConfigurations)选择一个合适的配置(struct usb_host_config)，并返回该配置的索引值。</p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #008000;">//</span><span style="color: #008000;">为usb device选择一个合适的配置</span>
+<span style="color: #0000ff;">int</span> usb_choose_configuration(<span style="color: #0000ff;">struct</span> usb_device *udev)
+{
+    <span style="color: #0000ff;">int</span> i;
+    <span style="color: #0000ff;">int</span> num_configs;
+    <span style="color: #0000ff;">int</span> insufficient_power = <span style="color: #800080;">0</span>;
+    <span style="color: #0000ff;">struct</span> usb_host_config *c, *best;
+ 
+    best = NULL;
+    <span style="color: #008000;">//</span><span style="color: #008000;">udev-&gt;config,其实是一个数组,存放设备的配置.usb_dev-&gt;config[m]-&gt; interface[n]表示第m个配置的第n个接口的intercace结构.(m,n不是配置序号和接口序号).</span>
+    c = udev-&gt;config;
+    <span style="color: #008000;">//</span><span style="color: #008000;">config项数</span>
+    num_configs = udev-&gt;descriptor.bNumConfigurations;
+    <span style="color: #008000;">//</span><span style="color: #008000;">遍历所有配置项</span>
+    <span style="color: #0000ff;">for</span> (i = <span style="color: #800080;">0</span>; i &lt; num_configs; (i++, c++)) {
+        <span style="color: #0000ff;">struct</span> usb_interface_descriptor *desc = NULL;
+ 
+        <span style="color: #008000;">//</span><span style="color: #008000;">配置项的接口数目
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">取配置项的第一个接口</span>
+        <span style="color: #0000ff;">if</span> (c-&gt;desc.bNumInterfaces &gt; <span style="color: #800080;">0</span>)
+            desc = &amp;c-&gt;intf_cache[<span style="color: #800080;">0</span>]-&gt;altsetting-&gt;desc;
+ 
+        ... ...
+
+        <span style="color: #008000;">//</span><span style="color: #008000;">电源不足.配置描述符中的电力是所需电力的1/2</span>
+        <span style="color: #0000ff;">if</span> (c-&gt;desc.bMaxPower * <span style="color: #800080;">2</span> &gt; udev-&gt;bus_mA) {
+            insufficient_power++;
+            <span style="color: #0000ff;">continue</span>;
+        }
+   
+         <span style="color: #008000;">//</span><span style="color: #008000;">非标准Ethernet-over-USB协议</span>
+　　　<span style="color: #0000ff;">if</span> (i == <span style="color: #800080;">0</span> &amp;&amp; num_configs &gt; <span style="color: #800080;">1</span> &amp;&amp; desc &amp;&amp;
+　　　　        (is_rndis(desc) || is_activesync(desc))){
+        
+　　　　　　... ...
+
+　　　　 }
+        <span style="color: #008000;">//</span><span style="color: #008000;">选择一个不是USB_CLASS_VENDOR_SPEC的配置</span>
+　　　　　<span style="color: #0000ff;">else</span> <span style="color: #0000ff;">if</span> (udev-&gt;descriptor.bDeviceClass !=
+                        USB_CLASS_VENDOR_SPEC &amp;&amp;
+                (!desc || desc-&gt;bInterfaceClass !=
+                        USB_CLASS_VENDOR_SPEC)) {
+            best = c;
+            <span style="color: #0000ff;">break</span>;
+        }
+ 
+        <span style="color: #008000;">/*如果所有剩下的配置是特殊的vendor,选择第一个</span><span style="color: #008000;">*/</span>
+        <span style="color: #0000ff;">else</span> <span style="color: #0000ff;">if</span> (!best)
+            best = c;
+    }
+ 
+    ... ...
+
+    <span style="color: #008000;">//</span><span style="color: #008000;">如果选择好了配置,返回配置的序号,否则,返回-1</span>
+    <span style="color: #0000ff;">if</span> (best) {
+        i = best-&gt;desc.bConfigurationValue;
+        dev_info(&amp;udev-&gt;dev,
+            <span style="color: #800000;">"</span><span style="color: #800000;">configuration #%d chosen from %d choice%s\n</span><span style="color: #800000;">"</span>,
+            i, num_configs, plural(num_configs));
+    } <span style="color: #0000ff;">else</span> {
+        i = -<span style="color: #800080;">1</span>;
+        dev_warn(&amp;udev-&gt;dev,
+            <span style="color: #800000;">"</span><span style="color: #800000;">no configuration chosen from %d choice%s\n</span><span style="color: #800000;">"</span>,
+            num_configs, plural(num_configs));
+    }
+
+    <span style="color: #0000ff;">return</span> i;
+}    </pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>　　例如：我机器上的的 usb 驱动加载时，输出：usb 1-1: configuration #1 chosen from 3 choices</p>
+<p>　　表示：此设备有3个配置，而驱动最终选择了索引号为1的配置，至于选择策略是怎样的，请看usb_choose_configuration()函数。　</p>
+<p>　　<strong>generic_probe</strong>函数中的usb_set_configuration函数里有很重要的动作，不是简单的设置个配置，当我们选择了某一个配置后，需要将这个配置的所有接口取出来，初始化接口作为驱动对应的一种”设备”的参数，如总线类型、设备类型等，调用device_add将该接口设备添加到设备模型中。</p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #0000ff;">int</span> usb_set_configuration(<span style="color: #0000ff;">struct</span> usb_device *dev, <span style="color: #0000ff;">int</span> configuration)
+{
+    ... ...
+
+    <span style="color: #0000ff;">if</span> (cp &amp;&amp; configuration == <span style="color: #800080;">0</span>)
+        dev_warn(&amp;dev-&gt;dev, <span style="color: #800000;">"</span><span style="color: #800000;">config 0 descriptor??\n</span><span style="color: #800000;">"</span>);
+
+　　<span style="color: #008000;">/*</span><span style="color: #008000;">首先,根据选择好的配置号找到相应的配置,在这里要注意了, dev-&gt;config[]数组中的配置并不是按照配置的序号来存放的,而是按照遍历到顺序来排序的.因为有些设备在发送配置描述符的时候,并不是按照配置序号来发送的,例如,配置2可能在第一次GET_CONFIGURATION就被发送了,而配置1可能是在第二次GET_CONFIGURATION才能发送.
+　　  取得配置描述信息之后,要对它进行有效性判断,注意一下本段代码的最后几行代码:usb2.0 spec上规定,0号配置是无效配置,但是可能有些厂商的设备并末按照这一约定,所以在linux中,遇到这种情况只是打印出警告信息,然后尝试使用这一配置.</span><span style="color: #008000;">*/</span>
+    n = nintf = <span style="color: #800080;">0</span>;
+    <span style="color: #0000ff;">if</span> (cp) {
+        <span style="color: #008000;">//</span><span style="color: #008000;">接口总数</span>
+        nintf = cp-&gt;desc.bNumInterfaces;
+        <span style="color: #008000;">//</span><span style="color: #008000;">在这里, 注要是为new_interfaces分配空间,要这意的是, new_interfaces是一个二级指针,它的最终指向是struct usb_interface结构.特别的,如果总电流数要小于配置所需电流,则打印出警告消息.实际上,这种情况在usb_choose_configuration()中已经进行了过滤.</span>
+        new_interfaces = kmalloc(nintf * <span style="color: #0000ff;">sizeof</span>(*new_interfaces),
+                GFP_KERNEL);
+        ... ... 
+ 
+        <span style="color: #0000ff;">for</span> (; n &lt; nintf; ++n) {
+            new_interfaces[n] = kzalloc(
+                    <span style="color: #0000ff;">sizeof</span>(<span style="color: #0000ff;">struct</span> usb_interface),
+                    GFP_KERNEL);
+             ... ...
+        }
+ 
+        <span style="color: #008000;">//</span><span style="color: #008000;">如果总电源小于所需电流,打印警告信息</span>
+        i = dev-&gt;bus_mA - cp-&gt;desc.bMaxPower * <span style="color: #800080;">2</span>;
+        ... ...
+    }
+　
+    <span style="color: #008000;">//</span><span style="color: #008000;">要对设备进行配置了,先唤醒它</span>
+    ret = usb_autoresume_device(dev);
+    <span style="color: #0000ff;">if</span> (ret)
+        <span style="color: #0000ff;">goto</span> free_interfaces;
+ 
+     <span style="color: #008000;">//</span><span style="color: #008000;">不是处于ADDRESS状态,先清除设备的状态</span>
+    <span style="color: #0000ff;">if</span> (dev-&gt;state != USB_STATE_ADDRESS)
+        usb_disable_device(dev, <span style="color: #800080;">1</span>); <span style="color: #008000;">/*</span><span style="color: #008000;"> Skip ep0 </span><span style="color: #008000;">*/</span>
+ 
+    <span style="color: #008000;">//</span><span style="color: #008000;">确定我们有足够带宽提供这个配置</span>
+    ret = usb_hcd_alloc_bandwidth(dev, cp, NULL, NULL);
+    ... ...
+
+    <span style="color: #008000;">//</span><span style="color: #008000;">发送控制消息,选取配置</span>
+    ret = usb_control_msg(dev, usb_sndctrlpipe(dev, <span style="color: #800080;">0</span>),
+                  USB_REQ_SET_CONFIGURATION, <span style="color: #800080;">0</span>, configuration, <span style="color: #800080;">0</span>,
+                  NULL, <span style="color: #800080;">0</span>, USB_CTRL_SET_TIMEOUT);
+     ... ...
+    }
+ 
+    <span style="color: #008000;">//</span><span style="color: #008000;">dev-&gt;actconfig存放的是当前设备选取的配置</span>
+    dev-&gt;actconfig = cp;
+     ... ...
+    <span style="color: #008000;">//</span><span style="color: #008000;">将状态设为CONFIGURED</span>
+    usb_set_device_state(dev, USB_STATE_CONFIGURED);
+    <span style="color: #008000;">/*</span><span style="color: #008000;">接下来,就要对设备进行配置了,首先,将设备唤醒.只有在ADDRESS状态才能转入到CONFIG状态.(SUSPEND状态除外). 所以,如果设备当前不是处于ADDRESS状态,就需要将设备的状态初始化
+    接着,发送SET_CONFIGURATION的Control消息给设备,用来选择配置最后,将dev-&gt;actconfig指向选定的配置,将设备状态设为CONFIG</span><span style="color: #008000;">*/</span>
+ 
+     <span style="color: #008000;">//</span><span style="color: #008000;">遍历所有的接口</span>
+    <span style="color: #0000ff;">for</span> (i = <span style="color: #800080;">0</span>; i &lt; nintf; ++i) {
+        <span style="color: #0000ff;">struct</span> usb_interface_cache *intfc;
+        <span style="color: #0000ff;">struct</span> usb_interface *intf;
+        <span style="color: #0000ff;">struct</span> usb_host_interface *alt;
+　     <span style="color: #008000;">/*</span><span style="color: #008000;">之前初始化的new_interfaces在这里终于要派上用场了.初始化各接口,从上面的初始化过程中,我们可以看出:
+　　　　Intf-&gt;altsetting,表示接口的各种设置
+　　　　Intf-&gt;num_altsetting:表示接口的设置数目
+　　　　Intf-&gt;intf_assoc:接口的关联接口(定义于minor usb 2.0 spec)
+　　　　Intf-&gt;cur_altsetting:接口的当前设置.</span><span style="color: #008000;">*/</span>
+        cp-&gt;<span style="color: #0000ff;">interface</span>[i] = intf = new_interfaces[i];
+        intfc = cp-&gt;intf_cache[i];
+        intf-&gt;altsetting = intfc-&gt;altsetting;
+        intf-&gt;num_altsetting = intfc-&gt;num_altsetting;
+        <span style="color: #008000;">//</span><span style="color: #008000;">是否关联的接口描述符,定义在minor usb 2.0 spec中</span>
+        intf-&gt;intf_assoc = find_iad(dev, cp, i);
+        kref_get(&amp;intfc-&gt;<span style="color: #0000ff;">ref</span>);
+ 
+        <span style="color: #008000;">//</span><span style="color: #008000;">选择0号设置</span>
+        alt = usb_altnum_to_altsetting(intf, <span style="color: #800080;">0</span>);
+
+        <span style="color: #008000;">//</span><span style="color: #008000;">如果0号设置不存在,选排在第一个设置</span>
+        <span style="color: #0000ff;">if</span> (!alt)
+            alt = &amp;intf-&gt;altsetting[<span style="color: #800080;">0</span>];
+ 
+        <span style="color: #008000;">//</span><span style="color: #008000;">当前的配置</span>
+        intf-&gt;cur_altsetting = alt;
+　　　　 <span style="color: #008000;">//</span><span style="color: #008000;">用来启用接口,也就是启用接口中的每一个endpoint.</span>
+        usb_enable_interface(dev, intf);
+        <span style="color: #008000;">//</span><span style="color: #008000;">注意这个地方对intf内嵌的struct devcie结构赋值,它的type被赋值为了usb_if_device_type.bus还是usb_bus_type.可能你已经反应过来了,要和这个device匹配的设备是interface的驱动.</span>
+        intf-&gt;dev.parent = &amp;dev-&gt;dev;
+        intf-&gt;dev.driver = NULL;
+        intf-&gt;dev.bus = &amp;usb_bus_type;
+        intf-&gt;dev.type = &amp;usb_if_device_type;
+        intf-&gt;dev.dma_mask = dev-&gt;dev.dma_mask;
+        device_initialize(&amp;intf-&gt;dev);<span style="color: #008000;">//</span><span style="color: #008000;">device 初始化</span>
+        mark_quiesced(intf);
+　　　　　<span style="color: #008000;">/*</span><span style="color: #008000;">
+　　　　　  device的命名:
+　　　　　　dev指的是这个接口所属的usb_dev,结合我们之前在UHCI中关于usb设备命名方式的描述.可得出它的命令方式如下:
+　　　　　　USB总线号-设备路径:配置号.接口号.
+　　　　　　例如,在我的虚拟机上:/sys/bus/usb/devices
+　　　　　　1-0:1.0 usb1
+　　　　　　可以得知,系统只有一个usb control.
+　　　　　　1-0:1.0:表示,第一个usb control下的root hub的1号配置的0号接口.
+</span><span style="color: #008000;">        */</span>
+        sprintf(&amp;intf-&gt;dev.bus_id[<span style="color: #800080;">0</span>], <span style="color: #800000;">"</span><span style="color: #800000;">%d-%s:%d.%d</span><span style="color: #800000;">"</span>,
+            dev-&gt;bus-&gt;busnum, dev-&gt;devpath,
+            configuration, alt-&gt;desc.bInterfaceNumber);
+    }
+    kfree(new_interfaces);
+ 
+    <span style="color: #0000ff;">if</span> (cp-&gt;<span style="color: #0000ff;">string</span> == NULL)
+        cp-&gt;<span style="color: #0000ff;">string</span> = usb_cache_string(dev, cp-&gt;desc.iConfiguration);
+
+    <span style="color: #008000;">//</span><span style="color: #008000;">注册每一个接口?</span>
+    <span style="color: #0000ff;">for</span> (i = <span style="color: #800080;">0</span>; i &lt; nintf; ++i) {
+        <span style="color: #0000ff;">struct</span> usb_interface *intf = cp-&gt;<span style="color: #0000ff;">interface</span>[i];
+ 
+        dev_dbg(&amp;dev-&gt;dev,
+            <span style="color: #800000;">"</span><span style="color: #800000;">adding %s (config #%d, interface %d)\n</span><span style="color: #800000;">"</span>,
+            intf-&gt;dev.bus_id, configuration,
+            intf-&gt;cur_altsetting-&gt;desc.bInterfaceNumber);
+        ret = device_add(&amp;intf-&gt;dev);<span style="color: #008000;">//</span><span style="color: #008000;">增加device</span>
+        <span style="color: #0000ff;">if</span> (ret != <span style="color: #800080;">0</span>) {
+            dev_err(&amp;dev-&gt;dev, <span style="color: #800000;">"</span><span style="color: #800000;">device_add(%s) --&gt; %d\n</span><span style="color: #800000;">"</span>,
+                intf-&gt;dev.bus_id, ret);
+            <span style="color: #0000ff;">continue</span>;
+        }
+        usb_create_sysfs_intf_files(intf);
+    }
+ 
+    <span style="color: #008000;">//</span><span style="color: #008000;">使设备suspend</span>
+    usb_autosuspend_device(dev);
+
+    <span style="color: #0000ff;">return</span> <span style="color: #800080;">0</span>;
+}</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>　　最后,注册intf内嵌的device结构.设备配置完成了,为了省电,可以将设备置为SUSPEND状态.</p>
+<p>　　到此为止usb_generic_driver凭借自己的博爱的胸襟将所有设备的各个接口添加到了linux的设备模型中。</p>
+<p><span style="color: #ff0000;">　　usb设备首先以设备的身份与usb_generic_driver匹配，成功之后，会分裂出接口，当对接口调用device_add()后，会引起接口和接口驱动的匹配，这个匹配还是用usb_bus_type.mach()函数。因为接口的device-&gt;bus=&amp; usb_bus_type, 这跟usb设备是一样的，所以，都会调用到usb_bus_type.mach()，但设备和接口的处理流程是不一样的（前面已经分析过）。</span></p>
+<p><strong>usb_hub_init：</strong></p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #0000ff;">int</span> usb_hub_init(<span style="color: #0000ff;">void</span>)
+{
+    <span style="color: #0000ff;">if</span> (<span style="color: #ff0000;">usb_register</span>(&amp;hub_driver) &lt; <span style="color: #800080;">0</span>) {
+        printk(KERN_ERR <span style="color: #800000;">"</span><span style="color: #800000;">%s: can't register hub driver\n</span><span style="color: #800000;">"</span>,
+            usbcore_name);
+        <span style="color: #0000ff;">return</span> -<span style="color: #800080;">1</span>;
+    }
+
+    khubd_task = <span style="color: #ff0000;">kthread_run</span>(<span style="color: #0000ff;">hub_thread</span>, NULL, <span style="color: #800000;">"</span><span style="color: #800000;">khubd</span><span style="color: #800000;">"</span>);
+    <span style="color: #0000ff;">if</span> (!IS_ERR(khubd_task))
+        <span style="color: #0000ff;">return</span> <span style="color: #800080;">0</span>;
+
+    <span style="color: #008000;">/*</span><span style="color: #008000;"> Fall through if kernel_thread failed </span><span style="color: #008000;">*/</span><span style="color: #333333;">
+    usb_deregister</span>(&amp;hub_driver);
+    printk(KERN_ERR <span style="color: #800000;">"</span><span style="color: #800000;">%s: can't start khubd\n</span><span style="color: #800000;">"</span>, usbcore_name);
+
+    <span style="color: #0000ff;">return</span> -<span style="color: #800080;">1</span>;
+}</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>这个函数主要有两个功能：</p>
+<p>　　在系统初始化的时候在usb_init函数中调用<strong>usb_hub_init</strong>函数，就进入了hub的初始化。</p>
+<p>&nbsp; &nbsp; &nbsp; <span style="color: #ff0000;">对于usb_register()可以看作是usb设备中的接口驱动，而usb_register_device_driver()是一个单纯的USB设备驱动。</span></p>
+<p>　　在usb_hub_init函数中完成了注册hub驱动，并且利用函数<strong>kthread_run</strong>创建一个内核线程。该线程用来管理监视hub的状态，所有的情况都通过该线程来报告。</p>
+<p>　　当加载主控器的时候，在自身的platform驱动的probe函数里，调用<strong>usb_add_hcd</strong>-&gt;<strong>register_root_hub</strong>向usb总线注册root hub设备， usb总线match成功后，由<strong>usb_generic_driver</strong>驱动的probe函数，配置interface设备，然后向usb总线注册interface， usb总线再一次match， 不过这次是匹配了interface，通过ID值和hub驱动配置，因此调用hub驱动的probe函数(<strong>hub_probe</strong>)，<strong>hub_probe</strong>函数中调用<strong>hub_configure</strong>函数来配置hub，在这个函数中主要是利用函数<strong>usb_alloc_urb</strong>函数来分配一个urb，利用<strong>usb_fill_int_urb</strong>来初始化这个urb结构，包括hub的中断服务程序hub_irq的，查询的周期等。</p>
+<p>　　每当有设备连接到USB接口时，USB总线在查询hub状态信息的时候会触发hub的中断服务程序<strong>hub_irq</strong>,在该函数中利用<strong>kick_khubd</strong>将hub结构通过event_list添加到khubd的队列<strong>hub_event_list</strong>，然后唤醒<strong>khubd</strong>。进入<strong>hub_events</strong>函数，该函数用来处理khubd事件队列，从khubd的hub_event_list中的每个usb_hub数据结构。该函数中首先判断hub是否出错，然后通过一个for循环来检测每个端口的状态信息。利用<strong>usb_port_status</strong>获取端口信息，如果发生变化就调用<strong>hub_port_connect_change</strong>函数来配置端口等。　</p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #0000ff;">static</span> <span style="color: #0000ff;">void</span> hub_events(<span style="color: #0000ff;">void</span>)
+{
+　　... ...
+    <span style="color: #0000ff;">while</span> (<span style="color: #800080;">1</span>) {
+
+        <span style="color: #008000;">//</span><span style="color: #008000;">如果hub_event_list为空，退出</span>
+        spin_lock_irq(&amp;hub_event_lock);
+        <span style="color: #0000ff;">if</span> (list_empty(&amp;hub_event_list)) {
+            spin_unlock_irq(&amp;hub_event_lock);
+            <span style="color: #0000ff;">break</span>;
+        }
+        <span style="color: #008000;">//</span><span style="color: #008000;">取hub_event_list中的后一个元素，并将其断链</span>
+        tmp = hub_event_list.next;
+        list_del_init(tmp);
+ 
+　　　　 <span style="color: #008000;">//</span><span style="color: #008000;">根据tmp获取hub</span>
+        hub = list_entry(tmp, <span style="color: #0000ff;">struct</span> usb_hub, event_list);
+        <span style="color: #008000;">//</span><span style="color: #008000;">增加hub计数</span>
+        kref_get(&amp;hub-&gt;kref);
+　　　　 <span style="color: #008000;">//</span><span style="color: #008000;">解锁</span>
+        spin_unlock_irq(&amp;hub_event_lock);
+ 
+        hdev = hub-&gt;hdev;
+        hub_dev = hub-&gt;intfdev;
+        intf = to_usb_interface(hub_dev);
+　　　　 ... ...
+        usb_lock_device(hdev);
+        <span style="color: #008000;">//</span><span style="color: #008000;">如果hub断开了,继续hub_event_list中的下一个</span>
+        <span style="color: #0000ff;">if</span> (unlikely(hub-&gt;disconnected))
+            <span style="color: #0000ff;">goto</span> loop;
+ 
+        <span style="color: #008000;">//</span><span style="color: #008000;">设备没有连接上</span>
+        <span style="color: #0000ff;">if</span> (hdev-&gt;state == USB_STATE_NOTATTACHED) {
+            hub-&gt;error = -ENODEV;
+            <span style="color: #008000;">//</span><span style="color: #008000;">将下面的子设备全部disable</span>
+            hub_pre_reset(intf);
+            <span style="color: #0000ff;">goto</span> loop;
+        }
+ 
+        <span style="color: #008000;">/*</span><span style="color: #008000;"> 自动恢复 </span><span style="color: #008000;">*/</span>
+        ret = usb_autopm_get_interface(intf);
+        <span style="color: #0000ff;">if</span> (ret) {
+            dev_dbg(hub_dev, <span style="color: #800000;">"</span><span style="color: #800000;">Can't autoresume: %d\n</span><span style="color: #800000;">"</span>, ret);
+            <span style="color: #0000ff;">goto</span> loop;
+        }
+ 
+        <span style="color: #008000;">//</span><span style="color: #008000;">hub 暂停</span>
+        <span style="color: #0000ff;">if</span> (hub-&gt;quiescing)
+            <span style="color: #0000ff;">goto</span> loop_autopm;
+ 
+        <span style="color: #008000;">//</span><span style="color: #008000;">hub 有错误发生？</span>
+        <span style="color: #0000ff;">if</span> (hub-&gt;error) {
+            dev_dbg (hub_dev, <span style="color: #800000;">"</span><span style="color: #800000;">resetting for error %d\n</span><span style="color: #800000;">"</span>,
+                hub-&gt;error);
+ 
+            ret = usb_reset_composite_device(hdev, intf);
+            <span style="color: #0000ff;">if</span> (ret) {
+                dev_dbg (hub_dev,
+                    <span style="color: #800000;">"</span><span style="color: #800000;">error resetting hub: %d\n</span><span style="color: #800000;">"</span>, ret);
+                <span style="color: #0000ff;">goto</span> loop_autopm;
+            }
+ 
+            hub-&gt;nerrors = <span style="color: #800080;">0</span>;
+            hub-&gt;error = <span style="color: #800080;">0</span>;
+        }
+　　　　 <span style="color: #008000;">/*</span><span style="color: #008000;">首先,从hub_event_list摘下第一个元素,根据我们之前在接口驱动probe过程的kick_khubd()函数分析中,有将hub-&gt; event_list添加到hub_event_list.因此,就可以顺藤摸瓜找到hub,再根据hub结构,找到接口结构和所属的usb 设备结构.
+         然后,进行第一个重要的判断.如果hub被断开了,则,断开hub下面所连接的所有端口,这是在hub_pre_reset()中完成的.
+         最后,进行第二个重要的判断,如果hub发生了错误,则reset它下面的所有端口,这是在usb_reset_composite_device()中完成的.</span><span style="color: #008000;">*/</span>
+ 
+        <span style="color: #008000;">//</span><span style="color: #008000;">在这里,它遍历hub上的每一个端口,如果端口的连接会生了改变(connect_change等于1)的情况,就会调用hub_port_connect_change()</span>
+        <span style="color: #0000ff;">for</span> (i = <span style="color: #800080;">1</span>; i &lt;= hub-&gt;descriptor-&gt;bNbrPorts; i++) {
+　　　　　　  <span style="color: #008000;">//</span><span style="color: #008000;">检测端口是否忙</span>
+            <span style="color: #0000ff;">if</span> (test_bit(i, hub-&gt;busy_bits))
+                <span style="color: #0000ff;">continue</span>;
+            <span style="color: #008000;">//</span><span style="color: #008000;">change_bits会在hub 第一次初始化时被赋值。而event_bits则在hub_irq中改变</span>
+            connect_change = test_bit(i, hub-&gt;change_bits);
+            <span style="color: #008000;">//</span><span style="color: #008000;">如果都没有改变，继续测试下一个端口。</span>
+            <span style="color: #0000ff;">if</span> (!test_and_clear_bit(i, hub-&gt;event_bits) &amp;&amp;
+                    !connect_change &amp;&amp; !hub-&gt;activating)
+                <span style="color: #0000ff;">continue</span>;
+ 
+        <span style="color: #008000;">//</span><span style="color: #008000;">Get_Port_Status:取得端口状态.
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">会取得port的改变值和状态值</span>
+            ret = hub_port_status(hub, i,
+                    &amp;portstatus, &amp;portchange);
+            <span style="color: #0000ff;">if</span> (ret &lt; <span style="color: #800080;">0</span>)
+                <span style="color: #0000ff;">continue</span>;
+ 
+　　　　　　　<span style="color: #008000;">//</span><span style="color: #008000;">在struct usb_dev中,有一个struct usb_device *children[USB_MAXCHILDREN]的成员,它是表示对应端口序号上所连接的usb设备.
+            </span><span style="color: #008000;">//</span><span style="color: #008000;">如果对应端口没有在设备树上,且端口显示已经连接上
+            </span><span style="color: #008000;">//</span><span style="color: #008000;">将connect_change置为1</span>
+            <span style="color: #0000ff;">if</span> (hub-&gt;activating &amp;&amp; !hdev-&gt;children[i-<span style="color: #800080;">1</span>] &amp;&amp;
+                    (portstatus &amp;
+                        USB_PORT_STAT_CONNECTION))
+                connect_change = <span style="color: #800080;">1</span>;
+            <span style="color: #008000;">//</span><span style="color: #008000;">端口的连接状态发生了改变.需要发送Clear_Feature</span>
+            <span style="color: #0000ff;">if</span> (portchange &amp; USB_PORT_STAT_C_CONNECTION) {
+                clear_port_feature(hdev, i,
+                    USB_PORT_FEAT_C_CONNECTION);
+                connect_change = <span style="color: #800080;">1</span>;
+            }
+ 
+            <span style="color: #008000;">//</span><span style="color: #008000;">端口的状态从enable 变为了disable</span>
+            <span style="color: #0000ff;">if</span> (portchange &amp; USB_PORT_STAT_C_ENABLE) {
+                <span style="color: #0000ff;">if</span> (!connect_change)
+                    dev_dbg (hub_dev,
+                        <span style="color: #800000;">"</span><span style="color: #800000;">port %d enable change, </span><span style="color: #800000;">"</span>
+                        <span style="color: #800000;">"</span><span style="color: #800000;">status %08x\n</span><span style="color: #800000;">"</span>,
+                        i, portstatus);
+                clear_port_feature(hdev, i,
+                    USB_PORT_FEAT_C_ENABLE);
+
+                 <span style="color: #008000;">//</span><span style="color: #008000;">端口已经被停止了,且端口已经被连在设备树中.
+                 </span><span style="color: #008000;">//</span><span style="color: #008000;">需要重启一下此端口</span>
+                <span style="color: #0000ff;">if</span> (!(portstatus &amp; USB_PORT_STAT_ENABLE)
+                    &amp;&amp; !connect_change
+                    &amp;&amp; hdev-&gt;children[i-<span style="color: #800080;">1</span>]) {
+                    dev_err (hub_dev,
+                        <span style="color: #800000;">"</span><span style="color: #800000;">port %i </span><span style="color: #800000;">"</span>
+                        <span style="color: #800000;">"</span><span style="color: #800000;">disabled by hub (EMI?), </span><span style="color: #800000;">"</span>
+                        <span style="color: #800000;">"</span><span style="color: #800000;">re-enabling...\n</span><span style="color: #800000;">"</span>,
+                        i);
+                    connect_change = <span style="color: #800080;">1</span>;
+                }
+            }
+ 
+            <span style="color: #008000;">//</span><span style="color: #008000;">Resume完成   </span>
+            <span style="color: #0000ff;">if</span> (portchange &amp; USB_PORT_STAT_C_SUSPEND) {
+                clear_port_feature(hdev, i,
+                    USB_PORT_FEAT_C_SUSPEND);
+                <span style="color: #008000;">//</span><span style="color: #008000;">如果端口连接了设备,就将设备唤醒</span>
+                <span style="color: #0000ff;">if</span> (hdev-&gt;children[i-<span style="color: #800080;">1</span>]) {
+                    ret = remote_wakeup(hdev-&gt;
+                            children[i-<span style="color: #800080;">1</span>]);
+                    <span style="color: #0000ff;">if</span> (ret &lt; <span style="color: #800080;">0</span>)
+                        connect_change = <span style="color: #800080;">1</span>;
+                }
+                <span style="color: #008000;">//</span><span style="color: #008000;">如果端口没有连接设备,就将端口禁用</span>
+                <span style="color: #0000ff;">else</span> {
+                    ret = -ENODEV;
+                    hub_port_disable(hub, i, <span style="color: #800080;">1</span>);
+                }
+                dev_dbg (hub_dev,
+                    <span style="color: #800000;">"</span><span style="color: #800000;">resume on port %d, status %d\n</span><span style="color: #800000;">"</span>,
+                    i, ret);
+            }
+ 
+            <span style="color: #008000;">//</span><span style="color: #008000;">有过流保护,需要对hub power on</span>
+            <span style="color: #0000ff;">if</span> (portchange &amp; USB_PORT_STAT_C_OVERCURRENT) {
+                dev_err (hub_dev,
+                    <span style="color: #800000;">"</span><span style="color: #800000;">over-current change on port %d\n</span><span style="color: #800000;">"</span>,
+                    i);
+                clear_port_feature(hdev, i,
+                    USB_PORT_FEAT_C_OVER_CURRENT);
+                hub_power_on(hub);
+            }
+ 
+            <span style="color: #008000;">//</span><span style="color: #008000;">Reset状态已经完成了</span>
+            <span style="color: #0000ff;">if</span> (portchange &amp; USB_PORT_STAT_C_RESET) {
+                dev_dbg (hub_dev,
+                    <span style="color: #800000;">"</span><span style="color: #800000;">reset change on port %d\n</span><span style="color: #800000;">"</span>,
+                    i);
+                clear_port_feature(hdev, i,
+                    USB_PORT_FEAT_C_RESET);
+            }
+ 　　　　　　
+<span style="color: #008000;">           /*</span><span style="color: #008000;">什么情况下, hub_port_connect_change才会被设为1.
+　　　　    1:端口在hub-&gt;change_bits中被置位.搜索整个代码树,发生在设置hub-&gt;change_bits的地方,只有在hub_port_logical_disconnect()中手动将端口禁用,会将对应位置1.
+           2:hub上没有这个设备树上没有这个端口上的设备.但显示端口已经连上了设备
+           3:hub这个端口上的连接发生了改变,从端口有设备连接变为无设备连接,或者从无设备连接变为有设备连接.
+           4:hub的端口变为了disable,此时这个端口上连接了设备,但被显示该端口已经变禁用,需要将connect_change设为1.
+           5:端口状态从SUSPEND变成了RESUME,远程唤醒端口上的设备失败,就需要将connect_change设为1.
+           另外hub_port_connect_change()函数我们放在后面再来讨论</span><span style="color: #008000;">*/</span>
+            <span style="color: #0000ff;">if</span> (connect_change)
+                hub_port_connect_change(hub, i,
+                        portstatus, portchange);
+        }
+
+         <span style="color: #008000;">//</span><span style="color: #008000;">对HUB的处理
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">如果hub状态末变化，不需要做任何处理</span>
+        <span style="color: #0000ff;">if</span> (test_and_clear_bit(<span style="color: #800080;">0</span>, hub-&gt;event_bits) == <span style="color: #800080;">0</span>)
+            ;   <span style="color: #008000;">/*</span><span style="color: #008000;"> do nothing </span><span style="color: #008000;">*/</span>
+        <span style="color: #008000;">//</span><span style="color: #008000;">Get_hub_status 失败?</span>
+        <span style="color: #0000ff;">else</span> <span style="color: #0000ff;">if</span> (hub_hub_status(hub, &amp;hubstatus, &amp;hubchange) &lt; <span style="color: #800080;">0</span>)
+            dev_err (hub_dev, <span style="color: #800000;">"</span><span style="color: #800000;">get_hub_status failed\n</span><span style="color: #800000;">"</span>);
+        <span style="color: #0000ff;">else</span> {
+            <span style="color: #008000;">//</span><span style="color: #008000;">这里是对应hub 状态发生了改变,且Get_hub_status正常返回的情况
+            </span><span style="color: #008000;">//</span><span style="color: #008000;">如果hub的本地电源供电发生了改变</span>
+            <span style="color: #0000ff;">if</span> (hubchange &amp; HUB_CHANGE_LOCAL_POWER) {
+                dev_dbg (hub_dev, <span style="color: #800000;">"</span><span style="color: #800000;">power change\n</span><span style="color: #800000;">"</span>);
+                clear_hub_feature(hdev, C_HUB_LOCAL_POWER);
+                <span style="color: #008000;">//</span><span style="color: #008000;">如果是本地电源供电</span>
+                <span style="color: #0000ff;">if</span> (hubstatus &amp; HUB_STATUS_LOCAL_POWER)
+                    <span style="color: #008000;">/*</span><span style="color: #008000;"> FIXME: Is this always true? </span><span style="color: #008000;">*/</span>
+                    hub-&gt;limited_power = <span style="color: #800080;">1</span>;
+                <span style="color: #008000;">//</span><span style="color: #008000;">如果本电源不供电</span>
+                <span style="color: #0000ff;">else</span>
+                    hub-&gt;limited_power = <span style="color: #800080;">0</span>;
+            }
+            <span style="color: #008000;">//</span><span style="color: #008000;">如果hub 发生过电源保护,需要对hub power on</span>
+            <span style="color: #0000ff;">if</span> (hubchange &amp; HUB_CHANGE_OVERCURRENT) {
+                dev_dbg (hub_dev, <span style="color: #800000;">"</span><span style="color: #800000;">overcurrent change\n</span><span style="color: #800000;">"</span>);
+                msleep(<span style="color: #800080;">500</span>);    <span style="color: #008000;">/*</span><span style="color: #008000;"> Cool down </span><span style="color: #008000;">*/</span>
+                clear_hub_feature(hdev, C_HUB_OVER_CURRENT);
+                           hub_power_on(hub);
+            }
+        }
+ 
+        hub-&gt;activating = <span style="color: #800080;">0</span>;
+ 
+        <span style="color: #008000;">/*</span><span style="color: #008000;"> If this is a root hub, tell the HCD it's okay to
+         * re-enable port-change interrupts now. </span><span style="color: #008000;">*/</span>
+        <span style="color: #0000ff;">if</span> (!hdev-&gt;parent &amp;&amp; !hub-&gt;busy_bits[<span style="color: #800080;">0</span>])
+            usb_enable_root_hub_irq(hdev-&gt;bus);
+ 
+loop_autopm:
+        <span style="color: #008000;">/*</span><span style="color: #008000;"> Allow autosuspend if we're not going to run again </span><span style="color: #008000;">*/</span>
+        <span style="color: #0000ff;">if</span> (list_empty(&amp;hub-&gt;event_list))
+            usb_autopm_enable(intf);
+loop:
+        usb_unlock_device(hdev);
+        kref_put(&amp;hub-&gt;kref, hub_release);
+    } <span style="color: #008000;">/*</span><span style="color: #008000;"> end while (1) </span><span style="color: #008000;">*/</span>
+}</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>　　hub_port_connect_change()函数分析：　</p>
+<div><div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div>
+<pre><span style="color: #0000ff;">static</span> <span style="color: #0000ff;">void</span> hub_port_connect_change(<span style="color: #0000ff;">struct</span> usb_hub *hub, <span style="color: #0000ff;">int</span> port1,
+                    u16 portstatus, u16 portchange)
+{  
+    ... ... <br>
+    <span style="color: #008000;">//</span><span style="color: #008000;">hub led</span>
+    <span style="color: #0000ff;">if</span> (hub-&gt;has_indicators) {
+        set_port_led(hub, port1, HUB_LED_AUTO);
+        hub-&gt;indicator[port1-<span style="color: #800080;">1</span>] = INDICATOR_AUTO;
+    }
+
+    <span style="color: #008000;">//</span><span style="color: #008000;">忽略掉CONFIG_USB_OTG的处理</span>
+#ifdef    CONFIG_USB_OTG
+    <span style="color: #008000;">/*</span><span style="color: #008000;"> during HNP, don't repeat the debounce </span><span style="color: #008000;">*/</span>
+    <span style="color: #0000ff;">if</span> (hdev-&gt;bus-&gt;is_b_host)
+        portchange &amp;= ~(USB_PORT_STAT_C_CONNECTION |
+                USB_PORT_STAT_C_ENABLE);
+<span style="color: #0000ff;">#endif</span>
+
+    <span style="color: #008000;">//</span><span style="color: #008000;">尝试唤醒一个存在的设备</span>
+    udev = hdev-&gt;children[port1-<span style="color: #800080;">1</span>];
+    <span style="color: #0000ff;">if</span> ((portstatus &amp; USB_PORT_STAT_CONNECTION) &amp;&amp; udev &amp;&amp;
+            udev-&gt;state != USB_STATE_NOTATTACHED) {
+        usb_lock_device(udev);
+        <span style="color: #0000ff;">if</span> (portstatus &amp; USB_PORT_STAT_ENABLE) {
+            status = <span style="color: #800080;">0</span>;        <span style="color: #008000;">/*</span><span style="color: #008000;"> Nothing to do </span><span style="color: #008000;">*/</span>
+
+#ifdef CONFIG_USB_SUSPEND
+        } <span style="color: #0000ff;">else</span> <span style="color: #0000ff;">if</span> (udev-&gt;state == USB_STATE_SUSPENDED &amp;&amp;
+                udev-&gt;persist_enabled) {
+            <span style="color: #008000;">/*</span><span style="color: #008000;"> For a suspended device, treat this as a
+             * remote wakeup event.
+             </span><span style="color: #008000;">*/</span>
+            status = usb_remote_wakeup(udev);
+<span style="color: #0000ff;">#endif</span>
+
+        } <span style="color: #0000ff;">else</span> {
+            status = -ENODEV;    <span style="color: #008000;">/*</span><span style="color: #008000;"> Don't resuscitate </span><span style="color: #008000;">*/</span>
+        }
+        usb_unlock_device(udev);
+
+        <span style="color: #0000ff;">if</span> (status == <span style="color: #800080;">0</span>) {
+            clear_bit(port1, hub-&gt;change_bits);
+            <span style="color: #0000ff;">return</span>;
+        }
+    }
+
+    <span style="color: #008000;">//</span><span style="color: #008000;">如果对应端口已经有设备连接,先将其断开</span>
+    <span style="color: #0000ff;">if</span> (udev)
+        usb_disconnect(&amp;hdev-&gt;children[port1-<span style="color: #800080;">1</span>]);<br>
+    <span style="color: #008000;">//</span><span style="color: #008000;">接下来,将hub-&gt;change_bits的对应位清掉,该位是在函数hub_port_logical_disconnect()中被置的,在这里将其清除,免得下次在进入hub_events()的时候,再次检测到这个位发生改变.    </span>
+    clear_bit(port1, hub-&gt;change_bits);
+
+    <span style="color: #008000;">//</span><span style="color: #008000;">如果发生物理断开或者连接状态改变，我们可能忘记移除设备</span>
+    <span style="color: #0000ff;">if</span> (!(portstatus &amp; USB_PORT_STAT_CONNECTION) ||
+            (portchange &amp; USB_PORT_STAT_C_CONNECTION))
+        clear_bit(port1, hub-&gt;removed_bits);
+
+    <span style="color: #008000;">//</span><span style="color: #008000;">连接发生改变
+    </span><span style="color: #008000;">//</span><span style="color: #008000;">连接反弹的处理,实际上就是除抖动</span>
+    <span style="color: #0000ff;">if</span> (portchange &amp; (USB_PORT_STAT_C_CONNECTION |
+                USB_PORT_STAT_C_ENABLE)) {
+        <span style="color: #008000;">//</span><span style="color: #008000;">如果该端口的连接发生改变(从有连接到无接接,或者从无连接到有连接),就有一个除抖动的过程,usb2.0 spec上规定,除抖动的时间为100ms.
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">在函数里,定义的测试时间是1500ms.如果在这个时间内,端口还末处于稳定状态,就会返回-ETIMEDOUT
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">如果已经处于稳定状态了,就会返回稳定状态下的portstatus</span>
+        status = hub_port_debounce(hub, port1);
+        <span style="color: #0000ff;">if</span> (status &lt; <span style="color: #800080;">0</span>) {
+            <span style="color: #0000ff;">if</span> (printk_ratelimit())
+                dev_err(hub_dev, <span style="color: #800000;">"</span><span style="color: #800000;">connect-debounce failed, </span><span style="color: #800000;">"</span>
+                        <span style="color: #800000;">"</span><span style="color: #800000;">port %d disabled\n</span><span style="color: #800000;">"</span>, port1);
+            portstatus &amp;= ~USB_PORT_STAT_CONNECTION;
+        } <span style="color: #0000ff;">else</span> {
+            portstatus = status;
+        }
+    }
+    <span style="color: #008000;">//</span><span style="color: #008000;">如果接口上没有连接了,可以直接退出了</span>
+    <span style="color: #0000ff;">if</span> (!(portstatus &amp; USB_PORT_STAT_CONNECTION) ||
+            test_bit(port1, hub-&gt;removed_bits)) {
+
+        <span style="color: #008000;">/*</span><span style="color: #008000;">经过去抖后,端口稳定的处于断开连接状态.说明端口已经没有设备了.然后,再判断hub是否有电源开关((wHubCharacteristics &amp; HUB_CHAR_LPSM) &lt; 2),portstatus 的 USB_PORT_FEAT_POWER位是否被设置,如果没有被设置,则说明该端口断电了.<br>          如果hub有电源开关,且端口没有上电,则需要发送POWER的Set_Feature来为之上电</span><span style="color: #008000;">*/</span>
+        <span style="color: #0000ff;">if</span> ((wHubCharacteristics &amp; HUB_CHAR_LPSM) &lt; <span style="color: #800080;">2</span>
+                &amp;&amp; !(portstatus &amp; USB_PORT_STAT_POWER))
+            set_port_feature(hdev, port1, USB_PORT_FEAT_POWER);
+　　　　　<span style="color: #008000;">//</span><span style="color: #008000;">如果端口依然处理enable状态,就会跳转到标号done处,就端口disalbe.</span>
+        <span style="color: #0000ff;">if</span> (portstatus &amp; USB_PORT_STAT_ENABLE)
+              <span style="color: #0000ff;">goto</span> done;
+        <span style="color: #0000ff;">return</span>;
+    }<br>
+<span style="color: #008000;">    /*</span><span style="color: #008000;">如果端口隐定处于连接状态,那就需要连接端口下的设备了.首先看到的是一个for循环,是用来配置设备的两种方式.我们知道,在配置设备的时候,首先要去取设备的描述符,这个过程是在ep0上完成的.而这个ep0支持的最大传输出数据又是在设备描述符的bMaxPacketSize0中所      定义的.因此就对应有两种处理方式:
+      第一种是传输8个字节,取得描述符的前面一部份,从而就可以取得bMaxPacketSize0.此后再reset设备,再根据这个bMaxPacketSize0的长度去取它的设备描述符.
+      第二种是一次传输64字节,取得设备描述符的bMaxPacketSize0字段</span><span style="color: #008000;">*/</span>
+    <span style="color: #0000ff;">for</span> (i = <span style="color: #800080;">0</span>; i &lt; SET_CONFIG_TRIES; i++) {
+
+   　　 <span style="color: #008000;">//</span><span style="color: #008000;">为探测到的usb设备（包括普通hub，u盘等）分配并初始化udev
+       </span><span style="color: #008000;">//</span><span style="color: #008000;"> 在为root hub分配struct usb_dev的时候,它的第一个参数,也就是它的父结点是为NULL.</span><span style="color: #008000;">
+       /*</span><span style="color: #008000;">我们来观察一下它在sysfs中的命名方式
+         在没有插入U盘之前:/sys/bus/usb/devices
+         1-0:1.0  usb1
+         插入U盘之后:
+         1-0:1.0  1-1  1-1:1.0  usb1
+         增加的两个目是:
+         1-1和1-1:1.0
+         1-1:1.0 :只有这样的目录,表示该U盘只有一个接口,当前选取的是第0号设置项.</span><span style="color: #008000;">*/</span>
+        udev = usb_alloc_dev(hdev, hdev-&gt;bus, port1);
+        <span style="color: #0000ff;">if</span> (!udev) {
+            dev_err (hub_dev,
+                <span style="color: #800000;">"</span><span style="color: #800000;">couldn't allocate port %d usb_device\n</span><span style="color: #800000;">"</span>,
+                port1);
+            <span style="color: #0000ff;">goto</span> done;
+        }
+        <span style="color: #008000;">//</span><span style="color: #008000;">置为USB_STATE_POWERED状态</span>
+        usb_set_device_state(udev, USB_STATE_POWERED);
+         udev-&gt;bus_mA = hub-&gt;mA_per_port;
+        udev-&gt;level = hdev-&gt;level + <span style="color: #800080;">1</span>;
+        udev-&gt;wusb = hub_is_wusb(hub);
+
+        <span style="color: #008000;">/*</span><span style="color: #008000;">
+         * USB 3.0 devices are reset automatically before the connect
+         * port status change appears, and the root hub port status
+         * shows the correct speed.  We also get port change
+         * notifications for USB 3.0 devices from the USB 3.0 portion of
+         * an external USB 3.0 hub, but this isn't handled correctly yet
+         * FIXME.
+         </span><span style="color: #008000;">*/</span>
+        <span style="color: #0000ff;">if</span> (!(hcd-&gt;driver-&gt;flags &amp; HCD_USB3))
+            udev-&gt;speed = USB_SPEED_UNKNOWN;
+        <span style="color: #0000ff;">else</span> <span style="color: #0000ff;">if</span> ((hdev-&gt;parent == NULL) &amp;&amp;
+                (portstatus &amp; USB_PORT_STAT_SUPER_SPEED))
+            udev-&gt;speed = USB_SPEED_SUPER;
+        <span style="color: #0000ff;">else</span>
+            udev-&gt;speed = USB_SPEED_UNKNOWN;
+
+        <span style="color: #008000;">/*</span><span style="color: #008000;">为设备指定一个地址,是到所属的usb bus的bus-&gt;devmap中找到没有使用的那一位,先进行两次新的策略(i=0和=1时),如果不行就再进行两次旧的策略(i=2和i=3时).所有这一切只有一个目的,就是为了获得设备的描述符，<br>        设置了udev-&gt;tt、udev-&gt;ttport和udev-&gt;ep    0.desc.wMaxPacketSize,设置udev-&gt;status= USB_STATE_ADDRESS。</span><span style="color: #008000;">*/</span>
+        choose_address(udev);
+        <span style="color: #0000ff;">if</span> (udev-&gt;devnum &lt;= <span style="color: #800080;">0</span>) {
+            status = -ENOTCONN;    <span style="color: #008000;">/*</span><span style="color: #008000;"> Don't retry </span><span style="color: #008000;">*/</span>
+            <span style="color: #0000ff;">goto</span> loop;
+        }
+
+        <span style="color: #008000;">//</span><span style="color: #008000;">hub_port_init()对这个usb_dev结构进行一系的初始化,在这个函数中会处理:Get_Description,Set_address.等操作</span>
+        status = hub_port_init(hub, udev, port1, i);
+        <span style="color: #0000ff;">if</span> (status &lt; <span style="color: #800080;">0</span>)
+            <span style="color: #0000ff;">goto</span> loop;
+
+        usb_detect_quirks(udev);
+        <span style="color: #0000ff;">if</span> (udev-&gt;quirks &amp; USB_QUIRK_DELAY_INIT)
+            msleep(<span style="color: #800080;">1000</span>);
+
+        <span style="color: #008000;">/*</span><span style="color: #008000;"> consecutive bus-powered hubs aren't reliable; they can
+         * violate the voltage drop budget.  if the new child has
+         * a "powered" LED, users should notice we didn't enable it
+         * (without reading syslog), even without per-port LEDs
+         * on the parent.
+         </span><span style="color: #008000;">*/</span>
+        <span style="color: #0000ff;">if</span> (udev-&gt;descriptor.bDeviceClass == USB_CLASS_HUB
+                &amp;&amp; udev-&gt;bus_mA &lt;= <span style="color: #800080;">100</span>) {
+            u16    devstat;
+
+            status = usb_get_status(udev, USB_RECIP_DEVICE, <span style="color: #800080;">0</span>,
+                    &amp;devstat);
+            <span style="color: #0000ff;">if</span> (status &lt; <span style="color: #800080;">2</span>) {
+                dev_dbg(&amp;udev-&gt;dev, <span style="color: #800000;">"</span><span style="color: #800000;">get status %d ?\n</span><span style="color: #800000;">"</span>, status);
+                <span style="color: #0000ff;">goto</span> loop_disable;
+            }
+            le16_to_cpus(&amp;devstat);
+            <span style="color: #0000ff;">if</span> ((devstat &amp; (<span style="color: #800080;">1</span> &lt;&lt; USB_DEVICE_SELF_POWERED)) == <span style="color: #800080;">0</span>) {
+                dev_err(&amp;udev-&gt;dev,
+                    <span style="color: #800000;">"</span><span style="color: #800000;">can't connect bus-powered hub </span><span style="color: #800000;">"</span>
+                    <span style="color: #800000;">"</span><span style="color: #800000;">to this port\n</span><span style="color: #800000;">"</span>);
+                <span style="color: #0000ff;">if</span> (hub-&gt;has_indicators) {
+                    hub-&gt;indicator[port1-<span style="color: #800080;">1</span>] =
+                        INDICATOR_AMBER_BLINK;
+                    schedule_delayed_work (&amp;hub-&gt;leds, <span style="color: #800080;">0</span>);
+                }
+                status = -ENOTCONN;    <span style="color: #008000;">/*</span><span style="color: #008000;"> Don't retry </span><span style="color: #008000;">*/</span>
+                <span style="color: #0000ff;">goto</span> loop_disable;
+            }
+        }
+ 
+        <span style="color: #008000;">/*</span><span style="color: #008000;"> check for devices running slower than they could </span><span style="color: #008000;">*/</span>
+        <span style="color: #0000ff;">if</span> (le16_to_cpu(udev-&gt;descriptor.bcdUSB) &gt;= <span style="color: #800080;">0x0200</span>
+                &amp;&amp; udev-&gt;speed == USB_SPEED_FULL
+                &amp;&amp; highspeed_hubs != <span style="color: #800080;">0</span>)
+            check_highspeed (hub, udev, port1);
+
+        <span style="color: #008000;">/*</span><span style="color: #008000;"> Store the parent's children[] pointer.  At this point
+         * udev becomes globally accessible, although presumably
+         * no one will look at it until hdev is unlocked.
+         </span><span style="color: #008000;">*/</span>
+        status = <span style="color: #800080;">0</span>;
+
+        <span style="color: #008000;">//</span><span style="color: #008000;"> 将分配的struct usb_dev结构跟他的父结构关联起来,也就是说添加到它的父结构的usb_dev-&gt; children[]数组.</span>
+        spin_lock_irq(&amp;device_state_lock);
+        <span style="color: #0000ff;">if</span> (hdev-&gt;state == USB_STATE_NOTATTACHED)
+            status = -ENOTCONN;
+        <span style="color: #0000ff;">else</span>
+            hdev-&gt;children[port1-<span style="color: #800080;">1</span>] = udev;
+        spin_unlock_irq(&amp;device_state_lock);
+
+        <span style="color: #0000ff;">if</span> (!status) {<span style="color: #008000;">
+          /*</span><span style="color: #008000;">usb_configure_device(): 得到设备的描述符(包括设备描述符、配置描述符、接口描述符等)，分析以上描述符信息,提取出配置、接口等，并赋值给udev结构里相应的字段。
+　　　　     device_add() :将usb设备注册到系统里，这个动作将触发驱动的匹配，由于这是个usb设备，所以万能usb驱动usb_generic_driver会匹配上，从而generic_probe会得到执行，从上面可以看出来，这一次hub_events()调用是由于主控制器初始化调用了<br>            hub_probe，从而引发hub_events调用。那root hub初始化完成以后hub_events会如何触发呢？答案是通过中断！而这个中断的服务函数就是hub_irq，也即是说，凡是真正的有端口变化事件发生，hub_irq就会被调用,而hub_irq()最终会调用kick_khubd()，             触发hub的event_list,于是再次调用hub_events().</span><span style="color: #008000;">*/</span>
+            status = usb_new_device(udev);
+            <span style="color: #0000ff;">if</span> (status) {
+                spin_lock_irq(&amp;device_state_lock);
+                hdev-&gt;children[port1-<span style="color: #800080;">1</span>] = NULL;
+                spin_unlock_irq(&amp;device_state_lock);
+            }
+        }
+
+        <span style="color: #0000ff;">if</span> (status)
+            <span style="color: #0000ff;">goto</span> loop_disable;
+
+        status = hub_power_remaining(hub);
+        <span style="color: #0000ff;">if</span> (status)
+            dev_dbg(hub_dev, <span style="color: #800000;">"</span><span style="color: #800000;">%dmA power budget left\n</span><span style="color: #800000;">"</span>, status);
+
+        <span style="color: #0000ff;">return</span>;
+
+loop_disable:
+        hub_port_disable(hub, port1, <span style="color: #800080;">1</span>);
+loop:
+        usb_ep0_reinit(udev);
+        release_address(udev);
+        hub_free_dev(udev);
+        usb_put_dev(udev);
+        <span style="color: #0000ff;">if</span> ((status == -ENOTCONN) || (status == -ENOTSUPP))
+            <span style="color: #0000ff;">break</span>;
+    }
+    <span style="color: #0000ff;">if</span> (hub-&gt;hdev-&gt;parent ||
+            !hcd-&gt;driver-&gt;port_handed_over ||
+            !(hcd-&gt;driver-&gt;port_handed_over)(hcd, port1))
+        dev_err(hub_dev, <span style="color: #800000;">"</span><span style="color: #800000;">unable to enumerate USB device on port %d\n</span><span style="color: #800000;">"</span>,
+                port1);
+<span style="color: #008000;">//</span><span style="color: #008000;"> Done标号是对应上述处理失败的处理,它禁用掉该端口(因为该端口没有连接设备或者是端口上的设备配置失败),如果是root hub,且USB控制器器驱动中又定义了relinquish_port.调用它.</span>
+done:
+    hub_port_disable(hub, port1, <span style="color: #800080;">1</span>);
+    <span style="color: #0000ff;">if</span> (hcd-&gt;driver-&gt;relinquish_port &amp;&amp; !hub-&gt;hdev-&gt;parent)
+        hcd-&gt;driver-&gt;relinquish_port(hcd, port1);
+}</pre>
+<div><a href="" title="复制代码"><img src="http://image85.360doc.com/DownloadImg/2015/05/1905/53713722_12.gif" alt="复制代码"></a></div></div>
+<p>&nbsp;参考了很多大神的分析，非常感谢！</p>
+<div><img src="http://www.cnblogs.com/cslunatic/p/file:///C:\Users\user\Documents\Tencent Files\945627420\Image\]6OY]BEFZUFQU05ZTP$4T%V.jpg" alt=""></div></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="viewerPlaceHolder" style="width: 717px; height: 700px; display: none; margin: 0 auto;">
+                    </div>
+                </div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <ul></ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div></div>
+                <span></span>
+                <a></a>
+                <p style="margin: 0; padding: 0;"></p>
+                <p class="clearboth"></p>
+                <div class="bdsharebuttonbox bottombtn">
+                    <div class="zcommond" style="overflow: visible;">
+                        <a href="javascript:void(0);" class="btn_collect" onclick="SaveArt();artStatistics('20-3-2');">转藏到我的图书馆</a>
+                        <a id="flowimg3" href="javascript:void(0);" class="btn_good" onclick="Showflowerlayer('sendedLayer1');">献花（<span id="articleflowernum">0</span>）
+                        <span id="flowernumadd" style="display: none;">+1</span>
+
+                        </a>
+                        <span class="span1 f_left" onclick="setTimeout(function(){$('.bottombtn .sharelist_new').slideToggle(0);},10);artStatistics('20-8-3');" onmouseover="this.style.color='#0f659c'" onmouseout="this.style.color=''">分享：</span>
+                        <a class="sharewx f_left" href="javascript:void(0);" onclick="shareWeixin();artStatistics('20-8-6');">微信</a>
+                        <div class="s2 f_left" onclick="setTimeout(function(){$('.bottombtn .sharelist_new').slideToggle(0);},10);artStatistics('20-8-4');"><span></span></div>
+                    </div>
+                    <div class="sharelist_new" id="fenxiangLayer2">
+                        <a class="slbg1" href="javascript:void(0);" data-cmd="qzone" onclick="artStatistics('20-8-8');">QQ空间</a>
+                        <a class="slbg2" href="javascript:void(0);" data-cmd="sqq" onclick="artStatistics('20-8-10');">QQ好友</a>
+                        <a class="slbg3" href="javascript:void(0);" data-cmd="tsina" onclick="artStatistics('20-8-12');">新浪微博</a>
+                        <a class="slbg4" href="javascript:void(0);" data-cmd="tqq" onclick="artStatistics('20-8-14');">腾讯微博</a>
+                        <a class="slbg5" href="javascript:void(0);" onclick="showdivemail1();artStatistics('20-8-16');">推荐给朋友</a>
+                    </div>
+                </div>
+                <div class="bottom_controler">
+                    <p class="bottom_cleft">
+                        来自：
+                         <span class="a_username" style="width: auto;">
+                             <a href="http://www.360doc.com/userhome/22854460" id="savernickname2" target="_blank" onclick="artStatistics(&#39;20-7-2&#39;);">嵌粉</a>
+                         </span>
+                        &gt; 
+                        <span id="cname" class="a_from"></span>
+                    </p>
+                    <div class="bottom_cright">
+                        <a href=" https://www.baidu.com/s?wd=usb+hub+dev&tn=SE_hldp01010_6r0gix1f" target="_blank" class="a1" onclick="artStatistics('20-19');">以文找文</a>
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
+                        <a href="javascript:void(0);" class="a2" onclick="showAlertLayer1();artStatistics('20-18');">举报</a>
+                    </div>
+                </div>
+                <div class="prev_next">
+                    <p id="lastart" class="p1">
+                    </p>
+                    <p id="nextart" class="p2">
+                    </p>
+                </div>
+            </div>
+            <p class="clearboth"></p>
+            <div style="width: 676px; float: left;">
+                <div class="str_border" style="border: none; position: relative; z-index: 2;">
+                    <strong>猜你喜欢</strong>
+                </div>
+                <ul class="youlike" style="margin-top: -18px; position: relative; z-index: 1;">
+                    <div  style="width: 676px; height: 280px; border: 0;" id="divyoulikead">
+
+
+                    </div>
+                    
+                </ul>
+                <div class="zcommond" style="padding: 10px 0 20px;">
+                    <div class="bottom_article f_left">
+                        <div class="str_border">
+                            <strong>类似文章</strong>
+                            <a href=http://www.360doc.com/relevant/471598740_more.shtml target='_blank' class='a_more f_right'  onclick='artStatistics('20-9-8');'>更多</a>
+                        </div>
+                        <ul class="barticle_list">
+                            
+                                    <li><span><a href=http://www.360doc.com/content/12/0327/12/8363527_198233948.shtml target=_blank onclick='artStatistics("20-9-7");'>usb probe</a></span></li>
+                                
+                                    <li><span><a href=http://www.360doc.com/content/14/1006/20/8218854_414839722.shtml target=_blank onclick='artStatistics("20-9-7");'>linux usb hub驱动-steven_miao-ChinaUn...</a></span></li>
+                                
+                                    <li><span><a href=http://www.360doc.com/content/14/0611/13/15377983_385670864.shtml target=_blank onclick='artStatistics("20-9-7");'>USB驱动分析（一）</a></span></li>
+                                
+                                    <li><span><a href=http://www.360doc.com/content/12/0315/11/8363527_194495503.shtml target=_blank onclick='artStatistics("20-9-7");'>linux usb初始化</a></span></li>
+                                
+                                    <li><span><a href=http://www.360doc.com/content/12/1201/05/7775902_251309113.shtml target=_blank onclick='artStatistics("20-9-7");'>platform_device与platform_driver</a></span></li>
+                                
+                                    <li><span><a href=http://www.360doc.com/content/16/0214/17/15700426_534571890.shtml target=_blank onclick='artStatistics("20-9-7");'>linux设备驱动归纳总结（八）：1.总线、...</a></span></li>
+                                
+                                    <li><span><a href=http://www.360doc.com/content/13/1115/00/14641369_329304485.shtml target=_blank onclick='artStatistics("20-9-7");'>Find USB device details in Linux/Unix...</a></span></li>
+                                
+                                    <li><span><a href=http://www.360doc.com/content/14/0410/19/15377983_367835688.shtml target=_blank onclick='artStatistics("20-9-7");'>Linux那些事儿之我是U盘(8)总线,设备,和...</a></span></li>
+                                
+                        </ul>
+                    </div>
+                    <div class="bottom_article f_right">
+                        <div class="str_border">
+                            <strong>精选文章</strong>
+                        </div>
+                        <ul class="barticle_list">
+                            
+                                    <li><span><a onclick="artStatistics('20-9-9');" href=http://www.360doc.com/content/14/0114/19/8439746_345166721.shtml target="_blank">《演讲口才》素材之网络流行语50篇</a></span></li>
+                                
+                                    <li><span><a onclick="artStatistics('20-9-9');" href=http://www.360doc.com/content/14/0112/05/9708896_344447789.shtml target="_blank">多情一眸为谁笑,空惹相思添恨长</a></span></li>
+                                
+                                    <li><span><a onclick="artStatistics('20-9-9');" href=http://www.360doc.com/content/14/0119/11/7858166_346318730.shtml target="_blank">受益终生的食疗法则</a></span></li>
+                                
+                                    <li><span><a onclick="artStatistics('20-9-9');" href=http://www.360doc.com/content/15/1122/05/22020824_514862783.shtml target="_blank">女人一定要懂的化妆品知识，必须看</a></span></li>
+                                
+                                    <li><span><a onclick="artStatistics('20-9-9');" href=http://www.360doc.com/content/13/1119/14/6956316_330391413.shtml target="_blank">唐诗里的情:不用登临恨落晖</a></span></li>
+                                
+                                    <li><span><a onclick="artStatistics('20-9-9');" href=http://www.360doc.com/content/12/1015/04/9076298_241467700.shtml target="_blank">护士都知道 医生都明白</a></span></li>
+                                
+                                    <li><span><a onclick="artStatistics('20-9-9');" href=http://www.360doc.com/content/12/1105/17/8781422_245802436.shtml target="_blank">妻子决定丈夫寿命？哪些男女适合做夫妻</a></span></li>
+                                
+                                    <li><span><a onclick="artStatistics('20-9-9');" href=http://www.360doc.com/content/13/0908/17/4714218_312984763.shtml target="_blank">超级好笑的事，流行在当下的句子</a></span></li>
+                                
+                        </ul>
+                    </div>
+                </div>
+                
+                <div  style="width: 676px; height: 202px;" id="divunderZcommondAd"></div>
+                
+                <div class="zcommond" style="margin-top: 10px;">
+                    
+                    <div class="f_left" style="width: 300px; height: 90px;" id="divaboveReflectionAd1">
+                        
+                    </div>
+                    
+                    <div class="f_left" style="width: 300px; height: 90px; margin-left: 44px;" id="divaboveReflectionAd2">
+                        
+                    </div>
+                </div>
+
+                <p></p>
+                <div id="ReflectionPart">
+                    <div style="height: 156px; margin: 0px 0px;">
+                        <div class="plbox">
+                            <div class="plmain">
+                                <div class="titwx" style="height: 23px;">
+                                    发表评论：
+                                </div>
+                                <textarea name="SendRefTB" id="SendRefTB" style="width: 100%; height: 75px; border: 1px solid #e7e7e7; background-color: #fff; overflow: auto; font-size: 12px;"
+                                    onfocus="testContent(1);" onblur="testContent(2)"></textarea>
+                                <div style="text-align: right; padding-right: 3px; padding-top: 6px;">
+                                    <div class="huifubt">
+                                        <a id="ImgSendPL" href="javascript:void(0);" onclick="SubmitReflection();"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding-top: 15px; padding-left: 15px;" id="Reflction">
+                </div>
+            </div>
+        </div>
+        <div class="a_right">
+            <div class="user_info">
+                <div class="user_photo f_left">
+                    <p class="user_photopic">
+                        <a href="http://www.360doc.com/userhome/22854460" id="userphotourl" target="_blank" onclick="artStatistics(&#39;20-7-4&#39;);">
+                            <img src="http://pubimage.360doc.com/head/001.gif" id="userphoto" width="58" height="58" />
+                        </a>
+                    </p>
+                    <a href="javascript:void(0);" onclick="docTalk();artStatistics('20-15');" class="user_talk" title="与TA对话"></a>
+                </div>
+                <div class="user_data f_right">
+                    <div class="user_data_name">
+                        <a href="http://www.360doc.com/userhome/22854460" id="nickname" target="_blank" onclick="artStatistics(&#39;20-7-3&#39;);">嵌粉</a>
+                        <img src="http://pubimage.360doc.com/NewArticle/user_name_tag.gif" alt="图书馆" />
+                    </div>
+                    <p id="userdegree"><img src='http://pubimage.360doc.com/NewArticle/userstar2.gif' /><img src='http://pubimage.360doc.com/NewArticle/userstar3.gif' /><img src='http://pubimage.360doc.com/NewArticle/userstar3.gif' /><img src='http://pubimage.360doc.com/NewArticle/userstar3.gif' /><img src='http://pubimage.360doc.com/NewArticle/userstar3.gif' /></p>
+                    <div class="user_data_num">
+                        <a id="spanfollowstatus" class="gz_no"></a>
+                        <script type="text/javascript">isfollow(22854460);</script>
+                        <span id="follownum">0</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span>馆藏</span>&nbsp;<span id="artnum">16</span>
+                    </div>
+                </div>
+            </div>
+            <div class="his_her"><ul class='his_her_type'><li class='f_left curone'>TA的最新馆藏</li></ul><div class='his_her_div' style="height:190px;"><ul class='his_her_list'><li><div><span></span><a href=http://www.360doc.com/content/15/0527/23/22854460_473745138.shtml target=_blank onclick="artStatistics('20-9-3');">fudan</a></div><div><span></span><a href=http://www.360doc.com/content/15/0523/02/22854460_472583823.shtml target=_blank onclick="artStatistics('20-9-3');">linux内核部件分析（二）</a></div><div><span></span><a href=http://www.360doc.com/content/15/0519/10/22854460_471642765.shtml target=_blank onclick="artStatistics('20-9-3');">4. Linux USB Host Driver</a></div><div><span></span><a href=http://www.360doc.com/content/15/0519/10/22854460_471639459.shtml target=_blank onclick="artStatistics('20-9-3');">Xilinx Wiki</a></div><div><span></span><a href=http://www.360doc.com/content/15/0519/10/22854460_471638808.shtml target=_blank onclick="artStatistics('20-9-3');">Device Drivers, Part 11: USB Drivers in Linux</a></div><div><span></span><a href=http://www.360doc.com/content/15/0519/10/22854460_471638559.shtml target=_blank onclick="artStatistics('20-9-3');">An Overview of Linux USB | Linux Journal</a></div></li></ul></div></div>
+
+
+
+
+
+<div class="clear360doc" style="padding-top: 10px; height: 260px;">
+    <div id="divifartad1"></div>
+    
+    <div style="height: 10px;">
+    </div>
+</div>
+
+<div class="his_her" id="recommendArt" style="margin-top: 5px;">
+    <div class="str_border" style="margin: 0;">
+        <span style="font-size: 14px; float: left;">推荐阅读</span>
+        <a style="float: right;" class="a_more" onclick="artStatistics('20-9-4');" href="http://www.360doc.com/readroom.html" target="_blank">更多</a>
+    </div>
+    <div class='his_her_div' style="height: 264px;">
+        <ul class='his_her_list'>
+            <li id="recommendArtLists"></li>
+        </ul>
+    </div>
+</div>
+
+
+
+<div class="clear360doc" style="padding-top: 10px;" id="divifartad2">
+    
+</div>
+<br />
+
+
+<div id="divifartrightsogou">
+    </div>
+            <div class="clear360doc" id="divad5" style="padding-top: 11px; zoom: 1; width: 300px;">
+                <div id="divad4" style="display: none;">
+                    <div id="divifartad">
+                        
+                        
+                    </div>
+                    <div class="ggwz">
+                        <a href="javascript:void(0);" onclick="closead(2);">关闭</a>
+                    </div>
+                    <div style="height: 13px;">
+                    </div>
+                </div>
+                <div style="clear: both; display: none;" id="divad6">
+                    <div id="adfloatbaidu">
+                        
+                    </div>
+                    <div class="ggwz" style="left: 25px;">
+                        <a href="javascript:void(0);" onclick="closead(3);">关闭</a>
+                    </div>
+                    <div style="height: 13px;">
+                    </div>
+                </div>
+                <div style="height: 75px;">
+                </div>
+            </div>
+        </div>
+    </div>
+    <p class="clearboth"></p>
+    <input type="hidden" id="artid" value="471598740" />
+    <input type="hidden" id="docarttitle" value="Linux++usb%e5%ad%90%e7%b3%bb%e7%bb%9f%ef%bc%88%e4%b8%80%ef%bc%89%ef%bc%9a%e5%ad%90%e7%b3%bb%e7%bb%9f%e6%9e%b6%e6%9e%84" />
+    <input type="hidden" id="firstartid" value="471598740" />
+    <input type="hidden" id="subclassid" value="-1" />
+    <input type="hidden" id="recommendart1" value="194495503" />
+    <input type="hidden" id="recommendart2" value="-1" />
+    <input type="hidden" id="isowner" value="False" />
+    <input type="hidden" id="artreadroomid" value="0" />
+    <script src="http://www.360doc.com/js/showarticle.js?t=2017012103" type="text/javascript" charset="utf-8"></script>
+    <script>GerLookingUserInfo(1,22854460,1,0,'-1',-1,10,0);OutputSource('http://www.cnblogs.com/cslunatic/p/3726053.html','博客园');OutputCategory(22854460,2,'%e3%80%8a%e5%be%85%e5%88%86%e7%b1%bb1%e3%80%8b');OutputLastNextArt('ARM+Linux+3.x%e7%9a%84%e8%ae%be%e5%a4%87%e6%a0%91%ef%bc%88Device+Tree%ef%bc%89','http://www.360doc.com/content/15/0516/02/22854460_470804576.shtml',0);OutputLastNextArt('Linux+USB%e9%a9%b1%e5%8a%a8%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b','http://www.360doc.com/content/15/0519/09/22854460_471631296.shtml',1);</script>
+        <script type="text/javascript" src="http://www.360doc.com/js/index7/newheader.js?t=2016123014"></script>
+        <script type="text/javascript" src="/js/Statistics/addStatistics.js?t=2017011303"></script>
+        <script src="http://blockart.360doc.com/ajax/getstatusv2.ashx?aid=471598740" type="text/javascript" charset="utf-8" async="async"></script>
+
+</body>
+</html>

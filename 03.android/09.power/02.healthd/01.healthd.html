@@ -1,0 +1,1118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="language for HTML, e.g. ‘en’ (org-export-default-language)" xml:lang="language for HTML, e.g. ‘en’ (org-export-default-language)">
+<head>
+<!-- 2017-01-12 四 16:38 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="wildbook" />
+<meta  name="description" content="掌握PMIC之FuelGauge"
+ />
+<meta  name="keywords" content="power,pmic," />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline1">1. 简介</a></li>
+<li><a href="#orgheadline4">2. 总结</a>
+<ul>
+<li><a href="#orgheadline2">2.1. g<sub>epoll</sub><sub>fd</sub></a></li>
+<li><a href="#orgheadline3">2.2. epollfd</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline5">3. 关键结构体</a></li>
+<li><a href="#orgheadline6">4. 关键函数</a></li>
+<li><a href="#orgheadline7">5. 框架分析</a></li>
+<li><a href="#orgheadline13">6. charger(关机充电)模式</a>
+<ul>
+<li><a href="#orgheadline8">6.1. 代码路径</a></li>
+<li><a href="#orgheadline9">6.2. healthd<sub>init</sub>()</a></li>
+<li><a href="#orgheadline10">6.3. periodic<sub>chores</sub>();</a></li>
+<li><a href="#orgheadline11">6.4. healthd<sub>mode</sub><sub>ops</sub>-&gt;heartbeat()</a></li>
+<li><a href="#orgheadline12">6.5. healthd<sub>mainloop</sub>()</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline14">7. android(开机充电)模式</a></li>
+<li><a href="#orgheadline15">8. recovery(恢复设置充电)模式</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1"><span class="section-number-2">1</span> 简介</h2>
+</div>
+<div id="outline-container-orgheadline4" class="outline-2">
+<h2 id="orgheadline4"><span class="section-number-2">2</span> 总结</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-orgheadline2" class="outline-3">
+<h3 id="orgheadline2"><span class="section-number-3">2.1</span> g<sub>epoll</sub><sub>fd</sub></h3>
+<div class="outline-text-3" id="text-2-1">
+<ol class="org-ol">
+<li>epoll()监听input事件,详情见ev<sub>init</sub>(),获取key状态</li>
+<li>监听charger<sub>event</sub>，不太明白,详情见healthd<sub>register</sub><sub>event</sub>()</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline3" class="outline-3">
+<h3 id="orgheadline3"><span class="section-number-3">2.2</span> epollfd</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+用于充电模式
+</p>
+<ol class="org-ol">
+<li>监听g<sub>epoll</sub><sub>fd,即key状态状态</sub>，详情见healthd<sub>register</sub><sub>event</sub>(),有key按下时，
+执行charger<sub>event</sub><sub>handler</sub>()</li>
+<li>wakealarm唤醒定时器每唤醒一次，更新一次电池状态,由epoll监控wakealarm<sub>fd</sub></li>
+<li>uevent，用于内核向用户空间发送数据,对数据判断后更新电池状态，由epoll监控uevent<sub>fd</sub></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline5" class="outline-2">
+<h2 id="orgheadline5"><span class="section-number-2">3</span> 关键结构体</h2>
+<div class="outline-text-2" id="text-3">
+<ol class="org-ol">
+<li><p>
+epoll<sub>event</sub>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">typedef</span> <span style="color: #859900; font-weight: bold;">union</span> <span style="color: #b58900;">epoll_data</span> {
+    <span style="color: #b58900;">void</span>        *<span style="color: #268bd2;">ptr</span>;
+    <span style="color: #b58900;">int</span>          <span style="color: #268bd2;">fd</span>;
+    <span style="color: #b58900;">uint32_t</span>     <span style="color: #268bd2;">u32</span>;
+    <span style="color: #b58900;">uint64_t</span>     <span style="color: #268bd2;">u64</span>;
+} <span style="color: #b58900;">epoll_data_t</span>;
+
+<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">epoll_event</span> {
+    <span style="color: #b58900;">uint32_t</span>     <span style="color: #268bd2;">events</span>;      <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Epoll events */</span>
+    <span style="color: #b58900;">epoll_data_t</span> <span style="color: #268bd2;">data</span>;        <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">User data variable */</span>
+};
+</pre>
+</div></li>
+<li><p>
+fd<sub>info</sub>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">typedef</span> <span style="color: #b58900;">int</span> (*<span style="color: #b58900;">ev_callback</span>)(<span style="color: #b58900;">int</span> <span style="color: #268bd2;">fd</span>, <span style="color: #b58900;">uint32_t</span> <span style="color: #268bd2;">epevents</span>, <span style="color: #b58900;">void</span>* <span style="color: #268bd2;">data</span>);
+<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">fd_info</span> {
+     <span style="color: #b58900;">int</span> <span style="color: #268bd2;">fd</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#22238;&#35843;&#21442;&#25968;</span>
+     <span style="color: #b58900;">ev_callback</span> <span style="color: #268bd2;">cb</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#22238;&#35843;&#20989;&#25968;</span>
+     <span style="color: #b58900;">void</span>* <span style="color: #268bd2;">data</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#22238;&#35843;&#20989;&#25968;&#21442;&#25968;</span>
+ };
+</pre>
+</div></li>
+<li><p>
+charger
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"> <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">key_state</span> {
+     <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">pending</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25353;&#38190;&#24377;&#36215;</span>
+     <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">down</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25353;&#38190;&#25353;&#19979;</span>
+     <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">timestamp</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25353;&#38190;&#25353;&#19979;&#25345;&#32493;&#26102;&#38388;</span>
+ };
+
+ <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">animation</span> {
+     <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">run</span>;
+
+     <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">frame</span> *<span style="color: #268bd2;">frames</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#24103;buf</span>
+     <span style="color: #b58900;">int</span> <span style="color: #268bd2;">cur_frame</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#24403;&#21069;&#24103;</span>
+     <span style="color: #b58900;">int</span> <span style="color: #268bd2;">num_frames</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#24103;&#25968;&#37327;</span>
+
+     <span style="color: #b58900;">int</span> <span style="color: #268bd2;">cur_cycle</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#24403;&#21069;&#21608;&#26399;</span>
+     <span style="color: #b58900;">int</span> <span style="color: #268bd2;">num_cycles</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#24635;&#21608;&#26399;</span>
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">current capacity being animated */</span>
+     <span style="color: #b58900;">int</span> <span style="color: #268bd2;">capacity</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#24403;&#21069;&#23481;&#37327;&#26159;&#21160;&#30011;</span>
+ };
+
+<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">charger</span> {
+     <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">have_battery_state</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26159;&#21542;&#26377;&#30005;&#27744;</span>
+     <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">charger_connected</span>;   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20805;&#30005;&#22120;&#26159;&#21542;&#38142;&#25509;</span>
+     <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">next_screen_transition</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#19979;&#19968;&#20010;&#23631;&#24149;&#36807;&#24230;</span>
+     <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">next_key_check</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#19979;&#27425;&#25353;&#38190;&#26816;&#27979;&#36229;&#26102;&#26102;&#38388;&#35774;&#32622;</span>
+     <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">next_pwr_check</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#19979;&#27425;&#26816;&#27979;pwr&#36229;&#26102;&#26102;&#38388;</span>
+
+     <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">key_state</span> <span style="color: #268bd2;">keys</span>[KEY_MAX + <span style="color: #6c71c4;">1</span>]; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25353;&#38190;&#29366;&#24577;</span>
+
+     <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">animation</span> *<span style="color: #268bd2;">batt_anim</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#26174;&#31034;&#21160;&#24577;&#21160;&#30011;</span>
+     <span style="color: #b58900;">GRSurface</span>* <span style="color: #268bd2;">surf_unknown</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#26410;&#30693;&#29366;&#24577;&#26102;&#26174;&#31034;,</span>
+     <span style="color: #b58900;">int</span> <span style="color: #268bd2;">boot_min_cap</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21551;&#21160;&#26368;&#23567;&#23481;&#37327;</span>
+ };
+</pre>
+</div></li>
+<li><p>
+input<sub>event</sub>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">input_event</span> {
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">timeval</span> <span style="color: #268bd2;">time</span>;
+   <span style="color: #b58900;">__u16</span> <span style="color: #268bd2;">type</span>;
+   <span style="color: #b58900;">__u16</span> <span style="color: #268bd2;">code</span>;
+   <span style="color: #b58900;">__s32</span> <span style="color: #268bd2;">value</span>;
+ };
+</pre>
+</div></li>
+<li><p>
+healthd<sub>config</sub>
+   描述电池属性节点的路径
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">healthd_config</span> {
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">periodic_chores_interval_fast</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26356;&#26032;&#30005;&#27744;&#29366;&#24577;&#21608;&#26399;&#25511;&#21046;,&#20805;&#30005;&#29992;&#36825;&#20010;</span>
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">periodic_chores_interval_slow</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26356;&#26032;&#30005;&#27744;&#29366;&#24577;&#21608;&#26399;&#25511;&#21046;,&#19981;&#20805;&#30005;&#29992;&#36825;&#20010;</span>
+
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">xxxx/status</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryStatusPath</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#26159;&#21542;&#23384;&#22312;&#30340;&#29366;&#24577;&#36335;&#24452;</span>
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">health</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryHealthPath</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#20581;&#24247;&#36335;&#24452;(&#28201;&#24230;)</span>
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">present</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryPresentPath</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#24403;&#21069;&#36335;&#24452;</span>
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">capacity</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryCapacityPath</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#21097;&#20313;&#23481;&#37327;</span>
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">voltage_now</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryVoltagePath</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#30005;&#21387;</span>
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">temp</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryTemperaturePath</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#28201;&#24230;</span>
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">technology</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryTechnologyPath</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#25152;&#20351;&#29992;&#30340;&#25216;&#26415;</span>
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">current_now</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryCurrentNowPath</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#24403;&#21069;&#30005;&#27969;</span>
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#27809;&#26377;current_avg</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryCurrentAvgPath</span>;
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#27809;&#26377;charge_counter</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryChargeCounterPath</span>;
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#27809;&#26377;charge_full</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryFullChargePath</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#20805;&#28385;&#30005;&#36335;&#24452;</span>
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#27809;&#26377;cycle_count</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryCycleCountPath</span>;
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">xo_termal</span>
+    <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">String8</span> <span style="color: #268bd2;">xothermalpath</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">[feature] mod-by sun zhangyang for defect2167030,2016.05.18</span>
+
+    <span style="color: #b58900;">int</span> (*<span style="color: #268bd2;">energyCounter</span>)(<span style="color: #b58900;">int64_t</span> *);
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">boot_min_cap</span>;
+    <span style="color: #b58900;">bool</span> (*<span style="color: #268bd2;">screen_on</span>)(<span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">BatteryProperties</span> *<span style="color: #268bd2;">props</span>);
+};
+</pre>
+</div></li>
+<li><p>
+BatteryProperties
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">BatteryProperties</span> {
+    <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">chargerAcOnline</span>;   <span style="color: #93a1a1;">//</span>
+    <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">chargerUsbOnline</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">usb&#20805;&#30005;&#38142;&#25509; &#25105;&#20204;&#25163;&#26426;&#24773;&#20917;&#26159;true</span>
+    <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">chargerWirelessOnline</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">maxChargingCurrent</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#24403;&#21069;&#20805;&#30005;&#26368;&#22823;&#30005;&#27969;</span>
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">maxChargingVoltage</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#24403;&#21069;&#20805;&#30005;&#26368;&#22823;&#30005;&#21387;</span>
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">batteryStatus</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#26159;&#21542;&#23384;&#22312;</span>
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">batteryHealth</span>;
+    <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">batteryPresent</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">batteryLevel</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#30005;&#37327;&#29366;&#24577; (1&#21040;100)</span>
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">batteryVoltage</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#30005;&#21387;</span>
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">batteryTemperature</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#28201;&#24230;</span>
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">batteryCurrent</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#30005;&#27969;</span>
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">batteryCycleCount</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">batteryFullCharge</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">batteryChargeCounter</span>;
+    <span style="color: #b58900;">String8</span> <span style="color: #268bd2;">batteryTechnology</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">xothermalTemp</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">[feature] mod-by sun zhangyang for defect2167030,2016.05.18</span>
+
+    <span style="color: #b58900;">status_t</span> <span style="color: #268bd2;">writeToParcel</span>(<span style="color: #b58900;">Parcel</span>* <span style="color: #268bd2;">parcel</span>) <span style="color: #859900; font-weight: bold;">const</span>;
+    <span style="color: #b58900;">status_t</span> <span style="color: #268bd2;">readFromParcel</span>(<span style="color: #b58900;">Parcel</span>* <span style="color: #268bd2;">parcel</span>);
+};
+</pre>
+</div></li>
+<li>android<sub>reboot对应的命令</sub>
+ANDROID<sub>RB</sub><sub>RESTART</sub>   &#x2014; reboot 普通重启
+ANDROID<sub>RB</sub><sub>POWEROFF</sub>  &#x2014; shutting down 关机
+ANDROID<sub>RB</sub><sub>RESTART2</sub>  &#x2014; 可以带参数重启</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline6" class="outline-2">
+<h2 id="orgheadline6"><span class="section-number-2">4</span> 关键函数</h2>
+<div class="outline-text-2" id="text-4">
+<ul class="org-ul">
+<li>int epoll<sub>create</sub>(int size)
+<ul class="org-ul">
+<li>功能: 打开一个epoll文件描述符</li>
+<li>参数: 个数</li>
+<li>成功返回文件描述符,失败-1和error</li>
+</ul></li>
+<li>int epoll<sub>wait</sub>(int epfd, struct epoll<sub>event</sub> *events, int maxevents, int timeout);
+<ul class="org-ul">
+<li>功能: 等待epoll文件描述符上的I / O事件</li>
+<li>返回值
+成功: 返回文件描述符的数量，或者超时时返回0
+失败：返回-1和errno</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline7" class="outline-2">
+<h2 id="orgheadline7"><span class="section-number-2">5</span> 框架分析</h2>
+<div class="outline-text-2" id="text-5">
+<ul class="org-ul">
+<li><p>
+healthd.cpp
+代码路径system/core/healthd/
+device/qcom/common/healthd
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #b58900;">int</span> <span style="color: #268bd2;">main</span>(<span style="color: #b58900;">int</span> <span style="color: #268bd2;">argc</span>, <span style="color: #b58900;">char</span> **<span style="color: #268bd2;">argv</span>) {
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">ch</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">ret</span>;
+
+    klog_set_level(KLOG_LEVEL);  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#35774;&#32622;log&#32423;&#21035;</span>
+    healthd_mode_ops = &amp;android_ops;
+
+    <span style="color: #859900; font-weight: bold;">if</span> (<span style="color: #b58900; font-weight: bold;">!</span>strcmp(basename(argv[<span style="color: #6c71c4;">0</span>]), <span style="color: #2aa198;">"charger"</span>)) {<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#35299;&#26512;&#36755;&#20837;&#21442;&#25968;&#22914;&#26524;&#26159;charger&#30340;&#20351;&#29992;charger_ops</span>
+        healthd_mode_ops = &amp;charger_ops;
+    } <span style="color: #859900; font-weight: bold;">else</span> {  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21542;&#32773;&#20351;&#29992;android_ops</span>
+        <span style="color: #859900; font-weight: bold;">while</span> ((ch = getopt(argc, argv, <span style="color: #2aa198;">"cr"</span>)) != -<span style="color: #6c71c4;">1</span>) {<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#35299;&#26512;&#36755;&#20837;&#21629;&#20196;,&#21508;&#20010;&#21629;&#20196;&#23545;&#24212;&#19981;&#21516;&#30340;mode_ops</span>
+            <span style="color: #859900; font-weight: bold;">switch</span> (ch) {
+            <span style="color: #859900; font-weight: bold;">case</span> <span style="color: #2aa198;">'c'</span>:
+                healthd_mode_ops = &amp;charger_ops;
+                <span style="color: #859900; font-weight: bold;">break</span>;
+            <span style="color: #859900; font-weight: bold;">case</span> <span style="color: #2aa198;">'r'</span>:
+                healthd_mode_ops = &amp;recovery_ops;
+                <span style="color: #859900; font-weight: bold;">break</span>;
+            <span style="color: #859900; font-weight: bold;">case</span> <span style="color: #2aa198;">'?'</span>:
+            <span style="color: #859900; font-weight: bold;">default</span>:
+                KLOG_ERROR(LOG_TAG, <span style="color: #2aa198;">"Unrecognized healthd option: %c\n"</span>,
+                           optopt);
+                exit(<span style="color: #6c71c4;">1</span>);
+            }
+        }
+    }
+
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">healthd&#21021;&#22987;&#21270;</span>
+    ret = healthd_init();
+    <span style="color: #859900; font-weight: bold;">if</span> (ret) {
+        KLOG_ERROR(<span style="color: #2aa198;">"Initialization failed, exiting\n"</span>);
+        exit(<span style="color: #6c71c4;">2</span>);
+    }
+
+    periodic_chores();
+    healthd_mode_ops-&gt;heartbeat();
+
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20027;&#20989;&#25968;</span>
+    healthd_mainloop();
+    KLOG_ERROR(<span style="color: #2aa198;">"Main loop terminated, exiting\n"</span>);
+    <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #6c71c4;">3</span>;
+}
+</pre>
+</div></li>
+<li id="总结">由上可知,healthd有三种工作模式,即charger(关机充电),
+android(关机充电),recovery模式，我就分别对它们进行讲解</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline13" class="outline-2">
+<h2 id="orgheadline13"><span class="section-number-2">6</span> charger(关机充电)模式</h2>
+<div class="outline-text-2" id="text-6">
+</div><div id="outline-container-orgheadline8" class="outline-3">
+<h3 id="orgheadline8"><span class="section-number-3">6.1</span> 代码路径</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+system/core/healthd/
+device/qcom/common/healthd/
+</p>
+<ul class="org-ul">
+<li><p>
+android<sub>ops</sub>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">healthd_mode_ops</span> <span style="color: #268bd2;">charger_ops</span> = {
+  .init = healthd_mode_charger_init,
+  .preparetowait = healthd_mode_charger_preparetowait,
+  .heartbeat = healthd_mode_charger_heartbeat,
+  .battery_update = healthd_mode_charger_battery_update,
+};
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline9" class="outline-3">
+<h3 id="orgheadline9"><span class="section-number-3">6.2</span> healthd<sub>init</sub>()</h3>
+<div class="outline-text-3" id="text-6-2">
+<ul class="org-ul">
+<li>healthd<sub>init</sub>()</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">healthd_init</span>() {
+
+    <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">io&#22797;&#29992;*/</span>
+    epollfd = epoll_create(MAX_EPOLL_EVENTS);
+    <span style="color: #859900; font-weight: bold;">if</span> (epollfd == -<span style="color: #6c71c4;">1</span>) {
+        KLOG_ERROR(LOG_TAG,
+                   <span style="color: #2aa198;">"epoll_create failed; errno=%d\n"</span>,
+                   errno);
+        <span style="color: #859900; font-weight: bold;">return</span> -<span style="color: #6c71c4;">1</span>;
+    }
+
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#29992;&#25143;&#23450;&#20041;&#30340;&#26495;&#32423;&#21021;&#22987;&#21270;,&#35774;&#32622;&#23450;&#26102;&#20851;&#26426;</span>
+    healthd_board_init(&amp;healthd_config);
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">io&#22797;&#29992; /dev/input/event&#20013;&#30340; &#25353;&#38190;&#20107;&#20214;&#65292;&#30456;&#23545;&#22352;&#26631;&#65292;EV_SW&#31867;&#22411;&#20107;&#20214;*/</span>
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#32472;&#21046;&#20805;&#30005;&#29366;&#24577;&#22270;*/</span>
+    healthd_mode_ops-&gt;init(&amp;healthd_config);
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#23450;&#26102;&#22120;&#21796;&#37266;&#21021;&#22987;&#21270;*/</span>
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#35753;epoll&#30417;&#21548;&#21796;&#37266;&#20107;&#20214;*/</span>
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#23450;&#26102;&#22120;&#27599;&#27425;&#21796;&#37266;&#37117;&#20250;&#26816;&#27979;&#19968;&#19979;&#30005;&#27744;&#30340;&#29366;&#24577;&#65292;&#30005;&#27744;&#38142;&#25509;&#19982;&#21542;&#20250;&#20915;&#23450;&#23450;&#26102;&#23450;&#26102;&#22120;&#21796;&#37266;&#21608;&#26399;*/</span>
+    wakealarm_init();
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">socket&#30417;&#21548;&#20107;&#20214;&#21021;&#22987;&#21270;*/</span>
+    uevent_init();
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#24314;&#19968;&#20010;&#23545;&#35937;&#65292;&#24182;&#21021;&#22987;&#21270;&#23427;&#65292;&#20174;&#32780;&#33719;&#21462;&#30005;&#28304;&#30340;&#35774;&#22791;&#33410;&#28857; /sys/class/power_supply/battery/xxx*/</span>
+    gBatteryMonitor = <span style="color: #859900; font-weight: bold;">new</span> <span style="color: #b58900;">BatteryMonitor</span>();
+    gBatteryMonitor-&gt;init(&amp;healthd_config);
+    <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #6c71c4;">0</span>;
+}
+</pre>
+</div>
+<ul class="org-ul">
+<li><p>
+healthd<sub>board</sub><sub>init</sub>()  =&gt; power<sub>off</sub><sub>alarm</sub><sub>init</sub>()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #b58900;">void</span> <span style="color: #268bd2;">power_off_alarm_init</span>(<span style="color: #b58900;">void</span>)
+{
+    <span style="color: #b58900;">pthread_t</span> <span style="color: #268bd2;">tid</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">rc</span>;
+    <span style="color: #b58900;">char</span> <span style="color: #268bd2;">value</span>[PROP_VALUE_MAX];
+
+    property_get(<span style="color: #2aa198;">"ro.bootmode"</span>, value, <span style="color: #2aa198;">""</span>);
+    <span style="color: #859900; font-weight: bold;">if</span> (<span style="color: #b58900; font-weight: bold;">!</span>strcmp(<span style="color: #2aa198;">"charger"</span>, value)) {
+
+        <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21019;&#24314;&#23450;&#26102;&#20851;&#26426;&#32447;&#31243;</span>
+        rc = pthread_create(&amp;tid, <span style="color: #268bd2; font-weight: bold;">NULL</span>, alarm_thread, <span style="color: #268bd2; font-weight: bold;">NULL</span>);
+        <span style="color: #859900; font-weight: bold;">if</span> (rc &lt; <span style="color: #6c71c4;">0</span>)
+            LOGE(<span style="color: #2aa198;">"Create alarm thread failed\n"</span>);
+    }
+}
+</pre>
+</div></li>
+<li><p>
+healthd<sub>mode</sub><sub>ops</sub>-&gt;init()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #b58900;">void</span> <span style="color: #268bd2;">healthd_mode_charger_init</span>(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">healthd_config</span>* <span style="color: #268bd2;">config</span>)
+{
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">ret</span>;
+    <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">charger</span> *<span style="color: #268bd2;">charger</span> = &amp;charger_state;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">i</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">epollfd</span>;
+
+    dump_last_kmsg();
+
+    LOGW(<span style="color: #2aa198;">"--------------- STARTING CHARGER MODE ---------------\n"</span>);
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#26495;&#32423;&#21021;&#22987;&#21270;,&#22914;&#26524;&#19981;&#33021;&#20805;&#30005;&#65292;&#23601;&#37325;&#21551;,&#36825;&#27493;&#30830;&#20445;&#36827;&#20837;charger&#27169;&#24335;*/</span>
+    healthd_board_mode_charger_init();
+
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">epoll:&#23545;/dev/input/eventxx&#20107;&#20214;&#30340;&#30417;&#21548;,&#24182;&#25913;&#21464;charger.key&#20540;</span>
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20195;&#30721;&#36335;&#24452;bootable/recovery/minui/</span>
+    ret = ev_init(input_callback, charger);
+    <span style="color: #859900; font-weight: bold;">if</span> (<span style="color: #b58900; font-weight: bold;">!</span>ret) {
+
+        <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#33719;&#21462;epoll&#30340;&#33410;&#28857;</span>
+        epollfd = ev_get_epollfd();
+        <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#27880;&#20876; charger&#30340;epoll&#30417;&#21548;&#20107;&#20214;</span>
+        healthd_register_event(epollfd, charger_event_handler);
+    }
+
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#36825;&#37324;&#29983;&#25104;&#19968;&#20010;&#34920;&#31034;&#30005;&#27744;&#38169;&#35823;&#30340;surface&#65292;&#24182;&#25226;&#36825;&#20010;&#25351;&#38024;&#20445;&#23384;&#21040;charger-&gt;surf_unknown&#20013;,</span>
+    ret = res_create_display_surface(<span style="color: #2aa198;">"charger/battery_fail"</span>, &amp;charger-&gt;surf_unknown);
+    <span style="color: #859900; font-weight: bold;">if</span> (ret &lt; <span style="color: #6c71c4;">0</span>) {
+        LOGE(<span style="color: #2aa198;">"Cannot load battery_fail image\n"</span>);
+        charger-&gt;surf_unknown = <span style="color: #268bd2; font-weight: bold;">NULL</span>;
+    }
+
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#28201;&#24230;&#26174;&#31034;&#22270;&#30340;&#21021;&#22987;&#21270;</span>
+    create_display_surface(<span style="color: #2aa198;">"charger/battery_temp_low"</span>,
+            &amp;batt_temp_low_frames[<span style="color: #6c71c4;">0</span>].surface);
+    create_display_surface(<span style="color: #2aa198;">"charger/battery_temp_high"</span>,
+            &amp;batt_temp_high_frames[<span style="color: #6c71c4;">0</span>].surface);
+    create_display_surface(<span style="color: #2aa198;">"charger/battery_temp_too_high"</span>,
+            &amp;batt_temp_too_high_frames[<span style="color: #6c71c4;">0</span>].surface);
+    create_display_surface(<span style="color: #2aa198;">"charger/battery_temp_too_low"</span>,
+            &amp;batt_temp_too_low_frames[<span style="color: #6c71c4;">0</span>].surface);
+
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20805;&#30005;&#30005;&#27744;&#26174;&#31034;&#21160;&#30011;</span>
+    charger-&gt;batt_anim = &amp;battery_animation;
+
+    <span style="color: #b58900;">GRSurface</span>** <span style="color: #268bd2;">scale_frames</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">scale_count</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">scale_fps</span>;
+
+<span style="color: #93a1a1;">/*                     </span><span style="color: #93a1a1;">&#20197;&#19979;&#20840;&#37096;&#26159;&#20805;&#30005;&#30340;&#21160;&#24577;&#22270;**/</span>
+<span style="color: #268bd2;">#ifdef</span> TCTNB_NEW_CHARGER_ICON
+    <span style="color: #859900; font-weight: bold;">struct</span> {
+        <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">png</span>;
+        <span style="color: #b58900;">GRSurface</span> **<span style="color: #268bd2;">surface</span>;
+    } <span style="color: #268bd2;">res</span> [] = {
+        {
+            .png = (<span style="color: #b58900;">char</span> *)<span style="color: #2aa198;">"charger/percent"</span>,<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30334;&#20998;&#27604;&#26174;&#31034;</span>
+            .surface = &amp;charger-&gt;surf_percent,
+        },
+        {
+            .png = (<span style="color: #b58900;">char</span> *)<span style="color: #2aa198;">"charger/battery_warn"</span>,<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#26410;&#30693;&#35686;&#21578;</span>
+            .surface = &amp;charger-&gt;surf_unknown,
+        },
+        {
+            .png = (<span style="color: #b58900;">char</span> *)<span style="color: #2aa198;">"charger/empty_battery"</span>, <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#27809;&#30005;&#27744;&#26174;&#31034;</span>
+            .surface = &amp;charger-&gt;empty_battery,
+        },
+    };
+    <span style="color: #859900; font-weight: bold;">for</span> ( i = <span style="color: #6c71c4;">0</span>; i &lt; (<span style="color: #b58900;">int</span>)ARRAY_SIZE(res); ++i) {
+        ret = res_create_display_surface(res[i].png, res[i].surface);
+        <span style="color: #859900; font-weight: bold;">if</span> (ret &lt; <span style="color: #6c71c4;">0</span>) {
+            LOGE(<span style="color: #2aa198;">"Cannot load image %s (%d)\n"</span>, res[i].png, ret);
+            *(res[i].surface) = <span style="color: #268bd2; font-weight: bold;">NULL</span>;
+        }
+    }
+
+    ret = res_create_multi_display_surface(<span style="color: #2aa198;">"charger/num"</span>, &amp;scale_count,&amp;scale_fps,&amp;charger-&gt;surf_num);
+    <span style="color: #859900; font-weight: bold;">if</span> (ret &lt; <span style="color: #6c71c4;">0</span> || scale_count != <span style="color: #6c71c4;">10</span>) {
+        LOGE(<span style="color: #2aa198;">"Cannot load number image (%d)\n"</span>, ret);
+        charger-&gt;surf_num = <span style="color: #268bd2; font-weight: bold;">NULL</span>;
+    }
+    ret = res_create_multi_display_surface(<span style="color: #2aa198;">"charger/battery_scale_tct"</span>, &amp;scale_count, &amp;scale_fps,
+                                           &amp;scale_frames);
+<span style="color: #268bd2;">#else</span>
+    ret = res_create_multi_display_surface(<span style="color: #2aa198;">"charger/battery_scale"</span>, &amp;scale_count, &amp;scale_fps,
+                                           &amp;scale_frames);
+<span style="color: #268bd2;">#endif</span>
+<span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">MODIFIED-END by li jiang,BUG-3009987*/</span>
+    <span style="color: #859900; font-weight: bold;">if</span> (ret &lt; <span style="color: #6c71c4;">0</span>) {
+        LOGE(<span style="color: #2aa198;">"Cannot load battery_scale image\n"</span>);
+        charger-&gt;batt_anim-&gt;num_frames = <span style="color: #6c71c4;">0</span>;
+        charger-&gt;batt_anim-&gt;num_cycles = <span style="color: #6c71c4;">1</span>;
+    } <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> (scale_count != charger-&gt;batt_anim-&gt;num_frames) {
+        LOGE(<span style="color: #2aa198;">"battery_scale image has unexpected frame count (%d, expected %d)\n"</span>,
+             scale_count, charger-&gt;batt_anim-&gt;num_frames);
+        charger-&gt;batt_anim-&gt;num_frames = <span style="color: #6c71c4;">0</span>;
+        charger-&gt;batt_anim-&gt;num_cycles = <span style="color: #6c71c4;">1</span>;
+    } <span style="color: #859900; font-weight: bold;">else</span> {
+        <span style="color: #859900; font-weight: bold;">for</span> (i = <span style="color: #6c71c4;">0</span>; i &lt; charger-&gt;batt_anim-&gt;num_frames; i++) {
+            charger-&gt;batt_anim-&gt;frames[i].surface = scale_frames[i];
+        }
+    }
+
+    ev_sync_key_state(set_key_callback, charger);
+
+    charger-&gt;next_screen_transition = -<span style="color: #6c71c4;">1</span>;
+    charger-&gt;next_key_check = -<span style="color: #6c71c4;">1</span>;
+    charger-&gt;next_pwr_check = -<span style="color: #6c71c4;">1</span>;
+    healthd_config = config;
+    charger-&gt;boot_min_cap = config-&gt;boot_min_cap;
+}
+</pre>
+</div></li>
+<li><p>
+healthd<sub>board</sub><sub>mode</sub><sub>charger</sub><sub>init</sub>()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #b58900;">void</span> <span style="color: #268bd2;">healthd_board_mode_charger_init</span>()
+{
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">ret</span>;
+    <span style="color: #b58900;">char</span> <span style="color: #268bd2;">buff</span>[<span style="color: #6c71c4;">8</span>] = <span style="color: #2aa198;">"\0"</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">charging_enabled</span> = <span style="color: #6c71c4;">0</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">bms_ready</span> = <span style="color: #6c71c4;">0</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">wait_count</span> = <span style="color: #6c71c4;">0</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">fd</span>;
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#21028;&#26029;&#20805;&#30005;&#26159;&#21542;&#20801;&#35768;*/</span>
+    fd = open(CHARGING_ENABLED_PATH, O_RDONLY);
+    ret = read(fd, buff, <span style="color: #859900; font-weight: bold;">sizeof</span>(buff));
+    close(fd);
+    <span style="color: #859900; font-weight: bold;">if</span> (ret &gt; <span style="color: #6c71c4;">0</span>) {
+        sscanf(buff, <span style="color: #2aa198;">"%d\n"</span>, &amp;charging_enabled);
+        LOGW(<span style="color: #2aa198;">"android charging is %s\n"</span>,
+                <span style="color: #b58900; font-weight: bold;">!</span>!charging_enabled ? <span style="color: #2aa198;">"enabled"</span> : <span style="color: #2aa198;">"disabled"</span>);
+        <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#22914;&#26524;&#31105;&#27490;&#65292;&#37325;&#21551;&#24182;&#36864;&#20986;&#20851;&#26426;&#20805;&#30005;&#27169;&#24335;*/</span>
+        <span style="color: #859900; font-weight: bold;">if</span> (<span style="color: #b58900; font-weight: bold;">!</span>charging_enabled)
+            android_reboot(ANDROID_RB_RESTART, <span style="color: #6c71c4;">0</span>, <span style="color: #6c71c4;">0</span>);
+    }
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#19981;&#30693;&#36947;&#24178;&#21861;&#30340;*/</span>
+    fd = open(BMS_READY_PATH, O_RDONLY);
+    <span style="color: #859900; font-weight: bold;">if</span> (fd &lt; <span style="color: #6c71c4;">0</span>)
+            <span style="color: #859900; font-weight: bold;">return</span>;
+    <span style="color: #859900; font-weight: bold;">while</span> (<span style="color: #6c71c4;">1</span>) {
+        ret = read(fd, buff, <span style="color: #859900; font-weight: bold;">sizeof</span>(buff));
+        <span style="color: #859900; font-weight: bold;">if</span> (ret &gt;= <span style="color: #6c71c4;">0</span>)
+            sscanf(buff, <span style="color: #2aa198;">"%d\n"</span>, &amp;bms_ready);
+        <span style="color: #859900; font-weight: bold;">else</span>
+            LOGE(<span style="color: #2aa198;">"read soc-ready failed, ret=%d\n"</span>, ret);
+
+        <span style="color: #859900; font-weight: bold;">if</span> ((bms_ready &gt; <span style="color: #6c71c4;">0</span>) || (wait_count++ &gt; WAIT_BMS_READY_TIMES_MAX))
+            <span style="color: #859900; font-weight: bold;">break</span>;
+        usleep(WAIT_BMS_READY_INTERVAL_USEC);
+        lseek(fd, <span style="color: #6c71c4;">0</span>, SEEK_SET);
+    }
+    close(fd);
+    LOGV(<span style="color: #2aa198;">"Checking BMS SoC ready done!\n"</span>);
+}
+</pre>
+</div></li>
+<li><p>
+uevent<sub>init</sub>()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">uevent_init</span>(<span style="color: #b58900;">void</span>) {
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21019;&#24314;&#22871;&#25509;&#23383;&#65292;&#29992;&#20110;&#20869;&#26680;&#21040;&#19978;&#23618;&#38388;&#36890;&#35759;</span>
+    uevent_fd = uevent_open_socket(<span style="color: #6c71c4;">64</span>*<span style="color: #6c71c4;">1024</span>, <span style="color: #268bd2; font-weight: bold;">true</span>);
+
+    <span style="color: #859900; font-weight: bold;">if</span> (uevent_fd &lt; <span style="color: #6c71c4;">0</span>) {
+        KLOG_ERROR(LOG_TAG, <span style="color: #2aa198;">"uevent_init: uevent_open_socket failed\n"</span>);
+        <span style="color: #859900; font-weight: bold;">return</span>;
+    }
+
+    fcntl(uevent_fd, F_SETFL, O_NONBLOCK);
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">uevent_event()&#20027;&#35201;&#26356;&#26032;&#30005;&#27744;&#29366;&#24577;</span>
+    <span style="color: #859900; font-weight: bold;">if</span> (healthd_register_event(uevent_fd, uevent_event))
+        KLOG_ERROR(LOG_TAG,
+                   <span style="color: #2aa198;">"register for uevent events failed\n"</span>);
+}
+</pre>
+</div></li>
+<li><p>
+input<sub>callback</sub>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">input_callback</span>(<span style="color: #b58900;">int</span> <span style="color: #268bd2;">fd</span>, <span style="color: #b58900;">unsigned</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">epevents</span>, <span style="color: #b58900;">void</span> *<span style="color: #268bd2;">data</span>)
+{
+    <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">charger</span> *<span style="color: #268bd2;">charger</span> = (<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">charger</span> *)data;
+    <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">input_event</span> <span style="color: #268bd2;">ev</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">ret</span>;
+
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#33719;&#21462;&#36755;&#20837;&#20449;&#24687;&#20445;&#23384;&#22312;ev&#20013;</span>
+    ret = ev_get_input(fd, epevents, &amp;ev);
+    <span style="color: #859900; font-weight: bold;">if</span> (ret)
+        <span style="color: #859900; font-weight: bold;">return</span> -<span style="color: #6c71c4;">1</span>;
+    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26356;&#26032;charger&#25353;&#38190;&#29366;&#24577;,&#21363;charger.keys&#30340;&#20540;</span>
+    update_input_state(charger, &amp;ev);
+    <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #6c71c4;">0</span>;
+}
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline10" class="outline-3">
+<h3 id="orgheadline10"><span class="section-number-3">6.3</span> periodic<sub>chores</sub>();</h3>
+<div class="outline-text-3" id="text-6-3">
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">periodic_chores</span>() {
+    healthd_battery_update();
+}
+</pre>
+</div>
+<ul class="org-ul">
+<li>healthd<sub>battery</sub><sub>update</sub>()</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #b58900;">void</span> <span style="color: #268bd2;">healthd_battery_update</span>(<span style="color: #b58900;">void</span>) {
+
+   <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#35843;&#29992;update&#20989;&#25968;&#65292;&#26681;&#25454;&#36820;&#22238;&#20540;&#21028;&#26029;&#20805;&#30005;&#29366;&#24577;&#65292;&#20805;&#30005;&#20026;true,&#21363;&#25105;&#20204;&#29992;&#30340;&#26159;usb&#20805;&#30005;*/</span>
+   <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20805;&#30005;&#26102;&#65292;&#25105;&#20204;&#36873;&#25321;xxx_fast&#36825;&#20010;&#65292;&#35753;&#23427;&#26356;&#26032;&#30005;&#27744;&#29366;&#24577;&#30340;&#21608;&#26399;&#30701;&#20123;*/</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">new_wake_interval</span> = gBatteryMonitor-&gt;update() ?
+       healthd_config.periodic_chores_interval_fast :
+           healthd_config.periodic_chores_interval_slow;
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#35774;&#32622;&#38393;&#38047;&#21796;&#37266;&#30340;&#21608;&#26399;*/</span>
+    <span style="color: #859900; font-weight: bold;">if</span> (new_wake_interval != wakealarm_wake_interval)
+            wakealarm_set_interval(new_wake_interval);
+
+    <span style="color: #93a1a1;">// </span><span style="color: #93a1a1;">During awake periods poll at fast rate.  If wake alarm is set at fast</span>
+    <span style="color: #93a1a1;">// </span><span style="color: #93a1a1;">rate then just use the alarm; if wake alarm is set at slow rate then</span>
+    <span style="color: #93a1a1;">// </span><span style="color: #93a1a1;">poll at fast rate while awake and let alarm wake up at slow rate when</span>
+    <span style="color: #93a1a1;">// </span><span style="color: #93a1a1;">asleep.</span>
+
+    <span style="color: #859900; font-weight: bold;">if</span> (healthd_config.periodic_chores_interval_fast == -<span style="color: #6c71c4;">1</span>)
+        awake_poll_interval = -<span style="color: #6c71c4;">1</span>;
+    <span style="color: #859900; font-weight: bold;">else</span>
+        awake_poll_interval =
+            new_wake_interval == healthd_config.periodic_chores_interval_fast ?
+                -<span style="color: #6c71c4;">1</span> : healthd_config.periodic_chores_interval_fast * <span style="color: #6c71c4;">1000</span>;
+}
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre class="src src-cpp"></pre>
+</div>
+<div class="org-src-container">
+
+<pre class="src src-cpp"></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline11" class="outline-3">
+<h3 id="orgheadline11"><span class="section-number-3">6.4</span> healthd<sub>mode</sub><sub>ops</sub>-&gt;heartbeat()</h3>
+<div class="outline-text-3" id="text-6-4">
+<ul class="org-ul">
+<li><p>
+healthd<sub>mode</sub><sub>charger</sub><sub>heartbeat</sub>()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #b58900;">void</span> <span style="color: #268bd2;">healthd_mode_charger_heartbeat</span>()
+{
+    <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">charger</span> *<span style="color: #268bd2;">charger</span> = &amp;charger_state;
+    <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">now</span> = curr_time_ms();
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20027;&#35201;&#23545;power&#38190;&#20107;&#20214;&#30340;&#22788;&#29702;,&#37325;&#21551;&#65292;&#20241;&#30496;&#65292;&#21796;&#37266;*/</span>
+    handle_input_state(charger, now);
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#30005;&#27744;led&#26174;&#31034;&#29366;&#24577;&#26356;&#26032;*/</span>
+    handle_power_supply_state(charger, now);
+
+    <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">do screen update last in case any of the above want to start</span>
+<span style="color: #93a1a1;">     * screen transitions (animations, etc)</span>
+<span style="color: #93a1a1;">     */</span>
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#23631;&#24149;&#21160;&#30011;&#30340;&#26356;&#26032;*/</span>
+    update_screen_state(charger, now);
+}
+</pre>
+</div></li>
+<li><p>
+handle<sub>input</sub><sub>state</sub>() =&gt; process<sub>key</sub>()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp">&#25353;&#38190;&#22788;&#29702;
+<span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">process_key</span>(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">charger</span> *<span style="color: #268bd2;">charger</span>, <span style="color: #b58900;">int</span> <span style="color: #268bd2;">code</span>, <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">now</span>)
+{
+    <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">animation</span> *<span style="color: #268bd2;">batt_anim</span> = charger-&gt;batt_anim;
+    <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">key_state</span> *<span style="color: #268bd2;">key</span> = &amp;charger-&gt;keys[code];
+
+    <span style="color: #859900; font-weight: bold;">if</span> (code == KEY_POWER) {
+        <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#28304;&#38190;&#25353;&#19979;&#65292;&#19988;&#25353;&#38190;&#26102;&#38271;&#22823;&#20110;&#37325;&#21551;&#26102;&#38388;&#65292;&#25163;&#26426;&#23601;&#37325;&#21551;</span>
+        <span style="color: #859900; font-weight: bold;">if</span> (key-&gt;down) {
+            <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">reboot_timeout</span> = key-&gt;timestamp + POWER_ON_KEY_TIME;
+            <span style="color: #859900; font-weight: bold;">if</span> (now &gt;= reboot_timeout) {
+                <span style="color: #859900; font-weight: bold;">if</span> (property_get_bool(<span style="color: #2aa198;">"ro.enable_boot_charger_mode"</span>, <span style="color: #268bd2; font-weight: bold;">false</span>)) {
+                    LOGW(<span style="color: #2aa198;">"[%"</span> PRId64 <span style="color: #2aa198;">"] booting from charger mode\n"</span>, now);
+                    property_set(<span style="color: #2aa198;">"sys.boot_from_charger_mode"</span>, <span style="color: #2aa198;">"1"</span>);
+                } <span style="color: #859900; font-weight: bold;">else</span> {
+                    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#25163;&#26426;&#37325;&#21551;*/</span>
+                    <span style="color: #859900; font-weight: bold;">if</span> (charger-&gt;batt_anim-&gt;capacity &gt;= charger-&gt;boot_min_cap) {
+                        LOGW(<span style="color: #2aa198;">"[%"</span> PRId64 <span style="color: #2aa198;">"] rebooting\n"</span>, now);
+                        android_reboot(ANDROID_RB_RESTART, <span style="color: #6c71c4;">0</span>, <span style="color: #6c71c4;">0</span>);
+                    } <span style="color: #859900; font-weight: bold;">else</span> {
+                        LOGV(<span style="color: #2aa198;">"[%"</span> PRId64 <span style="color: #2aa198;">"] ignore power-button press, battery level "</span>
+                            <span style="color: #2aa198;">"less than minimum\n"</span>, now);
+                    }
+                }
+            } <span style="color: #859900; font-weight: bold;">else</span> {
+                <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26102;&#38388;&#19981;&#22815;&#65292;&#35774;&#32622;&#19979;&#27425;&#25353;&#38190;&#26816;&#27979;&#26102;&#38388;</span>
+                set_next_key_check(charger, key, POWER_ON_KEY_TIME);
+            }
+        } <span style="color: #859900; font-weight: bold;">else</span> {
+            <span style="color: #859900; font-weight: bold;">if</span> (key-&gt;pending) {
+                <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#21160;&#30011;&#26410;&#36816;&#34892;&#26102;&#25353;&#19979;&#25353;&#38190;&#65292;&#21017;&#24377;&#20986;&#21160;&#30011;&#24182;&#36864;&#20986;&#20241;&#30496;*/</span>
+                <span style="color: #859900; font-weight: bold;">if</span> (<span style="color: #b58900; font-weight: bold;">!</span>batt_anim-&gt;run) {
+                    kick_animation(batt_anim);
+                    request_suspend(<span style="color: #268bd2; font-weight: bold;">false</span>);
+                } <span style="color: #859900; font-weight: bold;">else</span> {
+                <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#22914;&#26524;&#21160;&#30011;&#36816;&#34892;&#26102;&#25353;&#25353;&#38190;&#65292;&#20851;&#38381;&#21160;&#30011;&#24182;&#35831;&#27714;&#20241;&#30496;*/</span>
+                    reset_animation(batt_anim);
+                    charger-&gt;next_screen_transition = -<span style="color: #6c71c4;">1</span>;
+                    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#28781;&#23631;*/</span>
+                    healthd_board_mode_charger_set_backlight(<span style="color: #268bd2; font-weight: bold;">false</span>);
+                    gr_fb_blank(<span style="color: #268bd2; font-weight: bold;">true</span>);
+                    <span style="color: #859900; font-weight: bold;">if</span> (charger-&gt;charger_connected)
+                        request_suspend(<span style="color: #268bd2; font-weight: bold;">true</span>);
+                }
+            }
+        }
+    }
+
+    key-&gt;pending = <span style="color: #268bd2; font-weight: bold;">false</span>;
+}
+</pre>
+</div></li>
+<li><p>
+handle<sub>power</sub><sub>supply</sub><sub>state</sub>()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">handle_power_supply_state</span>(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">charger</span> *<span style="color: #268bd2;">charger</span>, <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">now</span>)
+{
+    <span style="color: #859900; font-weight: bold;">if</span> (<span style="color: #b58900; font-weight: bold;">!</span>charger-&gt;have_battery_state)
+        <span style="color: #859900; font-weight: bold;">return</span>;
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20027;&#35201;&#26159;&#26681;&#25454;&#30005;&#27744;&#30005;&#37327;&#21363;&#28201;&#24230;&#30340;&#29366;&#24577;&#65292;&#25913;&#21464;led&#28783;&#30340;&#39068;&#33394;&#65292;&#27604;&#22914;100%&#20142;&#32511;&#28783;*/</span>
+    healthd_board_mode_charger_battery_update(batt_prop);
+
+    <span style="color: #859900; font-weight: bold;">if</span> (<span style="color: #b58900; font-weight: bold;">!</span>charger-&gt;charger_connected) {
+
+        <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Last cycle would have stopped at the extreme top of battery-icon</span>
+<span style="color: #93a1a1;">         * Need to show the correct level corresponding to capacity.</span>
+<span style="color: #93a1a1;">         */</span>
+        request_suspend(<span style="color: #268bd2; font-weight: bold;">false</span>);
+        <span style="color: #859900; font-weight: bold;">if</span> (charger-&gt;next_pwr_check == -<span style="color: #6c71c4;">1</span>) {
+            charger-&gt;next_pwr_check = now + UNPLUGGED_SHUTDOWN_TIME;
+            LOGW(<span style="color: #2aa198;">"[%"</span> PRId64 <span style="color: #2aa198;">"] device unplugged: shutting down in %"</span> PRId64 <span style="color: #2aa198;">" (@ %"</span> PRId64 <span style="color: #2aa198;">")\n"</span>,
+                 now, (<span style="color: #b58900;">int64_t</span>)UNPLUGGED_SHUTDOWN_TIME, charger-&gt;next_pwr_check);
+        } <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> (now &gt;= charger-&gt;next_pwr_check) {
+            LOGW(<span style="color: #2aa198;">"[%"</span> PRId64 <span style="color: #2aa198;">"] shutting down\n"</span>, now);
+            android_reboot(ANDROID_RB_POWEROFF, <span style="color: #6c71c4;">0</span>, <span style="color: #6c71c4;">0</span>); <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20851;&#26426;</span>
+        } <span style="color: #859900; font-weight: bold;">else</span> {
+            <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">otherwise we already have a shutdown timer scheduled */</span>
+        }
+    } <span style="color: #859900; font-weight: bold;">else</span> {
+        <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">online supply present, reset shutdown timer if set */</span>
+        <span style="color: #859900; font-weight: bold;">if</span> (charger-&gt;next_pwr_check != -<span style="color: #6c71c4;">1</span>) {
+            LOGW(<span style="color: #2aa198;">"[%"</span> PRId64 <span style="color: #2aa198;">"] device plugged in: shutdown cancelled\n"</span>, now);
+            <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">kick_animation(charger-&gt;batt_anim);   // wangjin modify for poweroff-charging-reboot bug, PR1921547</span>
+        }
+        charger-&gt;next_pwr_check = -<span style="color: #6c71c4;">1</span>;
+    }
+}
+</pre>
+</div></li>
+<li><p>
+void healthd<sub>board</sub><sub>mode</sub><sub>charger</sub><sub>battery</sub><sub>update</sub>()
+主要做一些led状态的更新，比如满电亮绿灯，90%亮红绿灯等等
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">healthd_board_mode_charger_battery_update</span>(
+              <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #268bd2; font-weight: bold;">android</span>::<span style="color: #b58900;">BatteryProperties</span> *<span style="color: #268bd2;">batt_prop</span>)
+{
+    <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">blink_for_hvdcp</span> = -<span style="color: #6c71c4;">1</span>;
+    <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">old_color</span> = <span style="color: #6c71c4;">0</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">i</span>, <span style="color: #268bd2;">color</span>, <span style="color: #268bd2;">soc</span>, <span style="color: #268bd2;">rc</span>;
+    <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">blink</span> = <span style="color: #268bd2; font-weight: bold;">false</span>;
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#21028;&#26029;hvdcp&#20805;&#30005;&#26159;&#21542;&#25903;&#25345;&#32418;&#32511;&#28783;,&#26174;&#28982;idol4&#30340;&#39033;&#30446;&#19981;&#25903;&#25345;*/</span>
+    <span style="color: #859900; font-weight: bold;">if</span> (blink_for_hvdcp == -<span style="color: #6c71c4;">1</span>)
+        blink_for_hvdcp = leds_blink_for_hvdcp_allow();
+
+    <span style="color: #859900; font-weight: bold;">if</span> ((blink_for_hvdcp &gt; <span style="color: #6c71c4;">0</span>) &amp;&amp; is_hvdcp_inserted())
+        blink = <span style="color: #268bd2; font-weight: bold;">true</span>;
+
+    soc = batt_prop-&gt;batteryLevel;
+
+    <span style="color: #859900; font-weight: bold;">for</span> (i = <span style="color: #6c71c4;">0</span>; i &lt; ((<span style="color: #b58900;">int</span>)ARRAY_SIZE(soc_leds) - <span style="color: #6c71c4;">1</span>); i++) {
+        <span style="color: #859900; font-weight: bold;">if</span> (soc &lt; soc_leds[i].soc)
+            <span style="color: #859900; font-weight: bold;">break</span>;
+    }
+    color = soc_leds[i].color;
+
+    <span style="color: #859900; font-weight: bold;">if</span> (old_color != color) {
+        <span style="color: #859900; font-weight: bold;">if</span> ((color &amp; HVDCP_COLOR_MAP) &amp;&amp; blink) {
+            <span style="color: #859900; font-weight: bold;">if</span> (blink_for_hvdcp &amp; RED_LED) {
+                rc = write_file_int(RED_LED_BLINK_PATH, HVDCP_BLINK_TYPE);
+                <span style="color: #859900; font-weight: bold;">if</span> (rc &lt; <span style="color: #6c71c4;">0</span>) {
+                    LOGE(<span style="color: #2aa198;">"Fail to write: %s\n"</span>, RED_LED_BLINK_PATH);
+                    <span style="color: #859900; font-weight: bold;">return</span>;
+                }
+            }
+            <span style="color: #859900; font-weight: bold;">if</span> (blink_for_hvdcp &amp; GREEN_LED) {
+                rc = write_file_int(GREEN_LED_BLINK_PATH, HVDCP_BLINK_TYPE);
+                <span style="color: #859900; font-weight: bold;">if</span> (rc &lt; <span style="color: #6c71c4;">0</span>) {
+                    LOGE(<span style="color: #2aa198;">"Fail to write: %s\n"</span>, GREEN_LED_BLINK_PATH);
+                    <span style="color: #859900; font-weight: bold;">return</span>;
+                }
+            }
+        } <span style="color: #859900; font-weight: bold;">else</span> {
+                set_tricolor_led(<span style="color: #6c71c4;">0</span>, old_color);
+                set_tricolor_led(<span style="color: #6c71c4;">1</span>, color);
+                old_color = color;
+                LOGV(<span style="color: #2aa198;">"soc = %d, set led color 0x%x\n"</span>, soc, soc_leds[i].color);
+        }
+    }
+}
+</pre>
+</div></li>
+<li><div class="org-src-container">
+
+<pre class="src src-cpp"></pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline12" class="outline-3">
+<h3 id="orgheadline12"><span class="section-number-3">6.5</span> healthd<sub>mainloop</sub>()</h3>
+<div class="outline-text-3" id="text-6-5">
+<ul class="org-ul">
+<li><p>
+healthd<sub>mainloop</sub>()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">healthd_mainloop</span>(<span style="color: #b58900;">void</span>) {
+    <span style="color: #859900; font-weight: bold;">while</span> (<span style="color: #6c71c4;">1</span>) {
+        <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">epoll_event</span> <span style="color: #268bd2;">events</span>[eventct];
+        <span style="color: #b58900;">int</span> <span style="color: #268bd2;">nevents</span>;
+        <span style="color: #b58900;">int</span> <span style="color: #268bd2;">timeout</span> = awake_poll_interval;
+        <span style="color: #b58900;">int</span> <span style="color: #268bd2;">mode_timeout</span>;
+
+        mode_timeout = healthd_mode_ops-&gt;preparetowait();
+        <span style="color: #859900; font-weight: bold;">if</span> (timeout &lt; <span style="color: #6c71c4;">0</span> || (mode_timeout &gt; <span style="color: #6c71c4;">0</span> &amp;&amp; mode_timeout &lt; timeout))
+            timeout = mode_timeout;
+
+        <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">io&#21475;&#22797;&#29992; &#26816;&#27979;event&#20107;&#20214;*/</span>
+        nevents = epoll_wait(epollfd, events, eventct, timeout);
+
+        <span style="color: #859900; font-weight: bold;">if</span> (nevents == -<span style="color: #6c71c4;">1</span>) {
+            <span style="color: #859900; font-weight: bold;">if</span> (errno == EINTR)
+                <span style="color: #859900; font-weight: bold;">continue</span>;
+            KLOG_ERROR(LOG_TAG, <span style="color: #2aa198;">"healthd_mainloop: epoll_wait failed\n"</span>);
+            <span style="color: #859900; font-weight: bold;">break</span>;
+        }
+
+        <span style="color: #859900; font-weight: bold;">for</span> (<span style="color: #b58900;">int</span> <span style="color: #268bd2;">n</span> = <span style="color: #6c71c4;">0</span>; n &lt; nevents; ++n) {
+            <span style="color: #859900; font-weight: bold;">if</span> (events[n].data.ptr)
+                (*(<span style="color: #b58900;">void</span> (*)(<span style="color: #b58900;">int</span>))events[n].data.ptr)(events[n].events);
+        }
+
+        <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#36229;&#26102;&#65292;&#26356;&#26032;&#26174;&#31034;&#30005;&#27744;&#23646;&#24615;*/</span>
+        <span style="color: #859900; font-weight: bold;">if</span> (<span style="color: #b58900; font-weight: bold;">!</span>nevents)
+            periodic_chores();
+
+        <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#25353;&#38190;&#22788;&#29702;&#65292;&#26356;&#26032;&#26174;&#31034;&#29366;&#24577;&#31561;*/</span>
+        healthd_mode_ops-&gt;heartbeat();
+    }
+
+    <span style="color: #859900; font-weight: bold;">return</span>;
+}
+</pre>
+</div></li>
+<li><p>
+healthd<sub>mode</sub><sub>charger</sub><sub>preparetowait</sub>()
+计算超时时间
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #b58900;">int</span> <span style="color: #268bd2;">healthd_mode_charger_preparetowait</span>(<span style="color: #b58900;">void</span>)
+{
+    <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">charger</span> *<span style="color: #268bd2;">charger</span> = &amp;charger_state;
+    <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">now</span> = curr_time_ms(); <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#33719;&#21462;&#24403;&#21069;&#26102;&#38388;</span>
+    <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">next_event</span> = INT64_MAX;
+    <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">timeout</span>;
+
+    LOGV(<span style="color: #2aa198;">"[%"</span> PRId64 <span style="color: #2aa198;">"] next screen: %"</span> PRId64 <span style="color: #2aa198;">" next key: %"</span> PRId64 <span style="color: #2aa198;">" next pwr: %"</span> PRId64 <span style="color: #2aa198;">"\n"</span>, now,
+         charger-&gt;next_screen_transition, charger-&gt;next_key_check,
+         charger-&gt;next_pwr_check);
+
+    <span style="color: #859900; font-weight: bold;">if</span> (charger-&gt;next_screen_transition != -<span style="color: #6c71c4;">1</span>)
+        next_event = charger-&gt;next_screen_transition;
+    <span style="color: #859900; font-weight: bold;">if</span> (charger-&gt;next_key_check != -<span style="color: #6c71c4;">1</span> &amp;&amp; charger-&gt;next_key_check &lt; next_event)
+        next_event = charger-&gt;next_key_check;
+    <span style="color: #859900; font-weight: bold;">if</span> (charger-&gt;next_pwr_check != -<span style="color: #6c71c4;">1</span> &amp;&amp; charger-&gt;next_pwr_check &lt; next_event)
+        next_event = charger-&gt;next_pwr_check;
+
+    <span style="color: #859900; font-weight: bold;">if</span> (next_event != -<span style="color: #6c71c4;">1</span> &amp;&amp; next_event != INT64_MAX)
+        timeout = max(<span style="color: #6c71c4;">0</span>, next_event - now);
+    <span style="color: #859900; font-weight: bold;">else</span>
+        timeout = -<span style="color: #6c71c4;">1</span>;
+
+   <span style="color: #859900; font-weight: bold;">return</span> (<span style="color: #b58900;">int</span>)timeout;
+}
+</pre>
+</div></li>
+<li><div class="org-src-container">
+
+<pre class="src src-cpp"></pre>
+</div></li>
+<li><div class="org-src-container">
+
+<pre class="src src-cpp"></pre>
+</div></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline14" class="outline-2">
+<h2 id="orgheadline14"><span class="section-number-2">7</span> android(开机充电)模式</h2>
+<div class="outline-text-2" id="text-7">
+<ul class="org-ul">
+<li><p>
+android<sub>ops</sub>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">healthd_mode_ops</span> <span style="color: #268bd2;">android_ops</span> = {
+    .init = healthd_mode_android_init,
+    .preparetowait = healthd_mode_android_preparetowait,
+    .heartbeat = healthd_mode_nop_heartbeat,
+    .battery_update = healthd_mode_android_battery_update,
+};
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline15" class="outline-2">
+<h2 id="orgheadline15"><span class="section-number-2">8</span> recovery(恢复设置充电)模式</h2>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: a date, fixed, of a format string for format-time-string</p>
+<p class="author">Author: wildbook</p>
+<p class="date">Created: 2017-01-12 四 16:38</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

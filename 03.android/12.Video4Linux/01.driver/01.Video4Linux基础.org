@@ -1,0 +1,88 @@
+* 简介
+  V4L2是V4L的第二个版本
+** V4L2支持的设备接口
+   *视频采集接口* (video capture interface)
+   *视频输出接口* (video output interface)
+   *视频间隔消隐信号接口* (VBI interface)
+   *收音机接口* (radio interface)
+** 参考文档
+   + *Docs*
+     Documentation/video4linux/V4L2-framework.txt
+     Documentation/video4linux/videobuf
+   + *Code*
+     drivers/media/video目录下核心代码
+* sysfs
+  + 子设备用户空间API
+    */dev/v4l-subdevX*
+    */dev/fbX*
+* 数据结构
+** v4l2_device
+   用于保存设备实例的数据
+   #+begin_src cpp
+   struct video_device
+    {
+    #if defined(CONFIG_MEDIA_CONTROLLER)
+      struct media_entity entity;
+    #endif
+      /* device ops */
+      const struct v4l2_file_operations *fops;
+
+      /* sysfs */
+      struct device dev;		/* v4l device */
+      struct cdev *cdev;		/* character device */
+
+      /* Set either parent or v4l2_dev if your driver uses v4l2_device */
+      struct device *parent;		/* device parent */
+      struct v4l2_device *v4l2_dev;	/* v4l2_device parent */
+
+      /* Control handler associated with this device node. May be NULL. */
+      struct v4l2_ctrl_handler *ctrl_handler;
+
+      /* vb2_queue associated with this device node. May be NULL. */
+      struct vb2_queue *queue;
+
+      /* Priority state. If NULL, then v4l2_dev->prio will be used. */
+      struct v4l2_prio_state *prio;
+
+      /* device info */
+      char name[32];
+      int vfl_type;	/* device type */
+      int vfl_dir;	/* receiver, transmitter or m2m */
+      /* 'minor' is set to -1 if the registration failed */
+      int minor;
+      u16 num;
+      /* use bitops to set/clear/test flags */
+      unsigned long flags;
+      /* attribute to differentiate multiple indices on one physical device */
+      int index;
+
+      /* V4L2 file handles */
+      spinlock_t		fh_lock; /* Lock for all v4l2_fhs */
+      struct list_head	fh_list; /* List of struct v4l2_fh */
+
+      int debug;			/* Activates debug level*/
+
+      /* Video standard vars */
+      v4l2_std_id tvnorms;		/* Supported tv norms */
+      v4l2_std_id current_norm;	/* Current tvnorm */
+
+      /* callbacks */
+      void (*release)(struct video_device *vdev);
+
+      /* ioctl callbacks */
+      const struct v4l2_ioctl_ops *ioctl_ops;
+      DECLARE_BITMAP(valid_ioctls, BASE_VIDIOC_PRIVATE);
+
+      /* serialization lock */
+      DECLARE_BITMAP(disable_locking, BASE_VIDIOC_PRIVATE);
+      struct mutex *lock;
+    };
+   #+end_src
+** v4l2_subdev 
+   代表子设备实例
+** v4l2_fh
+   跟踪文件句柄实例
+** video_buf
+   处理视频缓冲
+** video_device
+   结构体保存V4L2设备节点的数据

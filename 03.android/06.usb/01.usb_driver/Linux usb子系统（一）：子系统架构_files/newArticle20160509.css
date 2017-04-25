@@ -1,0 +1,268 @@
+﻿body{font-family: Arial,Helvetica,sans-serif; font-size: 12px; background-color: #fff; text-align: center; padding: 0; margin: 0;}
+li{padding: 0; margin: 0;}
+.lf360{float: left;}
+.rt360{float: right;}
+.both{clear: both;}
+.both360doc{clear: both;}
+clear360doc{clear: both;}
+a:link, a:visited{color: #3d6ba7; text-decoration: none;}
+a:hover{color: #3d6ba7; text-decoration: underline;}
+.pageqh{text-align: left; width: 248px; border: #e4e4e4 1px solid; border-top: none; height: 215px; background-color: #fbfbfb;} .pageqh .nav{width: 248px; float: left; font-size: 14px;} .pageqh .nav SPAN{text-align: center; LINE-height: 34px; background: #fbfbfb; float: left; height: 34px; COLOR: #2c3437; CURSOR: pointer; border-top: #e4e4e4 1px solid;} .pageqh .nav SPAN.checked{position: relative; background: #fff; FONT-WEIGHT: bold; border-top: #ff7c12 2px solid;} .pageqh .mokuaicontent{MARGIN-TOP: -1px; width: 248px; float: left; border-TOP: #e4e4e4 1px solid; height: 1px; line-height: 0;}
+.plbox{width: 670px; height: 175px; background-color: #fafafa;}
+.plmain{padding: 15px 20px;}
+.deluwx{color: #626262; height: auto; text-align: left; font-size: 14px;} .deluwx span{font-weight: 700;}
+.wenzhang_pl_box{width: 655px; text-align: left; margin: 5px 0 20px 0; clear: both;}
+.wenzhang_pl_right{float: left; text-align: left; width: 588px;}
+#artContent .wenzhang_pl_right {float:none;}
+#artContent .pl_con { margin:5px  0 0;}
+.timewenzi{color: #848484; padding-left: 7px;}
+.pl_con{line-height: 25px; margin: 5px 0 0 8px; word-wrap: break-word; padding-top: 7px; padding-bottom: 7px; font-size: 14px; width: 580px; clear: both;}
+.revlace{color: #2d7ead; padding-top: 3px; vertical-align: top; padding-left: 8px; height: 20px;}
+.iehight{height: 7px;}
+.plskuai{height: 26px; background-color: #fafafa; line-height: 26px; padding-left: 8px;}
+.yeschu{color: #2c9900; font-weight: 700;}
+.nochu{color: #cd4700; font-weight: 700;}
+.pl_consmall{line-height: 25px; margin: 5px 0 0 8px; word-wrap: break-word; padding-top: 7px; padding-bottom: 7px; font-size: 14px; clear: both;}
+.pingrig{padding-right: 15px;}
+.pltit{height: 36px;}
+.sharelink A:link, .sharelink A:visited{COLOR: #6a6a6a; text-decoration: none;}
+.sharelink A:hover{COLOR: #3b6ba9; text-decoration: none;}
+.fenxiang{position: absolute; border: 1px solid #cbcbcb; text-align: left; background-color: #fff; margin-top: 9px; margin-left: -40px; font-size: 12px; height: 150px; width: 108px;} .fenxiang li{padding-left: 12px; height: 29px; border-bottom: 1px solid #f2f2f2;}
+.biaoqin{width: 248px; height: 180px; border: #d6d6d6 1px solid; background-color: #fff; margin-top: 30px; margin-left: 0; *margin-left: -23px !important;}
+.biaoqinpic{clear: both; padding-top: 10px; padding-left: 10px;} .biaoqinpic li{height: 32px; background-image: none;} .biaoqinpic img{padding: 2px; margin: 0;}
+.guanbiwz2{padding-top: 9px; padding-right: 14px; *padding-top: 11px !important;}
+.guanbiwz3{font-size: 12px; font-weight: 700; color: #4d4d4d; float: left;}
+.faxin{overflow-y: auto; height: 161px; width: 328px; color: #000; font-size: 12px; line-height: 16px; background-color: #fff; border: 1px solid #c9c9c9;}
+.guanbiwz111{font-size: 12px; font-weight: 700; color: #4d4d4d; float: left; padding-top: 9px; padding-left: 16px; *padding-top: 11px !important;}
+.highlight{background-color: #ff0;}
+.sticky{background-color: #e3edf8; color: #466ea6; text-decoration: underline;}
+.closedivdragenable{background-image: url(http://pubimage.360doc.com/lay_bg.gif); text-align: left; TEXT-INDENT: 10px; width: 312px; height: 16px; PADDING-TOP: 10px;}
+.stickyitem{width: 310px; height: 20px;}
+.stickytext{width: 310px;}
+.box_1{border: #a1c0df 1px solid; background-color: #e7f3fb;}
+.box_6{border: #a9a9a9 1px solid; background-color: #fff;}
+.wenzhang_pl_left{width: 57px; text-align: left; height: 70px;}
+.login_box_font{text-align: left; color: olive; font-size: 14px; font-weight: 700;}
+.spanCgCgLink{color: #1848b5;}
+.spanCgCgLinkOnMouseOver{color: #1848b5; cursor: pointer; text-decoration: underline;}
+.spanCgCgLinkOnMouseOut{color: #1848b5; text-decoration: none;}
+#divemail TD{line-height: 26px; font-size: 14px;}
+.mzbodl{font-weight: 700;}
+.revlace a:link, .revlace a:visited{color: #3d6ba7; text-decoration: none;}
+.revlace a:hover{color: #3d6ba7; text-decoration: underline;}
+.wenzhang_pl_boxsmall{text-align: left; margin: 26px 0 15px; width: 580px; clear: both; padding-left: 16px;}
+.wenzhang_pl_rightsmall{text-align: left; PADDING-LEFT: 8px; width: 512px; float: left;}
+.revacediv{text-align: left; width: 597px; CLEAR: both;}
+.revacextdiv{width: 597px; height: 2px;}
+#fullbg{Z-INDEX: 1001; position: absolute; FILTER: Alpha(Opacity=30); background-COLOR: gray; DISPLAY: none; TOP: 0; LEFT: 0; -moz-opacity: .4; opacity: .4;}
+#dialog{Z-INDEX: 10000; position: absolute; width: 500px; DISPLAY: none; height: 310px;}
+.loginnewdiv{PADDING-LEFT: 16px; width: 351px; COLOR: #6d6d6d;}
+.guanbi{width: 48px; float: right;}
+.guanbidiv{height: 38px; PADDING-TOP: 9px;}
+.backgroundDivIe{Z-INDEX: 9; position: absolute; FILTER: Alpha(Opacity=0,Style=0); background-COLOR: #000; opacity: .3;}
+.paixucssright{PADDING-LEFT: 4px; float: left; PADDING-TOP: 8px;}
+.bjyellow2{LINE-height: 26px; background-COLOR: #fef9d1; PADDING-LEFT: 6px; CURSOR: pointer;}
+.bjwhite2{LINE-height: 26px; background-COLOR: #fffff7; PADDING-LEFT: 6px; CURSOR: pointer;}
+.logininputanew{border: #eee 1px solid; PADDING-BOTTOM: 8px; LINE-height: 24px; PADDING-LEFT: 5px; width: 198px; PADDING-RIGHT: 5px; height: 18px; COLOR: #b2b2b2; FONT-SIZE: 12px; PADDING-TOP: 8px;}
+.zcbutton{position: absolute; margin-left: 30px; margin-top: -10px;}
+.addtionone{position: absolute; color: #cc4f4f; margin-left: 50px; margin-top: -62px; *margin-left: -28px !important; *margin-top: -37px !important; font-size: 22px; font-weight: 700; display: none;}
+#goTop2{bottom: 30px; position: fixed; width: 131px; z-index: 2; text-align: left; _position: absolute;}
+#goTop, #goTop1, #goTop3{width: 50px; height: 50px;} #goTop #go_top, #goTop #go_top:hover{background-image: url(http://pubimage.360doc.com/wz/wz26.gif); cursor: pointer; float: left; overflow: hidden;} #goTop #go_top{height: 50px; width: 50px;} #goTop #go_top:hover{background-image: url(http://pubimage.360doc.com/wz/wzgo1.gif);} #goTop1 #go_top1, #goTop1 #go_top1:hover{background-image: url(http://pubimage.360doc.com/wz/wzgo3.gif); cursor: pointer; float: left; overflow: hidden;} #goTop1 #go_top1, #goTop3 #go_top3{height: 49px; width: 50px;} #goTop3 #go_top3, #goTop3 #go_top3:hover{background-image: url(http://pubimage.360doc.com/wz/wzgo2.gif); cursor: pointer; float: left; overflow: hidden;}
+.huifuxt{width: 584px; height: 148px; background: url(http://pubimage.360doc.com/wz/wz17.gif) repeat-x; background-position: top; background-color: #fafafa; margin-left: 8px;}
+.checkbox{vertical-align: middle; margin-top: 0;}
+.dlinputwz{padding-top: 9px; padding-left: 10px; width: 60px;}
+.hezuodiv{padding-left: 78px; padding-top: 14px;}
+.zddenglu{padding-top: 9px; padding-left: 13px;}
+.huifubt{width: 81px; height: 28px; float: right;} .huifubt a:link, .huifubt a:visited{display: block; width: 81px; height: 28px; background: url(http://pubimage.360doc.com/wz/wz18.gif) no-repeat;} .huifubt a:hover{background-image: url(http://pubimage.360doc.com/wz/wz18a.gif);}
+.huifubt2{width: 81px; height: 28px; float: right;} .huifubt2 a:link, .huifubt2 a:visited{display: block; width: 81px; height: 28px; background: url(http://pubimage.360doc.com/wz/wz24.gif) no-repeat;} .huifubt2 a:hover{background-image: url(http://pubimage.360doc.com/wz/wz24a.gif);}
+.denglubt{width: 104px; height: 36px;} .denglubt a:link, .denglubt a:visited{display: block; width: 104px; height: 36px; background: url(http://pubimage.360doc.com/wz/wz21.gif) no-repeat;} .denglubt a:hover{background-image: url(http://pubimage.360doc.com/wz/wz21a.gif);}
+.txtbox{width: 335px; height: 100px; border: 1px solid #d4d4d4; overflow: auto; line-height: 20px; font-size: 12px; padding: 2px 5px; color: grey;}
+.quding{background: url(http://pubimage.360doc.com/wz/button1.gif) no-repeat; width: 80px; height: 30px; line-height: 30px; text-align: center; color: #fff; cursor: pointer;}
+.xuxiao{background: url(http://pubimage.360doc.com/wz/button2.gif) no-repeat; width: 80px; height: 30px; line-height: 30px; text-align: center; color: #555; cursor: pointer;}
+.txtinput{border: 1px solid #d4d4d4; height: 18px; line-height: 18px; color: #747474; padding: 5px 10px; width: 297px; font-size: 14px;}
+.sinputwz{padding-top: 6px; color: #b1b1b1; font-size: 12px; height: 37px;}
+.pizhu{background: url(http://pubimage.360doc.com/wz/biaozhubg1.png) no-repeat; width: 116px; height: 112px; text-align: center; color: #1c1c1c; padding: 5px;z-index:3;}
+.bjbiaoji1{height: 30px; margin-top: 1px; line-height: 30px; cursor: pointer;}
+.bjbiaoji2{height: 30px; line-height: 30px; cursor: pointer;}
+.pizhu2{background: url(http://pubimage.360doc.com/wz/biaozhubg2.png) no-repeat; width: 116px; height: 61px; text-align: center; color: #1c1c1c; padding: 4px;z-index:3;}
+.pop_content3{background: url(http://pubimage.360doc.com/wz/wz23.gif) repeat-x; text-align: left; width: 304px; border: 4px solid #8e8e8e; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; background-color: #fff; Z-INDEX: 200; position: absolute;}
+.puzhusmll{height: 20px; padding-top: 8px;}
+.pizhucool{padding: 0 9px; color: #414141;z-index:3;}
+.pizhudt{padding-left: 4px; border-top: 1px solid #efefef; padding-top: 12px;z-index:3;}
+.pizhbot{height: 34px; background-color: #f8f8f8; padding-top: 6px;}
+.tjpz{background: url(http://pubimage.360doc.com/wz/wz23.gif) repeat-x; height: 26px; padding-top: 7px; border-top: 1px solid #d8d8d8;}
+.pztxtbox{width: 284px; padding: 5px 10px; overflow: auto; border: none; height: 102px; line-height: 18px; color: #a2a2a2; font-size: 12px;}
+.tjpzsl{width: 67px; float: right;}
+.qudinga{background: url(http://pubimage.360doc.com/wz/button1a.gif) no-repeat; width: 80px; height: 30px; line-height: 30px; text-align: center; color: #fff; cursor: pointer;}
+.xuxiaoa{background: url(http://pubimage.360doc.com/wz/button2a.gif) no-repeat; width: 80px; height: 30px; line-height: 30px; text-align: center; color: #555; cursor: pointer;}
+.pop_content2{text-align: left; width: 620px; height: 378px; background-color: #f8f8f8; border: 1px solid #d8d8d8;}
+.tcengtop{height: 60px; padding-top: 17px; padding-left: 20px; padding-right: 15px;}
+.tcengmid{padding-top: 26px; height: 26px; text-align: center;}
+.pizhu3{background: url(http://pubimage.360doc.com/wz/biaozhubg3.png) no-repeat; width: 114px; height: 33px; text-align: center; color: #1c1c1c; padding: 5px;z-index:3;}
+.weixinbox{width: 459px; height: 347px; background-color: #fff; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px;}
+.chacha{padding-top: 15px; padding-right: 19px; height: 27px; text-align: right;}
+.weixinwz{font-size: 14px; font-weight: 700; color: #8c8c8c; text-align: center;}
+.chaa a:link, .chaa a:visited{display: block; width: 14px; height: 14px; background: url(http://pubimage.360doc.com/wz/cha2.gif) no-repeat;}
+.chaa a:hover{background: url(http://pubimage.360doc.com/wz/cha1a.gif) no-repeat;}
+.tuijianpy{width: 370px; height: 354px; background-color: #fff; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; text-align: left; border: 4px solid #8e8e8e;}
+.cengbj{height: 33px; background: url(http://pubimage.360doc.com/cengbj.gif) repeat-x;}
+.cengleft{font-size: 14px; color: #4d4d4d; padding-left: 16px; line-height: 32px; font-weight: 700; float: left;}
+.chas a:link, .chas a:visited{display: block; width: 10px; height: 9px; background: url(http://pubimage.360doc.com/chas.gif) no-repeat;}
+.chas a:hover{display: block; width: 10px; height: 9px; background-image: url(http://pubimage.360doc.com/chasa.gif); background-repeat: no-repeat;}
+.loginnew{text-align: left; PADDING-LEFT: 57px; width: 280px; float: left; padding-top: 8px;}
+.newwddivtop{text-align: left; padding-left: 4px; height: 55px; color: #525252; font-size: 14px; padding-top: 13px;}
+.newwdleft{width: 459px; float: left; padding-top: 13px;}
+.newwdfont{padding-left: 9px; font-weight: 700;}
+.newwdwz2{color: #fc5b00; font-size: 12px;}
+.newwdwz1{color: #000; font-size: 12px; padding-top: 5px;}
+.sharelink{line-height: 29px;}
+.shangtishi_pt{width: 300px; height: 48px; margin-top: 30px; line-height: 24px; text-align: center;}
+.erjibt_li{background: url(http://pubimage.360doc.com/wz/xianbg.gif) no-repeat; width: 86px; height: 28px; color: #fff; cursor: pointer;}
+.erjibta_li{background: url(http://pubimage.360doc.com/wz/xianbga.gif) no-repeat; width: 86px; height: 28px; color: #fff; cursor: pointer;}
+.erjibtgray_li, .erjibtgraya_li{cursor: pointer;}
+.tishi-box1{color: #494949; padding-left: 30px; font-size: 14px;}
+.tishi-wz1{clear: both; color: #2a2a2a;}
+.btwz{text-align: center; line-height: 28px; font-size: 12px; color: #666;}
+.modlist2_re{text-align: left; padding-top: 17px; font-size: 14px;}
+.paixu_big{width: 298px; height: 30px; text-align: left; vertical-align: top; color: #3B6EA7; overflow: hidden;}
+.paixu_li{float: left; width: 14px; height: 14px; background: #f58220; font-size: 12px; text-align: center; color: #FFF;}
+.paixu_li2{float: left; width: 14px; height: 14px; background: #d3d3d3; font-size: 12px; text-align: center; color: #FFF;}
+.paixu_info{float: left; width: 268px; height: 14px; text-align: left; margin-left: 5px;}
+.clo1{color: #949494;}
+.clo2{color: #262626;}
+.rwmswz{font-size: 12px; color: #979797;}
+.rwmswzt{color: #191919; font-weight: 700;}
+.rwmswzms{color: #373737;}
+.remsnbox{line-height: 24px; font-size: 14px; text-align: left;}
+.r_wx{position: absolute; z-index: 2001; margin-left: -217px; margin-top: -134px;}
+.r_hdimg{padding-top: 5px; clear: both; text-align: left; position: relative;}
+.r_hdxx{position: absolute; right: 1px; top: 6px;}
+.jb_x{padding-top: 11px; padding-right: 20px;}
+.jb_wz{font-size: 14px; line-height: 24px; height: 60px;}
+.jb_eml{border: #d4d4d4 1px solid; padding: 8px 5px; font-size: 12px; width: 335px; color: grey;}
+.jb_w2{color: #b1b1b1; height: 32px; padding-top: 5px;}
+.jb_xing{color: #de2c2c; font-size: 22px;}
+.jb_cg{padding-top: 100px; padding-left: 137px; font-size: 14px; font-weight: 700;}
+.jb_w3{padding-left: 77px; color: #787878; line-height: 24px; padding-top: 11px;}
+.dsftb{background-image: url(http://pubimage.360doc.com/index/sf28.png); _background-image: url(http://pubimage.360doc.com/index/sf28.gif); background-repeat: no-repeat; width: 28px; height: 28px; display: block; float: left; margin: 0 5px;}
+.sf1{background-position: 0 0;}
+.sf2{background-position: 0 -28px;}
+.sf3{background-position: 0 -56px;}
+.dsfwz{line-height: 28px; float: left; display: block; color: #929292;}
+.doc360article_content{width: 1012px; height: auto; margin: 0 auto; padding: 0;}
+#sameArtOuter{right: -90px !important; left: auto !important; _top: 35px;}
+body{margin: 0; padding: 0;}
+.f_left{float: left; _display: inline;}
+.f_right{float: right; _display: inline;}
+.doc360article_content a, .user_data_name a:hover{text-decoration: none; outline: 0;}
+.doc360article_content img{border: none;}
+.doc360article_content a:hover{color: #0f659c !important;}
+#bdshare *, .a_right *, .bottom_controler *, .prev_next *, .youlike *{list-style: outside none; margin: 0; padding: 0;}
+#bdshare, #bdshare *, #bgchange, .a_right *, .article_container, .article_data, .bottom_article *, .bottom_controler *, .prev_next *, .youlike *{font-family: "microsoft yahei",arial,simsun;}
+.clearboth{clear: both; width: 100%; height: 0; font-size: 0; overflow: hidden; margin: 0; padding: 0;}
+.a_left{width: 656px; height: auto; float: left; position: relative; padding-bottom: 50px;z-index:2;}
+#bgchange{padding: 13px 13px 0; width: 656px; height: auto;}
+.fontsize_bgcolor_controler{height: 17px;}
+.a_fontsize{width: 17px; height: 17px; float: right; position: relative;}
+.a_bgcolor{width: 17px; height: 17px; float: right; position: relative; margin-left: 10px;}
+.fschange{width: 146px; height: 35px; z-index: 2; border: 1px solid #cbcbcb; background: #fff; position: absolute; right: 0; top: 18px; text-align: center; display: none;}
+.fschange label{font-size: 13px; display: inline-block; margin-top: 7px;} .fschange label input{height: 14px; vertical-align: top;}
+@media screen and (-webkit-min-device-pixel-ratio:0){.fschange label input{vertical-align: sub;}}
+.a_colorlist{z-index: 2; width: 146px; height: 35px; border: 1px solid #cbcbcb; background: #fff; position: absolute; right: 0; top: 18px; text-align: center; display: none;} .a_colorlist span{display: inline-block; width: 13px; height: 13px; overflow: hidden; border: solid 1px #cbcbcb; margin: 10px 1px 0; cursor: pointer; font-size: 12px;} .a_colorlist img{vertical-align: top; visibility: hidden;} .a_colorlist .cur img{visibility: visible !important;}
+.a_color1{background: #e7f4fd;}
+.a_color2{background: #f5f1e6;}
+.a_color3{background: #eae8f6;}
+.a_color4{background: #fef5f0;}
+.a_color5{background: #ebf4ef;}
+.a_color6{background: #FFF;}
+.doc360article_content #titiletext{font-size: 30px; font-family: simhei; color: #000; line-height: 40px; margin: 12px 0 25px 0; max-height: 80px; overflow: hidden; text-align: left; word-break: break-all;}
+.article_data{height: 35px; border-bottom: solid 1px #efefef;position:relative; z-index:2;}
+.article_data_left{position: relative; float: left; text-align: left; font-size: 13px; color: #707070; height: 25px; margin-top: 10px;z-index:2;}
+.a_username{vertical-align: bottom; _vertical-align: middle;} .a_username a{color: #547b3c;}
+.a_from{vertical-align: bottom; _vertical-align: middle;} .a_from a{color: #2e2e2e;}
+.article_data_left .a_from a{color: #707070;}
+.article_data_right{float: right; width: 262px; height: 35px; position:relative;} .article_data_right .zcommond a{font-size: 13px; line-height: 35px; color: #707070; display: block; height: 35px; overflow: hidden; text-align: right;} .article_data_right .p1{float: right; width: 55px; background: url(http://pubimage.360doc.com/NewArticle/btnico_wx.png) no-repeat left center; _background: url(http://pubimage.360doc.com/NewArticle/btnico_wx.gif) no-repeat left center;} .article_data_right .p2{float: right;background: url(http://pubimage.360doc.com/NewArticle/btnico_cang.png) no-repeat left center; _background: url(http://pubimage.360doc.com/NewArticle/btnico_cang.gif) no-repeat left center; width: 124px;} .article_data_right .p3{float: right; background: url(http://pubimage.360doc.com/NewArticle/btnico_gai.png) no-repeat left center; width: 45px;}
+.article_container{word-break: break-all; padding: 10px 0 0; height: auto; overflow: hidden; font-size: 16px; text-align: left; color: #2f2f2f; line-height: 1.5; float: left;position:relative;}
+.bottombtn{height: 39px; text-align: left; position:relative;z-index:3;} .bottombtn .btn_collect,.bottombtn .btn_good{float:left;height: 36px; line-height: 36px; display: inline-block;font-size: 14px; color: #000 !important; font-family: "Microsoft YaHei"; border-radius: 2px;border-radius: 0px\9;  background-color: #fff; padding: 0 14px 0 34px; background-image: url(http://pubimage.360doc.com/NewArticle/btn_icon1.gif); background-repeat: no-repeat; margin: 0 2px;} .bottombtn .btn_collect:hover,.bottombtn .btn_good:hover{background-color: #fd933a; color: #fff !important; text-decoration: none;}
+.btn_collect{background-position: 0 0;}
+.btn_good{position: relative; background-position: 0 -75px;} .btn_good #flowernumadd{position: absolute; right: 0; top: -20px; font-weight: 700; font-size: 22px; color: #cc4f4f;}
+.btn_sharewx{background-position: 0 -149px;}
+.btn_find{background-position: 0 -223px;}
+.btn_collect:hover{background-position: 0 -37px;}
+.btn_good:hover{background-position: 0 -111px;}
+.btn_sharewx:hover{background-position: 0 -185px;}
+.btn_find:hover{background-position: 0 -259px;}
+.flower_loading{background-image: url(http://pubimage.360doc.com/NewArticle/load_.gif) !important; background-position: 5px center !important;}
+.bottom_controler{height: 28px; border-bottom: solid 1px #efefef;}
+.bottom_cleft{width: 60%; height: auto; overflow: hidden; font-size: 13px; color: #707070; text-align: left; float: left; margin-top: 4px;}
+.bottom_cright{width: 40%; height: auto; overflow: hidden; font-size: 13px; color: #707070;}
+.bottom_cright{float: right; text-align: right;} .bottom_cright a{display: inline-block; height: 32px; line-height: 32px; color: #707070;}
+.prev_next{height: auto; line-height: 30px; color: #000;  font-size: 14px; font-weight: 700;width:100%;text-align:left;} .prev_next p{width: 98%; height: 26px;display:none;overflow: hidden; word-break: keep-all; text-overflow: ellipsis; white-space: nowrap;} .prev_next p a{color: #707070;} .prev_next .p1{ text-align: left;} .prev_next .p2{text-align:left;}
+.str_border{height: 24px; overflow: hidden; border-bottom: solid 1px #efefef; margin-top: 14px; text-indent: 6px; text-align: left;} .str_border strong{font-size: 16px; color: #000; float: left;}
+.youlike, .zcommond{width: 100%; height: auto; overflow: hidden;}
+.a_right .youlike{margin-left: 16px !important;}
+.a_left .youlike{margin-left: -6px !important;}
+.youlike li{float: left; width: 116px; height: auto; overflow: hidden; text-align: left; _display: inline;} .youlike li .youlikeimg{width: 114px; height: 86px; overflow: hidden; border: solid 1px #ddd;} .youlike li .youliketext{line-height: 17px; height: 38px; overflow: hidden;} .youlike li .youliketext a{font-size: 12px; color: #2e2e2e;} .youlike li .youliketext a:hover{color: #0f659c;}
+.bottom_article{width: 48%; height: auto; overflow: hidden;}
+.barticle_list{height: auto; overflow: hidden; margin-top: 10px;} .barticle_list li{text-align: left; width: 100%; height: 30px; line-height: 30px; overflow: hidden; word-break: keep-all; text-overflow: ellipsis; white-space: nowrap; background: url(http://pubimage.360doc.com/NewArticle/article_libg.jpg) no-repeat 7px center; text-indent: 24px;} .barticle_list li a{color: #6c6c6c; font-size: 14px;}
+.titwx{text-align: left;}
+.a_more{line-height: 24px; color: #2e2e2e !important; height: 24px; padding-right: 16px; background: url(http://pubimage.360doc.com/NewArticle/a_more.gif) no-repeat right center; display: inline-block;}
+.shareList{width: 33px; height: 247px; overflow: hidden; position: fixed; margin-left: -70px; display: none; _margin-left: 0; _position: absolute; _left: -70px;z-index:2;} .shareList p{height: 32px; line-height: 32px; font-size: 13px;} .shareList a{display: block; height: 53px; overflow: hidden; background-image: url(http://pubimage.360doc.com/NewArticle/icon_share4.gif); background-repeat: no-repeat;border-bottom:1px solid #f5f5f5;} .shareList a:hover{background-image: url(http://pubimage.360doc.com/NewArticle/icon_share3.gif);}
+.doc360shareListWidth{width: 60px; height: 288px; overflow: hidden; position: fixed;_position:absolute; margin-left: -97px; _margin-left: 0;_left: -97px; display: none;} .doc360shareListWidth p{height: 32px; line-height: 32px; font-size: 13px;} .doc360shareListWidth a{display: block; height: 63px; overflow: hidden; background-image: url(http://pubimage.360doc.com/NewArticle/icon_share4kuan.gif); background-repeat: no-repeat;} .doc360shareListWidth a:hover{background-image: url(http://pubimage.360doc.com/NewArticle/icon_share3kuan.gif);}
+.user_talk:hover{opacity: 1;}
+.share_weixin{background-position: 0 0;}
+.share_qq{background-position: 0 -54px;}
+.share_kongjian{background-position: 0 -108px;}
+.share_weibo{background-position: 0 -162px;}
+.doc360shareListWidth .share_qq{background-position: 0 -64px;}
+.doc360shareListWidth .share_kongjian{background-position: 0 -128px;}
+.doc360shareListWidth .share_weibo{background-position: 0 -192px;}
+.a_right{float: right; width: 300px; height: auto; margin-top: 13px; position: relative;}
+.user_info{height: 116px; background: #fdfdfd;}
+.user_photo{width: 58px; height: 100%; overflow: hidden; margin-left: 16px;}
+.user_photopic{width: 58px; height: 58px; position: relative; overflow: hidden; margin-top: 12px;} .user_photopic span{z-index: 1; width: 58px; height: 58px; position: absolute; left: 0; top: 0; background: url(http://pubimage.360doc.com/NewArticle/user_photobg.gif) no-repeat 0 0;}
+.user_talk{display: block; width: 100%; height: 40px; background: url(http://pubimage.360doc.com/NewArticle/talk.gif) no-repeat center 10px; opacity: .8; filter: alpha(opacity=80);}
+.user_data{width: 208px; height: auto; overflow: hidden; text-align: left;}
+#userdegree{margin-top: 5px;}
+.user_data_name{height: 24px; overflow: hidden; margin-top: 18px;} .user_data_name img{float: left; margin-top: 3px !important; margin-left: 3px !important;} .user_data_name a{color: #080808 !important; display: inline-block; height: 24px; line-height: 24px; font-size: 16px; float: left;}
+.user_data_num{height: 22px; margin-top: 16px;}
+#spanfollowstatus{cursor: pointer; width: 58px; background-image: url(http://pubimage.360doc.com/NewArticle/guanzhu1.gif); background-repeat: no-repeat; display: inline-block; height: 21px;margin-top:-3px;vertical-align: middle;}
+.gz_no{background-position: left top;} .gz_no:hover{background-position: left bottom;}
+.gz_yes{background-position: left -23px;}
+#user_star{height: 14px; margin-top: 10px; overflow: hidden;}
+.user_star img{float: left;}
+.his_her{width: 280px; height: auto; margin: 23px auto 0; overflow: hidden;}
+.his_her_type li{cursor: pointer; width: 140px; background-image: url(http://pubimage.360doc.com/NewArticle/user_TA.gif); height: 31px; font-size: 14px; color: #000; background-repeat: no-repeat; background-position: right bottom;} .his_her_type li.cur{background-position: left bottom;} .his_her_type li.curone{width: 100%; text-align: left !important;}
+.his_her_div{width: 100%; height: 210px; position: relative; overflow: hidden;}
+.his_her_list{height: 100%; width: 561px; overflow: hidden; position: absolute; left: 0; top: 0;z-index:1;} .his_her_list li{float: left; width: 280px; height: auto; overflow: hidden;} .his_her_list li div{width: 100%; height: auto; overflow: hidden; background: url(http://pubimage.360doc.com/NewArticle/article_libg.jpg) no-repeat 6px center;} .his_her_list li div span{display: block; float: left; margin-left: 20px; font-size: 14px; line-height: 30px; height: 30px; _display: inline-block;} .his_her_list li div a{display: block; float: left; width: 230px; height: 30px; line-height: 30px; text-decoration: none; text-align: left; font-size: 14px; color: #626262; word-break: keep-all; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;} .his_her_list li a.more_ta{text-align: right; background: url(http://pubimage.360doc.com/NewArticle/a_more.gif) no-repeat right center; padding-right: 16px; float: right; color: #626262;}
+.a_right .youlike li{margin: 5px 10px 0 !important;}
+.bodycontent_marginleft{float: left; margin-left: 30px; _display: inline;}
+.bodycontent_marginleft2{float: left; margin-left: 30px; _display: inline;}
+.bodycontent_marginleft .shareList{margin-left: -30px; _margin-left: 0; _left: -30px;}
+.bodycontent_marginleft2 .shareList{margin-left: -30px; _margin-left: 0; _left: -30px;}
+.floatad{padding-left: 3px !important; padding-right: 2px !important; position: absolute; background-color: #9a9a9a; color: #fff; left: 0; bottom: 0; *+bottom:5px;} .floatad a:hover{color: #fff !important;}
+#adbaidu1{display: block; _margin-left: 10px; *+margin-left:10px;}
+#artContent {min-width:656px} #artContent pre{white-space: pre-wrap;word-wrap: break-word;}
+.biaoti3{font-family: simhei,Arial,Helvetica;font-size:26px;color:#5d9d23; font-weight:normal; }
+.ggwz{padding-left: 3px; padding-right:2px; position:absolute; margin-top:-15px; background-color:#9a9a9a; color:#fff;}
+.ggwz a:link {color: #fff; text-decoration: none}
+.ggwz a:visited {color: #fff; text-decoration: none}
+.ggwz a:hover {color: #fff !important; text-decoration:none;}
+
+.article_data_right .s1{ float:right; height:35px; line-height:35px;color:#707070; cursor:pointer;font-size:13px;}
+.article_data_right .s2,.bottombtn .s2{ width:25px; height:35px; cursor:pointer; overflow:hidden;}
+.article_data_right .s2 span,.bottombtn .s2 span{  width:0px; height:0px; overflow:hidden; line-height:0px; font-size:0px; border-color:#333 transparent transparent; display:block;border-style:solid dashed dashed dashed;border-width:5px; margin:16px 0 0 4px;}
+.article_data_right .s2 span{_margin:15px 0 0 0px;}
+.sharelist_new{ width:98px; height:145px; border:solid 1px #f2f2f2; position:absolute;bottom:-147px; z-index:2; background:#fff; display:none;}
+.article_data_right .sharelist_new{ left:53px;}
+.bottombtn .sharelist_new{ left:326px;}
+.sharelist_new a{ display:block; height:29px; line-height:29px;color:#707070; text-align:left; text-indent:30px; background-image:url(http://pubimage.360doc.com/NewArticle/NewArticleShareIcon.png); _background-image:url(http://pubimage.360doc.com/NewArticle/NewArticleShareIcon.gif); background-repeat:no-repeat;}
+.sharelist_new a:hover{ background-color:#f2f2f2;}
+.sharelist_new .slbg1{ background-position:6px 5px}
+.sharelist_new .slbg2{background-position:6px -26px}
+.sharelist_new .slbg3{background-position:6px -56px}
+.sharelist_new .slbg4{background-position:6px -86px}
+.sharelist_new .slbg5{background-position:6px -112px}
+.bottombtn .span1{ display:inline-block; height:36px; line-height:36px;font-size:14px; cursor:pointer;margin-left:10px;}
+.bottombtn .sharewx{ display:inline-block; height:36px; width:55%; text-align:right;width:55px; background: url(http://pubimage.360doc.com/NewArticle/btnico_wx.png) no-repeat left center; _background: url(http://pubimage.360doc.com/NewArticle/btnico_wx.gif) no-repeat left center; line-height:36px; color:#000; font-size:14px;}
+.shibaiwz{ margin:100px auto; width:100%; text-align:center; font-size:14px; font-weight:bold; }

@@ -1,0 +1,115 @@
+* 概述
+init是Linux系统中用户空间的第一个进程
+* 分析init
++ init功能(由init.cpp中的main函数得到)
+  1) 初始化(包括建立/dev,/proc等目录；初始化属性，执行init.rc等初始化文
+     件的actio等)
+  2) 使用for循环无限循环建立子进程
++ /system/core/init.cpp
+  + 解析配置文件init.rc
+  + 解析配置文件init.bravo.rc,这个文件名bravo,是通过查看/proc/cpuinfo得到
+    机器的hardware决定的
+  + 解析之后，执行Action(动作)分为４个阶段
+    early-init
+    init
+    early-boot
+    boot
+* 分析配置文件
++ android第一个执行的配置文件是init.rc(由init程序加载，细节看init.cpp),该
+  文件是内存映射到/init.rc文件上的，所以想修改它，唯一方法是修改android的
+  ROM中的内核镜像(boot.img)。其实boot.img名曰内核镜像，不过该文件除了包含
+  完整的linux内核文件(zImage)外，还包含一个镜像(ramdisk.img),ramdisk.img就
+  包含了init.rc文件和init命令。所以只有修改ramdisk.img文件中的init.rc文件，
+  重新打包boot.img文件，并刷机，才能彻底修改init.rc文件.Android源代码编译
+  后，就会看到out目录中的相关子目录会生成一个root目录，该目录实际上就是
+  ramdisk.img解压后的内容。会看到有init命令和init.rc文件
++ init.rc分析
+  init.rc文件是由一种被称为"Android初始化语言"(Android Init Language,这里简称
+  AIL)的脚本写成的文件
+  由以下4部分组成
+  + 动作(Actions)
+    + 语法
+      on <trigger>
+         <command>
+         <command>
+         <command>
+      + Actions是一关键字on开头的，然后跟一个触发器，接下来是若干命令。
+        + (trigger)触发器分类
+          1) boot
+             这是init执行后第一个被触发Trigger,也就是在/init.rc被装载之
+             后执行该该Trigger
+          2) <name>=<value>
+             当属性<name>被设置成<value>时被触发。例如，
+             on property:vold.decrypt=trigger_reset_main
+                class_reset main
+          3) device-added-<path>
+             当设备节点被添加时触发
+          4) device-removed-<path>
+             当设备节点被移除时添加
+          5) service-exited-<name>
+             会在一个特定的服务退出时触发
+        + 命令有以下几种
+          1. exec <path> [<argument> ]*
+            创建和执行一个程序（<path>）。在程序完全执行前，init将会阻塞。由于它不是内置命令，应尽量避免使用exec ，它可能会引起init执行超时。
+          2. export <name> <value>
+             在全局环境中将 <name>变量的值设为<value>。（这将会被所有在这命令之后运行的进程所继承）
+          3. ifup <interface>
+             启动网络接口
+          4. import <filename>
+             指定要解析的其他配置文件。常被用于当前配置文件的扩展
+          5. hostname <name>
+            设置主机名
+          6. chdir <directory>
+             改变工作目录
+          7. chmod <octal-mode><path>
+             改变文件的访问权限
+          8. chown <owner><group> <path>
+             更改文件的所有者和组
+          9. chroot <directory>
+             改变处理根目录
+          10. class_start<serviceclass>
+              启动所有指定服务类下的未运行服务。
+          11. class_stop<serviceclass>
+             停止指定服务类下的所有已运行的服务。
+          12. domainname <name>
+              设置域名
+          13. insmod <path>
+              加载<path>指定的驱动模块
+          14. mkdir <path> [mode][owner] [group]
+              创建一个目录<path> ，可以选择性地指定mode、owner以及group。如果没有指定，默认的权限为755，并属于root用户和 root组。
+          15. mount <type> <device> <dir> [<mountoption> ]*
+              试图在目录<dir>挂载指定的设备。<device> 可以是mtd@name的形式指定一个mtd块设备。<mountoption>包括 "ro"、"rw"、"re
+          16. setkey
+              保留，暂时未用
+          17. setprop <name><value>
+              将系统属性<name>的值设为<value>。
+          18. setrlimit <resource> <cur> <max>
+              设置<resource>的rlimit （资源限制）
+          19. start <service>
+              启动指定服务（如果此服务还未运行）。
+          20. stop<service>
+              停止指定服务（如果此服务在运行中）。
+          21. symlink <target> <path>
+              创建一个指向<path>的软连接<target>。
+          22. sysclktz <mins_west_of_gmt>
+              设置系统时钟基准（0代表时钟滴答以格林威治平均时（GMT）为准）
+          23. trigger <event>
+              触发一个事件。用于Action排队
+          24. wait <path> [<timeout> ]
+              等待一个文件是否存在，当文件存在时立即返回，或到<timeout>指定的超时时间后返回，如果不指定<timeout>，默认超时时间是5秒。
+  + 命令(Commands)
+  + 服务(Services)
+    服务是一个程序，他在初始化时启动，并在退出时重启(可选)。services的形式如
+    下:
+    service <name> <pathname> [ <argument>]*
+            <option>
+            <option>
+            <option>
+  + 选项(Options)
++ 系统启动阶段中第一个运行的进程是init,在这进程中会解析init.rc配置文件，
+  该配置文件启动Native Service(包括各种用户空间的Daemon),即在init第一阶
+  段启动Native Service,在解析文件中，我发现它启动Zygote，zygote启动
+  SystemServer建立Android service
+* 参考文档
+[[http://www.cnblogs.com/nokiaguy/archive/2013/04/14/3020774.html][android的init过程详解(一)]]
+[[http://www.cnblogs.com/nokiaguy/p/3164799.html][Android的init过程（二）：初始化语言（init.rc）解析]]

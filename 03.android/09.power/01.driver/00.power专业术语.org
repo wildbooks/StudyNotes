@@ -1,0 +1,131 @@
+| 缩写       | 全写                                                                | 中文                                           |
+|------------+---------------------------------------------------------------------+------------------------------------------------|
+| SBL        | Programmable Boot Sequence                                          | 二级启动加载程序                               |
+| PBL        | Primary Boot Loader                                                 | 主启动加载程序                                 |
+| TZ         | TrustZone                                                           |                                                |
+| RPM        | Resource Power Manager                                              | 资源电源管理器                                 |
+| PMIC       | Power Management Integrated Circuit (with RTC)                      | 电源管理集成电路                               |
+| FLCB       | Fast Low Current Boot                                               | 快速低电流启动                                 |
+| APSD       | Automatic Power Source Detection                                    | 自动电源检测                                   |
+| DBC        | Dead Battery Charging                                               | 低电量电池充电                                 |
+| PBS        | Programmable Boot Sequence                                          | 可编程启动序列                                 |
+| RTC        |                                                                     | 实时时钟                                       |
+| APSS       | Applications Processor Subsystem                                    | 应用程序处理子系统                             |
+| MPSS       | Modem Processor Subsystem                                           | Modem处理器子系统                              |
+| ROGE       | Programmable Boot Sequence                                          | 自读全局可用                                   |
+| RWGE       | Programmable Boot Sequence                                          | 读/写全局可用                                  |
+| RWE        | Programmable Boot Sequence                                          | 读/写可用                                      |
+| ADC        | Analog-to-digital Converter                                         | 模数转换器                                     |
+| PAM        | PMIC Arbitration Matrix                                             | PMIC仲裁矩阵                                   |
+| xPU        | External Protection Unit                                            | 外部保护单元                                   |
+| Charger    |                                                                     | 充电                                           |
+| AICL       | Automatic Input Current Limiting                                    | 自动输入电流限制                               |
+| ICL        | Input Current Limitation                                            | 输入电流限制                                   |
+| BMD        | Battery Missing Detection                                           |                                                |
+| DCP        | Dedicated Charging Port                                             | 专用充电端口                                   |
+| DTS        | Device Tree Source                                                  |                                                |
+| DTSI       | Device Tree Source Include                                          |                                                |
+| GPIO       | General purpose input/output                                        |                                                |
+| IADC       | Current analog-to-digital conversion                                |                                                |
+| LSID       | Local Slave ID                                                      |                                                |
+| MPP        | Multipurpose pin                                                    |                                                |
+| OCP        | Other Charger Port                                                  |                                                |
+| OVLO       | Over Voltage Lock Out                                               |                                                |
+| PWM        | Pulse Width Modulation                                              |                                                |
+| RCS        | Request-Capable Slave                                               |                                                |
+| SDP        | Standard Downstream Port                                            |                                                |
+| SoC        | State of Charge                                                     | 充电状态(电量百分比)                           |
+| SPMI       | System Power Management Interface                                   | 系统电源管理接口                               |
+| UVLO       | Under Voltage Lock Out                                              | 欠压锁定                                       |
+| VADC       | Voltage analog-to-digital conversion                                |                                                |
+| fuel gauge |                                                                     |                                                |
+| PID        | Peripheral ID                                                       | 外设ID                                         |
+| LSDI       |                                                                     |                                                |
+| FE         | Falling edge                                                        | 下降沿触发                                     |
+| RE         | Rising edge                                                         | 上升沿触发                                     |
+| BE         | Both edges                                                          | 双边沿触发                                     |
+| H          | High-level                                                          | 高电平                                         |
+| L          | Low-level                                                           | 低电平                                         |
+| Current    |                                                                     | 电流                                           |
+| Pmux       | power mux                                                           |                                                |
+| OVLO       | Over Voltage Lockout                                                | 过电压锁定                                     |
+| UVLO       | Under Voltage Lockout                                               | 欠压锁定                                       |
+| VBAT       |                                                                     |                                                |
+|            | Precharge                                                           | 预充电                                         |
+|            | Constant current charge                                             | 恒流充电                                       |
+|            | Constant voltage charge                                             | 恒压充电                                       |
+|            | Trickle charge                                                      | 涓流充电                                       |
+|            | Nonstandard charger                                                 | 非标准充电                                     |
+| OCP        | Other charger port                                                  | 其他充电端口                                   |
+| OTP        |                                                                     |                                                |
+| CSIR       |                                                                     |                                                |
+| JEITA      | Japan Electronics and Information Technology Industries Association | 日本电子信息技术产业协会                       |
+| LPG        | Light Pulse Generator                                               | 光脉冲发生器                                   |
+| WLED       |                                                                     | 白光LED                                        |
+| AMSS       | Advanced Mobile Subscriber Station                                  |                                                |
+| APPSBL     | Applications Boot Loader                                            |                                                |
+|            |                                                                     |                                                |
+| DDR        | Double Data Rate                                                    |                                                |
+| IMEM       | Internal Memory                                                     |                                                |
+| LPASS      | Low Power Audio Subsystem                                           |                                                |
+| MBA        | Modem Boot Authenticator                                            |                                                |
+| MPSS       | Modem Peripheral Subsystem Software                                 |                                                |
+| NPA        | node power architecture                                             | 节点电源架构                                   |
+| PAM        | power amplifier module                                              |                                                |
+| PBL        | Primary Boot Loader                                                 |                                                |
+| PIL        | Peripheral Image Loader                                             |                                                |
+| QHEE       | Qualcomm Hypervisor Execution Environment                           |                                                |
+| VMM        | Virtual Machine Monitor                                             |                                                |
+| QSEE       | Qualcomm Secure Execution Environment                               |                                                |
+| RPM        | Remote Power Manager                                                |                                                |
+| SBL        | Secure Boot Loader                                                  |                                                |
+| SMMU       | System Memory Management Unit                                       |                                                |
+| TCM        | Tightly Coupled Memory                                              |                                                |
+| UEFI       | Unified Extensible Firmware Interface                               |                                                |
+| SMBB       | Switch Mode Battery Charger and Boost                               | 开关模式电池充电器和升压                       |
+| PMIC_WD    | PMIC Watchdog                                                       |                                                |
+| HLOS       | High Level Operating System                                         |                                                |
+| SMPS       | Switch mode power supply                                            |                                                |
+| BMA        | battery missing algorithm                                           | 电池缺失算法                                   |
+| ADB        | Android Debug Bridge                                                |                                                |
+| AMUX       | Analog Multiplexer                                                  | 模拟多路复用器                                 |
+| BOM        | Bill of Materials                                                   |                                                |
+| DR         | Decimation Ratio                                                    | 取样率                                         |
+| EOC        | End of Conversion                                                   | 转换结果                                       |
+| GSM        | Global System for Mobile Communications                             | 全球移动通信系统                               |
+| LDO        | Low Dropout (Voltage Regulator)                                     | 低压差（稳压器）                               |
+| MUX        | Multiplexer                                                         | 多路复用器                                     |
+| NPM        | Normal Power Mode                                                   |                                                |
+| OVTP       | Over Voltage Temperature Protection                                 | 过压保护                                       |
+| RC         | Resistance-Capacitance                                              | 电阻-电容                                      |
+| VREF       | Reference Voltage                                                   | 参考电压                                       |
+| AVS        | Adaptive voltage scaling                                            |                                                |
+| Core BSP   | Core board software/support package                                 |                                                |
+| LDO        | Low dropout                                                         |                                                |
+| NPA        | Node power architecture                                             |                                                |
+| PC         | Pin control                                                         |                                                |
+| PC         | Percentage Charge                                                   | 剩余电荷占FCC百分比                            |
+| PD         | Pull-down                                                           |                                                |
+| PON        | Power-on                                                            |                                                |
+| RBCPR      | RPM rapid bridge core power reduction                               |                                                |
+| TCXO       | Temperature-compensated crystal oscillator                          |                                                |
+| VREG       | Voltage regulator                                                   |                                                |
+| VS         | Voltage switches                                                    |                                                |
+| FG         | Fuel Gauge                                                          |                                                |
+| MPG        | Master band gap                                                     |                                                |
+| FCC        | Full Charge Capacity(mAmpHour)                                      | 满电荷电量                                     |
+| CC         | constant charge                                                     | 恒定电荷                                       |
+| CV         | constant voltage                                                    | 很定电压                                       |
+| OVP        | over voltage protection                                             | 过压保护                                       |
+| SC         | short circuit                                                       | 短路                                           |
+| OCV        | Open Circuit Voltage                                                | 开路电压，电池在开路状态下的端电压称为开路电压 |
+| BMS        | battery management system                                           | 电池管理系统                                   |
+| CC         | Coulumb Counter                                                     | 电量计                                         |
+| UC         | Remaining Capacity                                                  |                                                |
+| UUC        | Unusable Capacity                                                   | 不可用电量                                     |
+| RUC        | Remaining Usable Capacity                                           | RUC=RC-CC-UUC，剩余可用电量                    |
+| ICO        | Input Current Optimizer                                             | 输入电量优化器                                 |
+|            |                                                                     |                                                |
+* 电量计算公式
+  + SOC(电荷状态)计算
+    SOC = RUC / (FCC-UUC)

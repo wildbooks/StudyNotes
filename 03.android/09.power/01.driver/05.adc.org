@@ -1,0 +1,92 @@
+* 简介
+* 参考资料
+  The ADC drivers read values from the VADC and IADC channels and
+  perform ADC.
+  + ADC drivers
+    kernel/drivers/hwmon/qpnp-adc-common.c
+    kernel/drivers/hwmon/qpnp-adc-voltage.c
+    kernel/drivers/hwmon/qpnp-adc-current.c
+  + ADC DTS – kernel/arch/arm/boot/dts/qcom/msm-pm8950.dtsi
+  + ADC DTSI document
+    kernel/Documentation/devicetree/bindings/hwmon/qpnp-adc-voltage.txt
+    kernel/Documentation/devicetree/bindings/hwmon/qpnp-adc-current.txt
+* 关键结构体
+1. qpnp_vadc_chip
+   #+begin_src cpp
+   struct qpnp_vadc_chip {
+      struct device			*dev;
+      struct qpnp_adc_drv		*adc;  //表示adc设备
+      struct list_head		list;
+      struct dentry			*dent;
+      struct device			*vadc_hwmon;
+      bool				vadc_init_calib;
+      int				max_channels_available;
+      bool				vadc_iadc_sync_lock;
+      u8				id;
+      struct work_struct		trigger_completion_work;
+      bool				vadc_poll_eoc;
+      bool				vadc_recalib_check;
+      u8				revision_ana_minor;
+      u8				revision_dig_major;
+      struct workqueue_struct		*high_thr_wq;
+      struct workqueue_struct		*low_thr_wq;
+      struct work_struct		trigger_high_thr_work;  //超过测量阀值
+      struct work_struct		trigger_low_thr_work;   //低于测量阀值
+      struct qpnp_vadc_mode_state	*state_copy;
+      struct qpnp_vadc_thermal_data	*vadc_therm_chan;
+      struct power_supply		*vadc_chg_vote;
+      struct sensor_device_attribute	sens_attr[0];
+    };
+   #+end_src
+2. qpnp_adc_drv
+   功能:adc设备结构体
+   #+begin_src cpp
+   struct qpnp_adc_drv {
+      struct spmi_device		*spmi; //用于ADC外设的spmi设备
+      uint8_t				slave;    //
+      uint16_t			offset;   //adc外设的基地址偏移
+      struct qpnp_adc_properties	*adc_prop;  //特定于adc外设的adc特殊属性
+      struct qpnp_adc_amux_properties	*amux_prop; //模拟多路复用属性配置
+      struct qpnp_adc_amux		*adc_channels;  //单个通道AMUX属性
+      int				adc_irq_eoc;        //转换结束IRQ
+      int				adc_irq_fifo_not_empty; //非空时转换定序器请求写入FIFO
+      int				adc_irq_conv_seq_timeout;//转换定时器触发超时
+      int				adc_high_thr_irq;  //输出高于测量阀值
+      int				adc_low_thr_irq;  //输出低于测量阀值
+      struct mutex			adc_lock;  //adc锁定，用于访问外设
+      struct completion		adc_rslt_completion; //收到中断后的ADC结果通知
+      struct qpnp_iadc_calib		calib;  //内部rsens增益和偏移的校准值。
+      struct regulator		*hkadc_ldo;
+      struct regulator		*hkadc_ldo_ok;
+    };
+   #+end_src
+3. qpnp_adc_properties
+    #+begin_src cpp
+    struct qpnp_adc_properties {
+       uint32_t	adc_vdd_reference; //代表adc值
+       uint32_t	bitresolution;    //位分辨率
+       bool		bipolar;      //极性
+     };
+   #+end_src
+4. qpnp_adc_amux_properties
+   功能:vadc通道属性
+   #+begin_src cpp
+    struct qpnp_adc_amux_properties {
+       uint32_t				amux_channel;  //被选择的通道
+       uint32_t				decimation;  //通道支持的采样率
+       uint32_t				mode_sel;    //基本操作模式
+       uint32_t				hw_settle_time;//配置和转换时间
+       uint32_t				fast_avg_setup; //
+       enum qpnp_vadc_trigger			trigger_channel; //配置adc触发通道方式
+       struct qpnp_vadc_chan_properties	chan_prop[0]; //表示adc通道属性
+   };
+   #+end_src
+* qpnp-adc-common.c
+* qpnp-adc-voltage.c
+** qpnp_vadc_probe()
+#+begin_src cpp
+static int qpnp_vadc_probe(struct spmi_device *spmi)
+{
+
+}
+#+end_src

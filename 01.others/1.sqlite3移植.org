@@ -1,0 +1,68 @@
+* 下载SQLite3源码
+  [[http://www.sqlite.org/download.html][下载地址]] 选择sqlite-autoconf...tar.gz版本
+* 复制并解压源码包
+  $ cd
+  $ mkdir sqlite3                                  #在主机（如Ubuntu）创建工作目录
+  $ cd sqlite3                                         #进入工作目录中
+  $ cp /media/sda1/sqlite-autoconf-3080600.tar.gz ./   #复制SQLite源码到主机
+  $ tar zxvf sqlite-autoconf-3080600.tar.gz            #解压
+  $ cd sqlite-autoconf-3080600                         #进入解压后的目录
+* 配置编译选项
+  mkdir ../install
+  ./configure --host=arm-linux --prefix=...../sqlite3/install
+    + --host： 指定交叉编译工具，一般为arm-none-linux-gnueabi、arm-linux-gnueabihf、arm-linux等，具体要和目标板用的交叉编译工具对应。
+    + --prefix： 指定安装目录，编译后的文件会全部放在安装目录中。注意：必须是绝对路径！
+* 编译
+  make
+  make install
+* 去除调试信息
+  + 使用交叉编译工具 strip 去除 sqlite3的调试信息。
+    $ cd ../install/bin
+    $ arm-none-linux-gnueabi-strip sqlite3
+
+  + 压缩动态库 libsqlite3.so.0.8.6 文件。
+    $ cd ../lib
+    $ arm-none-linux-gnueabi-strip libsqlite3.so.0.8.6
+
+* 复制文件
+  我板子用的是nfs文件系统，所以，我可以用cp直接复制过去，具体文件位置需要你们自己调整
+  $ cp .../sqlite3  ..../usr/sbin
+  然后在板子上运行
+  $ sqlite3
+  会报
+  错，上面提示缺少库，比如以下信息
+  $ sqlite3
+    sqlite3: error while loading shared libraries: libpthread.so.0: cannot open shay
+  这时我们就需要给相关的库添加在板子上的/lib 或者/usr/lib中
+  寻找库方法
+  $ find arm-linux/ -name libpthread*
+    + arm-linux :指的是你所使用的交叉编译链安装目录
+      然后你就可以给它复制到你的板子上了
+  还有一种方法
+   $ arm-linux-readelf -d sqlite3
+     Dynamic section at offset 0xaef00 contains 27 entries:
+     Tag        Type                         Name/Value
+     0x00000001 (NEEDED)                     Shared library: [libdl.so.2]
+     0x00000001 (NEEDED)                     Shared library: [libpthread.so.0]
+     0x00000001 (NEEDED)                     Shared library: [libgcc_s.so.1]
+     0x00000001 (NEEDED)                     Shared library: [libc.so.6]
+     .....
+     显示的这几个库，你直接添加到板子上去，就解决你的问题
+  + 再运行一次
+    $ sqlite3
+    SQLite version 3.13.0 2016-05-18 10:57:30
+    Enter ".help" for usage hints.
+    Connected to a transient in-memory database.
+    Use ".open FILENAME" to reopen on a persistent database.
+    sqlite>
+
+    好了你成功了
+* 让交叉编译链可以调用sqlite3库
+  $ cp libsqlite3.so.0.8.6 编译器库的位置/lib
+  $ cd 编译器库的位置/lib
+  $ ln -s libsqlite3.so.0.8.6 libsqlite3.so.0
+  $ ln -s libsqlite3.so.0.8.6 libsqlite3.so
+  静态库，我就没复制进去，反正我是用不到
+  然后运行arm-linx-gcc student.c -o student -lsgllite3
+  成功之后，然后用arm-linux-readelf -d student
+  然后给上面的库加到板子库里就可以了

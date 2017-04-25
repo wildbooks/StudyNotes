@@ -1,0 +1,32 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+E:\2.第二天\demo1 ARM v4版本指令集的环境搭建DEMO\demo1.uvproj
+Project File Date:  08/24/2016
+
+<h2>Output:</h2>
+Build target 'Target 1'
+linking...
+Program Size: Code=20 RO-data=0 RW-data=0 ZI-data=0  
+"demo1.axf" - 0 Error(s), 0 Warning(s).
+assembling start.s...
+start.s - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: Code=20 RO-data=0 RW-data=0 ZI-data=0  
+"demo1.axf" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: Code=20 RO-data=0 RW-data=0 ZI-data=0  
+"demo1.axf" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling start.s...
+linking...
+Program Size: Code=20 RO-data=0 RW-data=0 ZI-data=0  
+"demo1.axf" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: Code=20 RO-data=0 RW-data=0 ZI-data=0  
+"demo1.axf" - 0 Error(s), 0 Warning(s).

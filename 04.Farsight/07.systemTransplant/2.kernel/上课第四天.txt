@@ -1,0 +1,120 @@
+linux内核五大功能：
+	进程管理（cpu)  
+	内存管理（内存）
+	设备管理（驱动）
+	网络管理（网络协议tcp/ip）
+	文件系统（vfs)
+
+linux版本号：
+	linux 2.6  2--->主版本号  6---->次版本号:奇数代表测试版本 偶数代表稳定版本
+
+
+linux目录结构：
+	arch:体系结构相关代码
+	ipc:进程调度相关代码
+	mm:内存管理
+	Documentation：帮助文档
+	net:网络协议
+	lib:库
+	scripts:编译相关脚本工具
+	tools：编译相关工具
+	drivers:设备驱动
+	fs:文件系统实现
+
+编译相关文件：
+	顶层Makefile 与 子目录下的Makefile
+	各级目录Kconfig
+
+编译内核：
+	1.make mrproper: 清除内核生成的配置文件与目标文件等
+	2. a)make xxx_deconfig
+	   b)cp arch/arm/configs/xx_deconfig  .config
+	  生成默认配置文件。
+	3. make xxxxconfig  修改配置文件
+		make xconfig (图形界面 qt库)
+		make menuconfig (常用 libncurses库)
+				sudo apt-get install libncurses5-dev
+		make config (精简)
+	4.make xxImage  编译生成内核可执行文件
+
+make menuconfig:
+	.NOTE:y 在编译内核时会将相关代码编译进内核可执行文件
+		n 不被编译
+		M:会编译生成目标文件，但不与最终可执行文件链接
+	[]:代表二值选项， y---[*]   n---[]
+	<>:代表三值选项， y--[*] n---[]  m--[M]
+	():int  hex  strings
+	?/help:查看帮助信息
+	/：查询某个文件是否配置
+	--->:存在子级菜单
+	esc:退回到上一菜单
+	save:保存配置到顶层目录的.config
+	
+	.NOTE:位于/arch/arm/boot/
+		vmlinux:内核带调试信息的ELF可执行文件
+		Image:二进制制格式的可执行文件
+		zImage:经过gzip压缩的执行文件
+		uImage:使用uboot里面的mkimage工具生成的
+		设备树相关信息： /arch/arm/boot/dts
+		dtb:设备树编译生成的二进制文件
+		dts:相关板级设备树
+		dtsi:公共设备树文件
+		modules: 编译选项为M的文件
+		modules_install:  将M的文件安装到ELF可执行文件中
+Kconfig:
+	make menuconfig是检索所有目录中的Kconfig生成菜单的。
+	kconfig:内核地图
+	
+	Kconfig入口点：顶层目录Kconfig
+	
+
+
+	Kconfig语法：Documentation/kbuild/kconfig.txt
+		source :包含其它目录的Kconfig
+		config:
+			config  名称
+			类型   菜单名
+			其它信息
+			帮助信息
+
+		       名称：如果选中会在顶层中以CONFIG_名称出现,一般大写
+			类型：bool--->[]
+				tristate--><>
+				string--->()
+				int---->()
+				hex ---->()
+			其它选项：
+				depends on  名称：如果依赖的名称没有选中，不可见
+				default y :第一次加载时的默认选项
+	
+		menu   endmenu:菜单
+			例：  menu 菜单名
+				config xxxx
+				endmenu
+		menuconfig  :带配置的菜单
+		choice  endchoice:单选
+
+
+	uboot参数bootargs:
+		setenv bootargs root=/dev/nfs  使用nfs协议
+				   nfsroot=ip:/路径  指明nfs服务器目录
+				   init=/linuxrc :内核启动之后第一个运行的程序是linuxrc
+				console=ttySAC0,115200:使用第二个串口为调试串口，波特率为115200		
+				ip=xxx  :开发板进入文件系统之后使用的ip
+
+
+
+	添加驱动：
+		1）静态编译  <*>
+			将驱动编译内核，生成uImage.
+			采用 cat /proc/devices 查看驱动是否添加成功
+			采用 mknod /dev/xx  c num num  创建设备节点
+			测试应用程序
+		2）动态编译  <M>
+			将驱动编译成模块， make modules 编译， 采用Insmod 加载
+			insmod xx.ko
+			cat /proc/devices
+			mknod /dev/xx c num num
+			测试
+		3）单独编译驱动程序
+

@@ -1,0 +1,309 @@
+* 简介
+* 结构体
+  + binder_state
+    #+begin_src cpp
+    struct binder_state
+    {
+        int fd;  //文件描述符
+        void *mapped;//mmap映射出来的地址
+        size_t mapsize;//mmap映射的大小
+    };
+    #+end_src
+  + binder_write_read
+    用来应用层和驱动层传递数据
+    #+begin_src cpp
+    struct binder_write_read {
+      binder_size_t		write_size;	/* 写入字节 */
+      binder_size_t		write_consumed;	/* bytes consumed by driver */
+      binder_uintptr_t	write_buffer;
+      binder_size_t		read_size;	/* bytes to read */
+      binder_size_t		read_consumed;	/* bytes consumed by driver */
+      binder_uintptr_t	read_buffer;
+    };
+    #+end_src
+  + 
+    #+begin_src cpp
+    #+end_src
+* 代码
+  frameworks/native/cmds/servicemanager/service_manager.c
+  + 
+    #+begin_src cpp
+    int main()
+    {
+        struct binder_state *bs;
+
+        /*打开/dev/binder设备节点,并mmap映射之,映射大小为128k*/
+        bs = binder_open(128*1024);
+        if (!bs) {
+            ALOGE("failed to open binder driver\n");
+            return -1;
+        }
+
+        /*告诉binder驱动我是Service Manager进程*/
+        if (binder_become_context_manager(bs)) {
+            ALOGE("cannot become context manager (%s)\n", strerror(errno));
+            return -1;
+        }
+
+        selinux_enabled = is_selinux_enabled();
+        sehandle = selinux_android_service_context_handle();
+        /*打开并映射SELinux内核状态页面*/
+        selinux_status_open(true);
+
+        if (selinux_enabled > 0) {
+            if (sehandle == NULL) {
+                ALOGE("SELinux: Failed to acquire sehandle. Aborting.\n");
+                abort();
+            }
+
+            if (getcon(&service_manager_context) != 0) {
+                ALOGE("SELinux: Failed to acquire service_manager context. Aborting.\n");
+                abort();
+            }
+        }
+
+        union selinux_callback cb;
+        cb.func_audit = audit_callback;
+        selinux_set_callback(SELINUX_CB_AUDIT, cb);
+        cb.func_log = selinux_log_callback;
+        selinux_set_callback(SELINUX_CB_LOG, cb);
+
+        /*循环接收并处理消息*/
+        binder_loop(bs, svcmgr_handler);
+
+        return 0;
+    }
+  #+end_src
+  + binder_loop()
+    #+begin_src cpp
+    void binder_loop(struct binder_state *bs, binder_handler func)
+    {
+        int res;
+        struct binder_write_read bwr;
+        uint32_t readbuf[32];
+
+        bwr.write_size = 0;
+        bwr.write_consumed = 0;
+        bwr.write_buffer = 0;
+
+        /*通知binder驱动，我们要开始循环接收消息了*/
+        readbuf[0] = BC_ENTER_LOOPER;
+        binder_write(bs, readbuf, sizeof(uint32_t));
+
+        /*开始循环接收数据了*/
+        for (;;) {
+            bwr.read_size = sizeof(readbuf);
+            bwr.read_consumed = 0;
+            bwr.read_buffer = (uintptr_t) readbuf;
+
+            /*通过ioctl获得驱动中的数据*/
+            res = ioctl(bs->fd, BINDER_WRITE_READ, &bwr);
+
+            if (res < 0) {
+                ALOGE("binder_loop: ioctl failed (%s)\n", strerror(errno));
+                break;
+            }
+
+            /*获得之后开始解析处理*/
+            res = binder_parse(bs, 0, (uintptr_t) readbuf, bwr.read_consumed, func);
+            if (res == 0) {
+                ALOGE("binder_loop: unexpected reply?!\n");
+                break;
+            }
+            if (res < 0) {
+                ALOGE("binder_loop: io error %d %s\n", res, strerror(errno));
+                break;
+            }
+        }
+    }
+    #+end_src
+  + binder_parse()
+    #+begin_src cpp
+    int binder_parse(struct binder_state *bs, struct binder_io *bio, uintptr_t ptr, size_t size, binder_handler func)
+    {
+        int r = 1;
+        uintptr_t end = ptr + (uintptr_t) size;
+
+        while (ptr < end) {
+            uint32_t cmd = *(uint32_t *) ptr;
+            ptr += sizeof(uint32_t);
+    #if TRACE
+            fprintf(stderr,"%s:\n", cmd_name(cmd));
+    #endif
+            switch(cmd) {
+            case BR_NOOP:
+                break;
+            case BR_TRANSACTION_COMPLETE:
+                break;
+            case BR_INCREFS:
+            case BR_ACQUIRE:
+            case BR_RELEASE:
+            case BR_DECREFS:
+    #if TRACE
+                fprintf(stderr,"  %p, %p\n", (void *)ptr, (void *)(ptr + sizeof(void *)));
+    #endif
+                ptr += sizeof(struct binder_ptr_cookie);
+                break;
+            case BR_TRANSACTION: {
+                struct binder_transaction_data *txn = (struct binder_transaction_data *) ptr;
+                if ((end - ptr) < sizeof(*txn)) {
+                    ALOGE("parse: txn too small!\n");
+                    return -1;
+                }
+                binder_dump_txn(txn);
+                if (func) {
+                    unsigned rdata[256/4];
+                    struct binder_io msg;
+                    struct binder_io reply;
+                    int res;
+
+                    bio_init(&reply, rdata, sizeof(rdata), 4);
+                    bio_init_from_txn(&msg, txn);
+                    res = func(bs, txn, &msg, &reply);
+                    if (txn->flags & TF_ONE_WAY) {
+                        binder_free_buffer(bs, txn->data.ptr.buffer);
+                    } else {
+                        binder_send_reply(bs, &reply, txn->data.ptr.buffer, res);
+                    }
+                }
+                ptr += sizeof(*txn);
+                break;
+            }
+            case BR_REPLY: {
+                struct binder_transaction_data *txn = (struct binder_transaction_data *) ptr;
+                if ((end - ptr) < sizeof(*txn)) {
+                    ALOGE("parse: reply too small!\n");
+                    return -1;
+                }
+                binder_dump_txn(txn);
+                if (bio) {
+                    bio_init_from_txn(bio, txn);
+                    bio = 0;
+                } else {
+                    /* todo FREE BUFFER */
+                }
+                ptr += sizeof(*txn);
+                r = 0;
+                break;
+            }
+            case BR_DEAD_BINDER: {
+                struct binder_death *death = (struct binder_death *)(uintptr_t) *(binder_uintptr_t *)ptr;
+                ptr += sizeof(binder_uintptr_t);
+                death->func(bs, death->ptr);
+                break;
+            }
+            case BR_FAILED_REPLY:
+                r = -1;
+                break;
+            case BR_DEAD_REPLY:
+                r = -1;
+                break;
+            default:
+                ALOGE("parse: OOPS %d\n", cmd);
+                return -1;
+            }
+        }
+
+        return r;
+    }
+    #+end_src
+    如果接收到了消息，那么binder_parse会经过简单的转换，最后还是会调用回调函数svcmgr_handler 
+  + svcmgr_handler()
+    #+begin_src cpp
+    int svcmgr_handler(struct binder_state *bs, struct binder_transaction_data *txn, struct binder_io *msg, struct binder_io *reply)
+    {
+        struct svcinfo *si;
+        uint16_t *s;
+        size_t len;
+        uint32_t handle;
+        uint32_t strict_policy;
+        int allow_isolated;
+
+        if (txn->target.ptr != BINDER_SERVICE_MANAGER)
+            return -1;
+
+        if (txn->code == PING_TRANSACTION)
+            return 0;
+
+        // Equivalent to Parcel::enforceInterface(), reading the RPC
+        // header with the strict mode policy mask and the interface name.
+        // Note that we ignore the strict_policy and don't propagate it
+        // further (since we do no outbound RPCs anyway).
+        strict_policy = bio_get_uint32(msg); s = bio_get_string16(msg, &len);
+        if (s == NULL) {
+            return -1;
+        }
+
+        if ((len != (sizeof(svcmgr_id) / 2)) ||
+            memcmp(svcmgr_id, s, sizeof(svcmgr_id))) {
+            fprintf(stderr,"invalid id %s\n", str8(s, len));
+            return -1;
+        }
+
+        if (sehandle && selinux_status_updated() > 0) {
+            struct selabel_handle *tmp_sehandle = selinux_android_service_context_handle();
+            if (tmp_sehandle) {
+                selabel_close(sehandle);
+                sehandle = tmp_sehandle;
+            }
+        }
+
+        switch(txn->code) {
+        case SVC_MGR_GET_SERVICE:
+        case SVC_MGR_CHECK_SERVICE:
+            /*获得当前服务名称,s变量为服务名*/
+            s = bio_get_string16(msg, &len);
+            if (s == NULL) {
+                return -1;
+            }
+            /*
+            Server manager在其进程空间维护了一个service的全局链表svclist， 
+            do_find_service通过服务名来查找该服务是否存在，并返回给客户端 
+            */
+            handle = do_find_service(s, len, txn->sender_euid, txn->sender_pid);
+            if (!handle)
+                break;
+            bio_put_ref(reply, handle);
+            return 0;
+
+        case SVC_MGR_ADD_SERVICE:
+            /*其他的Server进程来添加服务*/
+            s = bio_get_string16(msg, &len);
+            if (s == NULL) {
+                return -1;
+            }
+            handle = bio_get_ref(msg);
+            allow_isolated = bio_get_uint32(msg) ? 1 : 0;
+            if (do_add_service(bs, s, len, handle, txn->sender_euid,
+                allow_isolated, txn->sender_pid))
+                return -1;
+            break;
+
+        case SVC_MGR_LIST_SERVICES: {
+            /*枚举所有已经注册了的服务名*/
+            uint32_t n = bio_get_uint32(msg);
+
+            if (!svc_can_list(txn->sender_pid, txn->sender_euid)) {
+                ALOGE("list_service() uid=%d - PERMISSION DENIED\n",
+                        txn->sender_euid);
+                return -1;
+            }
+            si = svclist;
+            while ((n-- > 0) && si)
+                si = si->next;
+            if (si) {
+                bio_put_string16(reply, si->name);
+                return 0;
+            }
+            return -1;
+        }
+        default:
+            ALOGE("unknown code %d\n", txn->code);
+            return -1;
+        }
+
+        bio_put_uint32(reply, 0);
+        return 0;
+    }
+    #+end_src
+    

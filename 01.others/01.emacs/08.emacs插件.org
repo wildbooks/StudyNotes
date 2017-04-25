@@ -1,0 +1,12 @@
+* projectile
+  管理项目工具
+  
+  sherry0126@126.com u刘海燕 200元
+  
+  
+  
+  You can now use these tools from [/opt/genymobile/genymotion]:
+  - genymotion
+  - genymotion-shell
+  - gmtool
+    

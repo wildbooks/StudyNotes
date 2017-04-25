@@ -1,0 +1,29 @@
+#+TITLE: android usb流程(FirstDay)
+#+AUTHOR: wildbook-杨玉春
+#+EMAIL: www762268@foxmail.com
+#+DESCRIPTION: iafasfafsdfasd
+* 概述
++ Vold(Volume Daemon),用于管理和控制Android平台外部存储设备的后台进程，
+  这些管理和控制，包括SD卡的插拔事件检测，SD卡挂载，卸载，格式化等
+  是Android平台中外部存储系统的管控中心，是一个比较重要的进程。虽然它的
++ Vold是属于Native的程序，另外java世界还有和它们交互的模块，ＭountService
+  和Vold交互，一方面它可以接收来自Vold的消息，例如，在应用程序中经常监
+  听到的ACTION_MEDIA_MOUNTED/ACTION_MEDIA_EJECT等广播，就是由MountService
+  根据Vold的信息而触发的。另一方面它可以向Vold发送控制命令，例如挂载SD卡
+  为磁盘驱动器的操作，就是由MountService发送命令给Vold来执行的。
+* 原理与机制分析
++ Vold框架图如下
+  [[file:./picture/vold框架图.png]]
++ Vold中的NetlinkManager模块接收来自Linux内核的
+  Volume Daemon(Vold)是一个Native Service,由init.c读取init.rc后启动的
++ 代码
++ 配置文件根据配置文件/etc/vold.fstab
+  dev_mount sdcard /storage/sdcard1 auto /devices/msm_sdcc.2/mmc_host
+vold.fstab格式是:
+         type         label        mount_point part         sysfs_path      sysfs_path
+　　sysfs_path可以有多个 part指定分区个数，如果是auto没有分区
+
+* Vold的main函数
+    创建VolumeManager -> 创建NetlinkManager -> 新建CommandListener对象　
+
+

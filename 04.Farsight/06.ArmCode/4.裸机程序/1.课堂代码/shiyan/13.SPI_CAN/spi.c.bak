@@ -1,0 +1,47 @@
+#include "exynos_4412.h"
+
+
+unsigned char src[]="1234567" ;
+unsigned char dst[20]={0};
+int main()
+{
+
+
+	unsigned char ID[4],buff[8];            					//状态字
+	unsigned char key;
+	unsigned char ret;//,j,k,ret0,ret1,ret2,ret3,ret4,ret5,ret6,ret7,ret8,ret9;
+	unsigned int rx_counter;
+	volatile int i=0;
+	uart0_init();
+
+	//GPB.GPBCON = (GPB.GPBCON  & ~0xffff) | 0x2222; //设置IO引脚为SPI模式
+	GPC1.CON = (GPC1.CON & ~0xffff0) | 0x55550;
+
+//	SPI0.CLK_CFG = (0x1<<8)|(4<<0);           // 设置SPI的时钟为PCLK ,使能时钟，spi clock=pclk/10=6.6MHZ
+	soft_reset();	                   // 软复位SPI控制器
+	SPI0.CH_CFG &= ~( (0x1 << 4) | (0x1 << 3) | (0x1 << 2) | 0x3);//master mode, CPOL = 0, CPHA = 0 (Format A)
+	SPI0.MODE_CFG &= ~((0x3 << 17) | (0x3 << 29));   //BUS_WIDTH=8bit,CH_WIDTH=8bit
+	SPI0.CS_REG &= ~(0x1 << 1);        //选择手动选择芯片
+    delay(10);    //延时
+    Init_can();   //初始化MCP2515
+
+    while(1)
+    {
+    	printf("\nplease input 8 bytes\n");
+        for(i=0;i<8;i++) src[i] = getchar();
+        Can_send(src); //发送标准帧
+		delay(100);
+        ret = Can_receive(dst); //接收CAN总线数据
+      printf("ret=%x\n",ret);
+        printf("src=");
+        for(i=0;i<8;i++) printf(" %x",src[i]); //将CAN总线上收到的数据发到串行口
+        printf("\n");
+
+        printf("dst=");
+        for(i=0;i<8;i++) printf(" %x",dst[6+i]); //将CAN总线上收到的数据发到串行口
+		printf("\n");
+    } //while(1)
+} //main
+
+
+

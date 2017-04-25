@@ -1,0 +1,81 @@
+/*
+* 点的参数
+        shape
+            record     由横的和竖的矩形组成的图形
+	    Mrecord    角是圆的，看例题
+	    polygon    多边形
+	    plaintext
+	    box
+	    Mdiamond
+	    Msquare
+	rankdir       默认时图中的线是从上到下的，值：LR，RL，TB(默认)，BT   
+	sides 设置边数
+	peripheries 设置多边形的外框的层数
+	regular = true可以让多边形是一个规则的多边形
+	orientation=15 可以让你的多边形旋转一个角度 如15度
+	color
+	style
+	skew 值-1.0～1.0能让多边形斜切一个角度
+	label
+	distortion 让图形产生透视效果
+	
+	decorate      决定每条线的label与所属线的连接值：true,false
+	labelfontcolor决定headlabel和taillabel的颜色
+	fontcolor     决定label颜色
+	headlabel     起始点标签
+	taillabel     终点标签
+	label         标签
+	rank       当图中时间表之类的东西时，我们会需要点能排在一行（列），这时要用到rank，用花括号把rank=same然后把需要并排的点一次输入          
+
+	width   宽
+	height  高
+	nodesep
+
+
+	画一个子图 subgraph 
+
+	compound 把一条边连到一个子图的边界上，先输入compound = true,然后就能用lhead和ltail来设置连接的子图了
+* 
+*
+****/
+/*
+设立一条边时，我们可以制定这条边从起点的那个位置射出和从哪个位置结束。控制符有
+"n", "ne","e", "se", "s", "sw", "w" 和"nw"，具体效果见下：
+n是北；s是南；w是西；e是东
+
+也可以在record/Mrecord中给点定义一些port，因为record类型中都是一个个格子
+*/
+/*
+Graphviz Example: traffic_lights
+
+##"I played some days with making an interface between our ConceptBase system (essentially a database system to store models) and graphviz. One example graph is attached. It is a so-called petri net for Dutch traffic lights. The example is actually taken from a book by Wil van der Aalst." Contributed by Manfred Jeusfeld.
+*/
+
+##Command to produce the output: "neato -Tpng thisfile > thisfile.png"
+
+digraph TrafficLights {
+node [shape=box];  gy2; yr2; rg2; gy1; yr1; rg1;
+node [shape=circle,fixedsize=true,width=0.9];  green2; yellow2; red2; safe2; safe1; green1; yellow1; red1;
+gy2->yellow2;
+rg2->green2;
+yr2->safe1;
+yr2->red2;
+safe2->rg2;
+green2->gy2;
+yellow2->yr2;
+red2->rg2;
+gy1->yellow1;
+rg1->green1;
+yr1->safe2;
+yr1->red1;
+safe1->rg1;
+green1->gy1;
+yellow1->yr1;
+red1->rg1;
+
+overlap=false
+label="PetriNet Model TrafficLights\nExtracted from ConceptBase and layed out by Graphviz"
+fontsize=12;
+}
+
+

@@ -1,0 +1,39 @@
+* Android 各层中日志打印功能的应用
+** KERNEL层
+   prink()
+** HAL层
+   头文件：#include <utils/Log.h> 
+   对应的级别 打印方法  
+   VERBOSE LOGV()
+   DEBUG LOGD()
+   INFO LOGI()
+   WARN LOGW()
+   ERROR LOGE()
+   *方法*:LOGD("%d, %s", int, char* )
+** JNI层
+   头文件：#include <utils/Log.h> 
+   对应的级别 打印方法  
+   VERBOSE LOGV()
+   DEBUG LOGD()
+   INFO LOGI()
+   WARN LOGW()
+   ERROR LOGE()
+   *方法*:LOGD("%d, %s", int, char* )
+** FRAMEWORK层
+   import android.util.Slog;
+   对应的级别 打印方法
+   VERBOSE Slog.v()
+   DEBUG Slog.d()
+   INFO Slog.i()
+   WARN Slog.w()
+   ERROR Slog.e()
+   *方法*:Slog.d(TAG, "something to say.");
+** JAVA层
+   import android.util.Log;
+   对应的级别 打印方法
+   VERBOSE Log.v()
+   DEBUG Log.d()
+   INFO Log.i()
+   WARN Log.w()
+   ERROR Log.e()
+   *方法*:Log.d(TAG, "something to say."); 

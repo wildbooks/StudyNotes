@@ -1,0 +1,24 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\Jason\Desktop\asm code\demo4 数据运算指令的比较指令和条件执行\demo4.uvproj
+Project File Date:  08/18/2015
+
+<h2>Output:</h2>
+Build target 'Target 1'
+assembling start.s...
+linking...
+Program Size: Code=16 RO-data=0 RW-data=0 ZI-data=0  
+"demo4.axf" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling start.s...
+linking...
+Program Size: Code=20 RO-data=0 RW-data=0 ZI-data=0  
+"demo4.axf" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling start.s...
+linking...
+Program Size: Code=20 RO-data=0 RW-data=0 ZI-data=0  
+"demo4.axf" - 0 Error(s), 0 Warning(s).

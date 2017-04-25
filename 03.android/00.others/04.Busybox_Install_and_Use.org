@@ -1,0 +1,11 @@
+* Busybox下载
+https://busybox.net/downloads/binaries/latest/busybox-armv7l
+我们用的是armv7的架构
+* 安装
+adb push busybox /system/xbin #为了避免冲突，我push到/system/xbin目录下了
+cd /system/xbin    #进入对应目录
+chmod 755 busybox  #更改Busybox权限为可执行
+busybox --install  #安装Busybox
+grep 或者busybox grep   #执行方式，这两种都行
++ 注意 ::
+     给手机安装Busybox需有root权限

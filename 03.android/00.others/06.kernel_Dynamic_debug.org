@@ -1,0 +1,16 @@
+* dynamic debug(动态调试)
+  参考文档：Documentation/dynamic-debug-howto.txt
+** 打印源文件'svcsock.c'，第1603行命令
+   1. 一个命令设置
+      echo 'file svcsock.c line 1603 +p' > <debugfs>/dynamic_debug/control
+   2. 多个命令设置,以“;”为分割符，命令如下
+      echo "func pnpacpi_get_resources +p; func pnp_assign_mem +p" > <debugfs>/dynamic_debug/control
+
+   3. 打印所有的
+      cat <debugfs>/dynamic_debug/control
+      # filename:lineno [module]function flags format
+      net/l2tp/l2tp_ip6.c:171 [l2tp_ip6]l2tp_ip6_recv =_ "%s: ip recv\012"
+   4. 过滤打印包含tcp关键字的log
+      grep -i tcp <debugfs>/dynamic_debug/control
+** 
+

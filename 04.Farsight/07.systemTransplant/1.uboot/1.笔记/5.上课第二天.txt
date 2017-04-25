@@ -1,0 +1,130 @@
+tftp模式设置：
+	交互模式：按回车进行配置
+		tftp 41000000 uImage
+		tftp 42000000 exynos4412-fs4412.dtb
+		bootm 41000000 - 420000000
+	自动模式：设备bootcmd
+		setenv bootcmd tftp 41000000 uImage \; tftp 42000000 				exynos4412-fs4412.dtb\; bootm 41000000 - 42000000
+		saveenv
+
+
+通过 nfs 挂载根文件系统
+	1）配置nfs
+	 a)下载
+		sudo apt-get install nfs-kernel-server
+	 b)配置
+		sudo vi /etc/exports
+		在最后一行添加你的nfs共享目录
+		/nfsboot *(rw,sync,no_subtree_check)
+		.note:保证此目录已存在（权限：777）
+	 c)重启nfs服务
+		sudo  /etc/init.d/nfs-kernel-server restart
+		
+	 d)测试	
+		第一种方法）showmount -e  ip
+		第二种方法）自己挂载
+			mount -t nfs 127.0.0.1:/nfsboot  /mnt/xxx
+			
+			
+      	2)拷贝解压已制作好的根文件系统
+		cp xxx/rootfs.tar.xz  /nfsboot
+		tar xvf rootfs.tar.xz
+	3)设置开发板bootargs
+	      setenv bootargs root=/dev/nfs nfsroot=虚拟机ip:/nfsboot/rootfs rw console=ttySAC2,115200 ip=开发板ip  init=/linuxrc
+		个人：
+			setenv bootargs root=/dev/nfs
+			nfsroot=192.168.2.231:/nfsboot/rootfs/
+			rw console=ttySAC2,115200 ip=192.168.2.22 init=/linuxrc
+	4)测试
+		写程序在开发板运行
+
+
+
+
+
+	
+uboot命令：
+	1）环境设置命令
+		a)查看当前环境变量
+			printenv
+		b)增加环境变量
+			setenv 
+			例： set ipaddr 192.168.1.1 ====>ipaddr=192.168.1.1
+		c)修改环境
+			setenv  变量名  值
+		d)删除环境变量
+			setenv 变量名
+		e)保存环境变量
+			saveenv
+		f）常用环境变量作用
+			ipaddr:设置开发平台ip
+			serverip:tftp服务器ip
+			netmask:子网掩码
+			gatewayip:网关
+			bootcmd:启动内核变量
+			bootargs:传输给内核的参数
+			bootdelay:设置交互延时
+	2）数据传输命令
+		a)网络
+			tftp 内存地址 文件名
+		b)串口  
+			loadb  内存地址
+	3）存储器访问命令
+		内存：
+			md 显示内存内容
+				md 41000000
+			mm 修改内容
+				mm  41000000    
+				以 . 结束
+				mm.w (2B)  mm.l(4B,默认)
+			mw 填充
+				mw 41000000 12345678 10
+				向0x41000000起始地址写0x10次 0x12345678
+		外存：
+			nand:
+				nand write 20008000 0 40000 
+				nand read 20008000 0 40000
+				nand erase 0 40000
+			emmc:
+				movi  write kernel 41000000
+				将内存41000000 数据写入到emmc的kernel分区
+				movi  read kernel 41000000
+				将emmc的kernel分区中的内容载入到内存41000000地址
+	4）运行
+		a)bootm  （将pc指针指向内存地址，还有其它操作）
+		b）go (将pc指针指向内存地址)
+		c) boot 重启开发板
+	5）其它
+		run:运行指定环境变量的内容
+		help:查看所有命令
+
+
+
+
+产品模式：
+	uboot,kernel,dtb,rootfs烧写到emmc
+
+	1)uboot烧写：
+		a)emmc中已经存在uboot
+			通过网络 tftp 41000000 u-bootxxx.bin
+				  movi write u 41000000
+			重启生效。
+		b)emmc为空
+			通过sd卡烧录
+			  一：开关拔到1000 （sd卡启动）
+				输入命令: sdfuse flashall
+			  二：开关拔回到0110 （emmc启动）
+				重启生效
+	2）kernel及dtb烧写
+		通过网络 tftp 41000000  uImage
+			   movi write k 41000000
+		通过网络 tftp 41000000  exynos4412-fs4412.dtb
+			   movi write d 41000000
+	3)ramdisk烧写(rootfs的镜像)
+		通过网络 tftp 41000000 ramdisk.img
+		  	   movi write r 41000000 300000
+	4)设置启动参数bootcmd
+		setenv bootcmd movi read k 41000000\; movi read d 42000000\;
+			movi read r 43000000 300000\; bootm 41000000 43000000 42000000   
+	.NOTE:bootm中间的数据如是'-'，说明从nfs挂载[参考bootargs]，如是内存地址，则从地址处加载文件系统
+

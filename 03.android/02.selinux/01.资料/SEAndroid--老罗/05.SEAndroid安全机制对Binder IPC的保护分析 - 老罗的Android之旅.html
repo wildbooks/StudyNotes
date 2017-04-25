@@ -1,0 +1,1353 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>   
+   
+
+    <script type="text/javascript" src="http://c.csdnimg.cn/pubfooter/js/tracking.js" charset="utf-8"></script>  
+
+    <script type="text/javascript">
+        var protocol = window.location.protocol;
+        document.write('<script type="text/javascript" src="' + protocol + '//csdnimg.cn/pubfooter/js/repoAddr2.js?v=' + Math.random() + '"></' + 'script>');
+    </script>
+
+  
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+
+    <title>SEAndroid安全机制对Binder IPC的保护分析 - 老罗的Android之旅
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="在img标签里面只设置宽，不设置高，图片就会等比例缩放。" />
+    <script src="http://static.blog.csdn.net/scripts/jquery.js" type="text/javascript"></script>
+      <script type="text/javascript" src="http://static.blog.csdn.net/scripts/jquery-version.js"></script>
+    <script type="text/javascript" src="http://static.blog.csdn.net/scripts/ad.js?v=1.1"></script>
+        <!--new top-->
+               <link rel="stylesheet" href="http://c.csdnimg.cn/public/common/toolbar/css/index.css">        <!--new top-->
+    
+      <!-- ad begin -->
+         <script language="javascript" type="text/javascript" src="http://ads.csdn.net/js/tracking.js"></script>
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/Luoshengyang/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/default.css" />
+ 
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+</head>
+<body>
+    <!-- 广告位开始 -->
+        <ins data-revive-zoneid="149" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins>
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/luoshengyang">老罗的Android之旅</a></h2>
+            <h3>爱生活，爱Android</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/luoshengyang?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/luoshengyang?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/luoshengyang/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "Luoshengyang";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/luoshengyang";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+<a href="http://geek.csdn.net/news/detail/126445">
+<font color=red>聚焦行业最佳实践，BDTC 2016完整议程公布
+</font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://huiyi.csdn.net/activity/product/goods_list?project_id=3287">
+<font color=blue>微信小程序实战项目——点餐系统
+</font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="http://blog.csdn.net/turingbooks/article/details/53079366">
+<font color=red>程序员11月书讯，评论得书啦 
+</font></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="http://geek.csdn.net/news/detail/110921">
+<font color=blue>Get IT技能知识库，50个领域一键直达
+</font></a>
+
+
+</font></a>
+</font></a>
+</div>                        </div>
+                        
+
+
+<!-- 广告位开始 -->
+<ins data-revive-zoneid="72" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins>
+<!-- 广告位结束 -->
+
+  
+<link href="http://static.blog.csdn.net/css/comment1.css" type="text/css" rel="stylesheet" />
+<link href="http://static.blog.csdn.net/css/style1.css" type="text/css" rel="stylesheet" />
+<script language='JavaScript' type='text/javascript' src='http://download.csdn.net/js/jquery.cookie.js'></script>
+<script type="text/javascript" src="http://c.csdnimg.cn/rabbit/search-service/main.js"></script>
+<link rel="stylesheet" href="http://static.blog.csdn.net/public/res-min/markdown_views.css?v=1.0" />
+<link rel="stylesheet" href="http://static.blog.csdn.net/css/category.css?v=1.0" />
+<script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/web-storage-cache.min.js"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/replace.min.js"></script>
+
+
+
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+          
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/luoshengyang/article/details/38326729">
+        SEAndroid安全机制对Binder IPC的保护分析            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/Android' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">Android</a><a href='http://www.csdn.net/tag/SEAndroid' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">SEAndroid</a><a href='http://www.csdn.net/tag/SELinux' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">SELinux</a><a href='http://www.csdn.net/tag/Binder%20IPC' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">Binder IPC</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2014-08-11 00:58</span>
+            <span class="link_view" title="阅读次数">16056人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(14)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('SEAndroid安全机制对Binder IPC的保护分析','38326729');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(38326729,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('838604','Luoshengyang','top','38326729');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">Android<em>（183）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/Luoshengyang/article/category/838604"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_838604">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+    <script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>  
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+<div id="article_content" class="article_content">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       在SEAndroid安全机制中，除了文件和属性，还有Binder IPC需要保护。Binder IPC是Android系统的灵魂，使用得相当广泛又频繁。例如，应用程序都是Binder IPC请求访问系统服务和资源。因此，SEAndroid安全机制必须要为Binder IPC保驾护航，阻止一个进程非法访问其它进程的服务和资源。本文就详细分析SEAndroid安全机制对Binder IPC提供的支持。</p><p align="center"><span style="font-size:14px;color:#CC0000;">老罗的新浪微博：<a target=_blank target="_blank" href="http://weibo.com/shengyangluo">http://weibo.com/shengyangluo</a>，欢迎关注！</span><br /></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 关于Binder IPC的知识，可以参考<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/6618363">Android进程间通信（IPC）机制Binder简要介绍和学习计划</a>这个系列的文章。SEAndroid安全机制对Binder IPC的保护实现在Binder驱动中，如图1所示：</p><p align="center"><img src="http://img.blog.csdn.net/20140801012725545?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTHVvc2hlbmd5YW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p align="center">图1 Binder驱动中的SEAndroid安全检查</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从图1可以看到，当Service Manager将自己注册为Context Manager时，Binder驱动会检查它是否具有设置Context Manager的SEAndroid安全权限。Service Manager将自己注册为Context Manager的过程，可以参考前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/6621566">浅谈Service Manager成为Android进程间通信（IPC）机制Binder守护进程之路</a>一文。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 此外，当Client通过Binder驱动请求与Server发送通信时，Binder驱动会检查Client是否具有与Server通信的SEAndroid安全权限。如果Client与Server的通信数据带有Binder对象或者文件描述符，那么Binder驱动还会进一步检查源进程是否具有向目标进程传输Binder对象或者文件描述符的SEAndroid权限。Client与Server的通信过程可以参考前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/6642463">Android系统进程间通信Binder机制在应用程序框架层的Java接口源代码分析</a>一文。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 以上提到的与Binder IPC相关的SEAndroid安全权限定义在内核的SELinux模块的数组secclass_map中，如下所示：</p><p></p><pre name="code" class="cpp">struct security_class_mapping secclass_map[] = {
+    ......
+
+    { &quot;binder&quot;, { &quot;impersonate&quot;, &quot;call&quot;, &quot;set_context_mgr&quot;, &quot;transfer&quot;, NULL } },
+    
+    ......
+};</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个数组定义在文件kernel/goldfish/security/selinux/include/classmap.h中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 数组secclass_map列出的Binder IPC相关的SEAndroid权限有四种，分别是impersonate、call、set_context_mgr和transfer。其中，call、set_context_mgr和transfer就对应我们前面说的Client与Server通信、设置Context Manager和传输Binder对象权限。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 数组secclass_map没有列出传输文件描述符的权限，是因为传输文件描述符权限实质上是属于文件读写相关的权限，也就是检查目标进程是否具有访问在通信数据附带的文件描述符所描述的文件的权限，这属于文件类别的SEAndroid安全权限。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 同时，数组secclass_map多出了一个impersonate权限。当进程1代表进程2与进程3执行Binder IPC时，Binder驱动需要检查进程1是否具有模拟进程2的impersonate权限。目前，不会发生一个进程代表另外一个进程与目标进程执行Binder IPC的情况，因此，impersonate权限实际上是没有使用到的。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在SEAndroid安全策略中，定义有一个名称为unconfineddomain的domain，它具有上述的call、set_context_mgr和transfer权限，如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_2_3955206" name="code" class="plain">allow unconfineddomain domain:binder { call transfer set_context_mgr };</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 上述安全策略定义在文件external/sepolicy/unconfined.te中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在Android系统中，所有类型的应用程序进程的domain都具有unconfineddomain属性，如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_3_5157455" name="code" class="plain">#
+# Apps signed with the platform key.
+#
+type platform_app, domain;
+......
+unconfined_domain(platform_app)
+
+# Apps signed with the media key.
+type media_app, domain;
+......
+unconfined_domain(media_app)
+
+# Apps signed with the shared key.
+type shared_app, domain;
+......
+unconfined_domain(shared_app)
+
+# Apps signed with the release key (testkey in AOSP).
+type release_app, domain;
+......
+unconfined_domain(release_app)
+
+# Services with isolatedProcess=true in their manifest.
+# In order for isolated_apps to interact with apps that have levelFromUid=true
+# set it must be an mlstrustedsubject.
+type isolated_app, domain, mlstrustedsubject;
+......
+unconfined_domain(isolated_app)
+
+#
+# Untrusted apps.
+#
+type untrusted_app, domain;
+......
+unconfined_domain(untrusted_app)</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 上述安全策略定义在文件external/sepolicy/app.te中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 例如，用户安装的第三方应用程序运行在的进程的domain为untrusted_app，它通过宏unconfined_domain将unconfineddomain设置为自己的属性。宏unconfined_domain的定义如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_4_928492" name="code" class="plain">#####################################
+# unconfined_domain(domain)
+# Allow the specified domain to do anything.
+#
+define(`unconfined_domain', `
+typeattribute $1 mlstrustedsubject;
+typeattribute $1 unconfineddomain;
+')</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个宏定义在文件external/sepolicy/te_macros中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这意味着所有应用程序进程都可以与其它进程进行Binder IPC，并且传递Binder对象。关于Android应用程序进程的domain设置过程，可以参考前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/38054645">SEAndroid安全机制中的进程安全上下文关联分析</a>一文。<br /></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 此外，Android系统的Service Manager进程的domain也具有unconfined_domain属性，如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_5_4747680" name="code" class="plain"># servicemanager - the Binder context manager
+type servicemanager, domain;
+......
+unconfined_domain(servicemanager)</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 上述安全策略定义在文件external/sepolicy/servicemanager.te中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这说明Service Manager进程具有向Binder驱动设置Context Manager的权限。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 了解了Binder IPC相关的SEAndroid安全权限以及安全策略之后，接下来我们就分别分析Binder驱动应用它们的过程。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. 设置Context Manager过程中的SEAndroid安全检查</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/6621566">浅谈Service Manager成为Android进程间通信（IPC）机制Binder守护进程之路</a>一文可以知道，当Service Manager将自己设置为Binder驱动的Context Manager的时候，Binder驱动里面的函数binder_ioctl就会被调用，如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_6_1947175" name="code" class="cpp">static struct binder_node *binder_context_mgr_node;
+......
+
+static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+{
+    int ret;
+    struct binder_proc *proc = filp-&gt;private_data;
+    ......
+
+    switch (cmd) {
+    ......
+    case BINDER_SET_CONTEXT_MGR:
+        if (binder_context_mgr_node != NULL) {
+            ......
+            ret = -EBUSY;
+            goto err;
+        }
+        ret = security_binder_set_context_mgr(proc-&gt;tsk);
+        if (ret &lt; 0)
+            goto err;
+        ......
+        binder_context_mgr_node = binder_new_node(proc, NULL, NULL);
+        ......
+        break;
+    ......
+    default:
+        ret = -EINVAL;
+        goto err;
+    }
+    ret = 0;
+err:
+   ......
+    return ret;
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/drivers/staging/android/binder.c中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; binder_context_mgr_node是一个类型为binder_node的全局变量，用来描述注册在Binder驱动里面的Context Manager。当binder_context_mgr_node的值不等于NULL的时候，就表示已经有进程注册过Context Manager了，因此，就不再允许重复注册。否则的话，就会调用函数binder_new_node创建一个binder_node对象，并且保存在全局变量binder_context_mgr_node中。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 不过，在调用函数binder_new_node为当前进程创建一个binder_node对象之前，需要调用函数security_binder_set_context_mgr检查当前进程是否具有注册Context Manager的SEAndroid安全权限。当前进程是通过本地变量proc来描述的，它指向的是一个类型为binder_proc的对象。在结构体binder_proc中，有一个类型为task_struct的成员变量task，它指向的就是内核中用来描述进程的一个控制块。在前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/38054645">SEAndroid安全机制中的进程安全上下文关联分析</a>一文中提到，进程的安全上下文是保存在内核中用来描述该进程的一个task_struct结构体中的，因此，当知道一个进程的task_struct结构体之后，我们就可以获得它的安全上下文。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 接下来，我们就继续分析函数security_binder_set_context_mgr的实现，如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_7_5209956" name="code" class="cpp">static struct security_operations *security_ops;
+......
+
+int security_binder_set_context_mgr(struct task_struct *mgr)
+{
+    return security_ops-&gt;binder_set_context_mgr(mgr);
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/security/security.c中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; security_ops是一个类型为security_operations的全局变量，它的成员变量binder_set_context_mgr是一个函数指针，指向的函数为selinux_binder_set_context_mgr，它的定义如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_8_773249" name="code" class="cpp">static int selinux_binder_set_context_mgr(struct task_struct *mgr)
+{
+    u32 mysid = current_sid();
+    u32 mgrsid = task_sid(mgr);
+
+    return avc_has_perm(mysid, mgrsid, SECCLASS_BINDER, BINDER__SET_CONTEXT_MGR, NULL);
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/security/selinux/hooks.c中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数selinux_binder_set_context_mgr首先获得用来描述当前进程的安全上下文的sid，即mysid，接着再获得用来描述要注册Context Manager的进程mgr的安全上下文的sid，即mgrsid，最后都调用由SELinux模块提供的函数avc_has_perm来检查进程mgr是否具有类型为SECCLASS_BINDER的安全权限BINDER__SET_CONTEXT_MGR。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当前进程即为注册Context Manager的进程，也就是说前面获得的mysid和mgrsid是一样的。进程的安全上下文本来是用字符串来描述的，但是在内核中，不会直接使用这些字符串形式的安全上下文。我们知道，SELinux是在内核的安全模块LSM的基础上实现的，但是LSM不只是为SELinux服务的。也就是说，我们也可以在内核中创建一个类似SELinux的模块，来实现另外一个安全机制。在这个另外实现的安全机制里面，或许不再使用字符串来描述进程的安全上下文。为了能够提供一种统一方式来计算、应用这些安全策略，LSM模块要求在它的基础上实现的安全机制在内部使用一个不透明的32位无符号数来代表一个安全上下文。这样，LSM模块就可以提供一个统一的avc_has_perm函数计算一个主体是否相应的权限来访问一个客体。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 简单来说，一个SID代表的就是一个安全上下文，不同的SID代表的是不同的安全上下文，根据安全上下文计算出其对应的SID是由SELinux实现的，但是对于LSM来说是不透明的。LSM提供的函数avc_has_perm首先是在内部维护的一个Access Vector Cache中检查指定的主体mysid是否具有对客体mgrsid类型为SECCLASS_BINDER的安全权限BINDER__SET_CONTEXT_MGR。如果LSM之前处理过相同参数的权限检查，那么就能从Access Vector Cache直接得到结果。否则的话，就需要到从用户空间加载进来的安全策略中去计算结果。计算得到的结果除了返回给调用者之外，还会缓存在Access Vector Cache中，这样就可以提高下一次同一样的安全检查的效率。<br /></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数avc_has_perm的实现原理就如上所述，它的详细实现我们就不进一步分析了，有兴趣的读者可以自行分析。不过从函数binder_ioctl到函数selinux_binder_set_context_mgr的调用过程，我们就可以知道，函数selinux_binder_set_context_mgr实际上就是由SELinux模块通过LSM模块安插在Binder驱动中的一个Hook，而通过这个Hook就可以验证对应的进程是否具有设置Context Manager的SEAndroid安全权限。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从前面的分析可以知道，Service Manager进程的domain具有unconfined_domain属性，而所有具有unconfined_domain属性的domain都具有设置Context Manager的SEAndroid安全权限，因此，当Service Manager进程将自己注册为Context Manager的时候，是能成功注册的。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. Client调用Server的SEAndroid安全权限检查</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/6629298">Android系统进程间通信（IPC）机制Binder中的Server启动过程源代码分析</a>一文可以知道，Client发送给Server的请求需要经过Binder驱动的函数binder_transaction处理，如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_9_2640590" name="code" class="cpp">static void binder_transaction(struct binder_proc *proc,
+                   struct binder_thread *thread,
+                   struct binder_transaction_data *tr, int reply)
+{
+    ......
+
+    if (reply) {
+        ......
+    } else {
+        if (tr-&gt;target.handle) {
+            struct binder_ref *ref;
+            ref = binder_get_ref(proc, tr-&gt;target.handle);
+            ......
+            target_node = ref-&gt;node;
+        } else {
+            target_node = binder_context_mgr_node;
+            ......
+        }
+        .......
+
+        target_proc = target_node-&gt;proc;
+        ......
+
+        if (security_binder_transaction(proc-&gt;tsk, target_proc-&gt;tsk) &lt; 0) {
+            ......
+            goto err_invalid_target_handle;
+        }
+
+        ......
+    }
+
+    ......
+    /*Continue to Process Binder Transaction*/
+    ......
+
+err_invalid_target_handle:
+    ....... 
+    /*Error Return*/
+    .......
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/drivers/staging/android/binder.c中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 参数reply用来区别函数binder_transaction是用来处理Client发送给Server的请求还是Server对Client发送的请求的回应。如果参数reply的值等于false，那么就表示函数binder_transaction是用来处理Client发送给Server的请求。在这种情况下，函数binder_transaction就需要检查Client是否有权限给Server发送请求。另一方面，如果参数reply的值等于true，那么就表示函数binder_transaction是用来处理Server对Client发送的请求的回应。在这种情况下，很明显就不需要进行权限检查。接下来我们就主要分析Client发送给Server的请求的情况。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 参数proc描述的是Client进程，而Server进程由参数tr指向的一个binder_transaction_data结构体描述。该binder_transaction_data结构体是从Client进程的用户空间传递进来的，它的成员变量target.handle是一个Binder句柄，实际上就是一个整数。如果这个Binder句柄不等于0，那么它所引用的Binder实体对象对应的就是运行在Server进程中的一个Binder服务。通过调用函数binder_get_ref可以获得一个Binder句柄所对应的Binder引用对象，而通过一个Binder引用对象的成员变量node可以获得它所引用的Binder实体对象。获得了要通信的Binder实体对象之后，通过它的成员变量proc就可以获得该Binder实体对象对应的Binder服务所运行在的Server进程。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 另一方面，如果上述Binder句柄的值等于0，那么就说明Client进程要发送请求给Service Manager。Service Manager是一个特殊的Binder服务，它会将自己注册为Binder IPC的Context Manager，并且在Binder驱动中使用一个专门的全局变量binder_context_mgr_node来描述它所对应的Binder实体对象。因此，在这种情况下，很容易就可以通过全局变量binder_context_mgr_node的成员变量proc找到要通信的Server进程。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这样，我们就知道了Client进程和Server进程分别由参数proc描述和本地变量arget_proc指向的binder_proc结构体描述。结构体binder_proc的成员变量tsk指向的是内核中用来描述进程的结构体task_struct。根据我们在前面一小节的分析，结构体task_struct包含了进程的安全上下文信息，因此，这时候就可以调用函数security_binder_transaction检查Client进程是否有权限向Server进程发送请求了，也就是Client是否有权限调用Server的功能。如果有权限的话，接下来就会将Client传递进来的参数发送给Server，否则的话，就直接出错返回。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数security_binder_transaction的实现如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_10_8444644" name="code" class="cpp">static struct security_operations *security_ops;
+......
+
+int security_binder_transaction(struct task_struct *from, struct task_struct *to)
+{
+    return security_ops-&gt;binder_transaction(from, to);
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/security/security.c中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 前面提到，security_ops是一个类型为security_operations的全局变量，它的成员变量binder_transaction是一个函数指针，指向的函数为selinux_binder_transaction，它的定义如下所示：</p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_11_104243" name="code" class="cpp">static int selinux_binder_transaction(struct task_struct *from, struct task_struct *to)
+{
+    u32 mysid = current_sid();
+    u32 fromsid = task_sid(from);
+    u32 tosid = task_sid(to);
+    int rc;
+
+    if (mysid != fromsid) {
+        rc = avc_has_perm(mysid, fromsid, SECCLASS_BINDER, BINDER__IMPERSONATE, NULL);
+        if (rc)
+            return rc;
+    }
+
+    return avc_has_perm(fromsid, tosid, SECCLASS_BINDER, BINDER__CALL, NULL);
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/security/selinux/hooks.c中。<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这里有3个sid，分别是mysid、fromsid和tosid。其中，mysid描述的是当前进程的安全上下文，fromsid描述的是Client进程的安全上下文，tosid描述的是Server进程的安全上下文。在目前的Binder驱动的实现中，当前正在调用函数selinux_binder_transaction进程即为Client进程。因此，mysid和fromsid的值总是相等的。但是，selinux模块在设计函数selinux_binder_transaction的时候，也考虑到了一个可能出现的特殊情景，那就是当前进程即不是真正的进程，而是代表参数from描述的Client进程向参数to描述的Server进程发送Binder通信请求。在这种情况下，如果当前进程和Client进程具有不同的安全上下文，即mysid和fromsid的值不相等，那么就要求当前进程具有模拟Client进程的权限，也就是具有类别为SECCLASS_BINDER的BINDER__IMPERSONATE权限。由于在目前的Binder驱动的实现中，不会出现一个进程代表另外一个进程向第三个进程发起Binder IPC请求的情况，因此，我们在用户空间的SEAndroid安全策略中，是看不到有关BINDER__IMPERSONATE的规则的。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 最后，函数selinux_binder_transaction调用LSM模块提供的通用函数avc_has_perm检查Client进程对Server进程是否具有类别为SECCLASS_BINDER的BINDER__CALL的权限，也就是检查Client进程是否有权限向Server进程发送Binder IPC请求，并且将结果返回给调用者。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从前面的分析可以知道，在Android系统中，所有类型的应用程序进程的domain都具有unconfined_domain属性，也就是说它们之间是可以互相进行Binder IPC的。而且，Android系统的服务进程，例如Service Manager进程、Zygote进程和System Server进程等，它们的domain也是具有unconfined_domain属性的，因此，应用程序进程和它们也能够互相进行Binder IPC的。当然，这只是默认的情况，如果有需要，我们是可以在SEAndroid安全策略中定义一个规则，禁止某一个应用程序进程向某一个服务进程发送Binder IPC请求的，这样就可以起到保护系统服务或者资源的目的。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. 传递Binder对象的SEAndroid安全权限检查<br /></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Client与Server在执行Binder IPC的过程中，可能会将Binder对象传递给对方，使得对方可以获得这些Binder对象的代理接口，进而使用这些Binder对象提供的服务。想象这样的一个情景。一个进程从另一个进程获得了一个有权限使用的Binder对象，接着将这个Binder对象通过Binder IPC传递给第三个进程，但是第三个进程没有使权限使用这个Binder对象。这时候就需要从源头上杜绝第三个进程获得它没有权限使用的Binder对象。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 确保一个进程不会通过Binder IPC获得它没有权限使用的Binder对象也是由Binder驱动在函数binder_transaction中进行的，如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_12_858769" name="code" class="cpp">static void binder_transaction(struct binder_proc *proc,
+                   struct binder_thread *thread,
+                   struct binder_transaction_data *tr, int reply)
+{
+    struct binder_transaction *t;
+    ......
+    struct binder_proc *target_proc;
+    ......
+    
+    t = kzalloc(sizeof(*t), GFP_KERNEL);
+    ......
+
+    t-&gt;buffer = binder_alloc_buf(target_proc, tr-&gt;data_size,
+        tr-&gt;offsets_size, !reply &amp;&amp; (t-&gt;flags &amp; TF_ONE_WAY));
+    ......
+
+    if (copy_from_user(t-&gt;buffer-&gt;data, tr-&gt;data.ptr.buffer, tr-&gt;data_size)) {
+        ......
+        goto err_copy_data_failed;
+    }
+    if (copy_from_user(offp, tr-&gt;data.ptr.offsets, tr-&gt;offsets_size)) {
+        ......
+        goto err_copy_data_failed;
+    }
+    ......
+
+    off_end = (void *)offp + tr-&gt;offsets_size;
+    for (; offp &lt; off_end; offp++) {
+        struct flat_binder_object *fp;
+        ......
+        fp = (struct flat_binder_object *)(t-&gt;buffer-&gt;data + *offp);
+        switch (fp-&gt;type) {
+        case BINDER_TYPE_BINDER:
+        case BINDER_TYPE_WEAK_BINDER: {
+            ......
+            struct binder_node *node = binder_get_node(proc, fp-&gt;binder);
+            ......
+
+            if (security_binder_transfer_binder(proc-&gt;tsk, target_proc-&gt;tsk)) {
+                ......
+                goto err_binder_get_ref_for_node_failed;
+            }
+            ......
+        } break;
+        case BINDER_TYPE_HANDLE:
+        case BINDER_TYPE_WEAK_HANDLE: {
+            struct binder_ref *ref = binder_get_ref(proc, fp-&gt;handle);
+            ......
+            if (security_binder_transfer_binder(proc-&gt;tsk, target_proc-&gt;tsk)) {
+                ......
+                goto err_binder_get_ref_failed;
+            }
+            ......
+        } break;
+        ......
+        }
+
+        ......
+    }
+
+    ......
+
+err_binder_get_ref_for_node_failed:
+err_binder_get_ref_failed:
+    ......
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/drivers/staging/android/binder.c中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 参数tr指向的是一个从用户空间传递进来的binder_transaction_data结构体，里面包含了源进程proc发送给目标进程target_proc的通信数据。在这些通信数据里面，可能包含有Binder对象。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数binder_transaction通过创建一个类型为binder_transaction的结构体t来描述当前这一次的Binder通信，并且通过函数binder_alloc_buf给这个结构体在内核空间分配了一块缓冲区，用来保存从用户空间传递进来的通信数据。用户空间传统进来的数据包含有两部分内容。第一部分是通信数据内容，第二部分是一个偏移数组，用来描述第一部分哪些位置包含有Binder对象。因此，函数binder_transaction需要通过两个copy_from_user函数调用将它们拷贝到刚才分配得到的内核缓冲区中。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 将Binder通信数据从用户空间拷贝到内核空间后，函数binder_transaction就通过上述的偏移数组对包含在通信数据里面的Binder对象进行处理，其中就包括SEAndroid安全检查。首先，每一个包含在通信数据里面的Binder对象都是用一个flat_binder_object结构体来描述。结构体flat_binder_object有一个成员变量type，当它的值等于BINDER_TYPE_BINDER、BINDER_TYPE_WEAK_BINDER、BINDER_TYPE_HANDLE和BINDER_TYPE_WEAK_HANDLE的时候，都表示它描述的是一个Binder对象。其中，前两者表示结构体flat_binder_object描述的是一个Binder实体对象，而后两者表示结构体flat_binder_object描述的是一个Binder引用对象。在Binder驱动中，Binder实体对象使用结构体binder_node来描述，而Binder引用对象使用结构体binder_ref来描述。无论是哪一种情况，都需要通过调用函数security_binder_transfer_binder来检查源进程proc是否具有向目标进程target_proc传递Binder对象的权限。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数security_binder_transfer_binder的实现如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_13_3041754" name="code" class="cpp">int security_binder_transfer_binder(struct task_struct *from, struct task_struct *to)
+{
+    return security_ops-&gt;binder_transfer_binder(from, to);
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/security/security.c中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 前面提到，security_ops是一个类型为security_operations的全局变量，它的成员变量binder_transfer_binder是一个函数指针，指向的函数为selinux_binder_transfer_binder，它的定义如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_14_5781147" name="code" class="cpp">static int selinux_binder_transfer_binder(struct task_struct *from, struct task_struct *to)
+{
+    u32 fromsid = task_sid(from);
+    u32 tosid = task_sid(to);
+    return avc_has_perm(fromsid, tosid, SECCLASS_BINDER, BINDER__TRANSFER, NULL);
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/security/selinux/hooks.c中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 参数from和to描述的分别是源进程和目标进程，通过函数task_sid可以获得用来描述它们的安全上下文的sid。有了源进程和目标进程的安全上下文之后，就可以调用LSM模块提供的函数avc_has_perm来检查源进程是否具有向目标进程传递Binder对象的SEAndroid安全权限了，也就是类型为SECCLASS_BINDER的BINDER__TRANSFER权限。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从前面的分析可以知道，在Android系统中，所有类型的应用程序进程，以及系统服务进程，例如Service Manager进程、Zygote进程和System Server进程，它们的domain都具有unconfined_domain属性，也就是说，在默认情况下，它们之间是可以在Binder IPC中，互相传递Binder对象。当然，我们也可以在SEAndroid安全策略中定义相应的规则，来阻止一个进程向另外一个进程传递Binder对象。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4. 传递文件描述符的SEAndroid安全权限检查<br /></p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Client与Server在执行Binder IPC的过程中，除了可以相互传递Binder对象之外，还可以传递文件描述符。也就是说，一个进程可以打开一个有权限访问的文件，得到一个文件描述符，然后再通过Binder IPC将这个文件描述符传递给另外一个进程，使得另外的这个进程也可以访问这个文件。由于文件是属于系统的敏感资源，因此，我们需要禁止一个进程将一个文件描述符传递给一个没有权限访问的进程。<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 与传递Binder对象的安全检查一样，传递文件描述符的安全检查也是在Binder驱动的函数binder_transaction进行的，如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_15_3046682" name="code" class="cpp">static void binder_transaction(struct binder_proc *proc,
+                   struct binder_thread *thread,
+                   struct binder_transaction_data *tr, int reply)
+{
+    struct binder_transaction *t;
+    ......
+    struct binder_proc *target_proc;
+    ......
+    
+    t = kzalloc(sizeof(*t), GFP_KERNEL);
+    ......
+
+    t-&gt;buffer = binder_alloc_buf(target_proc, tr-&gt;data_size,
+        tr-&gt;offsets_size, !reply &amp;&amp; (t-&gt;flags &amp; TF_ONE_WAY));
+    ......
+
+    if (copy_from_user(t-&gt;buffer-&gt;data, tr-&gt;data.ptr.buffer, tr-&gt;data_size)) {
+        ......
+        goto err_copy_data_failed;
+    }
+    if (copy_from_user(offp, tr-&gt;data.ptr.offsets, tr-&gt;offsets_size)) {
+        ......
+        goto err_copy_data_failed;
+    }
+    ......
+
+    off_end = (void *)offp + tr-&gt;offsets_size;
+    for (; offp &lt; off_end; offp++) {
+        struct flat_binder_object *fp;
+        ......
+        fp = (struct flat_binder_object *)(t-&gt;buffer-&gt;data + *offp);
+        switch (fp-&gt;type) {
+        ......
+        case BINDER_TYPE_FD: {
+            ......
+            struct file *file;
+            ......
+
+            file = fget(fp-&gt;handle);
+            ......
+
+            if (security_binder_transfer_file(proc-&gt;tsk, target_proc-&gt;tsk, file) &lt; 0) {
+                ......
+                goto err_get_unused_fd_failed;
+            }
+ 
+            ......
+        } break;
+        ......
+        }
+
+        ......
+    }
+
+    ......
+
+err_get_unused_fd_failed:
+    ......
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/drivers/staging/android/binder.c中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 与Binder对象一样，包含在Binder IPC通信数据里面的文件描述符也是使用一个类型为flat_binder_object的结构体来描述的，不过这时候flat_binder_object结构体的成员变量type的值为BINDER_TYPE_FD。此外，这时候flat_binder_object结构体的成员变量handle描述的就是要传递的文件描述符。有了这个文件描述符之后，就可以调用函数fget获得一个file结构体，该file结构体就描述要传递的文件的所有信息，包含它的安全上下文信息。因此，接下来就可以调用函数security_binder_transfer_file来检查源进程proc是否具有向目标进程target_proc传递指定的文件file了。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数security_binder_transfer_file的实现如下所示：</p><p></p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_16_4522714" name="code" class="cpp">int security_binder_transfer_file(struct task_struct *from, struct task_struct *to, struct file *file)
+{
+    return security_ops-&gt;binder_transfer_file(from, to, file);
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/security/security.c中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 前面提到，security_ops是一个类型为security_operations的全局变量，它的成员变量binder_transfer_file是一个函数指针，指向的函数为selinux_binder_transfer_file，它的定义如下所示：</p><pre code_snippet_id="568558" snippet_file_name="blog_20141231_17_2245597" name="code" class="cpp">static int selinux_binder_transfer_file(struct task_struct *from, struct task_struct *to, struct file *file)
+{
+    u32 sid = task_sid(to);
+    struct file_security_struct *fsec = file-&gt;f_security;
+    struct inode *inode = file-&gt;f_path.dentry-&gt;d_inode;
+    struct inode_security_struct *isec = inode-&gt;i_security;
+    struct common_audit_data ad;
+    struct selinux_audit_data sad = {0,};
+    int rc;
+
+    COMMON_AUDIT_DATA_INIT(&amp;ad, PATH);
+    ad.u.path = file-&gt;f_path;
+    ad.selinux_audit_data = &amp;sad;
+
+    if (sid != fsec-&gt;sid) {
+        rc = avc_has_perm(sid, fsec-&gt;sid,
+                  SECCLASS_FD,
+                  FD__USE,
+                  &amp;ad);
+        if (rc)
+            return rc;
+    }
+
+    if (unlikely(IS_PRIVATE(inode)))
+        return 0;
+
+    return avc_has_perm(sid, isec-&gt;sid, isec-&gt;sclass, file_to_av(file),
+                &amp;ad);
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件kernel/goldfish/security/selinux/hooks.c中。<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 参数from和to描述的分别是源进程和目标进程，而参数file描述的是要传递的文件。函数security_binder_transfer_file实际上是检查目标进程是否具有访问文件file的权限。如果有的话，那么就允许源进程将它传递给目标进程访问。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 由于源进程是以文件描述符的形式传递文件给目标进程访问，因此，函数security_binder_transfer_file还会要求目标进程拥有使用文件file的文件描述符的权限。也就是说。能够访问文件的内容是一种权限，而能够使用文件的描述符又是另一种权限。只有目标进程对这两种权限都具有的情况下，才允许源进程将一个文件描述符传递给目标进程使用。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 通过函数task_sid可以获得目标进程的sid，也就是获得目标进程的安全上下文，而通过文件file的成员变量f_security可以获得文件内核对象的安全上下文，也就是文件描述符相关的安全上下文。在Linux内核中，每一个文件都关联一个inode对象，通过该inode对象的成员变量i_security可以获得inode内核对象的安全上下文，也就是文件内容相关的安全上下文。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当目标进程的sid不等于要传递的文件内核对象的sid的时候，要求目标进程能够使用要传递的文件的文件描述符，这时候可以调用LSM模块提供的函数avc_has_perm检查目标进程对要传递的文件是否具有类型为SECCLASS_FD的FD__USE的权限。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当目标进程具有使用要传递的文件的描述符的权限之后，函数security_binder_transfer_file就继续检查目标进程是否具有访问要传递的文件的内容的权限。其中，isec-&gt;sclass描述的是文件的类型，例如，有可能是目录，也有可能是普通文件，函数file_to_av获得的是要传递的文件的访问方式，例如，是读还是写。举个例子，假设要传递的文件描述符指向的是一个普通文件，并且以只读方式打开，那么函数security_binder_transfer_file就会调用LSM提供的函数avc_has_perm检查目标进程对要传递的文件是否具有类型为SECCLASS_FILE的FILE__READ的权限。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从前面的分析可以知道，在Android系统中，所有类型的应用程序进程，以及系统服务进程，例如Service Manager进程、Zygote进程和System Server进程，它们能不能传递文件描述符给对方，不是取决于它们的domain有没有unconfined_domain属性，而是取决于目标进程是否具有使用传递的文件的描述符以及访问传递的文件的内容的权限。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 至此，我们就分析完成SEAndroid安全机制对Binder IPC的保护了。要想很好地理解这篇文章的内容，需要我们对Android系统的Binder IPC有一定的了解，具体可以参考<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/6618363">Android进程间通信（IPC）机制Binder简要介绍和学习计划</a>这个系列的文章。同时，我们也分析完成整个SEAndroid安全机制的内容了。重新学习SEAndroid安全机制，可以从<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/35392905">SEAndroid安全机制简要介绍和学习计划</a>这篇文章开始。更多信息可以关注老罗的新浪微博：<a target=_blank target="_blank" href="http://weibo.com/shengyangluo">http://weibo.com/shengyangluo</a>。<br /></p>   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   <link rel="stylesheet" href="http://static.blog.csdn.net/css/blog_detail.css" />
+
+    
+<!--172.16.140.14-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+ 
+
+        <div id="digg" ArticleId="38326729" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>14</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>1</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/luoshengyang/article/details/38102011';">上一篇</span><a href="/luoshengyang/article/details/38102011" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">SEAndroid安全机制对Android属性访问的保护分析</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/luoshengyang/article/details/39256813';">下一篇</span><a href="/luoshengyang/article/details/39256813" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">Android运行时ART简要介绍和学习计划</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+        <div class="similar_article"  style="display:none">
+                <h4>我的同类文章</h4>
+                <div class="similar_c"style="margin:20px 0px 0px 0px">
+                    <div class="similar_c_t">
+                                <label class="similar_cur">
+                                    <span  style="cursor:pointer"  onclick="GetCategoryArticles('838604','Luoshengyang','foot','38326729');">Android<em>（183）</em></span>
+                                </label>
+                    </div>
+                   
+                    <div class="similar_wrap tracking-ad" data-mod="popu_141"  style="max-height:195px;">
+                        <a href="http://blog.csdn.net" style="display:none">http://blog.csdn.net</a>
+                        <ul class="similar_list fl">                          
+                        </ul>
+
+                        <ul class="similar_list fr">                           
+                        </ul>
+                    </div>
+                </div>
+            </div>    
+    <script  type="text/javascript">
+        $(function () {
+            GetCategoryArticles('838604', 'Luoshengyang','foot','38326729');
+        });
+    </script>
+      
+</div>
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/Luoshengyang/svc/GetSuggestContent/38326729",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ <link rel="stylesheet" href="http://static.blog.csdn.net/css/replace.css"/>
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl" id="res-relatived" > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+
+    <div id="adCollege" style="width: 42%;float: left;"> 
+        <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+        <script type="text/javascript">
+            csdn.position.showEdu({
+                sourceType: "blog",
+                searchType: "detail",
+                searchKey: "38326729",
+                username: "",
+                recordcount: "5",
+                containerId: "adCollege" //容器DIV的id。 
+            });
+        </script> 
+    </div>  
+
+    
+     <div id="res"  data-mod="popu_36"  class="tracking-ad" style="width: 42%;float: left;margin-right: 30px;"></div>
+   
+</dl>
+
+
+<script type="text/javascript">
+    $(function () {
+        setTimeout(function () {
+            var searchtitletags = 'SEAndroid安全机制对Binder IPC的保护分析' + ',' + $("#tags").html();
+            searchService({
+                index: 'blog',
+                query: searchtitletags,
+                from: 5,
+                size: 5,
+                appendTo: '#res',
+                url: 'recommend',
+                his: 2,
+                client: "blog_cf_enhance",
+                tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+            });
+        }, 500);
+    });    
+
+ </script>  
+
+    <div id="ad_cen">        
+                    <script type="text/javascript">
+                        /*博客内容页下方Banner-728*90，创建于2014-7-3*/
+                        var cpro_id = "u1607657";
+                    </script>
+                    <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+    </div>  
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '38326729';
+    var commentscount = 14;
+    var islock = false
+</script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/comment.js"></script>
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  language="javascript" type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/Luoshengyang/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+</script>
+ <script language="javascript" type="text/javascript" src="http://ads.csdn.net/js/async_new.js"></script>      
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/Luoshengyang" target="_blank">
+    <img src="http://avatar.csdn.net/5/6/E/1_luoshengyang.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/Luoshengyang" class="user_name" target="_blank">Luoshengyang</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=Luoshengyang','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhixing.png" onmouseover="m_over_m(this,6)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>9119811次</span></li>
+    <li>积分：<span>41259</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog8.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：41259 </div>
+        </span>  </li>
+    <li>排名：<span>第71名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>184篇</span></li>
+    <li>转载：<span>0篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>7812条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_6567056" class="panel">
+<ul class="panel_head"><span>博客公告</span></ul>
+<ul class="panel_body">
+<b><font color="red" size="2">本博客所有文章均为原创，欢迎交流，欢迎转载；转载请勿篡改内容，并且注明出处，禁止用于商业目的，谢谢！</font></b>
+</ul>
+</div>
+
+<div id="custom_column_36982715" class="panel">
+<ul class="panel_head"><span>新浪微博</span></ul>
+<ul class="panel_body">
+<iframe width="100%" height="75" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=75&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=1&amp;isTitle=0&amp;noborder=0&amp;isWeibo=0&amp;isFans=0&amp;uid=1595248757&amp;verifier=e4445209&amp;dpc=1"></iframe>
+</ul>
+</div>
+
+<div id="custom_column_21664874" class="panel">
+<ul class="panel_head"><span>图书信息</span></ul>
+<ul class="panel_body">
+<font color="red"><b>书名：</b></font>
+<p>《Android系统源代码情景分析》</p>
+
+<p><a href="http://wenku.it168.com/d_000574719.shtml" target="_blank">试读请点击</a></p>
+
+<p><font color="red"><b>出版社：</b></font></p>
+<p>电子工业出版社</p>
+
+<p><font color="red"><b>网店：</b></font></p>
+
+<p>1. <a href="http://product.dangdang.com/23837163.html" target="_blank">当当网（满100减20，满200减50）</a></p><p></p>
+
+<p>2. <a href="http://item.jd.com/11838754.html" target="_blank">京东网（满99减20）</a></p><p></p>
+
+<p>3. <a href="http://www.amazon.cn/Android%E7%B3%BB%E7%BB%9F%E6%BA%90%E4%BB%A3%E7%A0%81%E6%83%85%E6%99%AF%E5%88%86%E6%9E%90-%E7%BD%97%E5%8D%87%E9%98%B3/dp/B019FSLVUU" target="_blank">亚马逊网（满100减20，满200减50）</a></p><p></p>
+
+<p>4. <a href="http://product.china-pub.com/4901762" target="_blank">互动出版网</a></p><p></p>
+
+<p>5. <a href="http://product.suning.com/141811846.html" target="_blank">苏宁易购网</a></p><p></p>
+
+<p><a href="http://s.etao.com/search?q=Android%CF%B5%CD%B3%D4%B4%B4%FA%C2%EB%C7%E9%BE%B0%B7%D6%CE%F6&eq=Android%25E7%25B3%25BB%25E7%25BB%259F%25E6%25BA%2590%25E4%25BB%25A3%25E7%25A0%2581%25E6%2583%2585%25E6%2599%25AF%25E5%2588%2586%25E6%259E%2590&initiative_id=wwwetao_20160422&spm=1002.1.8.1" target="_blank">比一比谁更实惠</a></p>
+
+<p><font color="red"><b>号外：</b></font></p>
+
+<p>本书繁体版已经成功输出到台湾</p>
+
+<p></p>
+</ul>
+</div>
+
+<div id="custom_column_21603386" class="panel">
+<ul class="panel_head"><span>联系方式</span></ul>
+<ul class="panel_body">
+<font color="red"><b>新浪微博：</b></font>
+<p><a href="http://weibo.com/shengyangluo" target="_blank">http://weibo.com/shengyangluo</a></p><p></p>
+
+<font color="red"><b>QQ交流群：</b></font>
+<p>130112760</p>
+</ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/androidluo.html" target="_blank"><img src="http://img.blog.csdn.net/20151123174935442" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/androidluo.html" target="_blank">老罗的Android之旅</a>
+    <p>文章：184篇</p>
+    <span>阅读：9086958</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/luoshengyang/article/details/8923485" title="那两年炼就的Android内功修养">那两年炼就的Android内功修养</a><span>(331990)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6618363" title="Android进程间通信（IPC）机制Binder简要介绍和学习计划">Android进程间通信（IPC）机制Binder简要介绍和学习计划</a><span>(295000)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6559955" title="在Ubuntu上下载、编译和安装Android最新源代码">在Ubuntu上下载、编译和安装Android最新源代码</a><span>(229686)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6689748" title="Android应用程序启动过程源代码分析">Android应用程序启动过程源代码分析</a><span>(229290)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6567257" title="Android硬件抽象层（HAL）概要介绍和学习计划">Android硬件抽象层（HAL）概要介绍和学习计划</a><span>(169013)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6568411" title="在Ubuntu上为Android系统编写Linux内核驱动程序">在Ubuntu上为Android系统编写Linux内核驱动程序</a><span>(153750)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/8661317" title="Android视图SurfaceView的实现原理分析">Android视图SurfaceView的实现原理分析</a><span>(149932)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6557518" title="Android学习启动篇">Android学习启动篇</a><span>(139077)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6566662" title="如何单独编译Android源代码中的模块">如何单独编译Android源代码中的模块</a><span>(135926)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6621566" title="浅谈Service Manager成为Android进程间通信（IPC）机制Binder守护进程之路">浅谈Service Manager成为Android进程间通信（IPC）机制Binder守护进程之路</a><span>(131385)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/luoshengyang/article/details/6689748" title="Android应用程序启动过程源代码分析">Android应用程序启动过程源代码分析</a><span>(387)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/8923485" title="那两年炼就的Android内功修养">那两年炼就的Android内功修养</a><span>(356)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6559955" title="在Ubuntu上下载、编译和安装Android最新源代码">在Ubuntu上下载、编译和安装Android最新源代码</a><span>(305)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/8116866" title="《Android系统源代码情景分析》一书勘误">《Android系统源代码情景分析》一书勘误</a><span>(266)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6882903" title="Android应用程序键盘（Keyboard）消息处理机制分析">Android应用程序键盘（Keyboard）消息处理机制分析</a><span>(206)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6568411" title="在Ubuntu上为Android系统编写Linux内核驱动程序">在Ubuntu上为Android系统编写Linux内核驱动程序</a><span>(195)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6580267" title="在Ubuntu上为Android系统内置Java应用程序测试Application Frameworks层的硬件服务">在Ubuntu上为Android系统内置Java应用程序测试Application Frameworks层的硬件服务</a><span>(186)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/7409491" title="Android博客文章整理">Android博客文章整理</a><span>(181)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/8452527" title="2012年的Android之旅：梦想、学习、坚持、自信、淡定">2012年的Android之旅：梦想、学习、坚持、自信、淡定</a><span>(177)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/12957169" title="《老罗的Android之旅》导读PPT">《老罗的Android之旅》导读PPT</a><span>(168)</span>
+</li>
+</ul>
+</div>
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/luoshengyang/article/details/53209199#comments">Android WebView加载Chromium动态库的过程分析</a>
+    <p style="margin:0px;"><a href="/lcalqf" class="user_name">lcalqf</a>:
+大神你注意身体啊，天天这么晚
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/8738877#comments">Android资源管理框架（Asset Manager）简要介绍和学习计划</a>
+    <p style="margin:0px;"><a href="/u010032372" class="user_name">u010032372</a>:
+2016-12-2学习
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/6557518#comments">Android学习启动篇</a>
+    <p style="margin:0px;"><a href="/dawnscofield" class="user_name">dawnscofield</a>:
+写的不错
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/6703247#comments">Android应用程序内部启动Activity过程（startActivity）的源代码分析</a>
+    <p style="margin:0px;"><a href="/FallingSand" class="user_name">FallingSand</a>:
+老师，劳烦您把图也发我一份吧，连同上一篇的。感谢1253576827@qq.com
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/6621566#comments">浅谈Service Manager成为Android进程间通信（IPC）机制Binder守护进程之路</a>
+    <p style="margin:0px;"><a href="/liao_hb" class="user_name">liao_hb</a>:
+老罗，在binder_mmap(filp, vma)中：struct vm_struct *area...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/6621566#comments">Android WebView加载Chromium动态库的过程分析</a>
+    <p style="margin:0px;"><a href="/dd864140130" class="user_name">dd864140130</a>:
+非常棒,受教了
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/53124261#comments">Android WebView简要介绍和学习计划</a>
+    <p style="margin:0px;"><a href="/rkshuai" class="user_name">rkshuai</a>:
+1. 为Chromium动态库保留了一段足够加载它的虚拟地址内间，这里的&quot;内间&quot;应为&quot;空间&quot;2. A...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/8923485#comments">那两年炼就的Android内功修养</a>
+    <p style="margin:0px;"><a href="/qq332982511" class="user_name">qq332982511</a>:
+我服~~~
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/46855395#comments">Chromium多线程模型设计和实现分析</a>
+    <p style="margin:0px;"><a href="/u012568263" class="user_name">u012568263</a>:
+@rkshuai:回复rkshuai：還能找到這麼多問題，真是佩服。1. &quot;一个从带消息循环的线程的...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/46855395#comments">Android WebView简要介绍和学习计划</a>
+    <p style="margin:0px;"><a href="/u012568263" class="user_name">u012568263</a>:
+1. &quot;可以参考前面前面&quot;，有衍文。2. &quot;并且这个N个App的进程都存在系统中&quot;，有衍文。3. 图...
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 --> 
+                    <ins data-revive-zoneid="190" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins> 
+                    <!-- 广告位结束 -->
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+<script type="text/javascript" src="http://c.csdnimg.cn/rabbit/cnick/cnick.js"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/newblog.min.js"></script>
+
+
+<script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=1134701"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/JavaScript1.js"></script>
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">document.write("<img src=http://counter.csdn.net/pv.aspx?id=24 border=0 width=0 height=0>");</script>
+<script type="text/javascript" src="http://www.csdn.net/ui/scripts/Csdn/counter.js"></script>
+<script type="text/javascript" src="http://ad.csdn.net/scripts/ad-blog.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+    <script id="csdn-toolbar-id" btnId="header_notice_num" wrapId="note1" count="5" subCount="5" type="text/javascript" src="http://c.csdnimg.cn/public/common/toolbar/js/toolbar.js"></script>     <!--new top-->
+   
+    <link href="http://c.csdnimg.cn/comm_ask/css/ask_float_block.css" type="text/css" rel="stylesheet" />
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/wmd.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/showdown.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/prettify.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/apps/ask_float_block.js'></script>
+   
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    <link rel="stylesheet" href="http://static.blog.csdn.net/css/blog_code.css" />
+    <script type="text/javascript" src="http://static.blog.csdn.net/scripts/saveToCode.js"></script>
+      <script type="text/javascript" src="//csdnimg.cn/rabbit/tracking-ad/main.js?75eacd8"></script>
+</body>
+</html>   
+ 

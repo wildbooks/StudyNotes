@@ -1,0 +1,116 @@
+/*
+* 点的参数
+        shape
+            record     由横的和竖的矩形组成的图形
+	    Mrecord    角是圆的，看例题
+	    polygon    多边形
+	    plaintext
+	    box
+	    Mdiamond
+	    Msquare
+	rankdir       默认时图中的线是从上到下的，值：LR，RL，TB(默认)，BT   
+	sides 设置边数
+	peripheries 设置多边形的外框的层数
+	regular = true可以让多边形是一个规则的多边形
+	orientation=15 可以让你的多边形旋转一个角度 如15度
+	color
+	style
+	skew 值-1.0～1.0能让多边形斜切一个角度
+	label
+	distortion 让图形产生透视效果
+	
+	decorate      决定每条线的label与所属线的连接值：true,false
+	labelfontcolor决定headlabel和taillabel的颜色
+	fontcolor     决定label颜色
+	headlabel     起始点标签
+	taillabel     终点标签
+	label         标签
+	rank       当图中时间表之类的东西时，我们会需要点能排在一行（列），这时要用到rank，用花括号把rank=same然后把需要并排的点一次输入          
+
+	width   宽
+	height  高
+	nodesep
+
+
+	画一个子图 subgraph 
+
+	compound 把一条边连到一个子图的边界上，先输入compound = true,然后就能用lhead和ltail来设置连接的子图了
+* 
+*
+****/
+/*
+设立一条边时，我们可以制定这条边从起点的那个位置射出和从哪个位置结束。控制符有
+"n", "ne","e", "se", "s", "sw", "w" 和"nw"，具体效果见下：
+n是北；s是南；w是西；e是东
+
+也可以在record/Mrecord中给点定义一些port，因为record类型中都是一个个格子
+*/
+
+
+/*
+Graphviz Example: Switch Network
+
+    A non-blocking switch network consisting of only 2-way splitters and selectors. This graph was created to illustrate the parallel edge feature. 
+*/
+
+
+digraph G {
+	graph [center=1 rankdir=LR bgcolor="#808080"]
+	edge [dir=none]
+	node [width=0.3 height=0.3 label=""]
+	{ node [shape=circle style=invis]
+		1 2 3 4 5 6 7 8  10 20 30 40 50 60 70 80
+	}
+	{ node [shape=circle]
+		a b c d e f g h  i j k l m n o p  q r s t u v w x
+	}
+	{ node [shape=diamond]
+		A B C D E F G H  I J K L M N O P  Q R S T U V W X
+	}
+	1 -> a -> {A B} [color="#0000ff"]
+	2 -> b -> {B A} [color="#ff0000"]
+	3 -> c -> {C D} [color="#ffff00"]
+	4 -> d -> {D C} [color="#00ff00"]
+	5 -> e -> {E F} [color="#000000"]
+	6 -> f -> {F E} [color="#00ffff"]
+	7 -> g -> {G H} [color="#ffffff"]
+	8 -> h -> {H G} [color="#ff00ff"]
+	{ edge [color="#ff0000:#0000ff"]
+		A -> i -> {I K}
+		B -> j -> {J L}
+	}
+	{ edge [color="#00ff00:#ffff00"]
+		C -> k -> {K I}
+		D -> l -> {L J}
+	}
+	{ edge [color="#00ffff:#000000"]
+		E -> m -> {M O}
+		F -> n -> {N P}
+	}
+	{ edge [color="#ff00ff:#ffffff"]
+		G -> o -> {O M}
+		H -> p -> {P N}
+	}
+	{ edge [color="#00ff00:#ffff00:#ff0000:#0000ff"]
+		I -> q -> {Q U}
+		J -> r -> {R V}
+		K -> s -> {S W}
+		L -> t -> {T X}
+	}
+	{ edge [color="#ff00ff:#ffffff:#00ffff:#000000"]
+		M -> u -> {U Q}
+		N -> v -> {V R}
+		O -> w -> {W S}
+		P -> x -> {X T}
+	}
+	{ edge [color="#ff00ff:#ffffff:#00ffff:#000000:#00ff00:#ffff00:#ff0000:#0000ff"]
+		Q -> 10
+		R -> 20
+		S -> 30
+		T -> 40
+		U -> 50
+		V -> 60
+		W -> 70
+		X -> 80
+	}
+}

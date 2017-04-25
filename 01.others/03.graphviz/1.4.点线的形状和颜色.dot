@@ -1,0 +1,36 @@
+/*
+* 点的参数
+        shape
+            record     由横的和竖的矩形组成的图形
+	    Mrecord    角是圆的，看例题
+	    polygon    多边形
+	    
+	sides 设置边数
+	peripheries 设置多边形的外框的层数
+	regular = true可以让多边形是一个规则的多边形
+	orientation=15 可以让你的多边形旋转一个角度 如15度
+	color
+	style
+	skew 值-1.0～1.0能让多边形斜切一个角度
+	label
+	distortion 让图形产生透视效果
+	
+	
+* 
+*
+****/
+
+digraph G{              /* digraph为有向图，graph为无向图 */
+
+        label = "I love you"; /*给这副图设置名字*/
+	labelloc=b;           /*图名字的位置b是底部，t是顶部*/
+	labeljust=r;          /*图名字的位置r是右侧，l是左侧*/
+	
+	node[shape=record];      //node是什么意思
+	struct1[shape=record,label="<f0>left|<f1>mid dle|<f2>right"];
+	struct2[shape=record,label="<f0>one|<f1>two"];
+	struct3[shape=record,label="hello\nworld|{b|{c|<here>d|e}|f}|g|h"]
+	struct4[shape=Mrecord,label="{a|{b|c}|{d|e|f}}"];
+
+	struct1 -> {struct2,struct3,struct4}
+} 

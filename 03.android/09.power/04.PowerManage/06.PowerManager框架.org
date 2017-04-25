@@ -1,0 +1,31 @@
+* PowerManager管理整体框架
+** 框架
+#+begin_src cpp
+                  app
+                  ||
+                  \/
+       应用接口层(PowerManager.java)
+                  ||
+                  \/
+    Framework层(PowerManagerService.java)
+                  ||
+                  \/
+JNI(com_android_server_power_PowerManagerService.cpp)
+                  ||
+                  \/
+            HAL层(Power.c)
+                  ||
+                  \/
+         内核层(Kernel/Power)
+#+end_src
+** 代码路径
++ 应用接口
+  frameworks/base/core/java/android/os/PowerManager.java
+  frameworks/base/core/java/android/os/PowerManagerInternal.java
++ Framework层
+  frameworks/base/services/core/java/com/android/server/power/PowerManagerService.java
++ JNI
+  frameworks/base/services/core/jni/com_android_server_power_PowerManagerService.cpp
++ HAL层
+  Power.c
++ kernel层

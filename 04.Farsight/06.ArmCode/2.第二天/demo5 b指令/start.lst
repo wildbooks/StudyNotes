@@ -1,0 +1,69 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 area             first, code, readonly
+    2 00000000                 code32
+    3 00000000                 entry
+    4 00000000         start
+    5 00000000         ; bl 指令, 子函数调用
+    6 00000000 EB000001        bl               child_func  ;0xeb 00 00 04
+    7 00000004 E1A00000        nop
+    8 00000008         ;while (1);
+    9 00000008         stop
+   10 00000008 EAFFFFFE        b                stop
+   11 0000000C         
+   12 0000000C         
+   13 0000000C         ; 子函数
+   14 0000000C         child_func
+   15 0000000C E3A00001        mov              r0, #1      ; <===  pc
+   16 00000010         ; bl child_func1
+   17 00000010         ;子函数返回
+   18 00000010 E1A0F00E        mov              pc, lr
+   19 00000014         
+   20 00000014                 end
+Command Line: --debug --xref --cpu=ARM920T --apcs=interwork --depend=start.d -o
+start.o -IC:\Keil\ARM\INC -IC:\Keil\ARM\INC\Samsung --predefine="__EVAL SETA 1"
+ --list=start.lst start.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+child_func 0000000C
+
+Symbol: child_func
+   Definitions
+      At line 14 in file start.s
+   Uses
+      At line 6 in file start.s
+Comment: child_func used once
+first 00000000
+
+Symbol: first
+   Definitions
+      At line 1 in file start.s
+   Uses
+      None
+Comment: first unused
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 4 in file start.s
+   Uses
+      None
+Comment: start unused
+stop 00000008
+
+Symbol: stop
+   Definitions
+      At line 9 in file start.s
+   Uses
+      At line 10 in file start.s
+Comment: stop used once
+4 symbols
+329 symbols in table

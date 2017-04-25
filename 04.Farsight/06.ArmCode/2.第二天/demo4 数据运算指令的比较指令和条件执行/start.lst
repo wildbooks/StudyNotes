@@ -1,0 +1,56 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 area             first, code, readonly
+    2 00000000                 code32
+    3 00000000                 entry
+    4 00000000         start
+    5 00000000         ; 一般做分支运算的时候常用减法
+    6 00000000         ; if （r0 == r1) 
+    7 00000000         ;    mov r2, #2
+    8 00000000 E3A00001        mov              r0, #1
+    9 00000004 E3A01002        mov              r1, #2
+   10 00000008 E0500001        subs             r0, r0, r1
+   11 0000000C 03A02002        moveq            r2, #2
+   12 00000010         
+   13 00000010         stop
+   14 00000010 EAFFFFFE        b                stop
+   15 00000014                 end
+Command Line: --debug --xref --cpu=ARM920T --apcs=interwork --depend=start.d -o
+start.o -IC:\Keil\ARM\INC -IC:\Keil\ARM\INC\Samsung --predefine="__EVAL SETA 1"
+ --list=start.lst start.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+first 00000000
+
+Symbol: first
+   Definitions
+      At line 1 in file start.s
+   Uses
+      None
+Comment: first unused
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 4 in file start.s
+   Uses
+      None
+Comment: start unused
+stop 00000010
+
+Symbol: stop
+   Definitions
+      At line 13 in file start.s
+   Uses
+      At line 14 in file start.s
+Comment: stop used once
+3 symbols
+328 symbols in table

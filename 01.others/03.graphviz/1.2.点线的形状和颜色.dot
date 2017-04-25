@@ -1,0 +1,35 @@
+/*
+* 点的参数
+        shape
+	width
+	height
+	
+* 
+*
+****/
+
+digraph G{              /* digraph为有向图，graph为无向图 */
+	/*用dir设置每条边箭头的方向*/
+        A -> B[dir = both];    /*双向*/
+        B -> C[dir = none];    /*没箭头*/
+	C -> D[dir = back];    /**/
+	D -> A[dir = forward];
+
+	//rankdir = LR;   /* 方向由默认的上到下变为左到右*/
+	size = "4,4";   /*设置图的尺寸*/
+	main[shape=box]; /*图形状设为方*/
+	main -> parse[weight=8];  /*设置这条边的重要程度，默认是1*/
+	parse -> execute;/*有向图用-> 无向图用--*/
+	main -> init[style=dotted]; /*让这条线是点状的*/
+	main -> cleanup;
+	execute -> {make_string,printf}; /*这个语句一次连二次*/
+	init -> make_string;
+
+	main -> printf[style=bild,label="100 times"];/*label就是在边上写行字*/
+	make_string[label="make a\nstring"];/*让make_string变成make a string(\n是换行符)*/
+	edge[color=red];        /*边的颜色设为红色，在此之后都是红色*/
+	node[shape=box,style=filled,color=red];/*设置了以下点的参数蓝色，被用在compare*/
+	execute ->compare;
+
+	
+} 

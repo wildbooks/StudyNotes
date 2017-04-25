@@ -1,0 +1,45 @@
+/*
+* 点的参数
+        shape
+            record     由横的和竖的矩形组成的图形
+	    Mrecord    角是圆的，看例题
+	    polygon    多边形
+	    
+	sides 设置边数
+	peripheries 设置多边形的外框的层数
+	regular = true可以让多边形是一个规则的多边形
+	orientation=15 可以让你的多边形旋转一个角度 如15度
+	color
+	style
+	skew 值-1.0～1.0能让多边形斜切一个角度
+	label
+	distortion 让图形产生透视效果
+	
+	decorate      决定每条线的label与所属线的连接值：true,false
+	labelfontcolor决定headlabel和taillabel的颜色
+	fontcolor     决定label颜色
+	headlabel     起始点标签
+	taillabel     终点标签
+	label         
+* 
+*
+****/
+
+graph G{              /* digraph为有向图，graph为无向图 */
+	label = "I love you"; /*给这副图设置名字*/
+	labelloc=b;           /*图名字的位置b是底部，t是顶部*/
+	labeljust=r;          /*图名字的位置r是右侧，l是左侧*/
+	
+	edge[decorate = true]; /*每条线的label与所属线之间连接*/
+//	edge[decorate = false];/*感受两者的区别*/
+       // edge[fontcolor=red];/*感受加上和去掉的区别*/
+	C--D[label="s1"];     
+	C--E[label="s2"];
+	C--F[label="s3"];
+	D--E[label="s4"];
+	D--F[label="s5"];
+	edge[decorate=false,labelfontcolor=blue,fontcolor=red];
+	C1--D1[headlabel="c1",taillabel="d1",label="c1-d1"];
+	
+	
+} 

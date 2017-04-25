@@ -1,0 +1,40 @@
+#+TITLE:fedora 23中配置nfs-server
+#+AUTHOR:野书
+#+EMAIL:www762268@foxmail.com
+#+KEYWORDS:nfs fedora23
+#+DESCRIPTION: 配置nfs-server服务器
+* 产考资料
+ [[http://www.tecmint.com/how-to-setup-nfs-server-in-linux/][How to Setup NFS (Network File System) on RHEL/CentOS/Fedora and Debian/Ubuntu]]
+ [[https://fedoraproject.org/wiki/Administration_Guide_Draft/NFS][inistration Guide Draft/NFS]]
+* 安装
+  1. 检查是否安装
+     rpm -aq "nfs"
+     + 输出结果 ::
+                  nfs-utils-1.2.6-3.fc17.x86_64
+  2. 如果没安装，则安装
+     sudo install nfs-utils system-config-nfs
+* NFS配置
+  1. 配置文件
+     /etc/exports 主要配置文件
+     /etc/hosts.allow  允许访问
+     /etc/sysconfig/nfs 拒绝访问
+  2. fedora下默认不被允许的，我们执行以下命令检测下
+     ps -ef | grep nfs
+     + 如果输出结果 ::
+                  [wildbook@wildbook ~]$ ps -ef |grep nfs
+                  root      1101     2  0 11:25 ?        00:00:00 [nfsd4_callbacks]
+                  root      1105     2  0 11:25 ?        00:00:00 [nfsd]
+                  root      1106     2  0 11:25 ?        00:00:00 [nfsd]
+                  root      1107     2  0 11:25 ?        00:00:00 [nfsd]
+                  root      1108     2  0 11:25 ?        00:00:00 [nfsd]
+                  root      1109     2  0 11:25 ?        00:00:00 [nfsd]
+                  root      1110     2  0 11:25 ?        00:00:00 [nfsd]
+                  root      1111     2  0 11:25 ?        00:00:00 [nfsd]
+                  root      1112     2  0 11:25 ?        00:00:00 [nfsd]
+                  wildbook  4014  3741  0 12:16 pts/2    00:00:00 grep --color=auto nfs
+     + 否则执行以下命令，允许nfs启动
+       sudo systemctl enable rpcbind
+       sudo systemctl enable nfs-server
+       sudo service rpcbind start
+       sudo service nfs-server start
+     + 创建分享

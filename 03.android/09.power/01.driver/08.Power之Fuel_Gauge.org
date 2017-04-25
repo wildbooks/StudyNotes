@@ -1,0 +1,1585 @@
+#+FILE: Power之Fuel Gauge
+#+AUTHOR:      wildbook
+#+DATE:        2017年01月12日18:13:13
+#+EMAIL:       www762268@foxmail.com
+#+DESCRIPTION: 掌握PMIC之FuelGauge
+#+KEYWORDS:    power,pmic,
+#+LANGUAGE:    language for HTML, e.g. ‘en’ (org-export-default-language)
+#+TEXT:        Some descriptive text to be inserted at the beginning.
+#+TEXT:        Several lines may be given.
+#+OPTIONS:     H:2 num:t toc:t \n:nil @:t ::t |:t ^:t f:t TeX:t ...
+#+LINK_UP:     the ``up'' link of an exported page
+#+LINK_HOME:   the ``home'' link of an exported page
+#+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
+* 简介
+  充电状态在硬件(Fuel Gauge)中计算并由软件通过检索寄存器读数。QPNP PMIC FG\\
+  为客户端提供了读取与电池相关的属性的接口。其主要功能是检索充电状态（SOC）\\
+  ，0-100百分比表示电池中剩余的电量。\\
+* Fuel Gauge参考资料
+  + SoC is calculated in the hardware and retrieved by the software through
+    register reading.
+  + Source code driver tree structure
+    + Driver – kernel/drivers/power/qpnp-fg.c
+    + DTS – kernel/arch/arm/boot/dts/qcom/msm-pmi8950.dtsi
+    + Documentation – Documentation/devicetree/bindings/power/qpnp-fg.txt.
+  + Supplies the properties for the user space power supply framework
+    POWER_SUPPLY_PROP_CAPACITY – Current SoC
+    POWER_SUPPLY_PROP_CURRENT_NOW – Instantaneous battery current
+    POWER_SUPPLY_PROP_VOLTAGE_NOW – Instantaneous battery voltage.
+  + Resolution for current and voltage are 39 mA and 39 mV respectively.
+  + Fuel gauge awakes system at full (100%) or empty (0%).
+  + Each SoC change generates a DELTA_SOC interrupt.
+  + Battery profiles
+    + Up to four profiles are stored in the OTP
+    + Selected profile is stored in SRAM, either through OTP, or from the
+      software through SPMI
+    + OEM-unique profile can be loaded into SRAM at boot up. It overwrites the
+      generic profiles.
+  + Interrupts
+    + high-soc – SoC > Configurable high SoC threshold
+    + low-soc – SoC < Configurable low SoC threshold
+    + full-soc – SoC = 100%
+    + empty-soc – SoC = 0% at shut-down SoC OR voltage < Configurable empty
+      voltage
+    + delta-soc – Configurable delta SoC to update the user space
+    + first-est-done – Trigger after profile is loaded, and battery detection
+      is performed in the fuel gauge hardware
+    + sw-fallbk-ocv
+    + sw-fallbk-new-battrt-sts.
+* sysfs使用
+  + debug
+    /sys/kernel/debug/fg_memif
+  + udevfs
+    /sys/class/power_supply/bms/
+  + 模块符号表路径
+    /sys/module/
+* 关键结构体
+  + fg_chip
+    #+begin_src cpp
+    struct fg_chip {
+          struct device		*dev;
+          struct spmi_device	*spmi;
+          u8			pmic_subtype;    //pmic版本信息
+          u8			pmic_revision;   //pmic修订版本信息
+          u8			revision[4];     //FG修订版本号
+          //fg_soc开始地址 fg主设备，负责电池计量器的控制和传感器
+          u16			soc_base;        
+          //fg_batt开始地址 负责电池状态中断和控制
+          u16			batt_base;       
+          //fg_memif开始地址  pmic外设寄存器地图
+          u16			mem_base;        
+          u16			vbat_adc_addr;   //vbat起始地址 电池电压限制
+          u16			ibat_adc_addr;  //vbat起始地址 电池电量限制
+          u16			tp_rev_addr;  //vbat起始地址
+          u32			wa_flag;
+          atomic_t		memif_user_cnt;
+          struct fg_irq		soc_irq[FG_SOC_IRQ_COUNT];//充电状态中断
+          struct fg_irq		batt_irq[FG_BATT_IRQ_COUNT];//电池状态中断
+          struct fg_irq		mem_irq[FG_MEM_IF_IRQ_COUNT];//
+          struct completion	sram_access_granted;  //类似互斥锁
+          struct completion	sram_access_revoked;  //类似互斥锁
+          struct completion	batt_id_avail;   //类似互斥锁
+          struct power_supply	bms_psy;       //电池检测系统 物理
+          struct mutex		rw_lock;        //互斥锁
+          struct mutex		sysfs_restart_lock; //互斥锁
+          struct work_struct	batt_profile_init;  //工作队列
+          struct work_struct	dump_sram; //工作队列
+          struct work_struct	status_change_work;   //工作队列
+          struct work_struct	cycle_count_work;   //工作队列
+          struct work_struct	battery_age_work;   //工作队列
+          struct work_struct	update_esr_work;   //工作队列
+          struct work_struct	set_resume_soc_work;  //工作队列
+          struct work_struct	rslow_comp_work;   //工作队列
+          struct work_struct	sysfs_restart_work;   //工作队列
+          struct work_struct	init_work;   //工作队列
+          struct work_struct	charge_full_work;   //工作队列
+          struct work_struct	gain_comp_work;   //工作队列
+          struct power_supply	*batt_psy;   //电池
+          struct power_supply	*usb_psy;    //usb电池
+          struct power_supply	*dc_psy;  //
+          struct fg_wakeup_source	memif_wakeup_source;    //唤醒源
+          struct fg_wakeup_source	profile_wakeup_source;    //唤醒源
+          struct fg_wakeup_source	empty_check_wakeup_source;   //唤醒源
+          struct fg_wakeup_source	resume_soc_wakeup_source;   //唤醒源
+          struct fg_wakeup_source	gain_comp_wakeup_source;   //唤醒源
+          struct fg_wakeup_source	capacity_learning_wakeup_source;   //唤醒源
+          bool			first_profile_loaded;
+          struct fg_wakeup_source	update_temp_wakeup_source;  //温度唤醒源
+          struct fg_wakeup_source	update_sram_wakeup_source;
+          bool			profile_loaded;
+          bool			use_otp_profile;
+          bool			battery_missing;
+          bool			power_supply_registered;
+          bool			sw_rbias_ctrl;
+          bool			use_thermal_coefficients; //是否使用电池热敏电阻的热系数
+          bool			esr_strict_filter;
+          bool			soc_empty;
+          bool			charge_done;
+          bool			resume_soc_lowered;
+          bool			vbat_low_irq_enabled;
+          bool			charge_full;             //充满电标志
+          bool			hold_soc_while_full;
+          bool			input_present;
+          bool			otg_present;
+          bool			safety_timer_expired;
+          bool			bad_batt_detection_en;
+          struct delayed_work	update_jeita_setting; //日本的jeita充电标准,这个用于配置寄存器
+          struct delayed_work	update_sram_data;
+          struct delayed_work	update_temp_work;
+          struct delayed_work	check_empty_work;
+          char			*batt_profile;
+           //用于读取电池热敏电阻的热系数字节数组
+          u8			thermal_coefficients[THERMAL_COEFF_N_BYTES];
+          u32			cc_cv_threshold_mv;
+          unsigned int		batt_profile_len;
+          unsigned int		batt_max_voltage_uv;
+          const char		*batt_type;
+          const char		*batt_psy_name;
+          unsigned long		last_sram_update_time;
+          unsigned long		last_temp_update_time;
+          int64_t			ocv_coeffs[12];
+          int64_t			cutoff_voltage;
+          int			evaluation_current;
+          int			ocv_junction_p1p2;
+          int			ocv_junction_p2p3;
+          int			nom_cap_uah;
+          int			actual_cap_uah;
+          int			status;
+          int			prev_status;
+          int			health;
+          enum fg_batt_aging_mode	batt_aging_mode;
+          /* capacity learning */
+          struct fg_learning_data	learning_data; //电池容量自我学习能力
+          struct alarm		fg_cap_learning_alarm;
+          struct work_struct	fg_cap_learning_work;
+          struct fg_cc_soc_data	sw_cc_soc_data;
+          /* rslow compensation */
+          struct fg_rslow_data	rslow_comp;
+          /* cycle counter */
+          struct fg_cyc_ctr_data	cyc_ctr;
+          /* iadc compensation */
+          struct fg_iadc_comp_data iadc_comp_data;
+          /* interleaved memory access */
+          u16			*offset;                     //Fuel Gauge的偏移地址
+          bool			ima_supported;             //是否支持中断
+          bool			jeita_hysteresis_support;  //是否支持冷热滞后 ture
+          bool			batt_hot;                  //热滞后
+          bool			batt_cold;                 //冷滞后
+          bool			init_done;
+          int			cold_hysteresis;   //冷滞后值 20
+          int			hot_hysteresis;    // //冷滞后值 30
+    };
+    #+end_src
+  + wakeup_source
+    功能:表示唤醒源
+    #+begin_src cpp
+    struct wakeup_source {
+        const char 		*name;  //唤醒源名
+        struct list_head	entry;
+        struct rcu_head		rcu;
+        spinlock_t		lock;
+        struct timer_list	timer;
+        unsigned long		timer_expires;
+        ktime_t total_time; //此唤醒源已经激活的总时间
+        ktime_t max_time;  //此唤醒源持续有效的最长时间
+        ktime_t last_time; //上次触发唤醒源时的单调时钟。
+        ktime_t start_prevent_time; //
+        ktime_t prevent_sleep_time; //此唤醒源阻止自动睡眠的总时间。
+        unsigned long		event_count; //唤醒事件的信号数
+        unsigned long		active_count; //唤醒源的激活次数。
+        unsigned long		relax_count; //唤醒源被禁用的次数。
+        unsigned long		expire_count; //唤醒源超时的次数。
+        unsigned long		wakeup_count; //唤醒源可能中止挂起的次数。
+        bool			active:1;          //唤醒源的状态。
+        bool			autosleep_enabled:1; //事件是否允许系统自动睡眠
+    };
+    #+end_src
+  + fg_power_props
+    #+begin_src cpp
+    static enum power_supply_property fg_power_props[] = {
+      POWER_SUPPLY_PROP_CAPACITY,   //电池容量
+      POWER_SUPPLY_PROP_CAPACITY_RAW,
+      POWER_SUPPLY_PROP_CURRENT_NOW, //当前电流
+      POWER_SUPPLY_PROP_VOLTAGE_NOW, //当前电压
+      POWER_SUPPLY_PROP_VOLTAGE_OCV,
+      POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
+      POWER_SUPPLY_PROP_CHARGE_NOW,  //现在充电
+      POWER_SUPPLY_PROP_CHARGE_NOW_RAW,
+      POWER_SUPPLY_PROP_CHARGE_NOW_ERROR, //当前充电错误
+      POWER_SUPPLY_PROP_CHARGE_FULL,      //充满电
+      POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
+      POWER_SUPPLY_PROP_TEMP,          //温度
+      POWER_SUPPLY_PROP_COOL_TEMP,     //cool温度
+      POWER_SUPPLY_PROP_WARM_TEMP,     //warm温度
+      POWER_SUPPLY_PROP_RESISTANCE,    //
+      POWER_SUPPLY_PROP_RESISTANCE_ID,
+      POWER_SUPPLY_PROP_BATTERY_TYPE,  //电池类型
+      POWER_SUPPLY_PROP_UPDATE_NOW,    //
+      POWER_SUPPLY_PROP_ESR_COUNT,
+      POWER_SUPPLY_PROP_VOLTAGE_MIN,   //最小电压
+      POWER_SUPPLY_PROP_CYCLE_COUNT,
+      POWER_SUPPLY_PROP_CYCLE_COUNT_ID,
+    };
+    #+end_src
+  + bms_battery_data
+    #+begin_src cpp
+    struct bms_battery_data {
+      unsigned int		fcc; //满充电容量(mAmpHour)
+      struct single_row_lut	*fcc_temp_lut;//表在给定的温度下获取fcc
+      struct single_row_lut	*fcc_sf_lut;  //给出电池温度和循环百分比电荷
+      struct pc_temp_ocv_lut	*pc_temp_ocv_lut;
+      struct ibat_temp_acc_lut *ibat_acc_lut;
+      struct sf_lut		*pc_sf_lut;
+      struct sf_lut		*rbatt_sf_lut;
+      int			default_rbatt_mohm;
+      int			delta_rbatt_mohm;
+      int			rbatt_capacitive_mohm;
+      int			flat_ocv_threshold_uv;
+      int			max_voltage_uv;
+      int			cutoff_uv;
+      int			iterm_ua;
+      int			batt_id_kohm;
+      int			fastchg_current_ma;
+      int			fg_cc_cv_threshold_mv;
+      const char		*battery_type;
+    };
+    #+end_src
+* 关键函数
+  + module_param_named(name, value, type, perm)
+    #+begin_src cpp
+    #define module_param_named(name, value, type, perm)   \
+         param_check_##type(name, &(value));   \
+         module_param_call(name, param_set_##type, \
+               param_get_##type, &value, perm);   \
+         __MODULE_PARM_TYPE(name, #type)
+
+
+    module_param_named(battery_type, fg_batt_type, charp, S_IRUSR | S_IWUSR);
+    #+end_src
+    + 等价于
+      #+begin_src cpp
+      param_check_charp(battery_type, &fg_batt_type);
+      module_param_call(battery_type, param_set_charp, param_get_charp, &fg_batt_type, S_IRUSR | S_IWUSR);
+      __MODULE_PARM_TYPE(battery_type, "charp")
+      #+end_src
+    + 此宏定义是安装模块时，用来传递参数的,insmod xx.ko battery_type="fasf",
+      实际是改变fg_batt_type.功能和module_param()有点类似
+* 设备树
+  + pmi8950_fg
+    #+begin_src cpp
+    pmi8950_fg: qcom,fg {
+          spmi-dev-container;
+          compatible = "qcom,qpnp-fg";
+          #address-cells = <1>;
+          #size-cells = <1>;
+          qcom,resume-soc-raw = <0xFD>;
+          status = "okay";
+          qcom,bcl-lm-threshold-ma = <127>;
+          qcom,bcl-mh-threshold-ma = <405>;
+          qcom,fg-iterm-ma = <150>;
+          qcom,fg-chg-iterm-ma = <100>;
+          qcom,pmic-revid = <&pmi8950_revid>;    //pmic修订版本信息
+          qcom,cycle-counter-en;
+          qcom,capacity-learning-on;
+          qcom,fg-cutoff-voltage-mv = <3400>;
+          qcom,warm-bat-decidegc = <450>;
+          qcom,cool-bat-decidegc = <100>;
+          qcom,hot-bat-decidegc =  <550>;
+          qcom,cold-bat-decidegc = <0>;
+          qcom,ext-sense-type;
+          qcom,thermal-coefficients = [c2 86 bb 50 cf 37];
+          qcom,vbat-estimate-diff-mv = <200>;
+          qcom,cold-hot-jeita-hysteresis = <20 30>;
+
+          /*主FG设备。支持电池电量计控制和传感器*/
+          qcom,fg-soc@4000 {
+                  status = "okay";
+                  reg = <0x4000 0x100>;
+                  interrupts =    <0x2 0x40 0x0>,
+                                  <0x2 0x40 0x1>,
+                                  <0x2 0x40 0x2>,
+                                  <0x2 0x40 0x3>,
+                                  <0x2 0x40 0x4>,
+                                  <0x2 0x40 0x5>,
+                                  <0x2 0x40 0x6>;
+
+                  interrupt-names =  "high-soc",//高电压
+                                     "low-soc", //低电压
+                                     "full-soc",//满电
+                                     "empty-soc",//
+                                     "delta-soc",
+                                     "first-est-done",
+                                     "update-soc";
+          };
+
+          /**/
+          qcom,fg-batt@4100 {
+                  reg = <0x4100 0x100>;
+                  interrupts =    <0x2 0x41 0x0>,
+                                  <0x2 0x41 0x1>,
+                                  <0x2 0x41 0x2>,
+                                  <0x2 0x41 0x3>,
+                                  <0x2 0x41 0x4>,
+                                  <0x2 0x41 0x5>,
+                                  <0x2 0x41 0x6>,
+                                  <0x2 0x41 0x7>;
+
+                  interrupt-names =    "soft-cold",    //低温
+                                       "soft-hot",     //高温
+                                       "vbatt-low",    //低电量
+                                       "batt-ided",
+                                       "batt-id-req",
+                                       "batt-unknown", //电池未知
+                                       "batt-missing", //没电池
+                                       "batt-match";
+          };
+
+          /**/
+          qcom,revid-tp-rev@1f1 {
+                  reg = <0x1f1 0x1>;    //寄存器保存tp修订版本号
+          };
+
+          /**/
+          qcom,fg-memif@4400 {
+                  status = "okay";
+                  reg = <0x4400 0x100>;
+                  interrupts =    <0x2 0x44 0x0>,
+                                  <0x2 0x44 0x2>;
+
+                  interrupt-names =   "mem-avail",     //内存可用中断
+                                      "data-rcvry-sug";
+          };
+    };
+    #+end_src
+  + battery-data
+    #+begin_src cpp
+    &pmi8950_fg {
+        qcom,battery-data = <&mtp_batterydata>;
+    };
+    mtp_batterydata: qcom,battery-data {
+                //给定电池ID电阻有效的上限和下限之间的变化范围
+                qcom,batt-id-range-pct = <15>;
+                #include "tcl-idol4-2600mah.dtsi"
+    };
+    qcom,tcl-idol4-2600mah {
+            /*#2208052_TCL_TLp026EJ_2600mAh_averaged_MasterSlave_Nov18th2015*/
+            qcom,max-voltage-uv = <4400000>; //电池的最大额定电压
+            qcom,nom-batt-capacity-mah = <2600>;
+            qcom,batt-id-kohm = <2>; //电池的电池阻值
+            qcom,battery-beta = <3435>;
+            qcom,default-battery-type;
+            qcom,battery-type = "tcl_idol4_2600mah";//电池类型
+
+            qcom,v-cutoff-uv = <3400000>;//设备正常关机的截止电压
+            qcom,chg-term-ua = <100000>;//电池的终止充电电流
+            qcom,fg-cc-cv-threshold-mv = <4390>;//从恒定电荷转换到恒定电压的电压阀值
+
+            qcom,chg-rslow-comp-c1 = <4654604>;//在fuel gauge中用于rslow补偿的常数。
+            qcom,chg-rslow-comp-c2 = <9210694>;
+            qcom,chg-rs-to-rslow = <1231247>;
+            qcom,chg-rslow-comp-thr = <0xBE>;
+            qcom,checksum = <0x7AA2>;
+            qcom,gui-version = "PMI8950GUI - 2.0.0.14";
+            qcom,fg-profile-data = [
+                     DD 83 AF 7C 
+                     0B 81 45 77 
+                     61 83 A4 6F 
+                     20 89 37 94 
+                     12 82 FF 99 
+                     B6 BC 02 C9 
+                     57 11 EF 83 
+                     D1 7C FE 80 
+                     F5 76 4A 83 
+                     20 71 7B 62 
+                     AC 7F 66 82 
+                     4F 98 1A B6 
+                     B0 C1 58 0E 
+                     89 0A 4C 5A 
+                     14 70 01 FE 
+                     FC 36 93 45 
+                     02 42 00 00 
+                     CC 46 C4 3B 
+                     26 3C 00 00 
+                     00 00 00 00 
+                     00 00 00 00 
+                     BB 71 F0 6B 
+                     BD 75 83 89 
+                     04 7E 64 73 
+                     38 75 44 73 
+                     75 7C DE 70 
+                     C2 53 D8 A3 
+                     27 BC 60 DF 
+                     5E A0 71 0C 
+                     28 00 FF 36 
+                     F0 11 30 03 
+                     00 00 00 0C 
+            ];
+    };
+    #+end_src
+* 代码分析
+** fg_ probe
+  #+begin_src cpp
+  static int fg_probe(struct spmi_device *spmi)
+  {
+      /*分配内存空间*/
+      chip = devm_kzalloc(dev, sizeof(struct fg_chip), GFP_KERNEL);
+
+      chip->spmi = spmi;
+	    chip->dev = &(spmi->dev);
+      
+      /*添加唤醒源*/
+      wakeup_source_init(&chip->empty_check_wakeup_source.source, "qpnp_fg_empty_check");
+      wakeup_source_init(&chip->memif_wakeup_source.source, "qpnp_fg_memaccess");
+      wakeup_source_init(&chip->profile_wakeup_source.source, "qpnp_fg_profile");
+      wakeup_source_init(&chip->update_temp_wakeup_source.source, "qpnp_fg_update_temp");
+      wakeup_source_init(&chip->update_sram_wakeup_source.source, "qpnp_fg_update_sram");
+      wakeup_source_init(&chip->resume_soc_wakeup_source.source, "qpnp_fg_set_resume_soc");
+      wakeup_source_init(&chip->gain_comp_wakeup_source.source, "qpnp_fg_gain_comp");
+      wakeup_source_init(&chip->capacity_learning_wakeup_source.source, "qpnp_fg_cap_learning");
+
+      /*添加互斥锁*/
+      mutex_init(&chip->rw_lock);
+	    mutex_init(&chip->cyc_ctr.lock);
+	    mutex_init(&chip->learning_data.learning_lock);
+	    mutex_init(&chip->rslow_comp.lock);
+	    mutex_init(&chip->sysfs_restart_lock);
+      
+      /*添加延时工作队列*/
+      INIT_DELAYED_WORK(&chip->update_jeita_setting, update_jeita_setting);//jeita充电标准
+	    INIT_DELAYED_WORK(&chip->update_sram_data, update_sram_data_work);
+	    INIT_DELAYED_WORK(&chip->update_temp_work, update_temp_data);
+	    INIT_DELAYED_WORK(&chip->check_empty_work, check_empty_work);
+
+      /*添加工作队列*/
+      INIT_WORK(&chip->rslow_comp_work, rslow_comp_work);
+      INIT_WORK(&chip->fg_cap_learning_work, fg_cap_learning_work);//电池容量学习
+      INIT_WORK(&chip->batt_profile_init, batt_profile_init);
+      INIT_WORK(&chip->dump_sram, dump_sram);
+      INIT_WORK(&chip->status_change_work, status_change_work);
+      INIT_WORK(&chip->cycle_count_work, update_cycle_count);
+      INIT_WORK(&chip->battery_age_work, battery_age_work);
+      INIT_WORK(&chip->update_esr_work, update_esr_value);
+      INIT_WORK(&chip->set_resume_soc_work, set_resume_soc_work);
+      INIT_WORK(&chip->sysfs_restart_work, sysfs_restart_work);
+      INIT_WORK(&chip->init_work, delayed_init_work);
+      INIT_WORK(&chip->charge_full_work, charge_full_work);
+      INIT_WORK(&chip->gain_comp_work, iadc_gain_comp_work);
+
+      /*初始化定时器*/
+      alarm_init(&chip->fg_cap_learning_alarm, ALARM_BOOTTIME, fg_cap_learning_alarm_cb);
+
+      /*一种轻量级互斥锁初始化*/
+	    init_completion(&chip->sram_access_granted);
+	    init_completion(&chip->sram_access_revoked);
+	    complete_all(&chip->sram_access_revoked);
+	    init_completion(&chip->batt_id_avail);
+
+      /*把chip值传给私有数据中*/
+	    dev_set_drvdata(&spmi->dev, chip);
+
+      /*遍历spmi中的设备*/
+      spmi_for_each_container_dev(spmi_resource, spmi) {
+      
+          /*获取资源*/
+          resource = spmi_get_resource(spmi, spmi_resource, IORESOURCE_MEM, 0);
+
+          /*idol4用的资源是qcom,revid-tp-rev*/
+          if (strcmp("qcom,fg-adc-vbat", spmi_resource->of_node->name) == 0) {
+              chip->vbat_adc_addr = resource->start; //没有
+              continue;
+		      } else if (strcmp("qcom,fg-adc-ibat", spmi_resource->of_node->name) == 0) {
+              chip->ibat_adc_addr = resource->start; //没有
+              continue;
+		      } else if (strcmp("qcom,revid-tp-rev", spmi_resource->of_node->name) == 0) {
+              chip->tp_rev_addr = resource->start; //=0x1f1 +0x1
+              continue;
+		      }
+
+          /*获取子类型*/
+          rc = fg_read(chip, &subtype, resource->start + REG_OFFSET_PERP_SUBTYPE, 1);
+          
+          switch (subtype) {
+            case FG_SOC:
+              chip->soc_base = resource->start;// = 0x4000 +100
+              break;
+            case FG_MEMIF:
+              chip->mem_base = resource->start;//有 = 0x4400 +100
+              break;
+            case FG_BATT:
+              chip->batt_base = resource->start;//有 =0x4100  结尾为+100
+              break;
+            default:
+              pr_err("Invalid peripheral subtype=0x%x\n", subtype);
+              rc = -EINVAL;
+          }
+      }
+      
+      /*PMIC的修订版本号信息*/
+      rc = fg_detect_pmic_type(chip);
+      
+      /*获取FG修订版本号,配置中断*/
+      rc = fg_setup_memif_offset(chip);
+
+      /*设备树解析*/
+      rc = fg_of_init(chip);
+      
+      /*获取电池初始化状态，并配置冷热滞后*/
+      if (chip->jeita_hysteresis_support)
+		      rc = fg_init_batt_temp_state(chip);
+          
+      /*禁止中断*/
+      reg = 0xFF;
+	    rc = fg_write(chip, &reg, INT_EN_CLR(chip->mem_base), 1);
+      
+      /*中断初始化*/
+      rc = fg_init_irqs(chip);
+      
+      // chip->batt_type ="Unknown Battery";
+      chip->batt_type = default_batt_type;
+      
+      /*电池监控系统*/
+	    chip->bms_psy.name = "bms";
+	    chip->bms_psy.type = POWER_SUPPLY_TYPE_BMS; //类型 电池监控系统
+	    chip->bms_psy.properties = fg_power_props;  //电源属性
+	    chip->bms_psy.num_properties = ARRAY_SIZE(fg_power_props); //电源属性数
+	    chip->bms_psy.get_property = fg_power_get_property;//获取电源属性
+	    chip->bms_psy.set_property = fg_power_set_property;//电源属性设置
+	    chip->bms_psy.external_power_changed = fg_external_power_changed;//额外电源变化
+	    chip->bms_psy.supplied_to = fg_supplicants;//fg的从机
+	    chip->bms_psy.num_supplicants = ARRAY_SIZE(fg_supplicants);//从机个数
+	    chip->bms_psy.property_is_writeable = fg_property_is_writeable;//
+      
+      /*设备注册*/
+	    rc = power_supply_register(chip->dev, &chip->bms_psy);
+      
+      /**/
+      chip->power_supply_registered = true;
+
+      /**/
+      chip->batt_psy_name = "battery";
+
+      /*创建fg_debugfs文件系统*/
+	    if (chip->mem_base)
+		      rc = fg_dfs_create(chip);
+          
+      /*工作队列初始化，从这里开始处理工作队列*/
+      schedule_work(&chip->init_work);
+
+      
+  }
+  #+end_src
+** fg_ detect_ pmic_ type()
+  #+begin_src cpp
+  static int fg_detect_pmic_type(struct fg_chip *chip)
+  {
+    struct pmic_revid_data *pmic_rev_id;
+    struct device_node *revid_dev_node;
+
+    /*获取节点qcom,pmic-revid,该节点是描述pmic版本的*/
+    revid_dev_node = of_parse_phandle(chip->spmi->dev.of_node, "qcom,pmic-revid", 0);
+
+    /*获取pmic修订版本信息*/
+    pmic_rev_id = get_revid_data(revid_dev_node);
+      /*
+       * the revid peripheral must be registered, any failure
+       * here only indicates that the rev-id module has not
+       * probed yet.
+       */
+      return -EPROBE_DEFER;
+    }
+
+    switch (pmic_rev_id->pmic_subtype) {
+    case PMI8994:
+    case PMI8950:
+      chip->pmic_subtype = pmic_rev_id->pmic_subtype;
+      chip->pmic_revision = pmic_rev_id->rev4;
+      break;
+    default:
+      pr_err("PMIC subtype %d not supported\n",
+          pmic_rev_id->pmic_subtype);
+      return -EINVAL;
+    }
+
+    return 0;
+  }
+  #+end_src
+** fg_ setup_ memif_ offset()
+   #+begin_src cpp
+   static int fg_setup_memif_offset(struct fg_chip *chip)
+   {
+      int rc;
+      u8 dig_major;
+
+      /*获取FG修订版本号*/
+      rc = fg_read(chip, chip->revision, chip->mem_base + DIG_MINOR, 4);
+
+      switch (chip->revision[DIG_MAJOR]) {
+      case DIG_REV_8994_1:
+      case DIG_REV_8994_2:
+        chip->offset = offset[0].address;
+        break;
+      case DIG_REV_8950_3:
+        chip->offset = offset[1].address; //Fuel Gauge的寄存器偏移地址
+        chip->ima_supported = true;
+        break;
+      default:
+        pr_err("Digital Major rev=%d not supported\n", dig_major);
+        return -EINVAL;
+      }
+
+      
+      /*是否支持中断*/
+      if (chip->ima_supported) {
+
+        /*配置中断源*/
+        rc = fg_masked_write(chip, chip->mem_base + chip->offset[MEM_INTF_CFG], IACS_INTR_SRC_SLCT, IACS_INTR_SRC_SLCT, 1);
+      }
+
+      return 0;
+    }
+   #+end_src
+** fg_ of_ init()
+   #+begin_src cpp
+   static int fg_of_init(struct fg_chip *chip)
+   {
+      int rc = 0, sense_type, len = 0;
+      const char *data;
+      struct device_node *node = chip->spmi->dev.of_node;
+      u32 temp[2] = {0};
+
+      //settings[FG_MEM_SOFT_HOT].value=450 温 电池温度
+      OF_READ_SETTING(FG_MEM_SOFT_HOT, "warm-bat-decidegc", rc, 1);//450
+      //settings[FG_MEM_SOFT_COLD].value=100 凉 电池温度
+      OF_READ_SETTING(FG_MEM_SOFT_COLD, "cool-bat-decidegc", rc, 1);
+      //settings[FG_MEM_HARD_HOT].value=550 热 电池温度
+      OF_READ_SETTING(FG_MEM_HARD_HOT, "hot-bat-decidegc", rc, 1);
+      //settings[FG_MEM_HARD_COLD].value=0 冷 电池温度
+      OF_READ_SETTING(FG_MEM_HARD_COLD, "cold-bat-decidegc", rc, 1);
+
+      if (of_find_property(node, "qcom,cold-hot-jeita-hysteresis", NULL)) {
+          int hard_hot = 0, soft_hot = 0, hard_cold = 0, soft_cold = 0;
+
+          /*temp[]={20,30}*/
+          rc = of_property_read_u32_array(node,"qcom,cold-hot-jeita-hysteresis", temp, 2);
+
+          chip->jeita_hysteresis_support = true;
+          chip->cold_hysteresis = temp[0]; //20
+          chip->hot_hysteresis = temp[1]; //30
+          hard_hot = settings[FG_MEM_HARD_HOT].value; //550
+          soft_hot = settings[FG_MEM_SOFT_HOT].value; //450
+          hard_cold = settings[FG_MEM_HARD_COLD].value; //0
+          soft_cold = settings[FG_MEM_SOFT_COLD].value; //100
+
+          // 不成立((550-30 < 450) || (0+20 > 100))
+          if (((hard_hot - chip->hot_hysteresis) < soft_hot) || ((hard_cold + chip->cold_hysteresis) > soft_cold)) {
+            chip->jeita_hysteresis_support = false; //不满足这条件的话，就不支持热冷滞后好功能
+            pr_err("invalid hysteresis: hot_hysterresis = %d cold_hysteresis = %d\n", chip->hot_hysteresis, chip->cold_hysteresis);
+          } else {
+            pr_debug("cold_hysteresis = %d, hot_hysteresis = %d\n", chip->cold_hysteresis, chip->hot_hysteresis);
+          }
+      }
+
+      
+      //settings[FG_MEM_BCL_LM_THRESHOLD].value=127
+      OF_READ_SETTING(FG_MEM_BCL_LM_THRESHOLD, "bcl-lm-threshold-ma", rc, 1);
+      //settings[FG_MEM_BCL_MH_THRESHOLD].value=405
+      OF_READ_SETTING(FG_MEM_BCL_MH_THRESHOLD, "bcl-mh-threshold-ma", rc, 1);
+      //settings[FG_MEM_TERM_CURRENT].value=150
+      OF_READ_SETTING(FG_MEM_TERM_CURRENT, "fg-iterm-ma", rc, 1);
+      //settings[FG_MEM_CHG_TERM_CURRENT].value=100
+      OF_READ_SETTING(FG_MEM_CHG_TERM_CURRENT, "fg-chg-iterm-ma", rc, 1);
+      //settings[FG_MEM_CUTOFF_VOLTAGE].value=3400
+      OF_READ_SETTING(FG_MEM_CUTOFF_VOLTAGE, "fg-cutoff-voltage-mv", rc, 1);
+
+      /*chip->thermal_coefficients={0xc2,0x86,0xbb,0x50,0xcf,0x37}*/
+      data = of_get_property(chip->spmi->dev.of_node, "qcom,thermal-coefficients", &len);
+      if (data && len == THERMAL_COEFF_N_BYTES) {
+        memcpy(chip->thermal_coefficients, data, len);
+        chip->use_thermal_coefficients = true;
+      }
+
+      /*以百分比恢复充电*/
+      OF_READ_SETTING(FG_MEM_RESUME_SOC, "resume-soc", rc, 1);
+      settings[FG_MEM_RESUME_SOC].value = DIV_ROUND_CLOSEST(settings[FG_MEM_RESUME_SOC].value * FULL_SOC_RAW, FULL_CAPACITY);
+      OF_READ_SETTING(FG_MEM_RESUME_SOC, "resume-soc-raw", rc, 1);
+
+      /*触发空电压中断的阀值，当soc中断触发时，电池soc将拉至0,用户空间将通过
+      电源框架通知，用户空间将读取0%并立即关机*/
+      //没有该属性，默认值 settings[FG_MEM_IRQ_VOLT_EMPTY].value = 3100
+      OF_READ_SETTING(FG_MEM_IRQ_VOLT_EMPTY, "irq-volt-empty-mv", rc, 1);
+
+      /*估值电压与实际电压差超过该值，则重新估算第一次soc(充电状态)估值*/
+      //settings[FG_MEM_VBAT_EST_DIFF].value = 200
+      OF_READ_SETTING(FG_MEM_VBAT_EST_DIFF, "vbat-estimate-diff-mv", rc, 1);
+
+      //默认值 settings[FG_MEM_DELTA_SOC].value = 1
+      OF_READ_SETTING(FG_MEM_DELTA_SOC, "fg-delta-soc", rc, 1);
+
+      //激活HIGH_SOC中断的充电状态阀值百分比
+      //默认值 settings[FG_MEM_SOC_MAX].value = 85
+      OF_READ_SETTING(FG_MEM_SOC_MAX, "fg-soc-max", rc, 1);
+
+      //激活LOW_SOC中断的充电状态阀值百分比
+      //默认值 settings[FG_MEM_SOC_MIN].value = 15
+      OF_READ_SETTING(FG_MEM_SOC_MIN, "fg-soc-min", rc, 1);
+
+      //低电池电压中断阀值
+      //默认值 settings[FG_MEM_BATT_LOW].value = 4200
+      OF_READ_SETTING(FG_MEM_BATT_LOW, "fg-vbatt-low-threshold", rc, 1);
+
+      /*电池容量学习功能*/
+      //chip->learning_data.max_increment=5 默认值
+      OF_READ_PROPERTY(chip->learning_data.max_increment, "cl-max-increment-deciperc", rc, 5);
+      // chip->learning_data.max_decrement=100
+      OF_READ_PROPERTY(chip->learning_data.max_decrement, "cl-max-decrement-deciperc", rc, 100);
+
+      //高于此温度时，容量学习将被取消
+      // chip->learning_data.max_temp=450
+      OF_READ_PROPERTY(chip->learning_data.max_temp, "cl-max-temp-decidegc", rc, 450);
+
+      //低于此温度时，容量学习将被取消
+      // chip->learning_data.min_temp=150
+      OF_READ_PROPERTY(chip->learning_data.min_temp, "cl-min-temp-decidegc", rc, 150);
+
+      //电池容量低于该值时，它才会开始电池容量学习
+      // chip->learning_data.max_start_soc=15
+      OF_READ_PROPERTY(chip->learning_data.max_start_soc, "cl-max-start-capacity", rc, 15);
+
+      // chip->learning_data.vbat_est_thr_uv=40000
+      OF_READ_PROPERTY(chip->learning_data.vbat_est_thr_uv, "cl-vbat-est-thr-uv", rc, 40000);
+
+      /*该值用于评价电池的老化程度*/
+      // chip->evaluation_current=1000
+      OF_READ_PROPERTY(chip->evaluation_current, "aging-eval-current-ma", rc, DEFAULT_EVALUATION_CURRENT_MA);
+
+      //用于在FG中配置恒定电荷（CC）至恒定电压（CV）设定点的电压阈值，以mV为单位，将在其上确定电池EOC状态。 该值应比充电器中配置的浮充电压小10 mV。只有在充电器驱动程序中指定了“qcom，autoadjust-vfloat”属性以确保正常运行时，才应指定此属性。
+      // chip->cc_cv_threshold_mv=0
+      OF_READ_PROPERTY(chip->cc_cv_threshold_mv, "fg-cc-cv-threshold-mv", rc, 0);
+      
+      /*true  开启电池自我学习功能*/
+      if (of_property_read_bool(chip->spmi->dev.of_node, "qcom,capacity-learning-on"))
+        chip->batt_aging_mode = FG_AGING_CC;
+      /*使用电池电阻估计电池容量*/
+      else if (of_property_read_bool(chip->spmi->dev.of_node, "qcom,capacity-estimation-on"))
+        chip->batt_aging_mode = FG_AGING_ESR;
+      else
+        chip->batt_aging_mode = FG_AGING_NONE;
+      if (chip->batt_aging_mode == FG_AGING_CC) {
+        //是否将学习的容量反馈到自我学习容量算法中
+        // chip->learning_data.feedback_on =false
+        chip->learning_data.feedback_on = of_property_read_bool(chip->spmi->dev.of_node, "qcom,capacity-learning-feedback");
+      }
+
+      /*获取使用otp配置属性 */
+      //避免ram加载任何电池配置  不懂
+      // chip->use_otp_profile = fales
+      chip->use_otp_profile = of_property_read_bool(chip->spmi->dev.of_node, "qcom,use-otp-profile");
+
+      /当电池已满时，定义时将SOC保持为100%
+      // chip->hold_soc_while_full = fales
+      chip->hold_soc_while_full = of_property_read_bool(chip->spmi->dev.of_node, "qcom,hold-soc-while-full");
+
+      //sense_type=true    使用fg的电量检测通道
+      sense_type = of_property_read_bool(chip->spmi->dev.of_node, "qcom,ext-sense-type");
+      if (rc == 0) {
+        if (fg_sense_type < 0)
+          fg_sense_type = sense_type;
+
+        if (fg_debug_mask & FG_STATUS) {
+          if (fg_sense_type == INTERNAL_CURRENT_SENSE)
+            pr_info("Using internal sense\n");
+          else if (fg_sense_type == EXTERNAL_CURRENT_SENSE)
+            pr_info("Using external sense\n");
+          else
+            pr_info("Using default sense\n");
+        }
+      } else {
+        rc = 0;
+      }
+
+      /**/
+      // chip->bad_batt_detection_en = false
+      chip->bad_batt_detection_en = of_property_read_bool(node, "qcom,bad-battery-detection-enable");
+
+      // chip->sw_rbias_ctrl = false 是否由软件控制rbias，没设置就由硬件控制
+      chip->sw_rbias_ctrl = of_property_read_bool(node, "qcom,sw-rbias-control");
+
+      // chip->cyc_ctr.en = ture  启用周期计数器功能
+      chip->cyc_ctr.en = of_property_read_bool(node, "qcom,cycle-counter-en");
+      if (chip->cyc_ctr.en)
+        chip->cyc_ctr.id = 1;
+
+      return rc;
+   }
+   #+end_src
+** fg_init_batt_temp_state
+   #+begin_src cpp
+   static int fg_init_batt_temp_state(struct fg_chip *chip)
+   {
+       /*读取状态*/
+       rc = fg_read(chip, &batt_info_sts, BATT_INFO_STS(chip->batt_base), 1);
+       
+       /*获取滞后冷热温度*/
+       hard_hot = get_prop_jeita_temp(chip, FG_MEM_HARD_HOT);
+	     hard_cold = get_prop_jeita_temp(chip, FG_MEM_HARD_COLD);
+
+       /**/
+       chip->batt_hot = (batt_info_sts & JEITA_HARD_HOT_RT_STS) ? true : false;
+	     chip->batt_cold = (batt_info_sts & JEITA_HARD_COLD_RT_STS) ? true : false;
+       if (chip->batt_hot || chip->batt_cold) {
+          if (chip->batt_hot) {   //热滞后
+            chip->health = POWER_SUPPLY_HEALTH_OVERHEAT;
+            set_prop_jeita_temp(chip, FG_MEM_HARD_HOT,
+              hard_hot - chip->hot_hysteresis);
+          } else { //冷滞后
+            chip->health = POWER_SUPPLY_HEALTH_COLD;
+            set_prop_jeita_temp(chip, FG_MEM_HARD_COLD,
+              hard_cold + chip->cold_hysteresis);
+          }
+       }
+
+   }
+   #+end_src
+**  fg_init_irqs()
+   #+begin_src cpp
+   static int fg_init_irqs(struct fg_chip *chip)
+   {
+       /**/
+       struct spmi_device *spmi = chip->spmi;
+       /*遍历设备资源数组*/
+       spmi_for_each_container_dev(spmi_resource, spmi) {
+       
+           /*获取设备内存资源*/
+           resource = spmi_get_resource(spmi, spmi_resource, IORESOURCE_MEM, 0);
+           
+           /*忽略vbat_adc相关的资源，因为这些资源我们其他地方处理*/
+           if ((resource->start == chip->vbat_adc_addr) || (resource->start == chip->ibat_adc_addr) || (resource->start == chip->tp_rev_addr))
+			         continue;
+           /获取外设子类型*/
+           rc = fg_read(chip, &subtype,resource->start + REG_OFFSET_PERP_SUBTYPE, 1);
+           /**/
+           switch (subtype) {
+		       case FG_SOC:
+           
+                /*获取FULL_SOC中断     满电充电状态*/
+                chip->soc_irq[FULL_SOC].irq = spmi_get_irq_byname(chip->spmi, spmi_resource, "full-soc");
+                /*获取EMPTY_SOC中断    没电充电状态*/
+                chip->soc_irq[EMPTY_SOC].irq = spmi_get_irq_byname(chip->spmi, spmi_resource, "empty-soc");
+                /*获取DELTA_SOC中断*/
+                chip->soc_irq[DELTA_SOC].irq = spmi_get_irq_byname(chip->spmi, spmi_resource, "delta-soc");
+                /*获取FIRST_EST_DONE中断*/
+                chip->soc_irq[FIRST_EST_DONE].irq = spmi_get_irq_byname(chip->spmi, spmi_resource, "first-est-done");
+                
+                /*中断注册*/
+                rc = devm_request_irq(chip->dev, chip->soc_irq[FULL_SOC].irq, fg_soc_irq_handler, IRQF_TRIGGER_RISING, "full-soc", chip);
+                rc = devm_request_irq(chip->dev, chip->soc_irq[EMPTY_SOC].irq, fg_empty_soc_irq_handler, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "empty-soc", chip);
+                rc = devm_request_irq(chip->dev, chip->soc_irq[DELTA_SOC].irq, fg_soc_irq_handler, IRQF_TRIGGER_RISING, "delta-soc", chip);
+                rc = devm_request_irq(chip->dev, chip->soc_irq[FIRST_EST_DONE].irq, fg_first_soc_irq_handler, IRQF_TRIGGER_RISING, "first-est-done", chip);
+                
+                /*使中断有唤醒(wakeup)功能*/
+                enable_irq_wake(chip->soc_irq[DELTA_SOC].irq);
+                enable_irq_wake(chip->soc_irq[FULL_SOC].irq);
+                enable_irq_wake(chip->soc_irq[EMPTY_SOC].irq);
+                break;
+           case FG_MEMIF:
+                /*获取中断号，并申请中断*/
+                chip->mem_irq[FG_MEM_AVAIL].irq = spmi_get_irq_byname(chip->spmi, spmi_resource, "mem-avail");
+                rc = devm_request_irq(chip->dev, chip->mem_irq[FG_MEM_AVAIL].irq, fg_mem_avail_irq_handler, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "mem-avail", chip);
+                break;
+           case FG_BATT:
+                /*缺失电池触发中断*/
+               	chip->batt_irq[BATT_MISSING].irq = spmi_get_irq_byname(chip->spmi, spmi_resource, "batt-missing");
+                rc = devm_request_threaded_irq(chip->dev, chip->batt_irq[BATT_MISSING].irq, NULL, fg_batt_missing_irq_handler, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_ONESHOT, "batt-missing", chip);
+
+                /*低电量中断注册*/
+                chip->batt_irq[VBATT_LOW].irq = spmi_get_irq_byname(chip->spmi, spmi_resource, "vbatt-low");
+                rc = devm_request_irq(chip->dev, chip->batt_irq[VBATT_LOW].irq, fg_vbatt_low_handler, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "vbatt-low", chip);
+
+                //不等待直接禁止中断
+                disable_irq_nosync(chip->batt_irq[VBATT_LOW].irq);
+                chip->vbat_low_irq_enabled = false;
+                break;
+           case FG_ADC:
+               /**/
+           }
+           return rc;  
+       }
+   }
+   #+end_src
+* 工作队列
+  #+begin_src cpp
+  delayed_init_work()      ->>    update_jeita_setting()    ->>  
+  update_sram_data_work()  ->>    update_temp_data()        ->>    
+  batt_profile_init()       ->>
+  #+end_src
+** delayed_init_work()
+   #+begin_src cpp
+   static void delayed_init_work(struct work_struct *work)
+   {
+       /**/
+       struct fg_chip *chip = container_of(work, struct fg_chip, init_work);
+
+	     /* hold memory access until initialization finishes */
+       /*保持存储器，知道初始化完成为止*/
+	     fg_mem_lock(chip);
+       
+       /*fg硬件初始化*/
+	     rc = fg_hw_init(chip);
+       
+       /*释放内存访问,在调用update_sram_data之前先取消内存访问*/
+       fg_mem_release(chip);
+
+       /*延时工作队列 设置电池4个温度级别,用于触发电池中断*/
+       schedule_delayed_work(&chip->update_jeita_setting, msecs_to_jiffies(INIT_JEITA_DELAY_MS));
+       
+       /**/
+       if (chip->last_sram_update_time == 0)
+		       update_sram_data_work(&chip->update_sram_data.work);
+       /*更新当前温度*/
+	     if (chip->last_temp_update_time == 0)
+		       update_temp_data(&chip->update_temp_work.work);
+
+       /*电池配置*/
+	     if (!chip->use_otp_profile)
+		       schedule_work(&chip->batt_profile_init);
+
+       /**/
+       /*读取默认增益*/
+	     if (chip->wa_flag & IADC_GAIN_COMP_WA) {
+		       rc = fg_mem_read(chip, reg, K_VCOR_REG, 2, DEF_GAIN_OFFSET, 0);
+
+       if (reg[1] || reg[0]) {
+
+          /*默认增益有效，写到增益寄存器中*/
+          rc = fg_mem_write(chip, reg, GAIN_REG, 2, GAIN_OFFSET, 0);
+        } else {
+          /*
+           * Default gain register is invalid:
+           * - read gain register for default gain value
+           * - write to default gain register.
+           */
+          /*默认增益无效时：为默认增益读取增益寄存器，并把值写入默认增益寄存器中*/
+          rc = fg_mem_read(chip, reg, GAIN_REG, 2, GAIN_OFFSET, 0);
+          rc = fg_mem_write(chip, reg, K_VCOR_REG, 2, DEF_GAIN_OFFSET, 0);
+        }
+
+        chip->iadc_comp_data.dfl_gain_reg[0] = reg[0];
+        chip->iadc_comp_data.dfl_gain_reg[1] = reg[1];
+        chip->iadc_comp_data.dfl_gain = half_float(reg);
+        chip->input_present = is_input_present(chip);
+        chip->otg_present = is_otg_present(chip);
+        chip->init_done = true;
+      }
+
+   }
+   #+end_src
+** update_jeita_setting()
+   #+begin_src cpp
+   static void update_jeita_setting(struct work_struct *work)
+    {
+      struct fg_chip *chip = container_of(work, struct fg_chip, update_jeita_setting.work);
+      u8 reg[4];
+      int i, rc;
+
+      /*配置寄存器SOFT_COLD,SOFT_HOT,HARD_COLD,HARD_HOT,电池温度*/
+      for (i = 0; i < 4; i++)
+        reg[i] = (settings[FG_MEM_SOFT_COLD + i].value / 10) + 30;
+
+        rc = fg_mem_write(chip, reg, settings[FG_MEM_SOFT_COLD].address, 4, settings[FG_MEM_SOFT_COLD].offset, 0);
+      if (rc)
+        pr_err("failed to update JEITA setting rc=%d\n", rc);
+    }
+   #+end_src
+** update_sram_data_work()
+   #+begin_src cpp
+   static void update_sram_data_work(struct work_struct *work)
+    {
+      struct fg_chip *chip = container_of(work, struct fg_chip, update_sram_data.work);
+      int resched_ms, ret;
+      bool tried_again = false;
+
+    wait:
+      /*等待MEEIF访问被撤销*/
+      ret = wait_for_completion_interruptible_timeout(&chip->sram_access_revoked, msecs_to_jiffies(SRAM_TIMEOUT_MS));
+
+      /*如果我们中断了，再等一次*/
+      if (ret == -ERESTARTSYS && !tried_again) {
+        tried_again = true;
+        goto wait;
+      } else if (ret <= 0) {//超时
+        pr_err("transaction timed out ret=%d\n", ret);
+        goto out;
+      }
+      update_sram_data(chip, &resched_ms);
+
+    out:
+      schedule_delayed_work(
+        &chip->update_sram_data,
+        msecs_to_jiffies(resched_ms));
+    }
+   #+end_src
+   + update_sram_data()
+     #+begin_src cpp
+     static void update_sram_data(struct fg_chip *chip, int *resched_ms)
+      {
+        int i, j, rc = 0;
+        u8 reg[4];
+        int64_t temp;
+        int battid_valid = fg_is_batt_id_valid(chip); //判断电池状态是否有效
+
+        fg_stay_awake(&chip->update_sram_wakeup_source);//通知PM核心，唤醒事件开始
+        fg_mem_lock(chip);//mem锁加一，当值为0时才能被释放，大概这意思
+        
+        /*获取相应寄存器里的值*/
+        for (i = 1; i < FG_DATA_MAX; i++) {
+          if (chip->profile_loaded && i >= FG_DATA_BATT_ID)
+            continue;
+          rc = fg_mem_read(chip, reg, fg_data[i].address, fg_data[i].len, fg_data[i].offset, 0);
+          if (rc) {
+            pr_err("Failed to update sram data\n");
+            break;
+          }
+
+          /*数据处理，有的数据是1个字节，有的2，有的3个字节，
+          例如16位数据，让低8位放低8位，高8位放在高8位*/
+          temp = 0;
+          for (j = 0; j < fg_data[i].len; j++)
+            temp |= reg[j] << (8 * j);
+
+          switch (i) {
+          case FG_DATA_OCV:
+          case FG_DATA_VOLTAGE:
+          case FG_DATA_CPRED_VOLTAGE:
+            /*无符号求余，相当于x%y*/
+            fg_data[i].value = div_u64((u64)(u16)temp * LSB_16B_NUMRTR, LSB_16B_DENMTR);
+            break;
+          case FG_DATA_CURRENT://电流
+            temp = twos_compliment_extend(temp, fg_data[i].len);//二进制补码
+            fg_data[i].value = div_s64((s64)temp * LSB_16B_NUMRTR, LSB_16B_DENMTR);
+            break;
+          case FG_DATA_BATT_ESR:
+            fg_data[i].value = float_decode((u16) temp);//浮点型
+            break;
+          case FG_DATA_BATT_ESR_COUNT:
+            fg_data[i].value = (u16)temp;
+            break;
+          case FG_DATA_BATT_ID: //有效电池iD
+            if (battid_valid)
+              fg_data[i].value = reg[0] * LSB_8B;
+            break;
+          case FG_DATA_BATT_ID_INFO:
+            if (battid_valid)
+              fg_data[i].value = reg[0];
+            break;
+          case FG_DATA_BATT_SOC: //电池充电状态
+            fg_data[i].value = div64_s64((temp * 10000), FULL_PERCENT_3B);
+            break;
+          case FG_DATA_CC_CHARGE:
+            //无符号求余
+            temp = twos_compliment_extend(temp, fg_data[i].len);
+            fg_data[i].value = div64_s64(temp * (int64_t)chip->nom_cap_uah, FULL_PERCENT_28BIT);
+            break;
+          case FG_DATA_VINT_ERR:
+            //无符号求余
+            temp = twos_compliment_extend(temp, fg_data[i].len);
+            fg_data[i].value = div64_s64(temp * chip->nom_cap_uah, FULL_PERCENT_3B);
+            break;
+          };
+
+          if (fg_debug_mask & FG_MEM_DEBUG_READS)
+            pr_info("%d %lld %d\n", i, temp, fg_data[i].value);
+        }
+        fg_mem_release(chip);
+
+        if (!rc)
+          get_current_time(&chip->last_sram_update_time); //获取当时时间
+
+        if (battid_valid) {
+          complete_all(&chip->batt_id_avail);  //不太明白
+          *resched_ms = fg_sram_update_period_ms;
+        } else {
+          *resched_ms = SRAM_PERIOD_NO_ID_UPDATE_MS;
+        }
+        fg_relax(&chip->update_sram_wakeup_source);//通知PM核心，唤醒事件结束
+      }
+     #+end_src
+** update_temp_data()
+   #+begin_src cpp
+   static void update_temp_data(struct work_struct *work)
+  {
+    s16 temp;
+    u8 reg[2];
+    bool tried_again = false;
+    int rc, ret, timeout = TEMP_PERIOD_TIMEOUT_MS;
+    struct fg_chip *chip = container_of(work, struct fg_chip, update_temp_work.work);
+
+    fg_stay_awake(&chip->update_temp_wakeup_source);//通知PM核心 唤醒事件开始
+    /*允许电池温度检测,如果成立为软件开启，如果为0由硬件自动开启*/
+    if (chip->sw_rbias_ctrl) {
+      rc = fg_mem_masked_write(chip, EXTERNAL_SENSE_SELECT, BATT_TEMP_CNTRL_MASK, BATT_TEMP_ON, BATT_TEMP_OFFSET);
+      if (rc) {
+        pr_err("failed to write BATT_TEMP_ON rc=%d\n", rc);
+        goto out;
+      }
+
+  wait:
+      /* 等待MEMIF访问被释放 */
+      ret = wait_for_completion_interruptible_timeout(&chip->sram_access_revoked, msecs_to_jiffies(timeout));
+
+      /*如果我们中断了，再等待一次*/
+      if (ret == -ERESTARTSYS && !tried_again) {
+        tried_again = true;
+        goto wait;
+      } else if (ret <= 0) {//超时
+        rc = -ETIMEDOUT;
+        pr_err("transaction timed out ret=%d\n", ret);
+        goto out;
+      }
+    }
+
+    /* 读取当前电池温度 */
+    rc = fg_mem_read(chip, reg, fg_data[0].address, fg_data[0].len, fg_data[0].offset, chip->sw_rbias_ctrl ? 1 : 0);
+    if (rc) {
+      pr_err("Failed to update temp data\n");
+      goto out;
+    }
+
+    /*电池温度处理*/
+    temp = reg[0] | (reg[1] << 8);
+    fg_data[0].value = (temp * TEMP_LSB_16B / 1000) - DECIKELVIN;
+
+    if (fg_debug_mask & FG_MEM_DEBUG_READS)
+      pr_info("BATT_TEMP %d %d\n", temp, fg_data[0].value);
+
+    get_current_time(&chip->last_temp_update_time);//获取当前时间
+
+  out:
+    
+    /*静止电池温度检测,如果条件成立为软件关闭，如果为0由硬件自动关闭*/
+    if (chip->sw_rbias_ctrl) {
+      rc = fg_mem_masked_write(chip, EXTERNAL_SENSE_SELECT, BATT_TEMP_CNTRL_MASK, BATT_TEMP_OFF, BATT_TEMP_OFFSET);
+      if (rc)
+        pr_err("failed to write BATT_TEMP_OFF rc=%d\n", rc);
+    }
+    schedule_delayed_work(&chip->update_temp_work, msecs_to_jiffies(TEMP_PERIOD_UPDATE_MS));
+    fg_relax(&chip->update_temp_wakeup_source);//通知PM核心，唤醒事件已结束
+  }
+   #+end_src
+** batt_profile_init()
+   #+begin_src cpp
+   static void batt_profile_init(struct work_struct *work)
+    {
+      struct fg_chip *chip = container_of(work,
+            struct fg_chip,
+            batt_profile_init);
+
+      if (fg_batt_profile_init(chip)) //电池初始化
+        pr_err("failed to initialize profile\n");
+    }
+   #+end_src
+   + fg_batt_profile_init()
+     #+begin_src cpp
+     static int fg_batt_profile_init(struct fg_chip *chip)
+      {
+        int rc = 0, ret;
+        int len;
+        struct device_node *node = chip->spmi->dev.of_node;
+        struct device_node *batt_node, *profile_node;
+        const char *data, *batt_type_str, *old_batt_type;
+        bool tried_again = false, vbat_in_range, profiles_same;
+        u8 reg = 0;
+
+      wait:
+        fg_stay_awake(&chip->profile_wakeup_source); //通知PM核心 唤醒事件开始
+        //等待chip->batt_id_avail结束或者超时
+        ret = wait_for_completion_interruptible_timeout(&chip->batt_id_avail, msecs_to_jiffies(PROFILE_LOAD_TIMEOUT_MS));
+        /*如果我们中断了，等待一次*/
+        if (ret == -ERESTARTSYS && !tried_again) {
+          tried_again = true;
+          pr_debug("interrupted, waiting again\n");
+          goto wait;
+        } else if (ret <= 0) {
+          rc = -ETIMEDOUT; //超时
+          pr_err("profile loading timed out rc=%d\n", rc);
+          goto no_profile;
+        }
+
+        /*获取设备节点*/
+        batt_node = of_find_node_by_name(node, "qcom,battery-data");
+        if (!batt_node) {
+          pr_warn("No available batterydata, using OTP defaults\n");
+          rc = 0;
+          goto no_profile;
+        }
+
+        profile_node = of_batterydata_get_best_profile(batt_node, "bms", fg_batt_type);
+        if (!profile_node) {
+          pr_err("couldn't find profile handle\n");
+          old_batt_type = default_batt_type;
+          rc = -ENODATA;
+          goto fail;
+        }
+
+        /* read rslow compensation values if they're available */
+        rc = of_property_read_u32(profile_node, "qcom,chg-rs-to-rslow", &chip->rslow_comp.chg_rs_to_rslow);
+        if (rc) {
+          chip->rslow_comp.chg_rs_to_rslow = -EINVAL;
+          if (rc != -EINVAL)
+            pr_err("Could not read rs to rslow: %d\n", rc);
+        }
+        rc = of_property_read_u32(profile_node, "qcom,chg-rslow-comp-c1", &chip->rslow_comp.chg_rslow_comp_c1);
+        if (rc) {
+          chip->rslow_comp.chg_rslow_comp_c1 = -EINVAL;
+          if (rc != -EINVAL)
+            pr_err("Could not read rslow comp c1: %d\n", rc);
+        }
+        rc = of_property_read_u32(profile_node, "qcom,chg-rslow-comp-c2", &chip->rslow_comp.chg_rslow_comp_c2);
+        if (rc) {
+          chip->rslow_comp.chg_rslow_comp_c2 = -EINVAL;
+          if (rc != -EINVAL)
+            pr_err("Could not read rslow comp c2: %d\n", rc);
+        }
+        rc = of_property_read_u32(profile_node, "qcom,chg-rslow-comp-thr", &chip->rslow_comp.chg_rslow_comp_thr);
+        if (rc) {
+          chip->rslow_comp.chg_rslow_comp_thr = -EINVAL;
+          if (rc != -EINVAL)
+            pr_err("Could not read rslow comp thr: %d\n", rc);
+        }
+
+        rc = of_property_read_u32(profile_node, "qcom,max-voltage-uv", &chip->batt_max_voltage_uv);
+
+        if (rc)
+          pr_warn("couldn't find battery max voltage\n");
+
+        /*
+         * Only configure from profile if fg-cc-cv-threshold-mv is not
+         * defined in the charger device node.
+         */
+        if (!of_find_property(chip->spmi->dev.of_node,
+              "qcom,fg-cc-cv-threshold-mv", NULL)) {
+          of_property_read_u32(profile_node, "qcom,fg-cc-cv-threshold-mv", &chip->cc_cv_threshold_mv);
+        }
+
+        /*
+         * Only configure from profile if thermal-coefficients is not
+         * defined in the FG device node.
+         */
+        if (!of_find_property(chip->spmi->dev.of_node, "qcom,thermal-coefficients", NULL)) {
+          data = of_get_property(profile_node, "qcom,thermal-coefficients", &len);
+          if (data && len == THERMAL_COEFF_N_BYTES) {
+            memcpy(chip->thermal_coefficients, data, len);
+            rc = fg_mem_write(chip, chip->thermal_coefficients,
+              THERMAL_COEFF_ADDR, THERMAL_COEFF_N_BYTES,
+              THERMAL_COEFF_OFFSET, 0);
+            if (rc) {
+              pr_err("spmi write failed addr:%03x, ret:%d\n",
+                  THERMAL_COEFF_ADDR, rc);
+              goto fail;
+            } else {
+              pr_debug("Battery thermal coefficients changed\n");
+            }
+          }
+        }
+
+        data = of_get_property(profile_node, "qcom,fg-profile-data", &len);
+        if (!data) {
+          pr_err("no battery profile loaded\n");
+          rc = 0;
+          goto no_profile;
+        }
+
+        if (len != FG_PROFILE_LEN) {
+          pr_err("battery profile incorrect size: %d\n", len);
+          rc = -EINVAL;
+          goto fail;
+        }
+
+        rc = of_property_read_string(profile_node, "qcom,battery-type",
+                &batt_type_str);
+        if (rc) {
+          pr_err("Could not find battery data type: %d\n", rc);
+          rc = 0;
+          goto no_profile;
+        }
+
+        if (!chip->batt_profile)
+          chip->batt_profile = devm_kzalloc(chip->dev,
+              sizeof(char) * len, GFP_KERNEL);
+
+        if (!chip->batt_profile) {
+          pr_err("out of memory\n");
+          rc = -ENOMEM;
+          goto no_profile;
+        }
+
+        rc = fg_mem_read(chip, &reg, PROFILE_INTEGRITY_REG, 1, 0, 1);
+        if (rc) {
+          pr_err("failed to read profile integrity rc=%d\n", rc);
+          goto no_profile;
+        }
+
+        rc = fg_mem_read(chip, chip->batt_profile, BATT_PROFILE_OFFSET,
+            len, 0, 1);
+        if (rc) {
+          pr_err("failed to read profile rc=%d\n", rc);
+          goto no_profile;
+        }
+
+        vbat_in_range = get_vbat_est_diff(chip)
+            < settings[FG_MEM_VBAT_EST_DIFF].value * 1000;
+        profiles_same = memcmp(chip->batt_profile, data,
+                PROFILE_COMPARE_LEN) == 0;
+        if (reg & PROFILE_INTEGRITY_BIT) {
+          fg_cap_learning_load_data(chip);
+          if (vbat_in_range && !fg_is_batt_empty(chip) && profiles_same) {
+            if (fg_debug_mask & FG_STATUS)
+              pr_info("Battery profiles same, using default\n");
+            if (fg_est_dump)
+              schedule_work(&chip->dump_sram);
+            goto done;
+          }
+        } else {
+          pr_info("Battery profile not same, clearing cycle counters\n");
+          clear_cycle_counter(chip);
+        }
+        if (fg_est_dump)
+          dump_sram(&chip->dump_sram);
+        if ((fg_debug_mask & FG_STATUS) && !vbat_in_range)
+          pr_info("Vbat out of range: v_current_pred: %d, v:%d\n",
+              fg_data[FG_DATA_CPRED_VOLTAGE].value,
+              fg_data[FG_DATA_VOLTAGE].value);
+        if ((fg_debug_mask & FG_STATUS) && fg_is_batt_empty(chip))
+          pr_info("battery empty\n");
+        if ((fg_debug_mask & FG_STATUS) && !profiles_same)
+          pr_info("profiles differ\n");
+        if (fg_debug_mask & FG_STATUS) {
+          pr_info("Using new profile\n");
+          print_hex_dump(KERN_INFO, "FG: loaded profile: ",
+              DUMP_PREFIX_NONE, 16, 1,
+              chip->batt_profile, len, false);
+        }
+        old_batt_type = chip->batt_type;
+        chip->batt_type = loading_batt_type;
+        if (chip->power_supply_registered)
+          power_supply_changed(&chip->bms_psy);
+
+        memcpy(chip->batt_profile, data, len);
+
+        chip->batt_profile_len = len;
+
+        if (fg_debug_mask & FG_STATUS)
+          print_hex_dump(KERN_INFO, "FG: new profile: ",
+              DUMP_PREFIX_NONE, 16, 1, chip->batt_profile,
+              chip->batt_profile_len, false);
+
+        rc = fg_do_restart(chip, true);
+        if (rc) {
+          pr_err("restart failed: %d\n", rc);
+          goto fail;
+        }
+
+      done:
+        if (fg_batt_type)
+          chip->batt_type = fg_batt_type;
+        else
+          chip->batt_type = batt_type_str;
+        chip->first_profile_loaded = true;
+        chip->profile_loaded = true;
+        chip->battery_missing = is_battery_missing(chip);
+        update_chg_iterm(chip);
+        update_cc_cv_setpoint(chip);
+        rc = populate_system_data(chip);
+        if (rc) {
+          pr_err("failed to read ocv properties=%d\n", rc);
+          return rc;
+        }
+        estimate_battery_age(chip, &chip->actual_cap_uah);
+        schedule_work(&chip->status_change_work);
+        if (chip->power_supply_registered)
+          power_supply_changed(&chip->bms_psy);
+        fg_relax(&chip->profile_wakeup_source);
+        return rc;
+      fail:
+        chip->batt_type = old_batt_type;
+        if (chip->power_supply_registered)
+          power_supply_changed(&chip->bms_psy);
+      no_profile:
+        fg_relax(&chip->profile_wakeup_source);
+        return rc;
+      }
+     #+end_src
+   + of_batterydata_get_best_profile()
+     #+begin_src cpp
+     //psy_name="bms"
+     struct device_node *of_batterydata_get_best_profile(const struct device_node *batterydata_container_node, const char *psy_name,  const char  *batt_type)
+      {
+        struct batt_ids batt_ids;
+        struct device_node *node, *best_node = NULL;
+        struct power_supply *psy;
+        const char *battery_type = NULL;
+        union power_supply_propval ret = {0, };
+        int delta = 0, best_delta = 0, best_id_kohm = 0, id_range_pct,
+          batt_id_kohm = 0, i = 0, rc = 0, limit = 0;
+        bool in_range = false;
+
+        /*获取bms设备节点,即/sys/class/power_supply/bms*/
+        psy = power_supply_get_by_name(psy_name);
+
+        /*检测电池电阻值*/
+        rc = psy->get_property(psy, POWER_SUPPLY_PROP_RESISTANCE_ID, &ret);
+        batt_id_kohm = ret.intval / 1000;
+
+        /*读取电池id范围百分比以获得最佳配置*/
+        rc = of_property_read_u32(batterydata_container_node, "qcom,batt-id-range-pct", &id_range_pct);
+
+        if (rc) {
+          if (rc == -EINVAL) {
+            id_range_pct = 0;//不存在时，默认为0
+          } else {
+            pr_err("failed to read battery id range\n");
+            return ERR_PTR(-ENXIO);
+          }
+        }
+
+        /*
+         * Find the battery data with a battery id resistor closest to this one
+         */
+        for_each_child_of_node(batterydata_container_node, node) {
+          if (batt_type != NULL) {
+            /*获取电池类型 "tcl_idol4_2600mah"*/
+            /*获取电池和batt_type名相等，就使用下面电池类型*/
+            rc = of_property_read_string(node, "qcom,battery-type", &battery_type);
+            if (!rc && strcmp(battery_type, batt_type) == 0) {
+              best_node = node;
+              best_id_kohm = batt_id_kohm;
+              break;
+            }
+          } else {
+            rc = of_batterydata_read_batt_id_kohm(node, "qcom,batt-id-kohm", &batt_ids);
+            if (rc)
+              continue;
+            for (i = 0; i < batt_ids.num; i++) {
+              delta = abs(batt_ids.kohm[i] - batt_id_kohm);
+              limit = (batt_ids.kohm[i] * id_range_pct) / 100;
+              in_range = (delta <= limit);
+              /*
+               * Check if the delta is the lowest one
+               * and also if the limits are in range
+               * before selecting the best node.
+               */
+              if ((delta < best_delta || !best_node)
+                && in_range) {
+                best_node = node;
+                best_delta = delta;
+                best_id_kohm = batt_ids.kohm[i];
+              }
+            }
+          }
+        }
+
+        if (best_node == NULL) {
+          pr_err("No battery data found\n");
+          return best_node;
+        }
+
+        /* check that profile id is in range of the measured batt_id */
+        if (abs(best_id_kohm - batt_id_kohm) >
+            ((best_id_kohm * id_range_pct) / 100)) {
+          pr_err("out of range: profile id %d batt id %d pct %d",
+            best_id_kohm, batt_id_kohm, id_range_pct);
+          return NULL;
+        }
+
+        rc = of_property_read_string(best_node, "qcom,battery-type", &battery_type);
+        if (!rc)
+          pr_info("%s found\n", battery_type);
+        else
+          pr_info("%s found\n", best_node->name);
+
+        return best_node;
+      }
+     #+end_src
+** battery_age_work()
+   + battery_age_work()
+     #+begin_src cpp
+     static void battery_age_work(struct work_struct *work)
+      {
+        struct fg_chip *chip = container_of(work, struct fg_chip, battery_age_work);
+
+        /*估计电池年龄(即：估算电池老化程度)*/
+        estimate_battery_age(chip, &chip->actual_cap_uah);
+      }
+     #+end_src
+** dfy
+   #+begin_src cpp
+   #+end_src
+** dfy
+   #+begin_src cpp
+   #+end_src
+* IRQ
+** FG_SOC(State of Charge)
+*** fg_soc_irq_handler()
+    #+begin_src cpp
+    static irqreturn_t fg_soc_irq_handler(int irq, void *_chip)
+    {
+      struct fg_chip *chip = _chip;
+      u8 soc_rt_sts;
+      int rc;
+
+      /*读取中断状态寄存器*/
+      rc = fg_read(chip, &soc_rt_sts, INT_RT_STS(chip->soc_base), 1);
+
+      /**/
+      /*工作队列调度,估算老化程度*/
+      schedule_work(&chip->battery_age_work);
+
+      /*通知PM核心正在处理唤醒事件*/
+      if (chip->power_supply_registered)
+          power_supply_changed(&chip->bms_psy);
+
+      if (chip->rslow_comp.chg_rs_to_rslow > 0 && chip->rslow_comp.chg_rslow_comp_c1 > 0 && chip->rslow_comp.chg_rslow_comp_c2 > 0)
+        schedule_work(&chip->rslow_comp_work);
+      if (chip->cyc_ctr.en)
+        schedule_work(&chip->cycle_count_work);
+      schedule_work(&chip->update_esr_work);
+      if (chip->charge_full)
+        schedule_work(&chip->charge_full_work);
+      if (chip->wa_flag & IADC_GAIN_COMP_WA
+          && chip->iadc_comp_data.gain_active) {
+        fg_stay_awake(&chip->gain_comp_wakeup_source);
+        schedule_work(&chip->gain_comp_work);
+      }
+
+      if (chip->wa_flag & USE_CC_SOC_REG
+          && chip->learning_data.active) {
+        fg_stay_awake(&chip->capacity_learning_wakeup_source);
+        schedule_work(&chip->fg_cap_learning_work);
+      }
+
+      return IRQ_HANDLED;
+    }
+    #+end_src
+*** fg_empty_soc_irq_handler
+    #+begin_src cpp
+    #+end_src
+*** fg_soc_irq_handler()
+    #+begin_src cpp
+    #+end_src
+*** fg_first_soc_irq_handler()
+    #+begin_src cpp
+    #+end_src
+** FG_MEMIF
+*** fg_mem_avail_irq_handler()
+    #+begin_src cpp
+    #+end_src
+** FG_BATT
+*** fg_batt_missing_irq_handler()
+    #+begin_src cpp
+    #+end_src
+*** fg_vbatt_low_handler()
+    #+begin_src cpp
+    #+end_src
+* DONE 总结
+  电池温度，电池属性，电池电量状态
+** 学习到的一些额外的东西
+   1. 通过debugfs文件系统,查看及修改寄存器的值，这点很巧妙

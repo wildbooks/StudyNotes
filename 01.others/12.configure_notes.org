@@ -1,0 +1,58 @@
+* configure通用参数介绍
+Standard options:
+  --prefix=PREFIX          install architecture-independent files in PREFIX
+                           [/usr/local]
+  --exec-prefix=EPREFIX    install architecture-dependent files in EPREFIX
+                           [PREFIX]
+  --bindir=DIR             install binaries in DIR [EPREFIX/bin] 二进制程序安装目录
+  --libdir=DIR             install libs in DIR [EPREFIX/lib]    库安装目录
+  --includedir=DIR         install includes in DIR [PREFIX/include]
+  --extra-asflags=EASFLAGS add EASFLAGS to ASFLAGS
+  --extra-cflags=ECFLAGS   add ECFLAGS to CFLAGS
+  --extra-ldflags=ELDFLAGS add ELDFLAGS to LDFLAGS
+  --extra-rcflags=ERCFLAGS add ERCFLAGS to RCFLAGS
+
+Configuration options:
+  --disable-cli            disable cli
+  --system-libx264         use system libx264 instead of internal
+  --enable-shared          build shared library
+  --enable-static          build static library
+  --disable-opencl         disable OpenCL features
+  --disable-gpl            disable GPL-only features
+  --disable-thread         disable multithreaded encoding
+  --disable-win32thread    disable win32threads (windows only)
+  --disable-interlaced     disable interlaced encoding support
+  --bit-depth=BIT_DEPTH    set output bit depth (8-10) [8]
+  --chroma-format=FORMAT   output chroma format (420, 422, 444, all) [all]
+
+Advanced options:
+  --disable-asm            disable platform-specific assembly optimizations
+  --enable-lto             enable link-time optimization
+  --enable-debug           add -g
+  --enable-gprof           add -pg
+  --enable-strip           add -s
+  --enable-pic             build position-independent code
+
+Cross-compilation:
+  --host=HOST              build programs to run on HOST
+  --cross-prefix=PREFIX    use PREFIX for compilation tools 为编译工具指定路径
+  --sysroot=SYSROOT        root of cross-build tree
+
+External library support:
+  --disable-avs            disable avisynth support
+  --disable-swscale        disable swscale support
+  --disable-lavf           disable libavformat support
+  --disable-ffms           disable ffmpegsource support
+  --disable-gpac           disable gpac support
+  --disable-lsmash         disable lsmash support
+
+
+  CC          C compiler command    c编译器
+  CFLAGS      C compiler flags      c编译标识符
+  LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+              nonstandard directory <lib dir>
+  LIBS        libraries to pass to the linker, e.g. -l<library>
+  CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
+              you have headers in a nonstandard directory <include dir>
+  CPP         C preprocessor
+

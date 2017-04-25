@@ -1,0 +1,24 @@
+#+FILE: input框架简介
+#+AUTHOR:      wildbook
+#+DATE:        2017年04月05日13:57:19
+#+EMAIL:       www762268@foxmail.com
+#+DESCRIPTION: 掌握input子系统框架
+#+KEYWORDS:    input,key,tp,bsp,linux
+#+LANGUAGE:    language for HTML, e.g. ‘en’ (org-export-default-language)
+#+TEXT:        Some descriptive text to be inserted at the beginning.
+#+TEXT:        Several lines may be given.
+#+OPTIONS:     H:2 num:t toc:t \n:nil @:t ::t |:t ^:t f:t TeX:t ...
+#+LINK_UP:     the ``up'' link of an exported page
+#+LINK_HOME:   the ``home'' link of an exported page
+#+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
+* frameworks
+  + *Code*:
+    kernel/drivers/input/input.c
+    kernel/include/linux/input.h
+    kernel/include/uapi/linux/input.h
+  + *dts*:
+  + *docs*
+  + *sysfs*:
+    *sysfs*:
+    *debugfs*:
+    *proc*:

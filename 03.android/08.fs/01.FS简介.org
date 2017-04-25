@@ -1,0 +1,6 @@
+sysfs
+procfs
+debugfs
+udev
+devpts
+tmpfs

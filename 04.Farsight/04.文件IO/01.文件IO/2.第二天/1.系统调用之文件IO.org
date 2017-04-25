@@ -1,0 +1,149 @@
+* 方法1：系统调用方法
+  1. open
+     int open(const char *pathname, int flags);
+     int open(const char *pathname, int flags, mode_t mode);
+     + 功能
+       打开或创建一个文件
+     + 参数
+       + pathname:要打开或创建文件的名字
+       + flags:定义打开文件所采取的动作
+         + 主标志
+           + O_RDONLY  只能读打开
+           + O_WRONLY  只能写打开
+           + O_RDWR    能读写打开
+         + 副标志
+           + O_APPEND
+             读写文件从文件尾部开始移动，所写入的数据追加到文件尾
+           + O_TRUNC
+             若文件存在并且以可写的方式打开时，此标志会将文件长度清为0，而原来存于该文件
+             的资料也会消失
+           + O_CREAT
+             若路径中的文件不存在则自动建立该文件
+           + O_EXCL
+             如果与O_CREAT同时设置，此指令会去检查文件是否存在，文件若不存在则建立该文件，
+             否则将导致打开文件错误。此外，若O_CREAT与O_EXCL同时设置，并且将要打开的文件
+             为符号连接，则将导致打开文件失败查文件是否存在
+             mode:文件权限标志
+       + mode：文件权限标志
+         + S_IRWXU  00700    所有者拥有读写执行权限
+         + S_IRUSR  00400    所有者拥有读权限
+         + S_IWUSR  00200    所有者拥有写权限
+         + S_IXUSR  00100    所有者拥有执行权限
+         + S_IRWXG  00070    群组拥有读写执行权限
+         + S_IRGRP  00040    群组拥有读权限
+         + S_IWGRP  00020    群组拥有写权限
+         + S_IXGRP  00010    群组拥有执行权限
+         + S_IRWXO  00007    其他用户拥有读写执行权限
+         + S_IROTH  00004    其他用户拥有读权限
+         + S_IWOTH  00002    其他用户拥有写权限
+         + S_IXOTH  00001    其他用户拥有执行权限
+     + 返回值
+       成功：返回文件描述符
+       失败：-1
+  2. creat
+     int creat(const char *pathname, mode_t mode);
+     + 功能
+       创建一个新文件
+     + 参数
+       + pathname:要创建文件的名字
+       + mode:用于指定文件的访问权限
+         + O_CREAT   :
+           若路径中的文件不存在则自动建立该文件
+         + O_WRONLY  :只能写打开
+         + O_TRUNC   :
+           若文件存在并且以可写的方式打开时，此标志会将文件长度清为0，而原来存于该文件
+           的资料也会消失
+         + 注意 ::
+                  <=> open(pathname, O_WRONLY | O_CREAT | O_TRUNC, mode);
+     + 返回值
+       成功：文件描述符
+       失败：-1
+  3. read
+     ssize_t read(int fd, void *buf, size_t count)
+     + 功能
+       将与文件描述符fd关联的文件中读入count个字符放到buf中
+     + 参数
+       fd:文件描述符
+       buf:需要读取的缓存区
+       count:最大读取字节数
+     + 返回值
+       成功：返回读到的字节数，若已到文件结尾则返回0
+       失败：-1
+  4. write
+     ssize_t write(int fd, const void *buf, size_t count);
+     + 功能
+       把缓存区buf的前count个字节写入与文件描述符fd相关的文件中
+     + 参数
+       fd:文件描述符
+       buf:需要输出的缓存区
+       count:最大输出字节数
+     + 返回值
+       成功：返回写入的字节数
+       失败：-1
+  5. lseek
+     off_t lseek(int fd, off_t offset, int whence);
+     + 功能
+       设置文件偏移量
+     + 参数
+       fd:文件描述符
+       offset:设置文件偏移量
+       whence:设置偏移值的用法
+       + SEEK_SET  偏移量设置为offset
+       + SEEK_CUR  偏移量设置为 当前偏移量+offset(offset可以为负)
+       + SEEK_END  偏移量设置为 文件长度+offset(offset可以为负)
+     + 返回值
+       成功：新的文件偏移量
+       失败：-1
+  6. close
+     int close(int fd);
+     + 功能
+       关闭一个打开的文件
+     + 参数
+       fd:文件描述符
+     + 返回值
+       成功：0
+       失败：-1
+  7. int fcntl(int fd, int cmd, ... /* arg */ );
+     + 功能
+       很多功能
+     + 参数
+       + fd:文件描述符
+       + cmd:
+         + 复制一个已有的文件描述符
+           F_DUPFD
+           F_DUPFD_CLOEXEC
+         + 获取/设置文件描述符标志
+           F_GETFD
+           F_SETFD
+         + 获取/设置文件状态标志
+           F__GETFL
+           F_SETFL
+         + 获取设置异步I/O所有权
+           F_GETOWN
+           F_SETOWN
+         + 获取/设置记录锁
+           F_GETLK:用来设置非阻塞式锁
+           F_SETLK:用来检测锁状态
+           F_SETLKW:用来设置阻塞式锁
+     + 返回值
+       成功：0
+       失败：-1
+
+* 方法2：调用C库函数
+* 额外补充
+** 文件描述符
+   标准输入(standard input) ： 进程的标准输入与文件描述符 0 关联  =>  0
+   标准输出(standart output)： 进程的标准输出与文件描述符 1 关联  =>  1
+   标准错误(standard error)：  进程的标准错误与文件描述符 2 关联  =>  2
+   + 为了提高可读性，替换程符号常量
+     STDIN_FILENO
+     STDOUT_FILENO
+     STDERR_FILEN
+     perror函数
+   + void perror(const char *s);
+     perror( )用来将上一个函数发生错误的原因输出到标准设备(stderr)
+* 查看终端
+  + 查看所使用的终端
+    tty
+  + 查看使用的键盘设备
+    ls -lt /dev/input/*

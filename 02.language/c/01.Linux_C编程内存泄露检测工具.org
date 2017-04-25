@@ -1,0 +1,1 @@
+在三种检测工具当中，设置最简单的算是memwatc<Plug>(deoplete_auto_refresh)h，和dmalloc一样，它能检测未释放的内存、同一段内存被释放多次、位址存取错误及不当使用未分配之内存区域。请往http://www.linkdata.se/sourcecode.html下载最新版本的Memwatch。

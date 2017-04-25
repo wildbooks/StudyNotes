@@ -1,0 +1,27 @@
+#+TITLE: android usb流程(FirstDay)
+#+AUTHOR: wildbook-杨玉春
+#+EMAIL: www762268@foxmail.com
+#+DESCRIPTION: iafasfafsdfasd
+* USB流程框架
++ USB框架
+  [[file:./picture/01.USBFramework.png]]
+  #+begin_src cpp
+  StorageManager为Client，MountService是Server，通过AIDL进行进程间通信。
+  MountService是一个Android Service，由systemserver启动。
+  Volume Daemon（Vold）是一个Native Service，有Init.c读取init.rc后启动。
+  MountService和Vold之间通过Socket通信。
+  NativeDaemonConnector帮助MountService取得Vold的socket，建立通信。
+  Vold通过NetLink读取Kernel的uevent.
+  NetLinkManager帮助Vold建立与kernel间的通信
+  #+end_src
++ 跟据框图分为５部分学习
+  #+begin_src cpp
+  1. 《AIDL之Jave Framework层实现》
+  2. 《AIDL之 Native Framework层实现》
+  3. 《AIDL之Kernel层实现：Binder机制》
+  4. 《Vold 通信详解》
+  5. 《Vold Framework层分析》
+  #+end_src
+* 参考文档
+[[http://blog.csdn.net/caocaozhuce/article/details/7799303][<<Android USB Host>>]]
+[[http://www.hzlitai.com.cn/article/ARM11/SYSTEM/Android_USB_develop_lx.html][<<android usb流程(转载加整理)>>]]

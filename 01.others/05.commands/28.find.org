@@ -1,0 +1,7 @@
+* find用法高级用法
+** exec用法
+   find . -iname *.txt -exec command {} \;(语法)
+   find . -iname *.txt -exec ls -l {} \;
+   find . -iname *.txt -ok ls -l {} \; 功能和-exec是一样的,每次操作前要确定
+   find . -iname *.txt -exec grep "root" {} \;
+   find . -iname *.txt -exec mv {} /tmp \;

@@ -1,0 +1,1709 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>   
+   
+
+    <script type="text/javascript" src="http://c.csdnimg.cn/pubfooter/js/tracking.js" charset="utf-8"></script>  
+
+    <script type="text/javascript">
+        var protocol = window.location.protocol;
+        document.write('<script type="text/javascript" src="' + protocol + '//csdnimg.cn/pubfooter/js/repoAddr2.js?v=' + Math.random() + '"></' + 'script>');
+    </script>
+
+  
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+
+    <title>SEAndroid安全机制中的文件安全上下文关联分析 - 老罗的Android之旅
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="在img标签里面只设置宽，不设置高，图片就会等比例缩放。" />
+    <script src="http://static.blog.csdn.net/scripts/jquery.js" type="text/javascript"></script>
+      <script type="text/javascript" src="http://static.blog.csdn.net/scripts/jquery-version.js"></script>
+    <script type="text/javascript" src="http://static.blog.csdn.net/scripts/ad.js?v=1.1"></script>
+        <!--new top-->
+               <link rel="stylesheet" href="http://c.csdnimg.cn/public/common/toolbar/css/index.css">        <!--new top-->
+    
+      <!-- ad begin -->
+         <script language="javascript" type="text/javascript" src="http://ads.csdn.net/js/tracking.js"></script>
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/Luoshengyang/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/default.css" />
+ 
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+</head>
+<body>
+    <!-- 广告位开始 -->
+        <ins data-revive-zoneid="149" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins>
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/luoshengyang">老罗的Android之旅</a></h2>
+            <h3>爱生活，爱Android</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/luoshengyang?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/luoshengyang?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/luoshengyang/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "Luoshengyang";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/luoshengyang";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+<a href="http://geek.csdn.net/news/detail/126445">
+<font color=red>聚焦行业最佳实践，BDTC 2016完整议程公布
+</font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://huiyi.csdn.net/activity/product/goods_list?project_id=3287">
+<font color=blue>微信小程序实战项目——点餐系统
+</font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="http://blog.csdn.net/turingbooks/article/details/53079366">
+<font color=red>程序员11月书讯，评论得书啦 
+</font></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="http://geek.csdn.net/news/detail/110921">
+<font color=blue>Get IT技能知识库，50个领域一键直达
+</font></a>
+
+
+</font></a>
+</font></a>
+</div>                        </div>
+                        
+
+
+<!-- 广告位开始 -->
+<ins data-revive-zoneid="72" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins>
+<!-- 广告位结束 -->
+
+  
+<link href="http://static.blog.csdn.net/css/comment1.css" type="text/css" rel="stylesheet" />
+<link href="http://static.blog.csdn.net/css/style1.css" type="text/css" rel="stylesheet" />
+<script language='JavaScript' type='text/javascript' src='http://download.csdn.net/js/jquery.cookie.js'></script>
+<script type="text/javascript" src="http://c.csdnimg.cn/rabbit/search-service/main.js"></script>
+<link rel="stylesheet" href="http://static.blog.csdn.net/public/res-min/markdown_views.css?v=1.0" />
+<link rel="stylesheet" href="http://static.blog.csdn.net/css/category.css?v=1.0" />
+<script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/web-storage-cache.min.js"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/replace.min.js"></script>
+
+
+
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+          
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/luoshengyang/article/details/37749383">
+        SEAndroid安全机制中的文件安全上下文关联分析            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/Android' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">Android</a><a href='http://www.csdn.net/tag/SEAndroid' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">SEAndroid</a><a href='http://www.csdn.net/tag/SELinux' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">SELinux</a><a href='http://www.csdn.net/tag/Security%20Context' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">Security Context</a><a href='http://www.csdn.net/tag/%e5%ae%89%e5%85%a8%e4%b8%8a%e4%b8%8b%e6%96%87' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">安全上下文</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2014-07-21 00:59</span>
+            <span class="link_view" title="阅读次数">24870人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(14)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('SEAndroid安全机制中的文件安全上下文关联分析','37749383');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(37749383,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody"  style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('838604','Luoshengyang','top','37749383');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">Android<em>（183）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/Luoshengyang/article/category/838604"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_838604">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+    <script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>  
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+<div id="article_content" class="article_content">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 前面一篇文章提到，SEAndroid是一种基于安全策略的MAC安全机制。这种安全策略实施在主体和客体的安全上下文之上。这意味着安全策略在实施之前，SEAndroid安全机制中的主休和客体是已经有安全上下文的。在SEAndroid安全机制中，主体一般就是进程，而客体一般就是文件。文件的安全上下文的关联有不同的方式。本文主要分析文件安全上下文的设置过程，接下来的一篇文章再分析进程安全上下文的设置过程。</p><p align="center"><span style="font-size:14px;color:#CC0000;">老罗的新浪微博：<a target=_blank target="_blank" href="http://weibo.com/shengyangluo">http://weibo.com/shengyangluo</a>，欢迎关注！</span><br /></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在SEAndroid中，文件的安全上下文是在文件的创建过程中设置的。在Android系统中，文件的产生方式主要分为两种，一种是预置在ROM里面的，另外一种是动态创建的，即在系统在运行的过程中创建的。对于预置在ROM里面的文件，例如打包在system.img里面的文件，它们的安全上下文在是制作ROM的过程中设置的。而对于动态创建的文件，它们的安全上下文如果没有特别指定，就与父目录的安全上下文一致。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 假设动态创建的文件的安全上下文来自于父目录。这时候就有一个问题需要解决，就是最开始的父目录的安全上下文是怎么来的呢？如果最开始的父目录是预置在ROM里面的，那么这个问题就很好解决。但是有一些目录，它们并不是预置在ROM的，而是在系统启动或者运行的过程中动态安装的，即我们平时所说的虚拟文件系统，例如我们在前面一篇文章<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/37613135">SEAndroid安全机制框架分析</a>中提到的selinux文件系统。这些虚拟文件系统在安装的时候，SEAndroid安全机制会根据安全策略给它们的根目录设置相应的安全上下文，这样以后在里面创建的文件就可以从父目录继承安全上下文了。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 此外，有些文件的安全上下文是不适合使用父目录的安全上下文的，例如应用程序数据文件，它们的安全上文需要根据一定的规则来特别指定。在前面一篇文章<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/37613135">SEAndroid安全机制框架分析</a>中提到，SEAndroid安全机制根据应用程序类型的签名来给其数据文件设置不同的安全上下文，以区分系统应用程序和第三方应用程序的数据文件。由于无论是系统应用程序，还是第三方应用程序，它们的数据文件都是位于data分区的data子目录中的，因此我们需要有一种机制给在/data/data目录中创建的数据文件设置不同的安全上下文。我们知道，应用程序在安装的时候，PackageManagerService会通过守护进程installd在/data/data目录中创建相应的数据目录，以后应用程序在运行的过程中默认创建的数据文件就位于对应的数据目录中，因此只要给这些数据目录设置不同的安全上下文，就可以让不同类型的应用程序在运行的过程中创建不同安全上下文的数据文件。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 我们通过图1总结上面描述的文件安全上下文创建方式，如下所示：</p><p align="center"><img src="http://img.blog.csdn.net/20140715111923780?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTHVvc2hlbmd5YW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="" /></p><p align="center">图1 文件安全上下文关联方式</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 接下来，我们就分别详细分析上述三种文件安全上下文关联方式。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. 设置打包在ROM里面的文件的安全上下文</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这里我们以ROM里面的system.img为例，说明打包在ROM里面的文件的安全上下文的设置过程。在前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/20501657">Android系统镜像文件的打包过程分析</a>一篇文章中，我们已经分析过system.img的制作过程了，因此这里我们只关注与安全上下文设置相关的逻辑。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 生成system.img的命令位于build/core/Makefile文件中，如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_1_7883105" name="code" class="plain">BUILT_SYSTEMIMAGE := $(systemimage_intermediates)/system.img
+
+# $(1): output file
+define build-systemimage-target
+  @echo &quot;Target system fs image: $(1)&quot;
+  @mkdir -p $(dir $(1)) $(systemimage_intermediates) &amp;&amp; rm -rf $(systemimage_intermediates)/system_image_info.txt
+  $(call generate-userimage-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt, skip_fsck=true)
+  $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
+      ./build/tools/releasetools/build_image.py \
+      $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1)
+endef
+
+$(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
+    $(call build-systemimage-target,$@)</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从这里就可以看出，system.img由命令build-system-target生成。build-system-target命令在执行的过程中，又会执行两个子命令。第一个子命令是generate-userimage-prop-dictionary，用来生成一个属性文件system_image_info.txt。第二个子命令是build_image，用来制作system.img镜像文件。注意，第二个命令在制作system.img镜像文件的过程中，会用到第一个命令生成的属性文件system_image_info.txt。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 第一个子命令generate-userimage-prop-dictionary也是实现在build/core/Makefile文件中，如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_2_5265383" name="code" class="plain">SELINUX_FC := $(TARGET_ROOT_OUT)/file_contexts
+......
+
+# $(1): the path of the output dictionary file
+# $(2): additional &quot;key=value&quot; pairs to append to the dictionary file.
+define generate-userimage-prop-dictionary
+$(if $(INTERNAL_USERIMAGES_EXT_VARIANT),$(hide) echo &quot;fs_type=$(INTERNAL_USERIMAGES_EXT_VARIANT)&quot; &gt;&gt; $(1))
+$(if $(BOARD_SYSTEMIMAGE_PARTITION_SIZE),$(hide) echo &quot;system_size=$(BOARD_SYSTEMIMAGE_PARTITION_SIZE)&quot; &gt;&gt; $(1))
+$(if $(BOARD_USERDATAIMAGE_PARTITION_SIZE),$(hide) echo &quot;userdata_size=$(BOARD_USERDATAIMAGE_PARTITION_SIZE)&quot; &gt;&gt; $(1))
+$(if $(BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE),$(hide) echo &quot;cache_fs_type=$(BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE)&quot; &gt;&gt; $(1))
+$(if $(BOARD_CACHEIMAGE_PARTITION_SIZE),$(hide) echo &quot;cache_size=$(BOARD_CACHEIMAGE_PARTITION_SIZE)&quot; &gt;&gt; $(1))
+$(if $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),$(hide) echo &quot;vendor_fs_type=$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE)&quot; &gt;&gt; $(1))
+$(if $(BOARD_VENDORIMAGE_PARTITION_SIZE),$(hide) echo &quot;vendor_size=$(BOARD_VENDORIMAGE_PARTITION_SIZE)&quot; &gt;&gt; $(1))
+$(if $(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG),$(hide) echo &quot;extfs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG)&quot; &gt;&gt; $(1))
+$(if $(mkyaffs2_extra_flags),$(hide) echo &quot;mkyaffs2_extra_flags=$(mkyaffs2_extra_flags)&quot; &gt;&gt; $(1))
+$(hide) echo &quot;selinux_fc=$(SELINUX_FC)&quot; &gt;&gt; $(1)</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这里传过来的第一个参数便是指向上述的属性文件system_image_info.txt，它的内容是通过一系列的echo命令生成的，每一行都是“key=value“形式。其中，与文件安全上下文相关的是最后一行：<p></p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_3_2092037" name="code" class="plain">selinux_fc=$(SELINUX_FC)</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 变量SELINUX_FC指向一个file_contexts文件。这个file_contexts文件就是我们在前面一篇文章<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/37613135">SEAndroid安全机制框架分析</a>中提到的file_contexts文件，用来描述文件的安全上下文。我们知道，system.img镜像文件是安装在目标设备上的/system目录的，因此我们就观察一下在file_contexts文件中与/system目录相关的文件的安全上下文是如何设置的。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 文件file_contexts最开始是位于build/external/sepolicy目录中的，经过编译后，就会保存在$OUT/root目录中，其中$OUT指向的是产品输出目录。打开$OUT/root/file_contexts文件，我们就可以看到与/system目录相关的文件的安全上下文的设置规则：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_4_7282487" name="code" class="plain">#############################
+# System files
+#
+/system(/.*)?       u:object_r:system_file:s0
+/system/bin/ash     u:object_r:shell_exec:s0
+/system/bin/mksh    u:object_r:shell_exec:s0
+/system/bin/sh      --  u:object_r:shell_exec:s0
+/system/bin/run-as  --  u:object_r:runas_exec:s0
+/system/bin/app_process u:object_r:zygote_exec:s0
+/system/bin/servicemanager  u:object_r:servicemanager_exec:s0
+/system/bin/surfaceflinger  u:object_r:surfaceflinger_exec:s0
+/system/bin/drmserver   u:object_r:drmserver_exec:s0
+/system/bin/vold    u:object_r:vold_exec:s0
+/system/bin/netd    u:object_r:netd_exec:s0
+/system/bin/rild    u:object_r:rild_exec:s0
+/system/bin/mediaserver u:object_r:mediaserver_exec:s0
+/system/bin/dbus-daemon u:object_r:dbusd_exec:s0
+/system/bin/installd    u:object_r:installd_exec:s0
+/system/bin/keystore    u:object_r:keystore_exec:s0
+/system/bin/debuggerd   u:object_r:debuggerd_exec:s0
+/system/bin/bluetoothd  u:object_r:bluetoothd_exec:s0
+/system/bin/wpa_supplicant  u:object_r:wpa_exec:s0
+/system/bin/qemud   u:object_r:qemud_exec:s0
+/system/bin/sdcard      u:object_r:sdcardd_exec:s0
+/system/bin/dhcpcd      u:object_r:dhcp_exec:s0
+/system/bin/mtpd    u:object_r:mtp_exec:s0
+/system/bin/pppd    u:object_r:ppp_exec:s0
+/system/bin/tf_daemon   u:object_r:tee_exec:s0
+/system/bin/racoon  u:object_r:racoon_exec:s0
+/system/etc/ppp(/.*)?   u:object_r:ppp_system_file:s0
+/system/etc/dhcpcd(/.*)? u:object_r:dhcp_system_file:s0
+/system/xbin/su     u:object_r:su_exec:s0
+/system/vendor/bin/gpsd u:object_r:gpsd_exec:s0
+/system/bin/ping    u:object_r:ping_exec:s0</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 接下来我们再来看第二个子命令build_image的实现，它是由文件build/tools/releasetools/build_image.py实现的，它的入口函数main的实现如下所示：<p></p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_5_2157294" name="code" class="python">def main(argv):
+  ......
+
+  in_dir = argv[0]
+  glob_dict_file = argv[1]
+  out_file = argv[2]
+
+  glob_dict = LoadGlobalDict(glob_dict_file)
+  image_filename = os.path.basename(out_file)
+  mount_point = &quot;&quot;
+  if image_filename == &quot;system.img&quot;:
+    mount_point = &quot;system&quot;
+  elif image_filename == &quot;userdata.img&quot;:
+    mount_point = &quot;data&quot;
+  elif image_filename == &quot;cache.img&quot;:
+    mount_point = &quot;cache&quot;
+  elif image_filename == &quot;vendor.img&quot;:
+    mount_point = &quot;vendor&quot;
+  else:
+    print &gt;&gt; sys.stderr, &quot;error: unknown image file name &quot;, image_filename
+    exit(1)
+
+  image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
+  if not BuildImage(in_dir, image_properties, out_file):
+    print &gt;&gt; sys.stderr, &quot;error: failed to build %s from %s&quot; % (out_file, in_dir)
+    exit(1)
+
+if __name__ == '__main__':
+  main(sys.argv[1:])</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 参数argv[1]指向的就是我们上面提到的属性文件system_image_info.txt，最终保存在本地变量glob_dict_file中。另外一个参数argv[2]指向的要输出的system.img文件路径，最终保存在本地变量out_file中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数LoadGlobalDict用来打开属性文件system_image_info.txt，并且将它每一行的key和value提取出来，并且保在字典glob_dict中。注意，这个字典glob_dict包含有一个key等于selinux_fc、value等于file_contexts文件路径的项。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 接下来再通过os.path.basename将输出的文件路径out_file的最后一项提取出来，就可以得到image_filename的值为”system.img“，因此再接下来就会得到本地变量mount_point的值为”system“，表示我们现在正在打包的是system.img文件。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数ImagePropFromGlobalDict用来从字典glob_dict中提取与安装点mount_point相关的项，并且保存在另外一个字典中返回给调用者，它的实现如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_6_7380764" name="code" class="python">def ImagePropFromGlobalDict(glob_dict, mount_point):
+  &quot;&quot;&quot;Build an image property dictionary from the global dictionary.
+
+  Args:
+    glob_dict: the global dictionary from the build system.
+    mount_point: such as &quot;system&quot;, &quot;data&quot; etc.
+  &quot;&quot;&quot;
+  d = {}
+
+  def copy_prop(src_p, dest_p):
+    if src_p in glob_dict:
+      d[dest_p] = str(glob_dict[src_p])
+
+  common_props = (
+      &quot;extfs_sparse_flag&quot;,
+      &quot;mkyaffs2_extra_flags&quot;,
+      &quot;selinux_fc&quot;,
+      &quot;skip_fsck&quot;,
+      )
+  for p in common_props:
+    copy_prop(p, p)
+
+  d[&quot;mount_point&quot;] = mount_point
+  if mount_point == &quot;system&quot;:
+    copy_prop(&quot;fs_type&quot;, &quot;fs_type&quot;)
+    copy_prop(&quot;system_size&quot;, &quot;partition_size&quot;)
+  elif mount_point == &quot;data&quot;:
+    copy_prop(&quot;fs_type&quot;, &quot;fs_type&quot;)
+    copy_prop(&quot;userdata_size&quot;, &quot;partition_size&quot;)
+  elif mount_point == &quot;cache&quot;:
+    copy_prop(&quot;cache_fs_type&quot;, &quot;fs_type&quot;)
+    copy_prop(&quot;cache_size&quot;, &quot;partition_size&quot;)
+  elif mount_point == &quot;vendor&quot;:
+    copy_prop(&quot;vendor_fs_type&quot;, &quot;fs_type&quot;)
+    copy_prop(&quot;vendor_size&quot;, &quot;partition_size&quot;)
+
+  return d</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从这里就可以看出，函数ImagePropFromGlobalDict返回给调用者的字典包含一个以selinux_fc为key值的项，它的值指向上述分析的file_contexts文件。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 回到函数main中，最后它调用另外一个函数BuildImage来生成最终的system.img文件，它的实现如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_7_5112489" name="code" class="python">def BuildImage(in_dir, prop_dict, out_file):
+  &quot;&quot;&quot;Build an image to out_file from in_dir with property prop_dict.
+
+  Args:
+    in_dir: path of input directory.
+    prop_dict: property dictionary.
+    out_file: path of the output image file.
+
+  Returns:
+    True iff the image is built successfully.
+  &quot;&quot;&quot;
+  build_command = []
+  fs_type = prop_dict.get(&quot;fs_type&quot;, &quot;&quot;)
+  run_fsck = False
+  if fs_type.startswith(&quot;ext&quot;):
+    build_command = [&quot;mkuserimg.sh&quot;]
+    ......
+    build_command.extend([in_dir, out_file, fs_type,
+                          prop_dict[&quot;mount_point&quot;]])
+    ......
+    if &quot;selinux_fc&quot; in prop_dict:
+      build_command.append(prop_dict[&quot;selinux_fc&quot;])
+  else:
+    build_command = [&quot;mkyaffs2image&quot;, &quot;-f&quot;]
+    ......
+    build_command.append(in_dir)
+    build_command.append(out_file)
+    if &quot;selinux_fc&quot; in prop_dict:
+      build_command.append(prop_dict[&quot;selinux_fc&quot;])
+      build_command.append(prop_dict[&quot;mount_point&quot;])
+
+  exit_code = RunCommand(build_command)
+  ......
+
+  return exit_code == 0</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 参数prop_dict指向的就是前面调用ImagePropFromGlobalDict获得的字典，如果它里面包含有一个key为&quot;fs_type&quot;的项，并且它的value等于&quot;ext&quot;，那么就意味着将要制作ext格式的system.img镜像文件，否则的话，就意味着将要制作yaffs2格式的system.img镜像文件。前者通过命令mkuserimg来生成，而后者通过命令mkyaffs2image来生成。无论生成的是什么格式的system.img镜像文件， 只要参数prop_dict包含有一个key为'selinux_fc'的项，那么都会将它的value提取出来，并且作为一个参数传递给命令mkuserimg或者mkyaffs2image使用。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 根据前面我们的分析，参数prop_dict描述的字典包含有key为'selinux_fc'的项，并且它的value描述的就是我们在上面提到的file_contexts的路径。当我们将这个file_contexts文件路径传递给命令mkuserimg或者mkyaffs2image时，后者就会根据它设置的规则给打包在system.img里面的文件关联安全上下文。这样我们就获得了一个关联有安全上下文的system.img镜像文件了。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. 设置虚拟文件系统的安全上下文</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这里我们以selinux虚拟文件系统的安装过程为例，说明虚拟文件系统的安全上下文的设置过程。在前面的一篇文章<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/37613135">SEAndroid安全机制框架分析</a>中提到，系统启动之后，会由init进程在/sys/fs/selinux中安装一个selinux虚拟文件系统，接着再加载SEAndroid安全策略到内核空间的SELinux LSM模块中去。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SEAndroid安全策略是由external/sepolicy模块生成的。观察external/sepolicy模块的编译脚本Android.mk，我们就会发现，SEAndroid安全策略包含有文件genfs_contexts定义的安全上下文设置规则，如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_8_6922632" name="code" class="plain">##################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := sepolicy
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
+
+include $(BUILD_SYSTEM)/base_rules.mk
+
+sepolicy_policy.conf := $(intermediates)/policy.conf
+$(sepolicy_policy.conf): PRIVATE_MLS_SENS := $(MLS_SENS)
+$(sepolicy_policy.conf): PRIVATE_MLS_CATS := $(MLS_CATS)
+$(sepolicy_policy.conf) : $(call build_policy, security_classes initial_sids access_vectors global_macros mls_macros mls policy_capabilities te_macros attributes *.te roles users initial_sid_contexts fs_use genfs_contexts port_contexts)
+    @mkdir -p $(dir $@)
+    $(hide) m4 -D mls_num_sens=$(PRIVATE_MLS_SENS) -D mls_num_cats=$(PRIVATE_MLS_CATS) -s $^ &gt; $@
+    $(hide) sed '/dontaudit/d' $@ &gt; $@.dontaudit
+
+$(LOCAL_BUILT_MODULE) : $(sepolicy_policy.conf) $(HOST_OUT_EXECUTABLES)/checkpolicy
+    @mkdir -p $(dir $@)
+    $(hide) $(HOST_OUT_EXECUTABLES)/checkpolicy -M -c $(POLICYVERS) -o $@ $&lt;
+    $(hide) $(HOST_OUT_EXECUTABLES)/checkpolicy -M -c $(POLICYVERS) -o $(dir $&lt;)/$(notdir $@).dontaudit $&lt;.dontaudit
+
+built_sepolicy := $(LOCAL_BUILT_MODULE)
+sepolicy_policy.conf :=</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 生成的SEAndroid安全策略保存在一个名称为policy.conf文件中。在生成这个policy.conf文件的过程中，会调用一个build_policy函数。传递给函数build_policy的参数包含了生成SEAndroid安全策略所需要的源文件。其中，源文件genfs_contexts描述的是虚拟文件系统的安全上下文设置规则，它的内容如下所示：<br /><p></p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_9_9637848" name="code" class="plain"># Label inodes with the fs label.
+genfscon rootfs / u:object_r:rootfs:s0
+# proc labeling can be further refined (longest matching prefix).
+genfscon proc / u:object_r:proc:s0
+genfscon proc /net/xt_qtaguid/ctrl u:object_r:qtaguid_proc:s0
+# selinuxfs booleans can be individually labeled.
+genfscon selinuxfs / u:object_r:selinuxfs:s0
+genfscon cgroup / u:object_r:cgroup:s0
+# sysfs labels can be set by userspace.
+genfscon sysfs / u:object_r:sysfs:s0
+genfscon inotifyfs / u:object_r:inotify:s0
+genfscon vfat / u:object_r:sdcard_external:s0
+genfscon debugfs / u:object_r:debugfs:s0
+genfscon fuse / u:object_r:sdcard_internal:s0</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从这里我们就可以看出selinux虚拟文件系统关联的安全上下文为”u:object_r:selinuxfs:s0“，这意味着只有那些对Type为”selinuxfs“的文件有访问权限的进程才可以访问selinux虚拟文件系统，也就是/sys/fs/selinux目录下的文件。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. 设置应用程序数据文件的安全上下文</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在Android系统中，每一个应用程序在/data/data目录下都有一个以包名命名的目录，用来作为数据保存目录。这个数据目录是在应用程序安装的时候由守护进程installd创建的。守护进程installd在创建应用程序数据目录的时候，会同时设置它的安全上下文，以便可以对它进行保护。Android应用程序的详细安装过程可以参考前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/6766010">Android应用程序安装过程源代码分析</a>一文，这里只关注应用程序数据目录的创建及其安全上下文设置的过程。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PackageManagerService负责安装Android应用程序，它在启动的时候会通过SELinuxMMAC类的静态成员函数readInstallPolicy读取我们在前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/37613135">SEAndroid安全机制框架分析</a>一文分析的mac_permissions.xml文件，如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_10_749881" name="code" class="java">public class PackageManagerService extends IPackageManager.Stub {
+    ......
+
+    public PackageManagerService(Context context, Installer installer,
+            boolean factoryTest, boolean onlyCore) {
+        ......
+
+        synchronized (mInstallLock) {
+        // writer
+        synchronized (mPackages) {
+            ......
+
+            mFoundPolicyFile = SELinuxMMAC.readInstallPolicy();
+ 
+            ......
+        } // synchronized (mPackages)
+        } // synchronized (mInstallLock)
+    }
+
+    ......
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件frameworks/base/services/java/com/android/server/pm/PackageManagerService.java文件中。<p></p><p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;SELinuxMMAC类的静态成员函数readInstallPolicy的实现如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_11_3988483" name="code" class="java">public final class SELinuxMMAC {
+    ......
+
+    // Signature seinfo values read from policy.
+    private static final HashMap&lt;Signature, String&gt; sSigSeinfo =
+        new HashMap&lt;Signature, String&gt;();
+
+    // Package name seinfo values read from policy.
+    private static final HashMap&lt;String, String&gt; sPackageSeinfo =
+        new HashMap&lt;String, String&gt;();
+
+    // Locations of potential install policy files.
+    private static final File[] INSTALL_POLICY_FILE = {
+        new File(Environment.getDataDirectory(), &quot;system/mac_permissions.xml&quot;),
+        new File(Environment.getRootDirectory(), &quot;etc/security/mac_permissions.xml&quot;),
+        null};
+    ......
+
+    public static boolean readInstallPolicy() {
+
+        return readInstallPolicy(INSTALL_POLICY_FILE);
+    }
+    .......
+
+    private static boolean readInstallPolicy(File[] policyFiles) {
+        FileReader policyFile = null;
+        int i = 0;
+        while (policyFile == null &amp;&amp; policyFiles != null &amp;&amp; policyFiles[i] != null) {
+            try {
+                policyFile = new FileReader(policyFiles[i]);
+                break;
+            } catch (FileNotFoundException e) {
+                Slog.d(TAG,&quot;Couldn't find install policy &quot; + policyFiles[i].getPath());
+            }
+            i++;
+        }
+
+        ......
+        
+        try {
+            XmlPullParser parser = Xml.newPullParser();
+            parser.setInput(policyFile);
+
+            XmlUtils.beginDocument(parser, &quot;policy&quot;);
+            while (true) {
+                XmlUtils.nextElement(parser);
+                if (parser.getEventType() == XmlPullParser.END_DOCUMENT) {
+                    break;
+                }
+
+                String tagName = parser.getName();
+                if (&quot;signer&quot;.equals(tagName)) {
+                    String cert = parser.getAttributeValue(null, &quot;signature&quot;);
+                    ......
+                    Signature signature;
+                    try {
+                        signature = new Signature(cert);
+                    } catch (IllegalArgumentException e) {
+                        ......
+                    }
+                    String seinfo = readSeinfoTag(parser);
+                    if (seinfo != null) {
+                        ......
+                        sSigSeinfo.put(signature, seinfo);
+                    }
+                } else if (&quot;default&quot;.equals(tagName)) {
+                    String seinfo = readSeinfoTag(parser);
+                    if (seinfo != null) {
+                        ......
+                        // The 'null' signature is the default seinfo value
+                        sSigSeinfo.put(null, seinfo);
+                    }
+                } else if (&quot;package&quot;.equals(tagName)) {
+                    String pkgName = parser.getAttributeValue(null, &quot;name&quot;);
+                    ......
+                    String seinfo = readSeinfoTag(parser);
+                    if (seinfo != null) {
+                        ......
+                        sPackageSeinfo.put(pkgName, seinfo);
+                    }
+                } else {
+                    XmlUtils.skipCurrentTag(parser);
+                    continue;
+                }
+            }
+        } catch (XmlPullParserException e) {
+            Slog.w(TAG, &quot;Got execption parsing &quot;, e);
+        } catch (IOException e) {
+            Slog.w(TAG, &quot;Got execption parsing &quot;, e);
+        }
+        try {
+            policyFile.close();
+        } catch (IOException e) {
+            //omit
+        }
+        return true;
+    }
+
+    ......
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件frameworks/base/services/java/com/android/server/pm/SELinuxMMAC.java文件中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 先看SELinuxMMAC类的两个静态成员变量sSigSeinfo和sPackageSeinfo，它们指向的都是一个HashMap。其中，sSigSeinfo是以应用程序签名为Key值的，而sPackageSeinfo是以应用程序包名为Key值，并且两者的Value描述的都是一个seinfo字符串。这个seinfo字符串决定了应用程序数据目录的安全上下文设置。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 再看SELinuxMMAC类的静态成员函数readInstallPolicy，这里列出了两个重载版本的实现。其中，无参数版本的readInstallPolicy以静态成员INSTALL_POLICY_FILE <br />描述的一个数组为参数，调用File数组参数版本的readInstallPolicy。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SELinuxMMAC类的静态成员变量INSTALL_POLICY_FILE指向的是一个File数组，它里包含了两个文件路径，分别是/data/system/mac_permissions.xml和/etc/security/mac_permissions.xml。从File数组参数版本的readInstallPolicy的开始实现可以知道，它会依次检查/data/system/mac_permissions.xml和/etc/security/mac_permissions.xml文件的存在性。只要其中的一个文件存在，那么就会停止检查过程，并且将已经存在的文件打开，以便接下来可以对它进行读取和解析。一般来说，mac_permissions.xml文件都是保存在/etc/security目录下的。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 打开了要读取的解析的mac_permissions.xml文件之后，接下来就开始对它进行解析了。mac_permissions.xml是一个xml文件，它的内容可以参考前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/37613135">SEAndroid安全机制框架分析</a>一文。对mac_permissions.xml的解析是比较简单的，逻辑如下所示：</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A. 如果碰到一个以“signer”为名称的Xml标签，那么就将它的signature属性值读取出来，并且以此为参数创建了一个Signature对象。接下来再通过另外一个函数readSeinfoTag在以“signer”为名称的Xml标签中，寻找一个名称为“seinfo”的Xml标签，并且将它的value属性值读取出来，作为一个seinfo字符串。最后，就以刚才创建的Signature对象为Key值，并且以通过函数readSeinfoTag读取出来的seinfo字符串为Value值，保存在SELinuxMMAC类的静态成员函数sSigSeinfo所描述的一个HashMap中。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B. 如果碰到一个以&quot;package&quot;为名称的Xml标签，那么就将它的name属性值读取出来，作为包名。接下来同样是通过函数readSeinfoTag在以“package”为名称的Xml标签中，寻找一个名称为“seinfo”的Xml标签，并且将它的value属性值读取出来，作为一个seinfo字符串。最后，就以刚才读取的包名为Key值，并且以通过函数readSeinfoTag读取出来的seinfo字符串为Value值，保存在SELinuxMMAC类的静态成员函数sPackageSeinfo所描述的一个HashMap中。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; C. 如果碰到一个以“default”为名称的Xml标签，那么就直接通过函数readSeinfoTag在其子标签中，寻找一个名称为“seinfo”的Xml标签，并且将它的value属性值读取出来，作为一个seinfo字符串。最后，以null为Key值，并且以通过函数readSeinfoTag读取出来的seinfo字符串为Value值，保存在SELinuxMMAC类的静态成员函数sSigSeinfo所描述的一个HashMap中。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 也就是说，我们可以在mac_permissions.xml文件中通过签名或者包名来为某一个应用程序设置特定的seinfo字符串，而对于没有显示通过签名或者包名来设置seinfo字符串的应用程序，那么它们的seinfo字符串就由mac_permissions.xml文件中的default标签来确定。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PackageManagerService通过调用SELinuxMMAC类的静态成员函数readInstallPolicy，就初始化好了接下来安装应用程序时要用到的seinfo字符串。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/6766010">Android应用程序安装过程源代码分析</a>一文可以知道，PackageManagerService在安装应用程序的时候，会调用到PackageManagerService类的成员函数scanPackageLI来解析应用程序的信息。这个函数会同时也会给正在安装的应用程序分配一个seinfo字符串，如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_12_2243597" name="code" class="java">public class PackageManagerService extends IPackageManager.Stub {
+    ......
+
+    private PackageParser.Package scanPackageLI(PackageParser.Package pkg,
+            int parseFlags, int scanMode, long currentTime, UserHandle user) {
+        ......
+
+        synchronized (mPackages) {
+            ......
+
+            if (mFoundPolicyFile) {
+                SELinuxMMAC.assignSeinfoValue(pkg);
+            }
+  
+            ......
+        }
+
+        ......
+   }
+
+   ......
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件frameworks/base/services/java/com/android/server/pm/PackageManagerService.java中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在PackageManagerService类的成员函数scanPackageLI中，参数pkg指向的是一个Package对象，用来描述正在安装的应用程序。如果PackageManagerService类的成员变量mFoundPolicyFile的值等于true，那么就说明前面已经成功地读取和解析到了一个mac_permissions.xml文件，这时候就会调用SELinuxMMAC类的静态成员函数assignSeinfoValue给正在安装的应用程序设置一个seinfo字符串。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SELinuxMMAC类的静态成员函数assignSeinfoValue的实现如下所示：</p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_13_5482200" name="code" class="java">public final class SELinuxMMAC {
+    ......
+
+    public static void assignSeinfoValue(PackageParser.Package pkg) {
+        ......
+
+        if (((pkg.applicationInfo.flags &amp; ApplicationInfo.FLAG_SYSTEM) != 0) ||
+            ((pkg.applicationInfo.flags &amp; ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0)) {
+
+            // We just want one of the signatures to match.
+            for (Signature s : pkg.mSignatures) {
+                ......
+
+                if (sSigSeinfo.containsKey(s)) {
+                    String seinfo = pkg.applicationInfo.seinfo = sSigSeinfo.get(s);
+                    ......
+
+                    return;
+                }
+            }
+
+            // Check for seinfo labeled by package.
+            if (sPackageSeinfo.containsKey(pkg.packageName)) {
+                String seinfo = pkg.applicationInfo.seinfo = sPackageSeinfo.get(pkg.packageName);
+                ......
+
+                return;
+            }
+        }
+        
+        String seinfo = pkg.applicationInfo.seinfo = sSigSeinfo.get(null);
+        ......
+    }
+}</pre><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在文件frameworks/base/services/java/com/android/server/pm/SELinuxMMAC.java文件中。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从SELinuxMMAC类的静态成员函数assignSeinfoValue的实现可以看出：</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A. 对于系统应用程序来说，首先根据签名来确定它的seinfo字符串。如果不能通过签名来确定它的seinfo字符串，那就再通过包名来确定它的seinfo字符串。如果通过包名也不能确定它的seinfo字符串，那么就使用默认的seinfo字符串。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B. 对于第三方应用程序来说，它们的seinfo字符串均为默认seinfo字符串。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 无论如何，最终获得的seinfo字符串都保存在用来描述应用程序安装信息的Package对象的成员变量applicationInfo所描述的一个ApplicationInfo对象的成员变量seinfo中。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当PackageManagerService解析完成要安装的应用程序的信息之后，接下来就会调用PackageManagerService类的成员函数createDataDirsLI来给正在安装的应用程序创建数据目录，如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_14_2308853" name="code" class="java">public class PackageManagerService extends IPackageManager.Stub {
+    ......
+
+    private int createDataDirsLI(String packageName, int uid, String seinfo) {
+        int[] users = sUserManager.getUserIds();
+        int res = mInstaller.install(packageName, uid, uid, seinfo);
+        ......
+    }
+
+    ......
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在frameworks/base/services/java/com/android/server/pm/PackageManagerService.java文件中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 参数packageName描述的是正在安装的应用程序的包名，而参数uid和seinfo描述的是分配给正在安装的应用程序的uid和seinfo。PackageManagerService类的成员函数createDataDirsLI通过调用成员变量mInstaller指向的一个Installer对象的成员函数install来为正在安装的应用程序创建数据目录，并且会将包名、uid和seinfo等信息传递给它。<br /></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Installer类的成员函数install的实现如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_15_6975916" name="code" class="java">public final class Installer {
+    ......
+
+    public int install(String name, int uid, int gid, String seinfo) {
+        StringBuilder builder = new StringBuilder(&quot;install&quot;);
+        builder.append(' ');
+        builder.append(name);
+        builder.append(' ');
+        builder.append(uid);
+        builder.append(' ');
+        builder.append(gid);
+        builder.append(' ');
+        builder.append(seinfo != null ? seinfo : &quot;!&quot;);
+        return execute(builder.toString());
+    }
+
+    ......
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在frameworks/base/services/java/com/android/server/pm/Installer.java文件中。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Installer类的成员函数install通过socket向守护进程installd发送一个install命令，请求为正在安装的应用程序创建数据目录，并且会将包名、uid和seinfo等信息传递给它。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 守护进程installd的源码位于frameworks/native/cmds/installd目录中，当它收到PackageManagerService发送过来的intall命令后，就会调用里面的一个函数install来为正在安装的应用程序创建数据目录，它的实现如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_16_5023286" name="code" class="cpp">int install(const char *pkgname, uid_t uid, gid_t gid, const char *seinfo)
+{
+    char pkgdir[PKG_PATH_MAX];
+    ......
+
+    if (create_pkg_path(pkgdir, pkgname, PKG_DIR_POSTFIX, 0)) {
+        ALOGE(&quot;cannot create package path\n&quot;);
+        return -1;
+    }
+
+    ......
+
+    if (selinux_android_setfilecon2(pkgdir, pkgname, seinfo, uid) &lt; 0) {
+        ALOGE(&quot;cannot setfilecon dir '%s': %s\n&quot;, pkgdir, strerror(errno));
+        ......
+        return -errno;
+    }
+
+    ......
+
+    return 0;
+}</pre><p></p><p></p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在rameworks/native/cmds/installd/commands.c文件中。<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数install首先是调用另外一个函数create_pkg_path在/data/data目录下创建一个名称等于包名pkgname的子目录，接着再调用由libselinux库提供的函数selinux_android_setfilecon2为刚才创建的目录设置安全上下文。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数selinux_android_setfilecon2的实现如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_17_770144" name="code" class="cpp">int selinux_android_setfilecon2(const char *pkgdir,
+                const char *pkgname,
+                const char *seinfo,
+                uid_t uid)
+{
+    char *orig_ctx_str = NULL, *ctx_str;
+    context_t ctx = NULL;
+    int rc;
+
+    if (is_selinux_enabled() &lt;= 0)
+        return 0;
+
+    __selinux_once(once, seapp_context_init);
+
+    rc = getfilecon(pkgdir, &amp;ctx_str);
+    if (rc &lt; 0)
+        goto err;
+
+    ctx = context_new(ctx_str);
+    orig_ctx_str = ctx_str;
+    if (!ctx)
+        goto oom;
+
+    rc = seapp_context_lookup(SEAPP_TYPE, uid, 0, seinfo, pkgname, ctx);
+    if (rc == -1)
+        goto err;
+    else if (rc == -2)
+        goto oom;
+
+    ctx_str = context_str(ctx);
+    if (!ctx_str)
+        goto oom;
+    rc = security_check_context(ctx_str);
+    if (rc &lt; 0)
+        goto err;
+
+    if (strcmp(ctx_str, orig_ctx_str)) {
+        rc = setfilecon(pkgdir, ctx_str);
+        if (rc &lt; 0)
+            goto err;
+    }
+
+    rc = 0;
+out:
+    freecon(orig_ctx_str);
+    context_free(ctx);
+    return rc;
+err:
+    selinux_log(SELINUX_ERROR, &quot;%s:  Error setting context for pkgdir %s, uid %d: %s\n&quot;,
+            __FUNCTION__, pkgdir, uid, strerror(errno));
+    rc = -1;
+    goto out;
+oom:
+    selinux_log(SELINUX_ERROR, &quot;%s:  Out of memory\n&quot;, __FUNCTION__);
+    rc = -1;
+    goto out;
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个函数定义在external/libselinux/src/android.c文件中。<br /><p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数selinux_android_setfilecon2的实现逻辑如下所示：</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A. 调用函数is_selinux_enabled检查系统是否启用了SELinux。如果没有启用的话，那就什么也不用做就返回。否则的话，就继续往下执行。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B. 调用函数seapp_context_init读取和解析我们在前面<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/37613135">SEAndroid安全机制框架分析</a>一文提到的seapp_contexts文件。注意，__selinux_once是一个宏，它实际上是利用了pthread库提供的函数pthread_once保证函数seapp_context_init在进程内有且仅有一次会被调用到，适合用来执行初始化工作。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; C. 调用函数getfilecon获得要设置新的安全上下文的目录pkgdir原来已有的安全上下文，保存在变量ctx_str。我们在<a target=_blank target="_blank" href="http://blog.csdn.net/luoshengyang/article/details/37613135">SEAndroid安全机制框架分析</a>一文提到，文件或者目录在创建的时候，默认设置的是父目录的安全上下文。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; D. 调用函数context_new在原来的安全上下文的基础上创建一个新的安全上下文ctx，以便可以获得原来安全上下文的SELinux用户、角色和安全级别等信息。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; E. 调用函数seapp_context_lookup根据传进来的参数seinfo在seapp_contexts文件中找到对应的Type，并且将其设置为新的安全上下文ctr的Type。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; F. 调用函数context_str获得新创建的安全上下文的字符串描述，以便可以调用函数security_check_context来验证新创建的安全上下文的正确性。如果不正确的话，就出错返回。否则的话，继续往下执行。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; G. 比较原来的安全上下文和新创建的安全上下文。如果不一致的话，那么就调用函数setfilecon将目录pkgdir的安全上下文设置为新创建的安全上下文。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在上面几个步骤中，最重要的就是B、E和G三步，因此接下来我们就继续分析函数seapp_context_init、seapp_context_lookup和setfilecon的实现。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数seapp_context_init实现在external/libselinux/src/android.c文件中。如下所示：</p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_18_3867043" name="code" class="cpp">static void seapp_context_init(void)
+{
+        selinux_android_seapp_context_reload();
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 它通过调用另外一个函数selinux_android_seapp_context_reload来读取和解析seapp_contexts文件。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数selinux_android_seapp_context_reload也是实现在external/libselinux/src/android.c文件中。如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_19_8010718" name="code" class="cpp">int selinux_android_seapp_context_reload(void)
+{
+    FILE *fp = NULL;
+    char line_buf[BUFSIZ];
+    ......
+    struct seapp_context *cur;
+    ......
+
+    while ((fp==NULL) &amp;&amp; seapp_contexts_file[i])
+        fp = fopen(seapp_contexts_file[i++], &quot;r&quot;);  
+    ......
+
+    seapp_contexts = calloc(nspec, sizeof(struct seapp_context *));
+    ......
+
+    while (fgets(line_buf, sizeof line_buf - 1, fp)) {
+        ......
+
+        cur = calloc(1, sizeof(struct seapp_context));
+        ......
+
+        token = strtok_r(p, &quot; \t&quot;, &amp;saveptr);
+        ......
+
+        while (1) {
+            name = token;
+            value = strchr(name, '=');
+            ......
+
+            if (!strcasecmp(name, &quot;isSystemServer&quot;)) {
+                if (!strcasecmp(value, &quot;true&quot;))
+                    cur-&gt;isSystemServer = 1;
+                else if (!strcasecmp(value, &quot;false&quot;))
+                    cur-&gt;isSystemServer = 0;
+                ......
+            } else if (!strcasecmp(name, &quot;user&quot;)) {
+                cur-&gt;user = strdup(value);
+                ......
+            } else if (!strcasecmp(name, &quot;seinfo&quot;)) {
+                cur-&gt;seinfo = strdup(value);
+                ......
+            } else if (!strcasecmp(name, &quot;name&quot;)) {
+                cur-&gt;name = strdup(value);
+                ......
+            } else if (!strcasecmp(name, &quot;domain&quot;)) {
+                cur-&gt;domain = strdup(value);
+                ......
+            } else if (!strcasecmp(name, &quot;type&quot;)) {
+                cur-&gt;type = strdup(value);
+                ......
+            } else if (!strcasecmp(name, &quot;levelFromUid&quot;)) {
+                if (!strcasecmp(value, &quot;true&quot;))
+                    cur-&gt;levelFrom = LEVELFROM_APP;
+                else if (!strcasecmp(value, &quot;false&quot;))
+                    cur-&gt;levelFrom = LEVELFROM_NONE;
+                ......
+            } else if (!strcasecmp(name, &quot;levelFrom&quot;)) {
+                if (!strcasecmp(value, &quot;none&quot;))
+                    cur-&gt;levelFrom = LEVELFROM_NONE;
+                else if (!strcasecmp(value, &quot;app&quot;))
+                    cur-&gt;levelFrom = LEVELFROM_APP;
+                else if (!strcasecmp(value, &quot;user&quot;))
+                    cur-&gt;levelFrom = LEVELFROM_USER;
+                else if (!strcasecmp(value, &quot;all&quot;))
+                    cur-&gt;levelFrom = LEVELFROM_ALL;
+                .......
+            } else if (!strcasecmp(name, &quot;level&quot;)) {
+                cur-&gt;level = strdup(value);
+                ......
+            } else if (!strcasecmp(name, &quot;sebool&quot;)) {
+                cur-&gt;sebool = strdup(value);
+                ......
+            }
+            ......
+
+            token = strtok_r(NULL, &quot; \t&quot;, &amp;saveptr);
+            ......
+        }
+
+        seapp_contexts[nspec] = cur;
+        ......
+    }
+
+    ......
+
+    ret = 0;
+out:
+    fclose(fp);
+    return ret;
+
+    ......
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; seapp_contexts_file是一个全局变量，也是定义在external/libselinux/src/android.c文件中。如下所示：<p></p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_20_6298851" name="code" class="cpp">static char const * const seapp_contexts_file[] = {
+    &quot;/data/security/current/seapp_contexts&quot;,
+    &quot;/seapp_contexts&quot;,
+    0 };</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从这里我们就可以看到，seapp_contexts可能保存在目录/data/security/current中，也有可能保存在根目录中，函数selinux_android_seapp_context_reload依次进行检查。只要其中一个地方存在，那么就对它进行打开。打开之后，接下来就按行进行解析。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 文件seapp_contexts的内容如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_21_2045709" name="code" class="plain">isSystemServer=true domain=system
+user=system domain=system_app type=system_data_file
+user=bluetooth domain=bluetooth type=bluetooth_data_file
+user=nfc domain=nfc type=nfc_data_file
+user=radio domain=radio type=radio_data_file
+user=_app domain=untrusted_app type=app_data_file levelFrom=none
+user=_app seinfo=platform domain=platform_app type=platform_app_data_file
+user=_app seinfo=shared domain=shared_app type=platform_app_data_file
+user=_app seinfo=media domain=media_app type=platform_app_data_file
+user=_app seinfo=release domain=release_app type=platform_app_data_file
+user=_isolated domain=isolated_app</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数selinux_android_seapp_context_reload将每一行的内容都用一个seapp_context结构体来描述，并且将这些结构体全部缓存在全局变量seapp_contexts之中。通过这种方式，以后需要从文件seapp_contexts中查找文件的Type或者进程的Domain时，就可以直接在内存进行，加快了查找的速度。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数seapp_context_lookup就是用来从全局变量seapp_contexts中查找文件的Type或者进程的Domain，它定义在external/libselinux/src/android.c文件中。如下所示：<br /></p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_22_6364107" name="code" class="cpp">static int seapp_context_lookup(enum seapp_kind kind,
+                uid_t uid,
+                int isSystemServer,
+                const char *seinfo,
+                const char *pkgname,
+                context_t ctx)
+{
+    const char *username = NULL;
+    ......
+    struct seapp_context *cur;
+    ......
+
+    userid = uid / AID_USER;
+    appid = uid % AID_USER;
+    if (appid &lt; AID_APP) {
+        for (n = 0; n &lt; android_id_count; n++) {
+            if (android_ids[n].aid == appid) {
+                username = android_ids[n].name;
+                break;
+            }
+        }
+        ......
+    } else if (appid &lt; AID_ISOLATED_START) {
+        username = &quot;_app&quot;;
+        ......
+    } else {
+        username = &quot;_isolated&quot;;
+        ......
+    }
+
+    ......
+
+    for (i = 0; i &lt; nspec; i++) {
+        cur = seapp_contexts[i];
+
+        if (cur-&gt;isSystemServer != isSystemServer)
+            continue;
+
+        if (cur-&gt;user) {
+            if (cur-&gt;prefix) {
+                if (strncasecmp(username, cur-&gt;user, cur-&gt;len-1))
+                    continue;
+            } else {
+                if (strcasecmp(username, cur-&gt;user))
+                    continue;
+            }
+        }
+
+        if (cur-&gt;seinfo) {
+            if (!seinfo || strcasecmp(seinfo, cur-&gt;seinfo))
+                continue;
+        }
+
+        if (cur-&gt;name) {
+            if (!pkgname || strcasecmp(pkgname, cur-&gt;name))
+                continue;
+        }
+
+        if (kind == SEAPP_TYPE &amp;&amp; !cur-&gt;type)
+            continue;
+        else if (kind == SEAPP_DOMAIN &amp;&amp; !cur-&gt;domain)
+            continue;
+
+        if (cur-&gt;sebool) {
+            int value = security_get_boolean_active(cur-&gt;sebool);
+            if (value == 0)
+                continue;
+            ......
+        }
+
+        if (kind == SEAPP_TYPE) {
+            if (context_type_set(ctx, cur-&gt;type))
+                goto oom;
+        } else if (kind == SEAPP_DOMAIN) {
+            if (context_type_set(ctx, cur-&gt;domain))
+                goto oom;
+        }
+
+        ......
+
+        break;
+    }
+
+    ......
+
+    return 0;
+
+    ......
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数seapp_context_lookup首先根据参数uid来确定接下来的查找中要用到的关键字username，这对应于seapp_contexts文件中的user字段。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Android从4.2开始支持多用户。支持多用户之后，应用程序在安装的时候分配到的UID由两部分组成，一部分是User Id，另一部分是App Id。常量AID_USER的值定义为100000，用UID除以该值获得的整数就为User Id，而用UID对该值进行取模得到的就为App Id。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; App Id小于AID_APP(10000)是保留给系统使用的，它们对应的username保存在数组android_ids中，具体可以参考文件system/core/include/private/android_filesystem_config.h。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; App Id大于等于AID_APP(10000)并且小于AID_ISOLATED_START(99000)是分配给应用程序使用的，它们对应的username统一设置为“_app”。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; App Id大于等于AID_ISOLATED_START(99000)是分配给运行在独立沙箱（没有任何自己的Permission）的应用程序使用的，它们对应的username统一设置为“_isolated”。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 接下来就根据username、isSystemServer、seinfo和pkgname等查找关键字在全局变量seapp_contexts中寻找目标文件的Type或者目标进程的Domain，这是由参数kind的值决定的。如果kind的值等于SEAPP_TYPE，那么就表明要寻找的是文件的Type。如果kind的值等于SEAPP_DOMAIN，那么就表明要查找的是文件的Domain。在我们这个场景中，我们要查找的是文件的Type。在接下来的一篇文章分析进程的安全上下文时，我们就会通过函数seapp_context_lookup查找目标进程的Domain。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查找的过程是相当直觉的。通过遍历保存在数组seapp_contexts中的每一个seapp_context，如果该seapp_context定义了相应的字段，那么就要求它与对应的查找关键字相等。如果某一个字段与对应的查找关键字不相等，就说明当前遍历的seapp_context不匹配，要继续下一个seapp_context的查找。有一点需要特别注意的是，如果当前正在遍历的seapp_context的某一个字段没有定义，那么它就默认匹配对应的查找关键字。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 最后，如果查找到了匹配的seapp_context，那么就将它的Type或者Domain字段值提取出来，并且设置到参数ctx所描述的安全上下文中去，以便返回给调用者使用。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 我们再来看函数setfilecon的实现，它定义在文件external/libselinux/src/setfilecon.c中，如下所示：</p><p></p><pre code_snippet_id="431498" snippet_file_name="blog_20140721_23_3364702" name="code" class="cpp">int setfilecon(const char *path, const security_context_t context)
+{
+    return setxattr(path, XATTR_NAME_SELINUX, context, strlen(context) + 1,
+            0);
+}</pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 参数path描述的就是要设置安全上下文的目录或者文件，而参数context描述的就是要设置的安全上下文。<p></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 函数setfilecon实际上是通过调用系统接口setxattr将参数context描述的安全上下文设置为参数path描述的目录或者文件名称为XATTR_NAME_SELINUX（“security.selinux”）的扩展属性中。也就是说，在SEAndroid中，目录或者文件的安全上下文其实是保存在名称为security.selinux扩展属性中的。这要求对应的文件系统支持扩展属性。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 至此，我们就分析完成在SEAndroid安全机制中，文件安全上下文的关联过程了。在接下来的一篇文章中，我们将继续分析SEAndroid安全机制中的进程安全上下文的关联过程了。当进程和文件的安全上下文都设置好之后，SEAndroid安全策略就有用武之地了。敬请关注！更多信息可以关注老罗的新浪微博：<a target=_blank target="_blank" href="http://weibo.com/shengyangluo">http://weibo.com/shengyangluo</a>。</p>   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   <link rel="stylesheet" href="http://static.blog.csdn.net/css/blog_detail.css" />
+
+    
+<!--172.16.140.14-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+ 
+
+        <div id="digg" ArticleId="37749383" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>5</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/luoshengyang/article/details/37613135';">上一篇</span><a href="/luoshengyang/article/details/37613135" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">SEAndroid安全机制框架分析</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/luoshengyang/article/details/38054645';">下一篇</span><a href="/luoshengyang/article/details/38054645" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">SEAndroid安全机制中的进程安全上下文关联分析</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+        <div class="similar_article"  style="display:none">
+                <h4>我的同类文章</h4>
+                <div class="similar_c"style="margin:20px 0px 0px 0px">
+                    <div class="similar_c_t">
+                                <label class="similar_cur">
+                                    <span  style="cursor:pointer"  onclick="GetCategoryArticles('838604','Luoshengyang','foot','37749383');">Android<em>（183）</em></span>
+                                </label>
+                    </div>
+                   
+                    <div class="similar_wrap tracking-ad" data-mod="popu_141"  style="max-height:195px;">
+                        <a href="http://blog.csdn.net" style="display:none">http://blog.csdn.net</a>
+                        <ul class="similar_list fl">                          
+                        </ul>
+
+                        <ul class="similar_list fr">                           
+                        </ul>
+                    </div>
+                </div>
+            </div>    
+    <script  type="text/javascript">
+        $(function () {
+            GetCategoryArticles('838604', 'Luoshengyang','foot','37749383');
+        });
+    </script>
+      
+</div>
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/Luoshengyang/svc/GetSuggestContent/37749383",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ <link rel="stylesheet" href="http://static.blog.csdn.net/css/replace.css"/>
+<div id="relate" data-mod="popu_218"  class="tracking-ad">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c">
+        </div>
+</div>
+ 
+
+<dl class="blog-ass-articl" id="res-relatived" > 
+    <div class="embody embody_b" id="libkeyparent"  style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+
+    <div id="adCollege" style="width: 42%;float: left;"> 
+        <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+        <script type="text/javascript">
+            csdn.position.showEdu({
+                sourceType: "blog",
+                searchType: "detail",
+                searchKey: "37749383",
+                username: "",
+                recordcount: "5",
+                containerId: "adCollege" //容器DIV的id。 
+            });
+        </script> 
+    </div>  
+
+    
+     <div id="res"  data-mod="popu_36"  class="tracking-ad" style="width: 42%;float: left;margin-right: 30px;"></div>
+   
+</dl>
+
+
+<script type="text/javascript">
+    $(function () {
+        setTimeout(function () {
+            var searchtitletags = 'SEAndroid安全机制中的文件安全上下文关联分析' + ',' + $("#tags").html();
+            searchService({
+                index: 'blog',
+                query: searchtitletags,
+                from: 5,
+                size: 5,
+                appendTo: '#res',
+                url: 'recommend',
+                his: 2,
+                client: "blog_cf_enhance",
+                tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+            });
+        }, 500);
+    });    
+
+ </script>  
+
+    <div id="ad_cen">        
+                    <script type="text/javascript">
+                        /*博客内容页下方Banner-728*90，创建于2014-7-3*/
+                        var cpro_id = "u1607657";
+                    </script>
+                    <script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+    </div>  
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '37749383';
+    var commentscount = 14;
+    var islock = false
+</script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/comment.js"></script>
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  language="javascript" type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/Luoshengyang/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+</script>
+ <script language="javascript" type="text/javascript" src="http://ads.csdn.net/js/async_new.js"></script>      
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/Luoshengyang" target="_blank">
+    <img src="http://avatar.csdn.net/5/6/E/1_luoshengyang.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/Luoshengyang" class="user_name" target="_blank">Luoshengyang</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=Luoshengyang','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/zhuanlandaren.png" onmouseover="m_over_m(this,2)" onmouseout="m_out_m()" alt="2" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhixing.png" onmouseover="m_over_m(this,6)" onmouseout="m_out_m()" alt="1" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>9119773次</span></li>
+    <li>积分：<span>41259</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog8.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：41259 </div>
+        </span>  </li>
+    <li>排名：<span>第71名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>184篇</span></li>
+    <li>转载：<span>0篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>7812条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_6567056" class="panel">
+<ul class="panel_head"><span>博客公告</span></ul>
+<ul class="panel_body">
+<b><font color="red" size="2">本博客所有文章均为原创，欢迎交流，欢迎转载；转载请勿篡改内容，并且注明出处，禁止用于商业目的，谢谢！</font></b>
+</ul>
+</div>
+
+<div id="custom_column_36982715" class="panel">
+<ul class="panel_head"><span>新浪微博</span></ul>
+<ul class="panel_body">
+<iframe width="100%" height="75" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=75&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=1&amp;isTitle=0&amp;noborder=0&amp;isWeibo=0&amp;isFans=0&amp;uid=1595248757&amp;verifier=e4445209&amp;dpc=1"></iframe>
+</ul>
+</div>
+
+<div id="custom_column_21664874" class="panel">
+<ul class="panel_head"><span>图书信息</span></ul>
+<ul class="panel_body">
+<font color="red"><b>书名：</b></font>
+<p>《Android系统源代码情景分析》</p>
+
+<p><a href="http://wenku.it168.com/d_000574719.shtml" target="_blank">试读请点击</a></p>
+
+<p><font color="red"><b>出版社：</b></font></p>
+<p>电子工业出版社</p>
+
+<p><font color="red"><b>网店：</b></font></p>
+
+<p>1. <a href="http://product.dangdang.com/23837163.html" target="_blank">当当网（满100减20，满200减50）</a></p><p></p>
+
+<p>2. <a href="http://item.jd.com/11838754.html" target="_blank">京东网（满99减20）</a></p><p></p>
+
+<p>3. <a href="http://www.amazon.cn/Android%E7%B3%BB%E7%BB%9F%E6%BA%90%E4%BB%A3%E7%A0%81%E6%83%85%E6%99%AF%E5%88%86%E6%9E%90-%E7%BD%97%E5%8D%87%E9%98%B3/dp/B019FSLVUU" target="_blank">亚马逊网（满100减20，满200减50）</a></p><p></p>
+
+<p>4. <a href="http://product.china-pub.com/4901762" target="_blank">互动出版网</a></p><p></p>
+
+<p>5. <a href="http://product.suning.com/141811846.html" target="_blank">苏宁易购网</a></p><p></p>
+
+<p><a href="http://s.etao.com/search?q=Android%CF%B5%CD%B3%D4%B4%B4%FA%C2%EB%C7%E9%BE%B0%B7%D6%CE%F6&eq=Android%25E7%25B3%25BB%25E7%25BB%259F%25E6%25BA%2590%25E4%25BB%25A3%25E7%25A0%2581%25E6%2583%2585%25E6%2599%25AF%25E5%2588%2586%25E6%259E%2590&initiative_id=wwwetao_20160422&spm=1002.1.8.1" target="_blank">比一比谁更实惠</a></p>
+
+<p><font color="red"><b>号外：</b></font></p>
+
+<p>本书繁体版已经成功输出到台湾</p>
+
+<p></p>
+</ul>
+</div>
+
+<div id="custom_column_21603386" class="panel">
+<ul class="panel_head"><span>联系方式</span></ul>
+<ul class="panel_body">
+<font color="red"><b>新浪微博：</b></font>
+<p><a href="http://weibo.com/shengyangluo" target="_blank">http://weibo.com/shengyangluo</a></p><p></p>
+
+<font color="red"><b>QQ交流群：</b></font>
+<p>130112760</p>
+</ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/androidluo.html" target="_blank"><img src="http://img.blog.csdn.net/20151123174935442" style="width:75px;height:75px;" /></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/androidluo.html" target="_blank">老罗的Android之旅</a>
+    <p>文章：184篇</p>
+    <span>阅读：9086958</span>
+    </td>
+    </tr></table>
+    </ul>
+</div><div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/luoshengyang/article/details/8923485" title="那两年炼就的Android内功修养">那两年炼就的Android内功修养</a><span>(331990)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6618363" title="Android进程间通信（IPC）机制Binder简要介绍和学习计划">Android进程间通信（IPC）机制Binder简要介绍和学习计划</a><span>(295000)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6559955" title="在Ubuntu上下载、编译和安装Android最新源代码">在Ubuntu上下载、编译和安装Android最新源代码</a><span>(229686)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6689748" title="Android应用程序启动过程源代码分析">Android应用程序启动过程源代码分析</a><span>(229290)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6567257" title="Android硬件抽象层（HAL）概要介绍和学习计划">Android硬件抽象层（HAL）概要介绍和学习计划</a><span>(169013)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6568411" title="在Ubuntu上为Android系统编写Linux内核驱动程序">在Ubuntu上为Android系统编写Linux内核驱动程序</a><span>(153750)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/8661317" title="Android视图SurfaceView的实现原理分析">Android视图SurfaceView的实现原理分析</a><span>(149932)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6557518" title="Android学习启动篇">Android学习启动篇</a><span>(139077)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6566662" title="如何单独编译Android源代码中的模块">如何单独编译Android源代码中的模块</a><span>(135926)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6621566" title="浅谈Service Manager成为Android进程间通信（IPC）机制Binder守护进程之路">浅谈Service Manager成为Android进程间通信（IPC）机制Binder守护进程之路</a><span>(131385)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/luoshengyang/article/details/6689748" title="Android应用程序启动过程源代码分析">Android应用程序启动过程源代码分析</a><span>(387)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/8923485" title="那两年炼就的Android内功修养">那两年炼就的Android内功修养</a><span>(356)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6559955" title="在Ubuntu上下载、编译和安装Android最新源代码">在Ubuntu上下载、编译和安装Android最新源代码</a><span>(305)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/8116866" title="《Android系统源代码情景分析》一书勘误">《Android系统源代码情景分析》一书勘误</a><span>(266)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6882903" title="Android应用程序键盘（Keyboard）消息处理机制分析">Android应用程序键盘（Keyboard）消息处理机制分析</a><span>(206)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6568411" title="在Ubuntu上为Android系统编写Linux内核驱动程序">在Ubuntu上为Android系统编写Linux内核驱动程序</a><span>(195)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/6580267" title="在Ubuntu上为Android系统内置Java应用程序测试Application Frameworks层的硬件服务">在Ubuntu上为Android系统内置Java应用程序测试Application Frameworks层的硬件服务</a><span>(186)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/7409491" title="Android博客文章整理">Android博客文章整理</a><span>(181)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/8452527" title="2012年的Android之旅：梦想、学习、坚持、自信、淡定">2012年的Android之旅：梦想、学习、坚持、自信、淡定</a><span>(177)</span>
+</li>
+<li>
+<a href="/luoshengyang/article/details/12957169" title="《老罗的Android之旅》导读PPT">《老罗的Android之旅》导读PPT</a><span>(168)</span>
+</li>
+</ul>
+</div>
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/luoshengyang/article/details/53209199#comments">Android WebView加载Chromium动态库的过程分析</a>
+    <p style="margin:0px;"><a href="/lcalqf" class="user_name">lcalqf</a>:
+大神你注意身体啊，天天这么晚
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/8738877#comments">Android资源管理框架（Asset Manager）简要介绍和学习计划</a>
+    <p style="margin:0px;"><a href="/u010032372" class="user_name">u010032372</a>:
+2016-12-2学习
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/6557518#comments">Android学习启动篇</a>
+    <p style="margin:0px;"><a href="/dawnscofield" class="user_name">dawnscofield</a>:
+写的不错
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/6703247#comments">Android应用程序内部启动Activity过程（startActivity）的源代码分析</a>
+    <p style="margin:0px;"><a href="/FallingSand" class="user_name">FallingSand</a>:
+老师，劳烦您把图也发我一份吧，连同上一篇的。感谢1253576827@qq.com
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/6621566#comments">浅谈Service Manager成为Android进程间通信（IPC）机制Binder守护进程之路</a>
+    <p style="margin:0px;"><a href="/liao_hb" class="user_name">liao_hb</a>:
+老罗，在binder_mmap(filp, vma)中：struct vm_struct *area...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/6621566#comments">Android WebView加载Chromium动态库的过程分析</a>
+    <p style="margin:0px;"><a href="/dd864140130" class="user_name">dd864140130</a>:
+非常棒,受教了
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/53124261#comments">Android WebView简要介绍和学习计划</a>
+    <p style="margin:0px;"><a href="/rkshuai" class="user_name">rkshuai</a>:
+1. 为Chromium动态库保留了一段足够加载它的虚拟地址内间，这里的&quot;内间&quot;应为&quot;空间&quot;2. A...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/8923485#comments">那两年炼就的Android内功修养</a>
+    <p style="margin:0px;"><a href="/qq332982511" class="user_name">qq332982511</a>:
+我服~~~
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/46855395#comments">Chromium多线程模型设计和实现分析</a>
+    <p style="margin:0px;"><a href="/u012568263" class="user_name">u012568263</a>:
+@rkshuai:回复rkshuai：還能找到這麼多問題，真是佩服。1. &quot;一个从带消息循环的线程的...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/luoshengyang/article/details/46855395#comments">Android WebView简要介绍和学习计划</a>
+    <p style="margin:0px;"><a href="/u012568263" class="user_name">u012568263</a>:
+1. &quot;可以参考前面前面&quot;，有衍文。2. &quot;并且这个N个App的进程都存在系统中&quot;，有衍文。3. 图...
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 --> 
+                    <ins data-revive-zoneid="190" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57"></ins> 
+                    <!-- 广告位结束 -->
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+<script type="text/javascript" src="http://c.csdnimg.cn/rabbit/cnick/cnick.js"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/newblog.min.js"></script>
+
+
+<script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=1134701"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/JavaScript1.js"></script>
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">document.write("<img src=http://counter.csdn.net/pv.aspx?id=24 border=0 width=0 height=0>");</script>
+<script type="text/javascript" src="http://www.csdn.net/ui/scripts/Csdn/counter.js"></script>
+<script type="text/javascript" src="http://ad.csdn.net/scripts/ad-blog.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+    <script id="csdn-toolbar-id" btnId="header_notice_num" wrapId="note1" count="5" subCount="5" type="text/javascript" src="http://c.csdnimg.cn/public/common/toolbar/js/toolbar.js"></script>     <!--new top-->
+   
+    <link href="http://c.csdnimg.cn/comm_ask/css/ask_float_block.css" type="text/css" rel="stylesheet" />
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/wmd.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/showdown.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/prettify.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/apps/ask_float_block.js'></script>
+   
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    <link rel="stylesheet" href="http://static.blog.csdn.net/css/blog_code.css" />
+    <script type="text/javascript" src="http://static.blog.csdn.net/scripts/saveToCode.js"></script>
+      <script type="text/javascript" src="//csdnimg.cn/rabbit/tracking-ad/main.js?75eacd8"></script>
+</body>
+</html>   
+ 

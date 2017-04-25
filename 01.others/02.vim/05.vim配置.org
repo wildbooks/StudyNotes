@@ -1,0 +1,115 @@
+1. Vundle
+ 	Vundle https://github.com/VundleVim/Vundle.vim 
+2. NerdTree
+	NerdTree http://www.vim.org/scripts/script.php?script_id=1658  
+3. C-support
+	C-support  https://github.com/WolfgangMehner/c-support
+4. bufexplorer
+ 	bufexplorer https://github.com/jlanzarotta/bufexplorer
+5. airline
+ 	vim-airline https://github.com/vim-airline/vim-airline
+6. undotree
+ 	undotree https://github.com/mbbill/undotree
+7. ctrlp
+ 	ctrlp http://kien.github.io/ctrlp.vim/#installation
+8. 中文帮助文档
+	http://nchc.dl.sourceforge.net/project/vimcdoc/vimcdoc/vimcdoc-1.9.0.tar.gz
+
+"	NERDTree配置
+"autocmd vimenter * NERDTree
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+"	BufExplorer
+let g:bufExplorerDefaultHelp=0       " Do not show default help.
+let g:bufExplorerShowRelativePath=1  " Show relative paths.
+let g:bufExplorerSortBy='mru'        " Sort by most recently used.
+let g:bufExplorerSplitRight=0        " Split left.
+let g:bufExplorerSplitVertical=1     " Split vertically.
+let g:bufExplorerSplitVertSize = 30  " Split width
+let g:bufExplorerUseCurrentWindow=1  " Open in new window.
+
+
+" tags
+set tags=tags
+set tags+=/home/wildbook/LinuxCode/Linux/linux-3.14-wildbook-fs4412/tags
+
+"cscope
+"set cst
+"set nocst
+
+
+"	快捷键
+" Switching between buffers.
+nnoremap <C-h> <C-W>h
+nnoremap <C-j> <C-W>j
+nnoremap <C-k> <C-W>k
+nnoremap <C-l> <C-W>l
+nnoremap <C-w> <C-W>w
+inoremap <C-h> <Esc><C-W>h
+inoremap <C-j> <Esc><C-W>j
+inoremap <C-k> <Esc><C-W>k
+inoremap <C-l> <Esc><C-W>l
+inoremap <C-w> <Esc><C-W>w
+" Space to command mode.
+nnoremap <space> :
+vnoremap <space> :
+
+"nmap <leader>v "+gp
+"nmap <leader>c "+y
+
+nmap <leader>v "+gp
+nmap <leader>c "+y
+
+map <F1> <Nop>		"禁掉帮助F1
+" 插件快捷键
+nmap  <F3> :NERDTreeToggle<cr>
+
+
+
+" 基础设置
+set		number				"开启行号
+set   	relativenumber   	"相对行号
+
+set   	autoindent
+set   	autoread
+set   	autowrite
+set   	backspace=indent,eol,start
+set	  	nobackup
+set   	cindent
+set   	cinoptions=:0
+set   	cursorline
+set   	completeopt=longest,menuone
+set   	noexpandtab
+set   	fileencodings=utf-8,gb2312,gbk,gb18030
+set   	fileformat=unix
+set   	foldenable
+set   	foldmethod=marker
+set   	guioptions-=T
+set   	guioptions-=m
+set   	guioptions-=r
+set		guioptions-=l
+set   	helpheight=10
+set   	helplang=cn
+set   	hidden
+set   	history=100
+set   	hlsearch
+set   	ignorecase
+set   	incsearch
+set   	laststatus=2
+set   	mouse=a
+set   	pumheight=10
+set   	ruler 
+set   	scrolloff=5
+set   	showcmd
+set   	smartindent
+set   	smartcase
+set   	shiftwidth=4
+set   	tabstop=4		"tab 4个字节
+set   	termencoding=utf-8
+set   	textwidth=70
+set   	whichwrap=h,l
+set   	wildignore=*.bak,*.o,*.e,*~
+set   	wildmenu
+set   	wildmode=list:longest,full
+set   	nowrap

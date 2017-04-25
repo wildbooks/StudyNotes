@@ -1,0 +1,869 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="language for HTML, e.g. ‘en’ (org-export-default-language)" xml:lang="language for HTML, e.g. ‘en’ (org-export-default-language)">
+<head>
+<!-- 2017-03-09 四 17:16 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="wildbook" />
+<meta  name="description" content="掌握power supply子系统框架"
+ />
+<meta  name="keywords" content="power,pmic,bsp,linux" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline1">1. 参考文档</a></li>
+<li><a href="#orgheadline20">2. 提供的API</a>
+<ul>
+<li><a href="#orgheadline18">2.1. power<sub>supply.h</sub>:全部</a></li>
+<li><a href="#orgheadline19">2.2. power<sub>supply.h</sub>:局部</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline21">3. 关键结构体</a></li>
+<li><a href="#orgheadline25">4. Code</a>
+<ul>
+<li><a href="#orgheadline22">4.1. power<sub>supply</sub><sub>core.c</sub></a></li>
+<li><a href="#orgheadline23">4.2. power<sub>supply</sub><sub>sysfs.c</sub></a></li>
+<li><a href="#orgheadline24">4.3. power<sub>supply</sub><sub>leds.c</sub></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1"><span class="section-number-2">1</span> 参考文档</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li><b>Code</b>:
+kernel/drivers/power/power<sub>supply</sub><sub>core.c</sub><br  />
+kernel/drivers/power/power<sub>supply</sub><sub>sysfs.c</sub><br  />
+kernel/drivers/power/power<sub>supply</sub><sub>leds.c</sub><br  />
+kernel/drivers/power/power<sub>supply.h</sub> <b>局部头文件</b><br  />
+kernel/include/linux/power<sub>supply.h</sub> <b>全局头文件</b><br  /></li>
+<li><b>dts</b>:</li>
+<li><b>docs</b></li>
+<li><b>sysfs</b>:</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline20" class="outline-2">
+<h2 id="orgheadline20"><span class="section-number-2">2</span> 提供的API</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-orgheadline18" class="outline-3">
+<h3 id="orgheadline18"><span class="section-number-3">2.1</span> power<sub>supply.h</sub>:全部</h3>
+<div class="outline-text-3" id="text-2-1">
+</div><ol class="org-ol"><li><a id="orgheadline2"></a>extern struct power<sub>supply</sub> *power<sub>supply</sub><sub>get</sub><sub>by</sub><sub>name</sub>(char *name);<br  /><div class="outline-text-4" id="text-2-1-1">
+<ul class="org-ul">
+<li><b>功能</b>:通过名字获取power<sub>supply设备</sub></li>
+<li><b>参数</b></li>
+<li><b>返回值</b>:成功返回地址,失败返回NULL</li>
+</ul>
+</div></li>
+<li><a id="orgheadline3"></a>extern void power<sub>supply</sub><sub>changed</sub>(struct power<sub>supply</sub> *psy);<br  /><div class="outline-text-4" id="text-2-1-2">
+<ul class="org-ul">
+<li><b>功能</b>:改变充电状态灯</li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline4"></a>extern int power<sub>supply</sub><sub>am</sub><sub>i</sub><sub>supplied</sub>(struct power<sub>supply</sub> *psy);<br  /><div class="outline-text-4" id="text-2-1-3">
+<ul class="org-ul">
+<li><b>功能</b>:不明白干吗的,但依赖驱动的get<sub>property</sub>()函数,不匹配的话无法工作</li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline5"></a>extern int power<sub>supply</sub><sub>set</sub><sub>battery</sub><sub>charged</sub>(struct power<sub>supply</sub> *psy);<br  /><div class="outline-text-4" id="text-2-1-4">
+<ul class="org-ul">
+<li><b>功能</b>:设置电池充电属性,
+<b>注意</b>:依赖于set<sub>charged</sub>()函数</li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline6"></a>extern int power<sub>supply</sub><sub>set</sub><sub>current</sub><sub>limit</sub>(struct power<sub>supply</sub> *psy, int limit);<br  /><div class="outline-text-4" id="text-2-1-5">
+<ul class="org-ul">
+<li><b>功能</b>
+设置最大充电电流,当limit=0时,将禁用充电器
+<b>注意</b>:依赖于set<sub>property</sub>()函数</li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline7"></a>extern int power<sub>supply</sub><sub>set</sub><sub>voltage</sub><sub>limit</sub>(struct power<sub>supply</sub> *psy, int limit);<br  /><div class="outline-text-4" id="text-2-1-6">
+<ul class="org-ul">
+<li><b>功能</b>
+设置最大充电电压,当limit=0时,将禁用充电器
+<b>注意</b>:依赖于set<sub>property</sub>()函数</li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline8"></a>extern int power<sub>supply</sub><sub>set</sub><sub>online</sub>(struct power<sub>supply</sub> *psy, bool enable);<br  /><div class="outline-text-4" id="text-2-1-7">
+<ul class="org-ul">
+<li><b>功能</b>
+设置电源的链接状态
+<b>注意</b>:依赖于set<sub>property</sub>()函数</li>
+<li><b>参数</b>
+      允许/禁止电源链接</li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline9"></a>extern int power<sub>supply</sub><sub>set</sub><sub>health</sub><sub>state</sub>(struct power<sub>supply</sub> *psy, int health);<br  /><div class="outline-text-4" id="text-2-1-8">
+<ul class="org-ul">
+<li><b>功能</b>:设置电源健康状态"过热,热,冷等等"
+<b>注意</b>:依赖于set<sub>property</sub>()函数</li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline10"></a>extern int power<sub>supply</sub><sub>set</sub><sub>present</sub>(struct power<sub>supply</sub> *psy, bool enable);<br  /><div class="outline-text-4" id="text-2-1-9">
+<ul class="org-ul">
+<li><b>功能</b>
+      设置电源当前状态,电池是否存在</li>
+<li><b>参数</b>
+      电池存在/不存在</li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline11"></a>extern int power<sub>supply</sub><sub>set</sub><sub>scope</sub>(struct power<sub>supply</sub> *psy, int scope);<br  /><div class="outline-text-4" id="text-2-1-10">
+<ul class="org-ul">
+<li><b>功能</b>:设置电源范围"Unknown","System","Device"等等
+<b>注意</b>:依赖于set<sub>property</sub>()函数</li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline12"></a>extern int power<sub>supply</sub><sub>set</sub><sub>charge</sub><sub>type</sub>(struct power<sub>supply</sub> *psy, int type);<br  /><div class="outline-text-4" id="text-2-1-11">
+<ul class="org-ul">
+<li><b>功能</b>:设置电源充电类型"Unknow","N/A","Fast"等等
+<b>注意</b>:依赖于set<sub>property</sub>()函数</li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline13"></a>extern int power<sub>supply</sub><sub>set</sub><sub>supply</sub><sub>type</sub>(struct power<sub>supply</sub> *psy, enum power<sub>supply</sub><sub>type</sub> supply<sub>type</sub>);<br  /><div class="outline-text-4" id="text-2-1-12">
+<ul class="org-ul">
+<li><b>功能</b>:设置电源类型"Battery","USB","USB<sub>DCP</sub>"等等
+<b>注意</b>:依赖于set<sub>property</sub>()函数</li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline14"></a>extern int power<sub>supply</sub><sub>is</sub><sub>system</sub><sub>supplied</sub>(void);<br  /><div class="outline-text-4" id="text-2-1-13">
+<ul class="org-ul">
+<li><b>功能</b>:不懂</li>
+<li><b>参数</b>
+      <b>注意</b>:依赖于get<sub>property</sub>()函数</li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline15"></a>extern int power<sub>supply</sub><sub>register</sub>(struct device *parent, struct power<sub>supply</sub> *psy);<br  /><div class="outline-text-4" id="text-2-1-14">
+<ul class="org-ul">
+<li><b>功能</b>
+      power<sub>supply设备的注册</sub></li>
+<li><b>参数</b>
+parent:父节点
+psy:</li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline16"></a>extern void power<sub>supply</sub><sub>unregister</sub>(struct power<sub>supply</sub> *psy);<br  /><div class="outline-text-4" id="text-2-1-15">
+<ul class="org-ul">
+<li><b>功能</b>:power<sub>supply设备的注销</sub></li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li>
+<li><a id="orgheadline17"></a>extern int power<sub>supply</sub><sub>powers</sub>(struct power<sub>supply</sub> *psy, struct device *dev);<br  /><div class="outline-text-4" id="text-2-1-16">
+<ul class="org-ul">
+<li><b>功能</b>:创建链接,软链接名为powers <b>未解决</b>:没找到对应的sysfs文件</li>
+<li><b>参数</b></li>
+<li><b>返回值</b></li>
+</ul>
+</div></li></ol>
+</div>
+<div id="outline-container-orgheadline19" class="outline-3">
+<h3 id="orgheadline19"><span class="section-number-3">2.2</span> power<sub>supply.h</sub>:局部</h3>
+<div class="outline-text-3" id="text-2-2">
+<ul class="org-ul">
+<li><b>power<sub>supply</sub><sub>sysfs.c</sub></b>
+<ul class="org-ul">
+<li>extern void power<sub>supply</sub><sub>init</sub><sub>attrs</sub>(struct device<sub>type</sub> <b>dev<sub>type</sub>);
+*功能</b>:初始化dev<sub>type,把power</sub><sub>supply</sub><sub>attrs.attr和power</sub><sub>supply</sub><sub>attr</sub><sub>is</sub><sub>visible,填充到</sub>
+dev<sub>type</sub>-&gt;groups中</li>
+<li>extern int power<sub>supply</sub><sub>uevent</sub>(struct device <b>dev, struct kobj<sub>uevent</sub><sub>env</sub> *env);
+*功能</b>:将/sys/class/power<sub>supply</sub>/battery/xxx里的信息发送到uevent文件中</li>
+</ul></li>
+<li><b>power<sub>supply</sub><sub>leds.c</sub></b>
+<ul class="org-ul">
+<li>extern void power<sub>supply</sub><sub>update</sub><sub>leds</sub>(struct power<sub>supply</sub> <b>psy);
+*功能</b>:充电,发电功率触发led</li>
+<li>extern int power<sub>supply</sub><sub>create</sub><sub>triggers</sub>(struct power<sub>supply</sub> <b>psy);
+*功能</b>:创建触发器</li>
+<li>extern void power<sub>supply</sub><sub>remove</sub><sub>triggers</sub>(struct power<sub>supply</sub> <b>psy);
+*功能</b>:删除触发器</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline21" class="outline-2">
+<h2 id="orgheadline21"><span class="section-number-2">3</span> 关键结构体</h2>
+<div class="outline-text-2" id="text-3">
+<ol class="org-ol">
+<li><p>
+power<sub>supply</sub>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">power_supply</span> {
+   <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">name</span>;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21517;&#31216;&#65292;&#23545;&#24212;&#20110;/sys/class/power_supply/xxx/&#25991;&#20214;&#22841;</span>
+   <span style="color: #859900; font-weight: bold;">enum</span> <span style="color: #b58900;">power_supply_type</span> <span style="color: #268bd2;">type</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#28304;&#31867;&#22411;&#65292;&#34920;&#31034;&#35813;&#30005;&#28304;&#20026;&#30005;&#27744;&#65292;&#20027;&#30005;&#28304;&#65292;USB&#31561;</span>
+   <span style="color: #859900; font-weight: bold;">enum</span> <span style="color: #b58900;">power_supply_property</span> *<span style="color: #268bd2;">properties</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25552;&#20379;&#23646;&#24615;&#30340;&#25968;&#32452;&#25351;&#38024;</span>
+   <span style="color: #b58900;">size_t</span> <span style="color: #268bd2;">num_properties</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#23646;&#24615;&#30340;&#25968;&#32452;&#22823;&#23567;</span>
+
+   <span style="color: #b58900;">char</span> **<span style="color: #268bd2;">supplied_to</span>;   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25903;&#25345;xx</span>
+   <span style="color: #b58900;">size_t</span> <span style="color: #268bd2;">num_supplicants</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25968;&#37327;</span>
+
+   <span style="color: #b58900;">char</span> **<span style="color: #268bd2;">supplied_from</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20174;xx&#33719;&#21462;&#25903;&#25345;</span>
+   <span style="color: #b58900;">size_t</span> <span style="color: #268bd2;">num_supplies</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25968;&#37327;</span>
+<span style="color: #268bd2;">#ifdef</span> CONFIG_OF
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device_node</span> *<span style="color: #268bd2;">of_node</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#35774;&#22791;&#26641;&#20013;&#30340;&#35774;&#22791;&#33410;&#28857;</span>
+<span style="color: #268bd2;">#endif</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#33719;&#21462;&#23646;&#24615;</span>
+   <span style="color: #b58900;">int</span> (*<span style="color: #268bd2;">get_property</span>)(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">power_supply</span> *<span style="color: #268bd2;">psy</span>, <span style="color: #859900; font-weight: bold;">enum</span> <span style="color: #b58900;">power_supply_property</span> <span style="color: #268bd2;">psp</span>, <span style="color: #859900; font-weight: bold;">union</span> <span style="color: #b58900;">power_supply_propval</span> *<span style="color: #268bd2;">val</span>);
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#35774;&#32622;&#23646;&#24615;</span>
+   <span style="color: #b58900;">int</span> (*<span style="color: #268bd2;">set_property</span>)(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">power_supply</span> *<span style="color: #268bd2;">psy</span>, <span style="color: #859900; font-weight: bold;">enum</span> <span style="color: #b58900;">power_supply_property</span> <span style="color: #268bd2;">psp</span>, <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #859900; font-weight: bold;">union</span> <span style="color: #b58900;">power_supply_propval</span> *<span style="color: #268bd2;">val</span>);
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#35774;&#32622;&#23646;&#24615;&#20026;&#21487;&#20889;&#30340;&#23646;&#24615;</span>
+   <span style="color: #b58900;">int</span> (*<span style="color: #268bd2;">property_is_writeable</span>)(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">power_supply</span> *<span style="color: #268bd2;">psy</span>, <span style="color: #859900; font-weight: bold;">enum</span> <span style="color: #b58900;">power_supply_property</span> <span style="color: #268bd2;">psp</span>);
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#22806;&#37096;&#30005;&#28304;&#21464;&#21270;&#26102;&#25152;&#20570;&#30340;&#24037;&#20316;</span>
+   <span style="color: #b58900;">void</span> (*<span style="color: #268bd2;">external_power_changed</span>)(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">power_supply</span> *<span style="color: #268bd2;">psy</span>);
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#35774;&#32622;&#20805;&#30005;&#29366;&#24577;</span>
+   <span style="color: #b58900;">void</span> (*<span style="color: #268bd2;">set_charged</span>)(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">power_supply</span> *<span style="color: #268bd2;">psy</span>);
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">For APM emulation, think legacy userspace. */</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">use_for_apm</span>;
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">private */</span>
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device</span> *<span style="color: #268bd2;">dev</span>;
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">work_struct</span> <span style="color: #268bd2;">changed_work</span>;
+   <span style="color: #b58900;">spinlock_t</span> <span style="color: #268bd2;">changed_lock</span>;
+   <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">changed</span>;
+<span style="color: #268bd2;">#ifdef</span> CONFIG_THERMAL
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">thermal_zone_device</span> *<span style="color: #268bd2;">tzd</span>;
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">thermal_cooling_device</span> *<span style="color: #268bd2;">tcd</span>;
+<span style="color: #268bd2;">#endif</span>  
+
+<span style="color: #268bd2;">#ifdef</span> CONFIG_LEDS_TRIGGERS  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">led&#35302;&#21457;&#22120;</span>
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">led_trigger</span> *<span style="color: #268bd2;">charging_full_trig</span>;
+   <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">charging_full_trig_name</span>;
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">led_trigger</span> *<span style="color: #268bd2;">charging_trig</span>;
+   <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">charging_trig_name</span>;
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">led_trigger</span> *<span style="color: #268bd2;">full_trig</span>;
+   <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">full_trig_name</span>;
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">led_trigger</span> *<span style="color: #268bd2;">online_trig</span>;
+   <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">online_trig_name</span>;
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">led_trigger</span> *<span style="color: #268bd2;">charging_blink_full_solid_trig</span>;
+   <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">charging_blink_full_solid_trig_name</span>;
+<span style="color: #268bd2;">#endif</span>
+};
+</pre>
+</div></li>
+<li><p>
+power<sub>supply</sub><sub>type</sub>(电源类型)
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">enum</span> <span style="color: #b58900;">power_supply_type</span> {
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_UNKNOWN</span> = <span style="color: #6c71c4;">0</span>,
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_BATTERY</span>,  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_UPS</span>,      <span style="color: #93a1a1;">//</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_MAINS</span>,    <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20027;&#30005;&#28304;</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26631;&#20934;&#20805;&#30005;&#31471;&#21475;</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_USB</span>,    <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Standard Downstream Port */</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#19987;&#19994;&#20805;&#30005;&#31471;&#21475;</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_USB_DCP</span>,  <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Dedicated Charging Port */</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20805;&#30005;&#19979;&#32447;&#31471;&#21475;</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_USB_CDP</span>,  <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Charging Downstream Port */</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#38468;&#20214;&#20805;&#30005;&#22120;&#36866;&#37197;&#22120;</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_USB_ACA</span>,  <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Accessory Charger Adapters */</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#39640;&#21387;DCP</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_USB_HVDCP</span>,  <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">High Voltage DCP */</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#39640;&#25928;&#29575;&#39640;&#21387;DCP</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_USB_HVDCP_3</span>,  <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Efficient High Voltage DCP */</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_WIRELESS</span>, <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Accessory Charger Adapters &#38468;&#20214;&#20805;&#30005;&#22120;&#36866;&#37197;&#22120;*/</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_BMS</span>,    <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Battery Monitor System &#30005;&#27744;&#26816;&#27979;&#31995;&#32479;*/</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_USB_PARALLEL</span>,   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">USB Parallel Path ,USB&#24182;&#34892;&#36335;&#24452;*/</span>
+   <span style="color: #268bd2;">POWER_SUPPLY_TYPE_WIPOWER</span>,    <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Wipower &#26080;&#32447;&#20805;&#30005;*/</span>
+ };
+</pre>
+</div></li>
+<li><p>
+power<sub>supply</sub><sub>property</sub>(电源属性)
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">enum</span> <span style="color: #b58900;">power_supply_property</span> {
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">properties of type `int' */</span>
+   <span style="color: #268bd2;">power_supply_prop_status</span> = <span style="color: #6c71c4;">0</span>,   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#31867;&#22411;</span>
+   <span style="color: #268bd2;">power_supply_prop_charge_type</span>,  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20805;&#30005;&#31867;&#22411;</span>
+   <span style="color: #268bd2;">power_supply_prop_health</span>,
+   <span style="color: #268bd2;">power_supply_prop_present</span>,      <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#26159;&#21542;&#23384;&#22312;</span>
+   <span style="color: #268bd2;">power_supply_prop_online</span>,       <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#28304;&#26159;&#21542;&#36830;&#25509;</span>
+   <span style="color: #268bd2;">power_supply_prop_authentic</span>,
+   <span style="color: #268bd2;">power_supply_prop_battery_charging_enabled</span>, <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#27744;&#20805;&#30005;&#20801;&#35768;</span>
+   <span style="color: #268bd2;">power_supply_prop_charging_enabled</span>,  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20801;&#35768;&#20805;&#30005;</span>
+   <span style="color: #268bd2;">power_supply_prop_technology</span>,
+
+   <span style="color: #268bd2;">power_supply_prop_cycle_count</span>,
+   <span style="color: #268bd2;">power_supply_prop_voltage_max</span>,   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26368;&#22823;&#30005;&#21387;</span>
+   <span style="color: #268bd2;">power_supply_prop_voltage_min</span>,   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26368;&#23567;&#30005;&#21387;</span>
+   <span style="color: #268bd2;">power_supply_prop_voltage_max_design</span>,
+   <span style="color: #268bd2;">power_supply_prop_voltage_min_design</span>,
+   <span style="color: #268bd2;">power_supply_prop_voltage_now</span>,
+   <span style="color: #268bd2;">power_supply_prop_voltage_avg</span>,
+   <span style="color: #268bd2;">power_supply_prop_voltage_ocv</span>,
+   <span style="color: #268bd2;">power_supply_prop_input_voltage_regulation</span>,
+   <span style="color: #268bd2;">power_supply_prop_current_max</span>,
+   <span style="color: #268bd2;">power_supply_prop_input_current_max</span>,
+   <span style="color: #268bd2;">power_supply_prop_input_current_trim</span>,
+   <span style="color: #268bd2;">power_supply_prop_input_current_settled</span>,
+   <span style="color: #268bd2;">power_supply_prop_vchg_loop_dbc_bypass</span>,
+   <span style="color: #268bd2;">power_supply_prop_current_now</span>,
+   <span style="color: #268bd2;">power_supply_prop_current_avg</span>,
+   <span style="color: #268bd2;">power_supply_prop_power_now</span>,
+   <span style="color: #268bd2;">power_supply_prop_power_avg</span>,
+
+   <span style="color: #268bd2;">power_supply_prop_charge_full_design</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_empty_design</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_full</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_empty</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_now</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_now_raw</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_now_error</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_avg</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_counter</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_counter_shadow</span>,
+   <span style="color: #268bd2;">power_supply_prop_constant_charge_current</span>,
+   <span style="color: #268bd2;">power_supply_prop_constant_charge_current_max</span>,
+   <span style="color: #268bd2;">power_supply_prop_constant_charge_voltage</span>,
+   <span style="color: #268bd2;">power_supply_prop_constant_charge_voltage_max</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_control_limit</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_control_limit_max</span>,
+
+   <span style="color: #268bd2;">power_supply_prop_energy_full_design</span>,
+   <span style="color: #268bd2;">power_supply_prop_energy_empty_design</span>,
+   <span style="color: #268bd2;">power_supply_prop_energy_full</span>,
+   <span style="color: #268bd2;">power_supply_prop_energy_empty</span>,
+   <span style="color: #268bd2;">power_supply_prop_energy_now</span>,
+   <span style="color: #268bd2;">power_supply_prop_energy_avg</span>,
+   <span style="color: #268bd2;">power_supply_prop_hi_power</span>,
+   <span style="color: #268bd2;">power_supply_prop_low_power</span>,
+   <span style="color: #268bd2;">power_supply_prop_capacity</span>, <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">in percents! */</span>
+   <span style="color: #268bd2;">power_supply_prop_capacity_alert_min</span>, <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">in percents! */</span>
+   <span style="color: #268bd2;">power_supply_prop_capacity_alert_max</span>, <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">in percents! */</span>
+   <span style="color: #268bd2;">power_supply_prop_capacity_level</span>,
+   <span style="color: #268bd2;">power_supply_prop_capacity_raw</span>,
+   <span style="color: #268bd2;">power_supply_prop_temp</span>,
+   <span style="color: #268bd2;">power_supply_prop_temp_alert_min</span>,
+   <span style="color: #268bd2;">power_supply_prop_temp_alert_max</span>,
+   <span style="color: #268bd2;">power_supply_prop_cool_temp</span>,
+   <span style="color: #268bd2;">power_supply_prop_warm_temp</span>,
+   <span style="color: #268bd2;">power_supply_prop_temp_ambient</span>,
+   <span style="color: #268bd2;">power_supply_prop_temp_ambient_alert_min</span>,
+   <span style="color: #268bd2;">power_supply_prop_temp_ambient_alert_max</span>,
+   <span style="color: #268bd2;">power_supply_prop_time_to_empty_now</span>,
+   <span style="color: #268bd2;">power_supply_prop_time_to_empty_avg</span>,
+   <span style="color: #268bd2;">power_supply_prop_time_to_full_now</span>,
+   <span style="color: #268bd2;">power_supply_prop_time_to_full_avg</span>,
+   <span style="color: #268bd2;">power_supply_prop_type</span>, <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">use power_supply.type instead */</span>
+   <span style="color: #268bd2;">power_supply_prop_scope</span>,
+   <span style="color: #268bd2;">power_supply_prop_system_temp_level</span>,
+   <span style="color: #268bd2;">power_supply_prop_resistance</span>,
+   <span style="color: #268bd2;">power_supply_prop_resistance_capacitive</span>,
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">unit is in ohms due to id being typically in kohm range */</span>
+   <span style="color: #268bd2;">power_supply_prop_resistance_id</span>,
+   <span style="color: #268bd2;">power_supply_prop_resistance_now</span>,
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">local extensions */</span>
+   <span style="color: #268bd2;">power_supply_prop_usb_hc</span>,
+   <span style="color: #268bd2;">power_supply_prop_usb_otg</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_enabled</span>,   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20805;&#30005;&#20801;&#35768;</span>
+   <span style="color: #268bd2;">power_supply_prop_flash_current_max</span>,
+   <span style="color: #268bd2;">power_supply_prop_update_now</span>,
+   <span style="color: #268bd2;">power_supply_prop_esr_count</span>,
+   <span style="color: #268bd2;">power_supply_prop_safety_timer_enable</span>,
+   <span style="color: #268bd2;">power_supply_prop_charge_done</span>,
+   <span style="color: #268bd2;">power_supply_prop_flash_active</span>,
+   <span style="color: #268bd2;">power_supply_prop_flash_trigger</span>,
+   <span style="color: #268bd2;">power_supply_prop_force_tlim</span>,
+   <span style="color: #268bd2;">power_supply_prop_dp_dm</span>,
+   <span style="color: #268bd2;">power_supply_prop_input_current_limited</span>,
+   <span style="color: #268bd2;">power_supply_prop_input_current_now</span>,
+   <span style="color: #268bd2;">power_supply_prop_rerun_aicl</span>,
+   <span style="color: #268bd2;">power_supply_prop_cycle_count_id</span>,
+   <span style="color: #268bd2;">power_supply_prop_safety_timer_expired</span>,
+   <span style="color: #268bd2;">power_supply_prop_restricted_charging</span>,
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">sun zhangyang add for task 1133932 begin</span>
+<span style="color: #268bd2;"> #if</span> <span style="color: #268bd2;">defined</span>(config_tct_8x76_idol4)
+     <span style="color: #268bd2;">power_supply_prop_tcl_fixtemp</span>,
+     <span style="color: #268bd2;">power_supply_prop_tcl_fixcapacity</span>,
+<span style="color: #268bd2;"> #endif</span>
+     <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">sun zhangyang add for task 1133932 end</span>
+   <span style="color: #268bd2;">power_supply_prop_allow_hvdcp3</span>,
+     <span style="color: #268bd2;">power_supply_prop_xo_thermal</span>,<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">[feature] mod-by sun zhangyang for defect2167030,2016.05.18</span>
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">local extensions of type int64_t */</span>
+   <span style="color: #268bd2;">power_supply_prop_charge_counter_ext</span>,
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">properties of type `const char *' */</span>
+   <span style="color: #268bd2;">power_supply_prop_model_name</span>,
+   <span style="color: #268bd2;">power_supply_prop_manufacturer</span>,
+   <span style="color: #268bd2;">power_supply_prop_serial_number</span>,
+   <span style="color: #268bd2;">power_supply_prop_battery_type</span>,
+ };
+</pre>
+</div></li>
+<li><p>
+power<sub>supply</sub><sub>info</sub>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">power_supply_info</span> {
+   <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">name</span>;      <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21517;&#23383;</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">technology</span>;        <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25216;&#26415;:&#30005;&#27744;&#31867;&#22411;</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">voltage_max_design</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26368;&#22823;&#30005;&#21387;</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">voltage_min_design</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26368;&#23567;&#30005;&#21387;</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">charge_full_design</span>;<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20805;&#28385;&#30005;&#30005;&#21387;</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">charge_empty_design</span>;<span style="color: #93a1a1;">//</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">energy_full_design</span>; <span style="color: #93a1a1;">//</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">energy_empty_design</span>;<span style="color: #93a1a1;">//</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">use_for_apm</span>;<span style="color: #93a1a1;">//</span>
+ };
+</pre>
+</div></li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline25" class="outline-2">
+<h2 id="orgheadline25"><span class="section-number-2">4</span> Code</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-orgheadline22" class="outline-3">
+<h3 id="orgheadline22"><span class="section-number-3">4.1</span> power<sub>supply</sub><sub>core.c</sub></h3>
+<div class="outline-text-3" id="text-4-1">
+<ul class="org-ul">
+<li>主要功能
+<ol class="org-ol">
+<li>在/sys/class/创建类"power<sub>supply</sub>"(即：/sys/class/power<sub>supply</sub>/)</li>
+</ol></li>
+<li><p>
+加载/卸载驱动模块
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">__init</span> power_supply_class_init(<span style="color: #b58900;">void</span>)
+ {
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21019;&#24314;&#31867;&#8220;power_supply&#8221;</span>
+   power_supply_class = class_create(THIS_MODULE, <span style="color: #2aa198;">"power_supply"</span>);
+
+   <span style="color: #859900; font-weight: bold;">if</span> (IS_ERR(power_supply_class))
+     <span style="color: #859900; font-weight: bold;">return</span> PTR_ERR(power_supply_class);
+
+   power_supply_class-&gt;dev_uevent = power_supply_uevent;
+   power_supply_init_attrs(&amp;power_supply_dev_type);
+
+   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #6c71c4;">0</span>;
+ }
+
+ <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">__exit</span> power_supply_class_exit(<span style="color: #b58900;">void</span>)
+ {
+   class_destroy(power_supply_class);<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21024;&#38500;&#31867;</span>
+ }
+
+ subsys_initcall(power_supply_class_init);<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21152;&#36733;&#39537;&#21160;</span>
+ module_exit(power_supply_class_exit);<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21368;&#36733;&#39537;&#21160;</span>
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline23" class="outline-3">
+<h3 id="orgheadline23"><span class="section-number-3">4.2</span> power<sub>supply</sub><sub>sysfs.c</sub></h3>
+<div class="outline-text-3" id="text-4-2">
+<ol class="org-ol">
+<li><p>
+POWER<sub>SUPPLY</sub><sub>ATTR宏讲解</sub>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #268bd2;">#define</span> <span style="color: #268bd2;">POWER_SUPPLY_ATTR</span>(<span style="color: #268bd2;">_name</span>)          \
+ {                  \
+   .attr = { .name = #_name },          \
+   .show = power_supply_show_property,        \
+   .store = power_supply_store_property,        \
+ }
+
+ <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device_attribute</span> <span style="color: #268bd2;">power_supply_attrs</span>[] = {
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Properties of type `int' */</span>
+   POWER_SUPPLY_ATTR(status),
+   POWER_SUPPLY_ATTR(charge_type),
+   ...
+ }
+</pre>
+</div>
+<p>
+以status为例，等价于
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device_attribute</span> <span style="color: #268bd2;">power_supply_attrs</span>[] = {
+     {
+        .attr = { .name = <span style="color: #2aa198;">"status"</span> },
+        .show = power_supply_show_property,<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26174;&#31034;&#23646;&#24615;&#21040;buf&#20013;</span>
+        .store = power_supply_store_property,
+     }
+}
+</pre>
+</div></li>
+<li><p>
+power<sub>supply</sub><sub>show</sub><sub>property</sub>()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">ssize_t</span> <span style="color: #268bd2;">power_supply_show_property</span>(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device</span> *<span style="color: #268bd2;">dev</span>, <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device_attribute</span> *<span style="color: #268bd2;">attr</span>, <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">buf</span>) {
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#31867;&#22411;</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26410;&#30693;&#12288;&#30005;&#27744;&#12288;</span>
+   <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">type_text</span>[] = {
+     <span style="color: #2aa198;">"Unknown"</span>, <span style="color: #2aa198;">"Battery"</span>, <span style="color: #2aa198;">"UPS"</span>, <span style="color: #2aa198;">"Mains"</span>, <span style="color: #2aa198;">"USB"</span>,
+     <span style="color: #2aa198;">"USB_DCP"</span>, <span style="color: #2aa198;">"USB_CDP"</span>, <span style="color: #2aa198;">"USB_ACA"</span>,
+     <span style="color: #2aa198;">"USB_HVDCP"</span>, <span style="color: #2aa198;">"USB_HVDCP_3"</span>, <span style="color: #2aa198;">"Wireless"</span>, <span style="color: #2aa198;">"BMS"</span>, <span style="color: #2aa198;">"USB_Parallel"</span>,
+     <span style="color: #2aa198;">"Wipower"</span>
+   };
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#29366;&#24577;</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26410;&#30693;&#12288;&#20805;&#30005; &#31105;&#27490;&#20805;&#30005;&#12288;&#27809;&#20805;&#30005;&#12288;&#28385;&#30005;</span>
+   <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">status_text</span>[] = {
+     <span style="color: #2aa198;">"Unknown"</span>, <span style="color: #2aa198;">"Charging"</span>, <span style="color: #2aa198;">"Discharging"</span>, <span style="color: #2aa198;">"Not charging"</span>, <span style="color: #2aa198;">"Full"</span>
+   };
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20805;&#30005;&#31867;&#22411;</span>
+   <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">charge_type</span>[] = {
+     <span style="color: #2aa198;">"Unknown"</span>, <span style="color: #2aa198;">"N/A"</span>, <span style="color: #2aa198;">"Trickle"</span>, <span style="color: #2aa198;">"Fast"</span>, <span style="color: #2aa198;">"Taper"</span>
+   };
+
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20581;&#24247;()</span>
+   <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">health_text</span>[] = {
+     <span style="color: #2aa198;">"Unknown"</span>, <span style="color: #2aa198;">"Good"</span>, <span style="color: #2aa198;">"Overheat"</span>, <span style="color: #2aa198;">"Warm"</span>, <span style="color: #2aa198;">"Dead"</span>, <span style="color: #2aa198;">"Over voltage"</span>,
+     <span style="color: #2aa198;">"Unspecified failure"</span>, <span style="color: #2aa198;">"Cold"</span>, <span style="color: #2aa198;">"Cool"</span>, <span style="color: #2aa198;">"Watchdog timer expire"</span>,
+     <span style="color: #2aa198;">"Safety timer expire"</span>
+   };
+
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25216;&#26415;</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26410;&#30693;&#65292;&#38221;&#27682;&#30005;&#27744;&#12288;&#38146;&#30005;&#27744;  &#38146;&#32858;&#21512;&#29289;&#30005;&#27744;  &#38146;&#38081;&#30005;&#27744;  &#38221;&#38217;&#30005;&#27744;&#12288;&#38146;&#30005;&#27744;</span>
+   <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">technology_text</span>[] = {
+     <span style="color: #2aa198;">"Unknown"</span>, <span style="color: #2aa198;">"NiMH"</span>, <span style="color: #2aa198;">"Li-ion"</span>, <span style="color: #2aa198;">"Li-poly"</span>, <span style="color: #2aa198;">"LiFe"</span>, <span style="color: #2aa198;">"NiCd"</span>,
+     <span style="color: #2aa198;">"LiMn"</span>
+   };
+
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#23481;&#37327;</span>
+   <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">capacity_level_text</span>[] = {
+     <span style="color: #2aa198;">"Unknown"</span>, <span style="color: #2aa198;">"Critical"</span>, <span style="color: #2aa198;">"Low"</span>, <span style="color: #2aa198;">"Normal"</span>, <span style="color: #2aa198;">"High"</span>, <span style="color: #2aa198;">"Full"</span>
+   };
+
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#33539;&#22260;</span>
+   <span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">scope_text</span>[] = {
+     <span style="color: #2aa198;">"Unknown"</span>, <span style="color: #2aa198;">"System"</span>, <span style="color: #2aa198;">"Device"</span>
+   };
+   <span style="color: #b58900;">ssize_t</span> <span style="color: #268bd2;">ret</span> = <span style="color: #6c71c4;">0</span>;
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">power_supply</span> *<span style="color: #268bd2;">psy</span> = dev_get_drvdata(dev);
+
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#36825;&#26159;&#35745;&#31639;&#20559;&#31227;&#37327;&#65292;&#23427;&#30340;&#20559;&#31227;&#20540;&#21644;&#26522;&#20030;&#31867;&#22411;&#20013;&#30340;power_supply_property&#20540;&#23545;&#24212;&#30340;</span>
+   <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">ptrdiff_t</span> <span style="color: #268bd2;">off</span> = attr - power_supply_attrs;
+   <span style="color: #859900; font-weight: bold;">union</span> <span style="color: #b58900;">power_supply_propval</span> <span style="color: #268bd2;">value</span>;
+
+   <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#26597;&#30475;&#31867;&#22411;*/</span>
+   <span style="color: #859900; font-weight: bold;">if</span> (off == POWER_SUPPLY_PROP_TYPE)
+     value.intval = psy-&gt;type;  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#30005;&#28304;&#31867;&#22411;</span>
+   <span style="color: #859900; font-weight: bold;">else</span>
+     <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20989;&#25968;&#21407;&#22411;&#22909;&#20687;&#26159;&#36825;&#20010;smbchg_battery_get_property()</span>
+     ret = psy-&gt;get_property(psy, off, &amp;value);<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#31867;&#22411;&#20063;&#20445;&#23384;&#22312;value.intval</span>
+
+
+   <span style="color: #859900; font-weight: bold;">if</span> (off == POWER_SUPPLY_PROP_STATUS)<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#29366;&#24577;</span>
+     <span style="color: #859900; font-weight: bold;">return</span> sprintf(buf, <span style="color: #2aa198;">"%s\n"</span>, status_text[value.intval]);
+
+   <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> (off == POWER_SUPPLY_PROP_CHARGE_TYPE)<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20805;&#30005;&#31867;&#22411;</span>
+     <span style="color: #859900; font-weight: bold;">return</span> sprintf(buf, <span style="color: #2aa198;">"%s\n"</span>, charge_type[value.intval]);
+
+   <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> (off == POWER_SUPPLY_PROP_HEALTH) <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20805;&#30005;&#20581;&#24247;&#31243;&#24230;</span>
+     <span style="color: #859900; font-weight: bold;">return</span> sprintf(buf, <span style="color: #2aa198;">"%s\n"</span>, health_text[value.intval]);
+
+   <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> (off == POWER_SUPPLY_PROP_TECHNOLOGY) <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#25216;&#26415;(&#30005;&#27744;&#31181;&#31867;)</span>
+     <span style="color: #859900; font-weight: bold;">return</span> sprintf(buf, <span style="color: #2aa198;">"%s\n"</span>, technology_text[value.intval]);
+
+   <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> (off == POWER_SUPPLY_PROP_CAPACITY_LEVEL)  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#23481;&#37327;</span>
+     <span style="color: #859900; font-weight: bold;">return</span> sprintf(buf, <span style="color: #2aa198;">"%s\n"</span>, capacity_level_text[value.intval]);
+
+   <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> (off == POWER_SUPPLY_PROP_TYPE)  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#31867;&#22411;</span>
+     <span style="color: #859900; font-weight: bold;">return</span> sprintf(buf, <span style="color: #2aa198;">"%s\n"</span>, type_text[value.intval]);
+
+   <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> (off == POWER_SUPPLY_PROP_SCOPE) <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#33539;&#22260;</span>
+     <span style="color: #859900; font-weight: bold;">return</span> sprintf(buf, <span style="color: #2aa198;">"%s\n"</span>, scope_text[value.intval]);
+
+   <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> (off &gt;= POWER_SUPPLY_PROP_MODEL_NAME)<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#27169;&#22411;&#21517;</span>
+     <span style="color: #859900; font-weight: bold;">return</span> sprintf(buf, <span style="color: #2aa198;">"%s\n"</span>, value.strval);
+
+   <span style="color: #859900; font-weight: bold;">if</span> (off == POWER_SUPPLY_PROP_CHARGE_COUNTER_EXT)<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20805;&#30005;&#35745;&#25968;</span>
+     <span style="color: #859900; font-weight: bold;">return</span> sprintf(buf, <span style="color: #2aa198;">"%lld\n"</span>, value.int64val);
+   <span style="color: #859900; font-weight: bold;">else</span>
+     <span style="color: #859900; font-weight: bold;">return</span> sprintf(buf, <span style="color: #2aa198;">"%d\n"</span>, value.intval);
+ }
+</pre>
+</div></li>
+<li><p>
+power<sub>supply</sub><sub>store</sub><sub>property</sub>()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">static</span> <span style="color: #b58900;">ssize_t</span> <span style="color: #268bd2;">power_supply_store_property</span>(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device</span> *<span style="color: #268bd2;">dev</span>, <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device_attribute</span> *<span style="color: #268bd2;">attr</span>, <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">buf</span>, <span style="color: #b58900;">size_t</span> <span style="color: #268bd2;">count</span>) {
+  <span style="color: #b58900;">ssize_t</span> <span style="color: #268bd2;">ret</span>;
+  <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">power_supply</span> *<span style="color: #268bd2;">psy</span> = dev_get_drvdata(dev);
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">ptrdiff_t</span> <span style="color: #268bd2;">off</span> = attr - power_supply_attrs;
+  <span style="color: #859900; font-weight: bold;">union</span> <span style="color: #b58900;">power_supply_propval</span> <span style="color: #268bd2;">value</span>;
+  <span style="color: #b58900;">long</span> <span style="color: #268bd2;">long_val</span>;
+
+  <span style="color: #93a1a1;">/* </span><span style="color: #cc9393;">TODO</span><span style="color: #93a1a1;">: support other types than int */</span>
+  ret = strict_strtol(buf, <span style="color: #6c71c4;">10</span>, &amp;long_val);
+  <span style="color: #859900; font-weight: bold;">if</span> (ret &lt; <span style="color: #6c71c4;">0</span>)
+    <span style="color: #859900; font-weight: bold;">return</span> ret;
+
+  value.intval = long_val;
+
+  <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21407;&#22411;smbchg_battery_set_property()</span>
+  ret = psy-&gt;set_property(psy, off, &amp;value);
+  <span style="color: #859900; font-weight: bold;">if</span> (ret &lt; <span style="color: #6c71c4;">0</span>)
+    <span style="color: #859900; font-weight: bold;">return</span> ret;
+
+  <span style="color: #859900; font-weight: bold;">return</span> count;
+}
+</pre>
+</div></li>
+<li>static umode<sub>t</sub> power<sub>supply</sub><sub>attr</sub><sub>is</sub><sub>visible</sub>(struct kobject *kobj, struct attribute *attr, int attrno)
+设备文件的访问权限设置</li>
+<li><p>
+power<sub>supply</sub><sub>uevent</sub>()
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #b58900;">int</span> <span style="color: #268bd2;">power_supply_uevent</span>(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device</span> *<span style="color: #268bd2;">dev</span>, <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">kobj_uevent_env</span> *<span style="color: #268bd2;">env</span>)
+ {
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">power_supply</span> *<span style="color: #268bd2;">psy</span> = dev_get_drvdata(dev);<span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#33719;&#21462;&#31169;&#26377;&#25968;&#25454;(&#20869;&#26680;&#31354;&#38388;)</span>
+
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#32473;&#29615;&#22659;&#21464;&#37327;&#20889;&#20837;env&#20013;</span>
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#23558;&#38190;&#20540;&#23383;&#31526;&#20018;&#28155;&#21152;&#21040;&#29615;&#22659;&#32531;&#20914;&#21306;env&#20013;</span>
+   ret = add_uevent_var(env, <span style="color: #2aa198;">"POWER_SUPPLY_NAME=%s"</span>, psy-&gt;name);
+
+   <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#20998;&#37197;&#20869;&#23384;,&#20540;&#37117;&#20026;0</span>
+   prop_buf = (<span style="color: #b58900;">char</span> *)get_zeroed_page(GFP_KERNEL);
+
+
+   <span style="color: #859900; font-weight: bold;">for</span> (j = <span style="color: #6c71c4;">0</span>; j &lt; psy-&gt;num_properties; j++) {
+     <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device_attribute</span> *<span style="color: #268bd2;">attr</span>;
+     <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">line</span>;
+
+     <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#22312;power_supply_sysfs.c</span>
+     attr = &amp;power_supply_attrs[psy-&gt;properties[j]];
+
+     ret = power_supply_show_property(dev, attr, prop_buf);
+     <span style="color: #859900; font-weight: bold;">if</span> (ret == -ENODEV || ret == -ENODATA) {
+       <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">When a battery is absent, we expect -ENODEV. Don't abort;</span>
+<span style="color: #93a1a1;">          send the uevent with at least the the PRESENT=0 property */</span>
+       ret = <span style="color: #6c71c4;">0</span>;
+       <span style="color: #859900; font-weight: bold;">continue</span>;
+     }
+
+     <span style="color: #859900; font-weight: bold;">if</span> (ret &lt; <span style="color: #6c71c4;">0</span>)
+       <span style="color: #859900; font-weight: bold;">goto</span> <span style="color: #268bd2; font-weight: bold;">out</span>;
+
+     <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#26597;&#25214;'\n'&#39318;&#27425;&#20986;&#29616;&#30340;&#20301;&#32622;  </span>
+     line = strchr(prop_buf, <span style="color: #2aa198;">'\n'</span>);
+     <span style="color: #859900; font-weight: bold;">if</span> (line)
+       *line = <span style="color: #6c71c4;">0</span>;
+
+     attrname = kstruprdup(attr-&gt;attr.name, GFP_KERNEL);
+     <span style="color: #859900; font-weight: bold;">if</span> (<span style="color: #b58900; font-weight: bold;">!</span>attrname) {
+       ret = -ENOMEM;
+       <span style="color: #859900; font-weight: bold;">goto</span> <span style="color: #268bd2; font-weight: bold;">out</span>;
+     }
+
+     dev_dbg(dev, <span style="color: #2aa198;">"prop %s=%s\n"</span>, attrname, prop_buf);
+
+     ret = add_uevent_var(env, <span style="color: #2aa198;">"POWER_SUPPLY_%s=%s"</span>, attrname, prop_buf);
+     kfree(attrname);
+
+       <span style="color: #859900; font-weight: bold;">goto</span> <span style="color: #268bd2; font-weight: bold;">out</span>;
+   }
+
+ <span style="color: #268bd2; font-weight: bold;">out</span>:
+   free_page((<span style="color: #b58900;">unsigned</span> <span style="color: #b58900;">long</span>)prop_buf);
+
+   <span style="color: #859900; font-weight: bold;">return</span> ret;
+ }
+</pre>
+</div></li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline24" class="outline-3">
+<h3 id="orgheadline24"><span class="section-number-3">4.3</span> power<sub>supply</sub><sub>leds.c</sub></h3>
+<div class="outline-text-3" id="text-4-3">
+<ol class="org-ol">
+<li>power<sub>supply</sub><sub>update</sub><sub>bat</sub><sub>leds</sub>()
+电池更新状态时,满电和充电时会出现亮灭，默认情况下是灭灯</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: 2017年01月12日18:13:13</p>
+<p class="author">Author: wildbook</p>
+<p class="date">Created: 2017-03-09 四 17:16</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

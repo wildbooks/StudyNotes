@@ -1,0 +1,70 @@
+* dot
+       dot    filter for hierarchical layouts of graphs
+** 支持的格式
+   bmp canon cmap cmapx cmapx_np dot eps fig gtk gv ico imap imap_np
+   ismap jpe jpeg jpg pdf pic plain plain-ext png pov ps ps2 svg svgz
+   tif tiff tk vdx vml vmlz x11 xdot xdot1.2 xdot1.4 xlib
+* neato
+       neato  filter for symmetric layouts of graphs
+* twopi
+       twopi  filter for radial layouts of graphs
+* circo
+       circo  filter for circular layout of graphs
+* fdp
+       fdp    filter for symmetric layouts of graphs
+
+
+
+
+
+       All  of  the filters work with either directed or undirected graphs,
+       though dot is typically used for directed graphs and neato for undi‐
+       rected  graphs.   Note  also  that neato -n[2] can be used to render
+       layouts produced by the other filters.
+
+   Graph drawing programs
+       lefty  A Programmable Graphics Editor
+
+       lneato lefty + neato
+
+       dotty  lefty + dot
+
+
+
+   Graph layout enhancement
+       gvcolor
+              flow colors through a ranked digraph
+
+       unflatten
+              adjust directed graphs to improve layout aspect ratio
+
+       gvpack merge and pack disjoint graphs
+
+
+   Graph information and transformation
+       gc     count graph components
+
+       acyclic
+              make directed graph acyclic
+
+       nop    pretty-print graph file
+
+       ccomps connected components filter for graphs
+
+       sccmap extract strongly connected components of directed graphs
+
+       tred   transitive reduction filter for directed graphs
+
+       dijkstra
+              single-source distance filter
+
+       bcomps biconnected components filter for graphs
+
+       gvpr   graph pattern scanning and processing language
+
+       prune  prune directed graphs
+
+
+   Other
+       gxl2dot, dot2gxl
+              GXL-DOT converters

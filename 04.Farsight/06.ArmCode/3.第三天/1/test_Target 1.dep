@@ -1,0 +1,2 @@
+Dependencies for Project 'test', Target 'Target 1': (DO NOT MODIFY !)
+F (.\test.s)(0x57BD7183)(--cpu ARM966E-S -g --apcs=interwork -I "C:\Keil\ARM\INC" -I "C:\Keil\ARM\INC\ARM" --list "test.lst" --xref -o "test.o" --depend "test.d")

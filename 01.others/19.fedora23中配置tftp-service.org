@@ -1,0 +1,175 @@
+ #+TITLE:fedora 23中配置tftp-server
+#+AUTHOR:野书
+#+EMAIL:www762268@foxmail.com
+#+KEYWORDS:bash fedora23
+#+DESCRIPTION: 嵌入式linux开发必备开发工具之tftp-server
+* 简介
+* tftp安装
+  #+BEGIN_HTML
+  <div class="cnblogs_Highlighter">
+  <pre class="brush:shell">
+  sudo dnf install tftp-server
+  </pre>
+  </div>
+  #+END_HTML
+* 启动和允许
+  老版本启动方式是启动和允许xinetd
+  参考文档[[https://docs.fedoraproject.org/en-US/Fedora/18/html/Installation_Guide/ch13s05s03.html][fedora 18 Starting the tftp Server]]
+  #+BEGIN_HTML
+  <div class="cnblogs_Highlighter">
+  <pre class="brush:shell">
+  systemctl start xinetd.service
+  systemctl enable xinetd.service
+  </pre>
+  </div>
+  #+END_HTML
+  而新版本改了，用的是以下方式，产考文档[[https://docs.fedoraproject.org/en-US/Fedora/23/html/Installation_Guide/pxe-tftpd.html][fedora 23 Installing the tftp server]]
+  Start and enable the tftp socket. systemd will automatically start the//
+  tftpd service when required.
+  开始并允许tftp服务，系统会自动启动tftp服务所需的服务
+  #+BEGIN_HTML
+  <div class="cnblogs_Highlighter">
+  <pre class="brush:shell">
+  systemctl start tftp.socket
+  systemctl enable tftp.socket
+  </pre>
+  </div>
+  #+END_HTML
+  + 运行结果 ::
+  #+BEGIN_HTML
+  <div class="cnblogs_Highlighter">
+  <pre class="brush:shell">
+  Created symlink from /etc/systemd/system/sockets.target.wants/tftp.socket to\\
+  /usr/lib/systemd/system/tftp.socket
+  </pre>
+  </div>
+  #+END_HTML
+  如果你感兴趣你可以查看这个文件的内容，有句话是这样讲的，好奇心是一切技术的源泉，尽管我知道这\\
+  都是坑,我还是毫不犹豫的跳下去了；命令如下：
+  #+BEGIN_HTML
+  <div class="cnblogs_Highlighter">
+  <pre class="brush:shell">
+  cat /usr/lib/systemd/system/tftp.socket
+  </pre>
+  </div>
+  #+END_HTML
+  + 运行结果 ::
+  #+BEGIN_HTML
+  <div class="cnblogs_Highlighter">
+  <pre class="brush:shell">
+  [Unit]
+  Description=Tftp Server Activation Socket
+
+  [Socket]
+  ListenDatagram=69
+
+  [Install]
+  WantedBy=sockets.target
+
+  </pre>
+  </div>
+  #+END_HTML
+  我‘猜测’这就是我们启动服务，系统自动生成的的配置文件
+* 设置tftp服务根目录
+  + 执行一下命令
+    #+BEGIN_HTML
+    <div class="cnblogs_Highlighter">
+    <pre class="brush:shell">
+    cat /usr/lib/systemd/system/tftp.service
+    </pre>
+    </div>
+    #+END_HTML
+    + 运行结果 ::
+                 #+BEGIN_HTML
+                 <div class="cnblogs_Highlighter">
+                 <pre class="brush:shell">
+                 [Unit]
+                 Description=Tftp Server
+                 Requires=tftp.socket
+                 Documentation=man:in.tftpd
+
+                 [Service]
+                 ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot
+                 StandardInput=socket
+
+                 [Install]
+                 Also=tftp.socket
+                 </pre>
+                 </div>
+                 #+END_HTML
+      + 从中可以发现tftp-service的根目录默认地址为var/lib/tftpboot;想改的话,可以给这\\
+        位置改下并增加该目录权限，我选择默认位置，修改权限
+        #+BEGIN_HTML
+        <div class="cnblogs_Highlighter">
+        <pre class="brush:shell">
+        chmod a+w /var/lib/tftpboot
+        </pre>
+        </div>
+        #+END_HTML
+      + 帮助文档
+        in.tftpd文档我们可以通过一下命令查看
+        #+BEGIN_HTML
+        <div class="cnblogs_Highlighter">
+        <pre class="brush:shell">
+        man in.tftpd
+        </pre>
+        </div>
+        #+END_HTML
+  + 启动
+    #+BEGIN_HTML
+    <div class="cnblogs_Highlighter">
+    <pre class="brush:shell">
+    systemctl start tftp.service
+    </pre>
+    </div>
+    #+END_HTML
+  + 查看状态
+    #+BEGIN_HTML
+    <div class="cnblogs_Highlighter">
+    <pre class="brush:shell">
+    systemctl status tftp.service
+    </pre>
+    </div>
+    #+END_HTML
+    + 运行结果 ::
+    #+BEGIN_HTML
+    <div class="cnblogs_Highlighter">
+    <pre class="brush:shell">
+    tftp.service - Tftp Server
+   Loaded: loaded (/usr/lib/systemd/system/tftp.service; indirect; vendor preset: disabled)
+   Active: active (running) since 五 2016-05-13 09:35:22 CST; 17s ago
+     Docs: man:in.tftpd
+   Main PID: 15450 (in.tftpd)
+   CGroup: /system.slice/tftp.service
+           └─15450 /usr/sbin/in.tftpd -s /var/lib/tftpboot
+
+    </pre>
+    </div>
+    #+END_HTML
+  + 或者运行这个命令检查是否成功
+    #+BEGIN_HTML
+    <div class="cnblogs_Highlighter">
+    <pre class="brush:shell">
+    netstat -a | grep tftp
+    </pre>
+    </div>
+    #+END_HTML
+    + 运行结果 ::
+    #+BEGIN_HTML
+    <div class="cnblogs_Highlighter">
+    <pre class="brush:shell">
+    udp6       0      0 [::]:tftp               [::]:*
+    </pre>
+    </div>
+    #+END_HTML
+    成功
+* 开发板tftp失败原因
+  没有关闭防火墙
+  + 关闭防火墙
+    systemctl stop firewalld.service
+  + 查看防火墙状态
+    systemctl stop firewalld.service
+  + 最彻底的是关闭防火墙
+    systemctl disable firewalld.service
+* 产考文档
+  《Install a TFTP serv on Fedora 16+》网址：dflund.se/~triad/krad/tftpserver.html

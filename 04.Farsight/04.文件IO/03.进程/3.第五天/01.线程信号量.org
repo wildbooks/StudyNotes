@@ -1,0 +1,38 @@
+* 线程信号量
+  + int sem_init(sem_t *sem, int pshared, unsigned int value);
+  + sem_wait  //P操作  -1
+  + sem_post  //V操作  +1
+  + sem_destroy
+  + sem_open
+  + sem_close
+* 进程间通信
+  + 无名管道
+  + int pipe(int fd[2])
+    + 功能
+      创建无名管道
+    + 参数
+      fd[0] ：读
+      fd[1] ：写
+    + dup2
+      + 功能
+        dup2(fd, STDOUT_FILENO) 将标准输出重定向到某个文件描述符
+  + 有名管道
+    + int mkfifo(const char *pathname, mode_t mode);
+      + 功能
+        创建有名管道
+  + 信号
+    + kill(pid_t pid, int sig)
+      + 功能
+        发送信号
+      + 返回值
+        成功
+        失败
+    SIGHUP
+    SIGINT
+    SIGQUIT
+    SIGILL
+    SIGFPE
+  + raise
+  + unsigned int alarm(unsigned int seconds)
+  消息队列
+  网络通信

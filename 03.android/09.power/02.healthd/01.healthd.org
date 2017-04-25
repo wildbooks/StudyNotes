@@ -1,0 +1,769 @@
+#+AUTHOR:      wildbook
+#+DATE:        a date, fixed, of a format string for format-time-string
+#+EMAIL:       www762268@foxmail.com
+#+DESCRIPTION: 掌握PMIC之FuelGauge
+#+KEYWORDS:    power,pmic,
+#+LANGUAGE:    language for HTML, e.g. ‘en’ (org-export-default-language)
+#+TEXT:        Some descriptive text to be inserted at the beginning.
+#+TEXT:        Several lines may be given.
+#+OPTIONS:     H:2 num:t toc:t \n:nil @:t ::t |:t ^:t f:t TeX:t ...
+#+LINK_UP:     the ``up'' link of an exported page
+#+LINK_HOME:   the ``home'' link of an exported page
+#+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
+* 简介
+* 总结
+** g_epoll_fd
+   1. epoll()监听input事件,详情见ev_init(),获取key状态
+   2. 监听charger_event，不太明白,详情见healthd_register_event()
+** epollfd
+   用于充电模式
+   1. 监听g_epoll_fd,即key状态状态，详情见healthd_register_event(),有key按下时，
+      执行charger_event_handler()
+   2. wakealarm唤醒定时器每唤醒一次，更新一次电池状态,由epoll监控wakealarm_fd
+   3. uevent，用于内核向用户空间发送数据,对数据判断后更新电池状态，由epoll监控uevent_fd
+* 关键结构体
+1. epoll_event
+   #+begin_src cpp
+   typedef union epoll_data {
+       void        *ptr;
+       int          fd;
+       uint32_t     u32;
+       uint64_t     u64;
+   } epoll_data_t;
+
+   struct epoll_event {
+       uint32_t     events;      /* Epoll events */
+       epoll_data_t data;        /* User data variable */
+   };
+   #+end_src
+2. fd_info
+   #+begin_src cpp
+   typedef int (*ev_callback)(int fd, uint32_t epevents, void* data);
+   struct fd_info {
+        int fd;//回调参数
+        ev_callback cb;//回调函数
+        void* data;//回调函数参数
+    };
+   #+end_src
+3. charger
+   #+begin_src cpp
+    struct key_state {
+        bool pending; //按键弹起
+        bool down;  //按键按下
+        int64_t timestamp;//按键按下持续时间
+    };
+
+    struct animation {
+        bool run;
+
+        struct frame *frames;//帧buf
+        int cur_frame;  //当前帧
+        int num_frames; //帧数量
+
+        int cur_cycle;  //当前周期
+        int num_cycles; //总周期
+
+        /* current capacity being animated */
+        int capacity; //当前容量是动画
+    };
+
+   struct charger {
+        bool have_battery_state;  //是否有电池
+        bool charger_connected;   //充电器是否链接
+        int64_t next_screen_transition;//下一个屏幕过度
+        int64_t next_key_check; //下次按键检测超时时间设置
+        int64_t next_pwr_check; //下次检测pwr超时时间
+
+        struct key_state keys[KEY_MAX + 1]; //按键状态
+
+        struct animation *batt_anim;  //电池显示动态动画
+        GRSurface* surf_unknown;//电池未知状态时显示,
+        int boot_min_cap;  //启动最小容量
+    };
+
+   #+end_src
+4. input_event
+   #+begin_src cpp
+   struct input_event {
+      struct timeval time;
+      __u16 type;
+      __u16 code;
+      __s32 value;
+    };
+   #+end_src
+5. healthd_config
+   描述电池属性节点的路径
+   #+begin_src cpp
+    struct healthd_config {
+        int periodic_chores_interval_fast;//更新电池状态周期控制,充电用这个
+        int periodic_chores_interval_slow;//更新电池状态周期控制,不充电用这个
+
+        //xxxx/status
+        android::String8 batteryStatusPath; //电池是否存在的状态路径
+        //health
+        android::String8 batteryHealthPath; //电池健康路径(温度)
+        //present
+        android::String8 batteryPresentPath; //电池当前路径
+        //capacity
+        android::String8 batteryCapacityPath; //电池剩余容量
+        //voltage_now
+        android::String8 batteryVoltagePath;  //电池电压
+        //temp
+        android::String8 batteryTemperaturePath; //电池温度
+        //technology
+        android::String8 batteryTechnologyPath; //电池所使用的技术
+        //current_now
+        android::String8 batteryCurrentNowPath; //电池当前电流
+        //没有current_avg
+        android::String8 batteryCurrentAvgPath;
+        //没有charge_counter
+        android::String8 batteryChargeCounterPath;
+        //没有charge_full
+        android::String8 batteryFullChargePath; //电池充满电路径
+        //没有cycle_count
+        android::String8 batteryCycleCountPath;
+        //xo_termal
+        android::String8 xothermalpath;//[feature] mod-by sun zhangyang for defect2167030,2016.05.18
+
+        int (*energyCounter)(int64_t *);
+        int boot_min_cap;
+        bool (*screen_on)(android::BatteryProperties *props);
+    };
+   #+end_src
+7. BatteryProperties
+   #+begin_src cpp
+   struct BatteryProperties {
+       bool chargerAcOnline;   //
+       bool chargerUsbOnline;  //usb充电链接 我们手机情况是true
+       bool chargerWirelessOnline;
+       int maxChargingCurrent;  //当前充电最大电流
+       int maxChargingVoltage;  //当前充电最大电压
+       int batteryStatus; //电池是否存在
+       int batteryHealth;
+       bool batteryPresent;
+       int batteryLevel;  //电池电量状态 (1到100)
+       int batteryVoltage; //电池电压
+       int batteryTemperature; //电池温度
+       int batteryCurrent;  //电池电流
+       int batteryCycleCount;
+       int batteryFullCharge;
+       int batteryChargeCounter;
+       String8 batteryTechnology;
+       int xothermalTemp;
+
+       status_t writeToParcel(Parcel* parcel) const;
+       status_t readFromParcel(Parcel* parcel);
+   };
+   #+end_src
+8. android_reboot对应的命令
+   ANDROID_RB_RESTART   --- reboot 普通重启
+   ANDROID_RB_POWEROFF  --- shutting down 关机
+   ANDROID_RB_RESTART2  --- 可以带参数重启
+* 关键函数
+  + int epoll_create(int size)
+    + 功能: 打开一个epoll文件描述符
+    + 参数: 个数
+    + 成功返回文件描述符,失败-1和error
+  + int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout);
+    + 功能: 等待epoll文件描述符上的I / O事件
+    + 返回值
+      成功: 返回文件描述符的数量，或者超时时返回0
+      失败：返回-1和errno
+* 框架分析
++ healthd.cpp
+  代码路径system/core/healthd/
+  device/qcom/common/healthd
+  #+begin_src cpp
+  int main(int argc, char **argv) {
+      int ch;
+      int ret;
+
+      klog_set_level(KLOG_LEVEL);  //设置log级别
+      healthd_mode_ops = &android_ops;
+
+      if (!strcmp(basename(argv[0]), "charger")) {//解析输入参数如果是charger的使用charger_ops
+          healthd_mode_ops = &charger_ops;
+      } else {  //否者使用android_ops
+          while ((ch = getopt(argc, argv, "cr")) != -1) {//解析输入命令,各个命令对应不同的mode_ops
+              switch (ch) {
+              case 'c':
+                  healthd_mode_ops = &charger_ops;
+                  break;
+              case 'r':
+                  healthd_mode_ops = &recovery_ops;
+                  break;
+              case '?':
+              default:
+                  KLOG_ERROR(LOG_TAG, "Unrecognized healthd option: %c\n",
+                             optopt);
+                  exit(1);
+              }
+          }
+      }
+
+      //healthd初始化
+      ret = healthd_init();
+      if (ret) {
+          KLOG_ERROR("Initialization failed, exiting\n");
+          exit(2);
+      }
+
+      periodic_chores();
+      healthd_mode_ops->heartbeat();
+
+      //主函数
+      healthd_mainloop();
+      KLOG_ERROR("Main loop terminated, exiting\n");
+      return 3;
+  }
+  #+end_src
++ 总结 :: 由上可知,healthd有三种工作模式,即charger(关机充电),
+     android(关机充电),recovery模式，我就分别对它们进行讲解
+* charger(关机充电)模式
+** 代码路径
+   system/core/healthd/
+   device/qcom/common/healthd/
+ + android_ops
+   #+begin_src cpp
+   static struct healthd_mode_ops charger_ops = {
+     .init = healthd_mode_charger_init,
+     .preparetowait = healthd_mode_charger_preparetowait,
+     .heartbeat = healthd_mode_charger_heartbeat,
+     .battery_update = healthd_mode_charger_battery_update,
+   };
+   #+end_src
+** healthd_init()
++ healthd_init()
+#+begin_src cpp
+static int healthd_init() {
+
+    /* io复用*/
+    epollfd = epoll_create(MAX_EPOLL_EVENTS);
+    if (epollfd == -1) {
+        KLOG_ERROR(LOG_TAG,
+                   "epoll_create failed; errno=%d\n",
+                   errno);
+        return -1;
+    }
+
+    //用户定义的板级初始化,设置定时关机
+    healthd_board_init(&healthd_config);
+
+    /*io复用 /dev/input/event中的 按键事件，相对坐标，EV_SW类型事件*/
+    /*绘制充电状态图*/
+    healthd_mode_ops->init(&healthd_config);
+
+    /*定时器唤醒初始化*/
+    /*让epoll监听唤醒事件*/
+    /*定时器每次唤醒都会检测一下电池的状态，电池链接与否会决定定时定时器唤醒周期*/
+    wakealarm_init();
+
+    /*socket监听事件初始化*/
+    uevent_init();
+
+    /*建一个对象，并初始化它，从而获取电源的设备节点 /sys/class/power_supply/battery/xxx*/
+    gBatteryMonitor = new BatteryMonitor();
+    gBatteryMonitor->init(&healthd_config);
+    return 0;
+}
+#+end_src
++ healthd_board_init()  => power_off_alarm_init()
+  #+begin_src cpp
+  void power_off_alarm_init(void)
+  {
+      pthread_t tid;
+      int rc;
+      char value[PROP_VALUE_MAX];
+
+      property_get("ro.bootmode", value, "");
+      if (!strcmp("charger", value)) {
+         
+          //创建定时关机线程
+          rc = pthread_create(&tid, NULL, alarm_thread, NULL);
+          if (rc < 0)
+              LOGE("Create alarm thread failed\n");
+      }
+  }
+  #+end_src
++ healthd_mode_ops->init()
+  #+begin_src cpp
+  void healthd_mode_charger_init(struct healthd_config* config)
+  {
+      int ret;
+      struct charger *charger = &charger_state;
+      int i;
+      int epollfd;
+
+      dump_last_kmsg();
+
+      LOGW("--------------- STARTING CHARGER MODE ---------------\n");
+
+      /*板级初始化,如果不能充电，就重启,这步确保进入charger模式*/
+      healthd_board_mode_charger_init();
+
+      //epoll:对/dev/input/eventxx事件的监听,并改变charger.key值
+      //代码路径bootable/recovery/minui/
+      ret = ev_init(input_callback, charger);
+      if (!ret) {
+
+          //获取epoll的节点
+          epollfd = ev_get_epollfd();
+          //注册 charger的epoll监听事件
+          healthd_register_event(epollfd, charger_event_handler);
+      }
+
+      //这里生成一个表示电池错误的surface，并把这个指针保存到charger->surf_unknown中,
+      ret = res_create_display_surface("charger/battery_fail", &charger->surf_unknown);
+      if (ret < 0) {
+          LOGE("Cannot load battery_fail image\n");
+          charger->surf_unknown = NULL;
+      }
+
+      //电池温度显示图的初始化
+      create_display_surface("charger/battery_temp_low",
+              &batt_temp_low_frames[0].surface);
+      create_display_surface("charger/battery_temp_high",
+              &batt_temp_high_frames[0].surface);
+      create_display_surface("charger/battery_temp_too_high",
+              &batt_temp_too_high_frames[0].surface);
+      create_display_surface("charger/battery_temp_too_low",
+              &batt_temp_too_low_frames[0].surface);
+
+      //充电电池显示动画
+      charger->batt_anim = &battery_animation;
+
+      GRSurface** scale_frames;
+      int scale_count;
+      int scale_fps;
+
+  /*                     以下全部是充电的动态图**/
+  #ifdef TCTNB_NEW_CHARGER_ICON
+      struct {
+          char *png;
+          GRSurface **surface;
+      } res [] = {
+          {
+              .png = (char *)"charger/percent",//百分比显示
+              .surface = &charger->surf_percent,
+          },
+          {
+              .png = (char *)"charger/battery_warn",//电池未知警告
+              .surface = &charger->surf_unknown,
+          },
+          {
+              .png = (char *)"charger/empty_battery", //没电池显示
+              .surface = &charger->empty_battery,
+          },
+      };
+      for ( i = 0; i < (int)ARRAY_SIZE(res); ++i) {
+          ret = res_create_display_surface(res[i].png, res[i].surface);
+          if (ret < 0) {
+              LOGE("Cannot load image %s (%d)\n", res[i].png, ret);
+              *(res[i].surface) = NULL;
+          }
+      }
+
+      ret = res_create_multi_display_surface("charger/num", &scale_count,&scale_fps,&charger->surf_num);
+      if (ret < 0 || scale_count != 10) {
+          LOGE("Cannot load number image (%d)\n", ret);
+          charger->surf_num = NULL;
+      }
+      ret = res_create_multi_display_surface("charger/battery_scale_tct", &scale_count, &scale_fps,
+                                             &scale_frames);
+  #else
+      ret = res_create_multi_display_surface("charger/battery_scale", &scale_count, &scale_fps,
+                                             &scale_frames);
+  #endif
+  /* MODIFIED-END by li jiang,BUG-3009987*/
+      if (ret < 0) {
+          LOGE("Cannot load battery_scale image\n");
+          charger->batt_anim->num_frames = 0;
+          charger->batt_anim->num_cycles = 1;
+      } else if (scale_count != charger->batt_anim->num_frames) {
+          LOGE("battery_scale image has unexpected frame count (%d, expected %d)\n",
+               scale_count, charger->batt_anim->num_frames);
+          charger->batt_anim->num_frames = 0;
+          charger->batt_anim->num_cycles = 1;
+      } else {
+          for (i = 0; i < charger->batt_anim->num_frames; i++) {
+              charger->batt_anim->frames[i].surface = scale_frames[i];
+          }
+      }
+
+      ev_sync_key_state(set_key_callback, charger);
+
+      charger->next_screen_transition = -1;
+      charger->next_key_check = -1;
+      charger->next_pwr_check = -1;
+      healthd_config = config;
+      charger->boot_min_cap = config->boot_min_cap;
+  }
+  #+end_src
++ healthd_board_mode_charger_init()
+  #+begin_src cpp
+  void healthd_board_mode_charger_init()
+  {
+      int ret;
+      char buff[8] = "\0";
+      int charging_enabled = 0;
+      int bms_ready = 0;
+      int wait_count = 0;
+      int fd;
+
+      /*判断充电是否允许*/
+      fd = open(CHARGING_ENABLED_PATH, O_RDONLY);
+      ret = read(fd, buff, sizeof(buff));
+      close(fd);
+      if (ret > 0) {
+          sscanf(buff, "%d\n", &charging_enabled);
+          LOGW("android charging is %s\n",
+                  !!charging_enabled ? "enabled" : "disabled");
+          /*如果禁止，重启并退出关机充电模式*/
+          if (!charging_enabled)
+              android_reboot(ANDROID_RB_RESTART, 0, 0);
+      }
+      
+      /*不知道干啥的*/
+      fd = open(BMS_READY_PATH, O_RDONLY);
+      if (fd < 0)
+              return;
+      while (1) {
+          ret = read(fd, buff, sizeof(buff));
+          if (ret >= 0)
+              sscanf(buff, "%d\n", &bms_ready);
+          else
+              LOGE("read soc-ready failed, ret=%d\n", ret);
+
+          if ((bms_ready > 0) || (wait_count++ > WAIT_BMS_READY_TIMES_MAX))
+              break;
+          usleep(WAIT_BMS_READY_INTERVAL_USEC);
+          lseek(fd, 0, SEEK_SET);
+      }
+      close(fd);
+      LOGV("Checking BMS SoC ready done!\n");
+  }
+  #+end_src
++ uevent_init()
+  #+begin_src cpp
+  static void uevent_init(void) {
+      //创建套接字，用于内核到上层间通讯
+      uevent_fd = uevent_open_socket(64*1024, true);
+
+      if (uevent_fd < 0) {
+          KLOG_ERROR(LOG_TAG, "uevent_init: uevent_open_socket failed\n");
+          return;
+      }
+
+      fcntl(uevent_fd, F_SETFL, O_NONBLOCK);
+      //uevent_event()主要更新电池状态
+      if (healthd_register_event(uevent_fd, uevent_event))
+          KLOG_ERROR(LOG_TAG,
+                     "register for uevent events failed\n");
+  }
+  #+end_src
++ input_callback
+  #+begin_src cpp
+  static int input_callback(int fd, unsigned int epevents, void *data)
+  {
+      struct charger *charger = (struct charger *)data;
+      struct input_event ev;
+      int ret;
+
+      //获取输入信息保存在ev中
+      ret = ev_get_input(fd, epevents, &ev);
+      if (ret)
+          return -1;
+      //更新charger按键状态,即charger.keys的值
+      update_input_state(charger, &ev);
+      return 0;
+  }
+  #+end_src
+** periodic_chores();
+#+begin_src cpp
+static void periodic_chores() {
+    healthd_battery_update();
+}
+#+end_src
++ healthd_battery_update()
+#+begin_src cpp
+void healthd_battery_update(void) {
+
+   /*调用update函数，根据返回值判断充电状态，充电为true,即我们用的是usb充电*/
+   /*充电时，我们选择xxx_fast这个，让它更新电池状态的周期短些*/
+   int new_wake_interval = gBatteryMonitor->update() ?
+       healthd_config.periodic_chores_interval_fast :
+           healthd_config.periodic_chores_interval_slow;
+
+    /*设置闹钟唤醒的周期*/
+    if (new_wake_interval != wakealarm_wake_interval)
+            wakealarm_set_interval(new_wake_interval);
+
+    // During awake periods poll at fast rate.  If wake alarm is set at fast
+    // rate then just use the alarm; if wake alarm is set at slow rate then
+    // poll at fast rate while awake and let alarm wake up at slow rate when
+    // asleep.
+
+    if (healthd_config.periodic_chores_interval_fast == -1)
+        awake_poll_interval = -1;
+    else
+        awake_poll_interval =
+            new_wake_interval == healthd_config.periodic_chores_interval_fast ?
+                -1 : healthd_config.periodic_chores_interval_fast * 1000;
+}
+
+#+end_src
+#+begin_src cpp
+#+end_src
+#+begin_src cpp
+#+end_src
+** healthd_mode_ops->heartbeat()
++ healthd_mode_charger_heartbeat()
+  #+begin_src cpp
+  void healthd_mode_charger_heartbeat()
+  {
+      struct charger *charger = &charger_state;
+      int64_t now = curr_time_ms();
+
+      /*主要对power键事件的处理,重启，休眠，唤醒*/
+      handle_input_state(charger, now);
+
+      /*电池led显示状态更新*/
+      handle_power_supply_state(charger, now);
+
+      /* do screen update last in case any of the above want to start
+       * screen transitions (animations, etc)
+       */
+      /*屏幕动画的更新*/
+      update_screen_state(charger, now);
+  }
+  #+end_src
++ handle_input_state() => process_key()
+  #+begin_src cpp
+  按键处理
+  static void process_key(struct charger *charger, int code, int64_t now)
+  {
+      struct animation *batt_anim = charger->batt_anim;
+      struct key_state *key = &charger->keys[code];
+
+      if (code == KEY_POWER) {
+          //电源键按下，且按键时长大于重启时间，手机就重启
+          if (key->down) {
+              int64_t reboot_timeout = key->timestamp + POWER_ON_KEY_TIME;
+              if (now >= reboot_timeout) {
+                  if (property_get_bool("ro.enable_boot_charger_mode", false)) {
+                      LOGW("[%" PRId64 "] booting from charger mode\n", now);
+                      property_set("sys.boot_from_charger_mode", "1");
+                  } else {
+                      /*手机重启*/
+                      if (charger->batt_anim->capacity >= charger->boot_min_cap) {
+                          LOGW("[%" PRId64 "] rebooting\n", now);
+                          android_reboot(ANDROID_RB_RESTART, 0, 0);
+                      } else {
+                          LOGV("[%" PRId64 "] ignore power-button press, battery level "
+                              "less than minimum\n", now);
+                      }
+                  }
+              } else {
+                  //时间不够，设置下次按键检测时间
+                  set_next_key_check(charger, key, POWER_ON_KEY_TIME);
+              }
+          } else {
+              if (key->pending) {
+                  /*动画未运行时按下按键，则弹出动画并退出休眠*/
+                  if (!batt_anim->run) {
+                      kick_animation(batt_anim);
+                      request_suspend(false);
+                  } else {
+                  /*如果动画运行时按按键，关闭动画并请求休眠*/
+                      reset_animation(batt_anim);
+                      charger->next_screen_transition = -1;
+                      /*灭屏*/
+                      healthd_board_mode_charger_set_backlight(false);
+                      gr_fb_blank(true);
+                      if (charger->charger_connected)
+                          request_suspend(true);
+                  }
+              }
+          }
+      }
+
+      key->pending = false;
+  }
+  #+end_src
++ handle_power_supply_state()
+  #+begin_src cpp
+  static void handle_power_supply_state(struct charger *charger, int64_t now)
+  {
+      if (!charger->have_battery_state)
+          return;
+
+      /*主要是根据电池电量即温度的状态，改变led灯的颜色，比如100%亮绿灯*/
+      healthd_board_mode_charger_battery_update(batt_prop);
+
+      if (!charger->charger_connected) {
+
+          /* Last cycle would have stopped at the extreme top of battery-icon
+           * Need to show the correct level corresponding to capacity.
+           */
+          request_suspend(false);
+          if (charger->next_pwr_check == -1) {
+              charger->next_pwr_check = now + UNPLUGGED_SHUTDOWN_TIME;
+              LOGW("[%" PRId64 "] device unplugged: shutting down in %" PRId64 " (@ %" PRId64 ")\n",
+                   now, (int64_t)UNPLUGGED_SHUTDOWN_TIME, charger->next_pwr_check);
+          } else if (now >= charger->next_pwr_check) {
+              LOGW("[%" PRId64 "] shutting down\n", now);
+              android_reboot(ANDROID_RB_POWEROFF, 0, 0); //关机
+          } else {
+              /* otherwise we already have a shutdown timer scheduled */
+          }
+      } else {
+          /* online supply present, reset shutdown timer if set */
+          if (charger->next_pwr_check != -1) {
+              LOGW("[%" PRId64 "] device plugged in: shutdown cancelled\n", now);
+              //kick_animation(charger->batt_anim);   // wangjin modify for poweroff-charging-reboot bug, PR1921547
+          }
+          charger->next_pwr_check = -1;
+      }
+  }
+  #+end_src
++ void healthd_board_mode_charger_battery_update()
+  主要做一些led状态的更新，比如满电亮绿灯，90%亮红绿灯等等
+   #+begin_src cpp
+   void healthd_board_mode_charger_battery_update(
+                struct android::BatteryProperties *batt_prop)
+  {
+      static int blink_for_hvdcp = -1;
+      static int old_color = 0;
+      int i, color, soc, rc;
+      bool blink = false;
+
+      /*判断hvdcp充电是否支持红绿灯,显然idol4的项目不支持*/
+      if (blink_for_hvdcp == -1)
+          blink_for_hvdcp = leds_blink_for_hvdcp_allow();
+
+      if ((blink_for_hvdcp > 0) && is_hvdcp_inserted())
+          blink = true;
+
+      soc = batt_prop->batteryLevel;
+
+      for (i = 0; i < ((int)ARRAY_SIZE(soc_leds) - 1); i++) {
+          if (soc < soc_leds[i].soc)
+              break;
+      }
+      color = soc_leds[i].color;
+
+      if (old_color != color) {
+          if ((color & HVDCP_COLOR_MAP) && blink) {
+              if (blink_for_hvdcp & RED_LED) {
+                  rc = write_file_int(RED_LED_BLINK_PATH, HVDCP_BLINK_TYPE);
+                  if (rc < 0) {
+                      LOGE("Fail to write: %s\n", RED_LED_BLINK_PATH);
+                      return;
+                  }
+              }
+              if (blink_for_hvdcp & GREEN_LED) {
+                  rc = write_file_int(GREEN_LED_BLINK_PATH, HVDCP_BLINK_TYPE);
+                  if (rc < 0) {
+                      LOGE("Fail to write: %s\n", GREEN_LED_BLINK_PATH);
+                      return;
+                  }
+              }
+          } else {
+                  set_tricolor_led(0, old_color);
+                  set_tricolor_led(1, color);
+                  old_color = color;
+                  LOGV("soc = %d, set led color 0x%x\n", soc, soc_leds[i].color);
+          }
+      }
+  }
+   #+end_src
++ 
+          #+begin_src cpp
+          #+end_src
+** healthd_mainloop()
++ healthd_mainloop()
+  #+begin_src cpp
+  static void healthd_mainloop(void) {
+      while (1) {
+          struct epoll_event events[eventct];
+          int nevents;
+          int timeout = awake_poll_interval;
+          int mode_timeout;
+
+          mode_timeout = healthd_mode_ops->preparetowait();
+          if (timeout < 0 || (mode_timeout > 0 && mode_timeout < timeout))
+              timeout = mode_timeout;
+          
+          /*io口复用 检测event事件*/
+          nevents = epoll_wait(epollfd, events, eventct, timeout);
+
+          if (nevents == -1) {
+              if (errno == EINTR)
+                  continue;
+              KLOG_ERROR(LOG_TAG, "healthd_mainloop: epoll_wait failed\n");
+              break;
+          }
+
+          for (int n = 0; n < nevents; ++n) {
+              if (events[n].data.ptr)
+                  (*(void (*)(int))events[n].data.ptr)(events[n].events);
+          }
+
+          /*超时，更新显示电池属性*/
+          if (!nevents)
+              periodic_chores();
+
+          /*按键处理，更新显示状态等*/
+          healthd_mode_ops->heartbeat();
+      }
+
+      return;
+  }
+  #+end_src
++ healthd_mode_charger_preparetowait()
+  计算超时时间
+  #+begin_src cpp
+  int healthd_mode_charger_preparetowait(void)
+  {
+      struct charger *charger = &charger_state;
+      int64_t now = curr_time_ms(); //获取当前时间
+      int64_t next_event = INT64_MAX;
+      int64_t timeout;
+
+      LOGV("[%" PRId64 "] next screen: %" PRId64 " next key: %" PRId64 " next pwr: %" PRId64 "\n", now,
+           charger->next_screen_transition, charger->next_key_check,
+           charger->next_pwr_check);
+
+      if (charger->next_screen_transition != -1)
+          next_event = charger->next_screen_transition;
+      if (charger->next_key_check != -1 && charger->next_key_check < next_event)
+          next_event = charger->next_key_check;
+      if (charger->next_pwr_check != -1 && charger->next_pwr_check < next_event)
+          next_event = charger->next_pwr_check;
+
+      if (next_event != -1 && next_event != INT64_MAX)
+          timeout = max(0, next_event - now);
+      else
+          timeout = -1;
+
+     return (int)timeout;
+  }
+
+  #+end_src
++ 
+   #+begin_src cpp
+   #+end_src
++ 
+   #+begin_src cpp
+   #+end_src
+* android(开机充电)模式
++ android_ops
+  #+begin_src cpp
+  static struct healthd_mode_ops android_ops = {
+      .init = healthd_mode_android_init,
+      .preparetowait = healthd_mode_android_preparetowait,
+      .heartbeat = healthd_mode_nop_heartbeat,
+      .battery_update = healthd_mode_android_battery_update,
+  };
+  #+end_src
+* recovery(恢复设置充电)模式

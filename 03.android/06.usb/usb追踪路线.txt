@@ -1,0 +1,34 @@
+UsbDeviceManager中
+        setUsbDataUnlocked(boolean unlocked)    ->  UsbDeviceManager: setUsbDataUnlocked(true)functionmtp
+        Handler(mHandler.sendMessage)           ->
+        setEnabledFunctions(null, false);       ->
+            trySetEnabledFunctions()            ->
+        setUsbConfig(UsbManager.USB_FUNCTION_NONE);
+        waitForState(config)
+
+
+01-01 12:03:42.539  1357  2868 D UsbDeviceManager: setUsbDataUnlocked(true)functionmtp
+01-01 12:03:42.539  1357  1381 D UsbDeviceManager: setUsbDataUnlocked: truemtp
+01-01 12:03:42.540  8494  8494 D cyl     : function = mtp
+01-01 12:03:42.546  1357  1381 D UsbDeviceManager: setEnabledFunctions functions=mtp, forceRestart=true
+01-01 12:03:42.546  1357  1381 I UsbDeviceManager: Setting USB config to mtp,adb
+01-01 12:03:42.598  1357  1381 D UsbDeviceManager: setUsbConfig(mtp,adb)
+01-01 12:03:43.082  4723  4723 D MtpService: starting MTP server in MTP mode
+01-01 12:03:43.088  4723  4723 D MtpService: Adding MTP storage 0x10001 at /storage/emulated/0
+01-01 12:09:02.088  4723  4723 D MtpService: starting MTP server in PTP mode
+01-01 12:09:02.097  4723  4723 D MtpService: Adding MTP storage 0x10001 at /storage/emulated/0
+01-01 12:09:02.108  4723  8791 W MtpDatabase: Missing volume for /storage/sdcard1; assuming invalid
+01-01 12:09:02.108  4723  8791 D MtpDatabase: createObjectQuery -- storageID = -1, format = 0, parent = -1, storageID_L = 131073, storageID_M =0
+01-01 12:09:02.108  4723  8791 D MtpDatabase: createObjectQuery -- where =parent=?
+01-01 12:09:02.117  4723  8791 W MtpDatabase: Missing volume for /storage/sdcard1; assuming invalid
+01-01 12:09:02.117  4723  8791 D MtpDatabase: createObjectQuery -- storageID = 65537, format = 0, parent = -1, storageID_L = 131073, storageID_M =0
+01-01 12:09:02.120  4723  8791 W MtpDatabase: Missing volume for /storage/sdcard1; assuming invalid
+01-01 12:09:02.120  4723  8791 D MtpDatabase: createObjectQuery -- where =storage_id=? AND parent=?
+01-01 12:09:02.208  4723  8791 W MtpDatabase: Missing volume for /storage/sdcard1; assuming invalid
+01-01 12:09:02.208  4723  8791 D MtpDatabase: createObjectQuery -- storageID = -1, format = 0, parent = -1, storageID_L = 131073, storageID_M =0
+01-01 12:09:02.208  4723  8791 D MtpDatabase: createObjectQuery -- where =parent=?
+01-01 12:09:02.215  4723  8791 W MtpDatabase: Missing volume for /storage/sdcard1; assuming invalid
+01-01 12:09:02.215  4723  8791 D MtpDatabase: createObjectQuery -- storageID = 65537, format = 0, parent = -1, storageID_L = 131073, storageID_M =0
+01-01 12:09:02.217  4723  8791 W MtpDatabase: Missing volume for /storage/sdcard1; assuming invalid
+01-01 12:09:02.217  4723  8791 D MtpDatabase: createObjectQuery -- where =storage_id=? AND parent=?
+01-01 12:09:19.440  1357  1381 D UsbDeviceManager: setUsbDataUnlocked: truemtp

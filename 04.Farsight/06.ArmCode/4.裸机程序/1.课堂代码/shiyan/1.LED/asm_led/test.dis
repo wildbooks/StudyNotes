@@ -1,0 +1,46 @@
+
+test.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+40008000 <_start>:
+40008000:	e59f0048 	ldr	r0, [pc, #72]	; 40008050 <delay_loop+0x10>
+40008004:	e59f1048 	ldr	r1, [pc, #72]	; 40008054 <delay_loop+0x14>
+40008008:	e3a02201 	mov	r2, #268435456	; 0x10000000
+4000800c:	e5802000 	str	r2, [r0]
+40008010:	e3a02000 	mov	r2, #0
+40008014:	e5812000 	str	r2, [r1]
+
+40008018 <led_loop>:
+40008018:	e3a02080 	mov	r2, #128	; 0x80
+4000801c:	e5812000 	str	r2, [r1]
+40008020:	e3a04a01 	mov	r4, #4096	; 0x1000
+40008024:	eb000004 	bl	4000803c <asm_delay>
+40008028:	e3a02000 	mov	r2, #0
+4000802c:	e5812000 	str	r2, [r1]
+40008030:	e3a04a01 	mov	r4, #4096	; 0x1000
+40008034:	eb000000 	bl	4000803c <asm_delay>
+40008038:	eafffff6 	b	40008018 <led_loop>
+
+4000803c <asm_delay>:
+4000803c:	e3a04201 	mov	r4, #268435456	; 0x10000000
+
+40008040 <delay_loop>:
+40008040:	e3540000 	cmp	r4, #0
+40008044:	c2444001 	subgt	r4, r4, #1
+40008048:	cafffffc 	bgt	40008040 <delay_loop>
+4000804c:	e1a0f00e 	mov	pc, lr
+40008050:	11000c40 	tstne	r0, r0, asr #24
+40008054:	11000c44 	tstne	r0, r4, asr #24
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00001541 	andeq	r1, r0, r1, asr #10
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	0000000b 	andeq	r0, r0, fp
+  10:	01080106 	tsteq	r8, r6, lsl #2
+  14:	Address 0x00000014 is out of bounds.
+

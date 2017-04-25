@@ -1,0 +1,124 @@
+* adb前奏
+  lsusb          查询USB总线上的设备
+  adb devices    查询手机是否链接成功
+* adb命令
+** shell
+   adb shell
+** 装软件
+   adb install xxx.apk
+   adb uninstall xxx.apk
+**  与模拟器或手机传输文件
+   + 从模拟器或手机中复制一个文件或文件夹（递归的）使用：
+     adb pull <remote> <local>
+   + 复制一个文件或文件夹（递归的）到模拟器或手机中使用：
+     adb push <local> <remote>
+     在这个命令中和引用的是文件或文件夹的路径，在开发用电脑上的是local，在模拟器或手机上的是remote。
+     例如：
+     adb push foo.txt /sdcard/foo.txt
+** 转发端口
+   + 可以使用forward 命令转发端口 — 将特定端口上的请求转发到模拟器或手机的不同的端口上。下例是从6100端口转到7100端口：
+      adb forward tcp:6100 tcp:7100
+   + 也可以使用UNIX命名的socket标识：
+      adb forward tcp:6100 local:logd
+** logcat
+   + 打印内核log
+     logcat -b kernel > /data/kernel.log &
+   + 打印systemlog
+   + Log优先级
+     V：明细verbose（最低优先级） D：调试debug
+     I:信息 info
+     W： 警告warm
+     E:错误error
+     F：严重错误fatal
+     S：无记载 silent
+   + 使用logcat查看日志输出
+     adb logcat -v<format>//设置日志输入格式控制输出字段，默认为brief格式
+     format：brief——显示优先级/标记和原始进程的PID
+     progress——仅显示原始进程的PID
+     tag——仅显示优先级/标记
+     thread——仅显示进程：线程和优先级/标记
+     raw——显示日志的原始信息没有其他的元数据字段
+     time ——显示日期，调用时间，优先级/标记，PID
+     long——显示所有元数据字段并且用空行分隔消息内容
+     //注：-v后只能跟一个<format>
+   + 过滤日志
+     adb logcat ActivityManger:I   PowerManger:E  *S
+     //仅输出标记为 ActivityManger且优先级大于I和标记为 PowerManger且优先级大于E的log
+     //注：*S用于设置所有标记的日志优先级为S可以保证仅输出符合条件的日志
+
+     adb  logcat -s PowerManger //显示PowerManger标记的log
+     adb logcat  *：W//显示所有优先级大于等于W的日志
+   + 其他Log相关
+     adb logcat >c:\test.log   //将文件保存到test.log
+     adb  logcat  -f<filename> //将日志输出到文件，如： adb  logcat  -f  /sdcard/test.txt
+** fas
+ 3.2、adb自身管理相关命令
+ 可选项：-d //命令仅对USB设备有效，如果有多个USB设备就会返回错误
+ -e//命令仅对运行中的设备有效，如果有多个运行中的设备就会返回错误
+ -s//命令仅对adb关联的特定序列号的模拟器或手机有效（如“emulator-5556”）,不指定设               备就会返回错误(一般  -s +设备号指定设备)
+
+ adb help //查看help信息
+ adb version//adb版本号
+ 　　adb devices //查看当前连接的设备
+ 注：连接到计算机的android设备或者模拟器将会列出显示输出以下信息：[serialNumber]  [state]
+ serialNumber——序列号，由adb创建的使用控制台端口号的用于标识一个模拟器或手机社设备的字符串，格式是<设备类型>-<端口号>，例如：emulator-5554
+ state——状态，表示连接状态，值有：
+ offline-未连接或未响应
+ dervice-已经连接到服务商。注意这个状态并不表示安卓系统已经完全启动起来
+
+ 3.3、 apk的安装与卸载操作
+ adb install <apk文件路径> //这个命令将指定的apk文件安装到设备上
+ adb -s <serialNumber>  install<apk文件路径>//这个命令将指定的apk文件安装到设备上
+ 　　adb uninstall <软件名> //卸载软件  注意,软件名为包名可在mainfest中看到也可在data/app下看到如:com.android
+ 　　adb uninstall -k <软件名> //如果加 -k 参数,为卸载软件但是保留配置和缓存文件.
+
+ 3.4、对文件进行操作
+ 　　adb pull <远程路径> <本地路径> // 把设备(手机)上的文件或者文件夹复制到本机电脑
+ 　　adb push <本地路径> <远程路径>//从电脑上发送文件到设备
+ 3..5、使用ADB进行设备管理(包括模拟器)
+ 　　3.5.1. 进入设备或模拟器的shell：
+ 　　adb shell
+ [commend]
+ 通过上面的命令，就可以进入设备或模拟器的shell环境中，在这个Linux Shell中，你可以执行各种Linux的命令，另外如果只想执行一条shell命令，可以采用 adb  shell  [command] 的方式,通过cd/system/bin， ls可以列表出大部分可用的命令;
+ 常用的commend：
+ exit//退出shell
+ am start -n{包名}/{包名}.{活动的activity名}//启动某个app的activity。配置参考mainfest.xml ,例如：# am start -n com.android.alarmclock/com.android.alarmclock .AlarmClock
+ am broadcast  -a  android.intent.action.ActionName//发送广播消息
+ getevent  //获取所有事件
+ start/stop SERVER//  启动/强行停止某服务
+ ps  //显示进程自身的标记信息
+ top//显示瞬间的进程的资源占用等信息
+ free//显示当前进程内存使用情况
+ kill  pid//杀死进程
+ sqlite3  {文件.db} //打开某一个数据库，之后可以使用数据库操作命令
+
+ 3.5.2.指定特定的目标
+ adb -s <serialNumber><commend>
+ 　　
+ 　　
+ 3.5.3、对程序进行强制测试100次
+ adb  monkey -p   /path/appname  -v 100
+
+ 3.5.4、adb服务端管理
+ 当adb连接设备offline未连接或未响应或者无法识别设备可能是未启动服务端或端口占用.此时可以试着:
+ adb usb //重插usb
+ adb kill-server      //  终止服务端进程
+ adb start-server   //检测服务端是否启动，如果没有则启动它
+ 如果start-server失败需要考虑端口占用问题,此时可以netstat -aon |findstr  127.0.0.1:5037来找到占用的id,再用kill  -f pid 杀掉他们;或者自己配制端口export$ANDROID_ADB_SERVER_PORT=自定端口(最好选择一个五位数的端口号(10000~65535))
+
+
+ 3.6  其他一些命令
+
+ 1. adb可以设置任意的端口号，将特定端口上的请求转发到模拟器或手机的不同端口上。
+
+ 下例是从5555端口转到7100端口：
+ adb forward tcp:5555 tcp:7100
+ 2.  adb  logcat -b<buffer> //加载一个可使用的日志缓冲区供查看，默认值是main
+ <buffer>:  main——查看主缓冲区
+ radio——查看包含无线/电话相关的缓冲区信息
+ event——查看时间相关的缓冲区信息
+
+
+ 3. adb bugreport  //为报告bug，在屏幕上输出dumpsys，dumpstate和logcat数据
+ 4. 可以使用forward jdwp：转换端口以连接到指定的JDWP进程.
+ 例如: adb forward tcp:8000  jdwp:572 job -attach  localhost:8000

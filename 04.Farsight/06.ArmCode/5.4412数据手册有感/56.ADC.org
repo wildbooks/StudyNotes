@@ -1,0 +1,37 @@
+* 简介
+  + 4412有两个ADC模块分别是General ADC 和 MTCADC_ISP,通常使用ADC_CFG寄存器进行选择
+  + 5Mhz A/D 转换时钟时，最大1Msps的转换速度。
+    maximum conversion rate of 1MSPS with 5MHz A/D converter clock
+    + 公式
+      PCLK = 66MHz
+      A/D converter freq = 66MHz/(65 + 1) = 1MHz
+      Conversion time = 1/(1MHz/5cycles) = 1/200kHz = 5us
+* 寄存器地图
+  + ADC_CFG 选择哪种ADC模块
+    MTCADC_ISP 或者 General ADC
+  + ADCCON  ADC控制寄存器
+    + RES 设置10bit或者12bit
+    + ECFLG 转化完成标志位
+    + PRSCEN ADC使能
+    + PRSCVL 设置转换频率
+      A/D converter freq = 66MHz/(65 + 1) = 1MHz
+      Conversion time = 1/(1MHz/5cycles) = 1/200kHz = 5us
+    + STANDBY
+      正常模式
+      standby(节能，好像是休眠状态)
+    + READSTART ADC一直转换使能
+    + ENABLE_START 读时转换使能
+  + ADCDLY  触摸频用的，不太懂
+    + FILCLKsrc 选择时钟源
+    +
+  + ADCDAT  ADC转化后的数据放在这里
+  + CLRINTADC  清除中断
+  + ADCMUX  模拟信号输入通道选择
+    总共4通道
+  + ADCDLY  触摸频用的，不太懂
+    + FILCLKsrc 选择时钟源
+    +
+  + ADCDAT  ADC转化后的数据放在这里
+  + CLRINTADC  清除中断
+  + ADCMUX  模拟信号输入通道选择
+    总共4通道

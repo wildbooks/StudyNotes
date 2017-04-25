@@ -1,0 +1,83 @@
+uboot代码分析：
+先查看是否支持开发板，查看board, arch
+
+uboot作用：引导内核
+
+uboot代码分为：平台相关，平台无关。
+		平台相关：跟我们的cpu，soc 还有外围电路相关配置。
+		平台无关：uboot框架，网络协议。
+		.NOTE:我们一般修改的是1）自己的板级支持包 board/samsung/fs4412
+			2)头文件配置 include/configs/fs4412.h
+
+uboot2013目录结构：
+	arch:cpu架构
+	board:开发板厂商相关信息
+	common:命令解析
+	doc:uboot相关帮助文档
+	drviers:相关外设驱动（网卡，串口，时钟）
+	include:头文件
+	fs：文件系统支持
+	lib:库
+	net:网络协议。
+	tools:编译工具
+	boards.cfg:uboot所支持的开发板。
+
+uboot使用：
+	make mrproper:清除所有生成文件及配置
+	make fs4412_config:配置开发板相关信息
+	make :编译生成u-boot.bin
+
+
+uboot执行通过宏来判断：宏在头文件中定义。
+#ifdef CONFIG_TEST
+	run_test();
+#endif
+
+某头文件
+#define CONFIG_TEST
+
+uboot编译通过Makefile来判断：
+	obj-y += xx.o xx.o  在编译时，只编译obj-y
+		|
+	obj-$(CONFIG_XX) = xx.o xx.o 如果CONFIG_XX为y，则此文件会被编译进u-boot.bin
+
+uboot编译流程
+./build.sh --->1）make fs4412_config 2)make -jxx  3)添加加密信息
+
+make fs4412_config
+	主Makefile :700line --- > %_config:  mkconfig -A fs4412
+	mkconfig脚本解析：(解析boars.cfg)
+		1）：进行board  arch cpu vendor soc options 并且导入include/config.mk
+		2) :作软链接：
+			ln -s arch/$(arch)/include/asm  include/asm
+			ln -s arch-exynos  include/asm/arch
+			ln -s proc-armv7   include/asm/proc
+		3):填充头文件配置：
+			/include/config.h
+	make分析：
+		all:---u-boot.bin（通过objcopey 将elf--bin格式）----u-boot (编译各目录下的Makefile，通u-boot.lds将各个.o文件链接成u-boot elf可执行文件)
+			
+	
+uboot启动流程：
+	第一阶段：（汇编）
+	1，设置svc工作模式
+	2，关闭Irq, fiq ,icache, dcache
+	3, 关狗，设置时钟，初始内存
+	4，初始化栈
+	5，清空bss
+	第二阶段：（c语言）
+	6，初始化硬件
+	7，命令解析
+
+
+uboot启动内核的特点：
+	cpu处于svc模式
+	r0 = 0
+	r1 = cpuid
+	r2 = 参数的起始地址
+	pc = 内核的起始地址
+	
+
+
+
+	

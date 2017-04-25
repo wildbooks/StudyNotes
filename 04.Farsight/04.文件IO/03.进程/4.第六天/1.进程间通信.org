@@ -1,0 +1,52 @@
+* 信号灯
+* 共享内存
+  + key_t ftok(const char *pathname, int proj_id);
+    + 功能
+      生成一个共享内存的标识符
+  + int shmget(key_t key, size_t size, int shmflg);
+    + 功能
+      申请一段共享内存
+  + void *shmat(int shmid, const void *shmaddr, int shmflg);
+    + 功能
+      将共享内存影射到本进程的虚拟空间
+  + int shmdt(const void *shmaddr);
+    + 功能
+      删除本进程对某段共享的使用权
+  + int shmctl(int shmid, int cmd, struct shmid_ds *buf);
+    + 功能
+      控制共享内存，删除共享内存区，得到状态
+  + 查看共享内存
+    ipcs
+  + 删除共享内存
+    ipcrm
+* 消息队列
+  + int msgget(key_t key, int msgflg);
+    + 功能
+      创建并初始化这个链表
+    + 返回值
+      成功：消息队列ID
+      失败：-1
+  + int msgsnd(int msqid, const void *msgp, size_t msgsz, int msgflg);
+    + 功能
+      发送信息是在链表的尾部插入一个节点
+    + 返回值
+      成功：0
+      失败：-1
+  + msgrcv
+    + 功能
+      是遍历链表，找到第一个符合要求
+  + msgctl
+    + 功能
+* 信号量(进程间)
+  + int semget(key_t key, int nsems, int semflg);
+    + 功能
+      初始化
+    + 返回值
+  + int semop(int semid, struct sembuf *sops, size_t nsops);
+    + 功能
+      p,v操作，对应sem_wait, sem_post
+    + 返回值
+  + int semctl(int semid, int semnum, int cmd, ...);
+    + 功能
+      删除信息，对应sem_destroy
+    + 返回值

@@ -1,0 +1,238 @@
+DESCRIPTION
+       This manual page documents Terminator, a terminal emulator application.
+
+       Terminator  is  a program that allows users to set up flexible arrange‐
+       ments of GNOME terminals. It is aimed at  those  who  normally  arrange
+       lots  of terminals near each other, but don't want to use a frame based
+       window manager.
+
+OPTIONS
+       This program follow the  usual  GNU  command  line  syntax,  with  long
+       options  starting  with  two  dashes  (`-').   A  summary of options is
+       included below.
+
+       -h, --help
+              Show summary of options
+
+       -v, --version
+              Show the version of the Terminator installation
+
+       -m, --maximise
+              Start with a maximised window
+
+       -f, --fullscreen
+              Start with a fullscreen window
+
+       -b, --borderless
+              Instruct the window manager not to render borders/decoration  on
+              the Terminator window (this works well with -m)
+
+       -H, --hidden
+              Hide  the  Terminator  window  by default. Its visibility can be
+              toggled with the hide_window keyboard shortcut (Ctrl-Shift-Alt-a
+              by default)
+
+       -T, --title
+              Force  the  Terminator window to use a specific name rather than
+              updating it dynamically based on the wishes of the child shell.
+
+       --geometry=GEOMETRY
+              Specifies the preferred size and position of  Terminator's  win‐
+              dow; see X(7).
+
+       -e, --command=COMMAND
+              Runs the specified command instead of your default shell or pro‐
+              file specified command. Note: if Terminator is  launched  as  x-
+              terminal-emulator  -e  behaves like -x, and the longform becomes
+              --execute2=COMMAND
+
+       -x, --execute COMMAND [ARGS]
+              Runs the rest of the command line instead of your default  shell
+              or profile specified command.
+
+       --working-directory=DIR
+              Set the terminal's working directory
+
+       -r, --role=ROLE
+              Set a custom WM_WINDOW_ROLE property on the window
+
+       -c, --classname=CLASSNAME
+              Set a custom name (WM_CLASS) property on the window
+
+       -l, --layout=LAYOUT
+              Start  Terminator  with  a specific layout. The argument here is
+              the name of a saved layout.
+
+       -s, --select-layout=LAYOUT
+              Open the layout launcher window instead of the normal terminal.
+
+       -p, --profile=PROFILE
+              Use a different profile as the default
+
+       -i, --icon=FORCEDICON
+              Set a custom icon for the window (by file or name)
+
+       -u, --no-dbus
+              Disable DBus
+
+       -d, --debug
+              Enable debugging output (please use this when  reporting  bugs).
+              This  can  be specified twice to enable a built-in python debug‐
+              ging server.
+
+       --debug-classes=DEBUG_CLASSES
+              If this is specified as a comma separated list, debugging output
+              will only be printed from the specified classes.
+
+       --debug-methods=DEBUG_METHODS
+              If this is specified as a comma separated list, debugging output
+              will only be printed from the specified functions.  If  this  is
+              specified  in addition to --debug-classes, only the intersection
+              of the two lists will be displayed
+
+       --new-tab
+              If this is specified and Terminator  is  already  running,  DBus
+              will be used to spawn a new tab in the first Terminator window.
+
+
+       KEYBINDINGS
+              The following keybindings can be used to control Terminator:
+
+       Super+R
+              Rotate terminals clockwise.
+
+       Super+Shift+R
+              Rotate terminals counter-clockwise.
+
+       Ctrl+Shift+O
+              横分屏
+
+       Ctrl+Shift+E
+              竖分屏
+
+       Ctrl+Shift+Right
+              父窗口向右拉伸
+
+       Ctrl+Shift+Left
+              父窗口u向左拉伸
+
+       Ctrl+Shift+Up
+              父窗口向上拉伸
+
+       Ctrl+Shift+Down
+              父窗口向下拉伸
+
+       Ctrl+Shift+S
+              Hide/Show Scrollbar.
+              隐藏/显示滚动栏
+
+       Ctrl+Shift+F
+              Search within terminal scrollback
+
+       Ctrl+Shift+N or Ctrl+Tab
+              在同一个标签，循环切换到下一个窗口
+
+       Ctrl+Shift+P or Ctrl+Shift+Tab
+              在同一个标签，循环切换到上一个窗口
+
+       Alt+Up
+              切换到当前窗口的上边
+
+       Alt+Down
+              切换到当前窗口的下边
+
+       Alt+Left
+              切换到当前窗口的左边
+
+       Alt+Right
+              切换到当前窗口的右边
+
+       Ctrl+Shift+C
+              复制
+
+       Ctrl+Shift+V
+              转帖
+
+       Ctrl+Shift+W
+              关闭当前终端
+
+       Ctrl+Shift+Q
+              退出终端
+
+       Ctrl+Shift+X
+              只显示当前窗口，窗口占满整个终端
+
+       Ctrl+Shift+Z
+              Toggle between showing all terminals and only showing  a  scaled
+              version of the current one (zoom).
+
+       Ctrl+Shift+T
+              打开新标签
+
+       Ctrl+PageDown
+              切换到下一个标签
+
+       Ctrl+PageUp
+              切换到上一个标签
+
+       Ctrl+Shift+PageDown
+              交换标签位置到下一个
+
+       Ctrl+Shift+PageUp
+              交换标签位置到上一个
+
+       Ctrl+Plus (+)
+              放大字体
+
+       Ctrl+Minus (-)
+              缩小字体
+
+       Ctrl+Zero (0)
+              字体恢复正常大小
+
+       F11    全屏
+
+       Ctrl+Shift+R
+              Reset terminal state
+
+       Ctrl+Shift+G
+              Reset terminal state and clear window
+
+       Super+g
+              Group  all terminals so that any input sent to one of them, goes
+              to all of them.
+
+       Super+Shift+G
+              Remove grouping from all terminals.
+
+       Super+t
+              Group all terminals in the current tab so input sent to  one  of
+              them, goes to all terminals in the current tab.
+
+       Super+Shift+T
+              Remove grouping from all terminals in the current tab.
+
+       Ctrl+Shift+I
+              Open  a new window (note: unlike in previous releases, this win‐
+              dow is part of the same Terminator process)
+
+       Super+i
+              Spawn a new Terminator process
+
+
+       Drag and Drop
+              The layout can be modified by moving  terminals  with  Drag  and
+              Drop.   To  start  dragging  a  terminal,  click and hold on its
+              titlebar.  Alternatively, hold down Ctrl,  click  and  hold  the
+              right  mouse  button.   Then, **Release Ctrl**. You can now drag
+              the terminal to the point in the layout you would like it to be.
+              The  zone  where  the  terminal  would be inserted will be high‐
+              lighted.
+
+
+* terminator配置
+       terminator_config(5)
+       配置文件： ~/.config/terminator/config
+
+       Alt+数字
+              切换标签

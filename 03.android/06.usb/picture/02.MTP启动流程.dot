@@ -1,0 +1,8 @@
+digraph G{              /* digraph为有向图，graph为无向图 */
+	/*用dir设置每条边箭头的方向*/
+
+    "USB连接 and MTP/PTP Enable?"[shape=parallelogram]
+    "USB连接 and MTP/PTP Enable?" -> "启动MtpService";
+    "USB连接 and MTP/PTP Enable?" -> "通知MediaProvider";
+
+}

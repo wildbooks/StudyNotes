@@ -1,0 +1,79 @@
+#+FILE: Power supply子系统之大纲
+#+AUTHOR:      wildbook
+#+DATE:        2017年01月12日18:13:13
+#+EMAIL:       www762268@foxmail.com
+#+DESCRIPTION: 掌握power supply子系统框架
+#+KEYWORDS:    power,pmic,bsp,linux
+#+LANGUAGE:    language for HTML, e.g. ‘en’ (org-export-default-language)
+#+TEXT:        Some descriptive text to be inserted at the beginning.
+#+TEXT:        Several lines may be given.
+#+OPTIONS:     H:2 num:t toc:t \n:nil @:t ::t |:t ^:t f:t TeX:t ...
+#+LINK_UP:     the ``up'' link of an exported page
+#+LINK_HOME:   the ``home'' link of an exported page
+#+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
+* frameworks
+  + *Code*:
+    kernel/drivers/power/power_supply_core.c\\
+    kernel/drivers/power/power_supply_sysfs.c\\
+    kernel/drivers/power/power_supply_leds.c\\
+    kernel/drivers/power/power_supply.h *局部头文件*\\
+    kernel/include/linux/power_supply.h *全局头文件*\\
+  + *dts*:
+  + *docs*
+  + *sysfs*:
+    *sysfs*:
+    *debugfs*:
+    *proc*:
+* battery
+  + *Code*:
+    bq28400_battery.c
+    battery_current_limit.c
+  + *dts*:
+    msm8974-liquid.dtsi  =>搜索"ti,bq28400-battery"
+  + *docs*
+    kernel/Documentation/devicetree/bindings/batterydata/batterydata.txt
+    kernel/Documentation/devicetree/bindings/power/bq28400-battery.txt
+  + *sysfs*:
+    *sysfs*:/sys/class/power/battery
+    *debugfs*:
+    *proc*:
+* charger
+  + *Code*:
+    qpnp-charger.c     qpnp-dc
+    smb350_charger.c     这个驱动
+    bq2589x_charger.c    bq2589x-Wall  bq2589x-usb battery
+  + *dts*:
+    msm8974-mtp.dtsi  =>搜索 "ti,bq2589x-1"
+  + *docs*
+  + *sysfs*:
+    *sysfs*:
+    *debugfs*:
+    *proc*:
+  + *sysfs*:
+    /sys/class/power_supply/bq2589x-Wall
+    /sys/class/power_supply/bq2589x-usb
+    /sys/class/power_supply/qpnp-dc
+    /sys/class/power_supply/battery
+    /sys/class/power_supply/bms
+    /sys/class/power_supply/usb  ==>>这个没找到
+  kernel/drivers/power/power_supply.ko
+  kernel/drivers/power/smb350_charger.ko
+  kernel/drivers/power/bq28400_battery.ko
+  kernel/drivers/power/qpnp-bms.ko
+  kernel/drivers/power/qpnp-charger.ko
+  kernel/drivers/power/battery_current_limit.ko
+  kernel/drivers/power/bq2589x_charger.ko
+* bms
+  + *Code*:\\
+    kernel/drivers/power/qpnp-bms.c   ==> bms\\
+  + *dts*:\\
+    kernel/arch/arm/boot/dts/msm-pm8941.dtsi => 搜索:"qcom,qpnp-bms"\\
+    kernel/arch/arm/boot/dts/msm8974-mtp.dtsi => 搜索:"bms"\\
+  + *docs*\\
+    kernel/Documentation/devicetree/bindings/power/qpnp-bms.txt
+  + *sysfs*:\\
+    *sysfs*:/sys/class/power_supply/bms
+    *debugfs*:/sys/kernel/debug/wakeup_sources 查看所有唤醒源
+    *proc*:\\
+  + *debug*
+    

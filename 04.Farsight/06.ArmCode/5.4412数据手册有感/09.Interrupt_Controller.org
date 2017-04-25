@@ -1,0 +1,185 @@
+* 中断分类
+  + Generic Interrupt Controller (GIC)通用中断控制器
+    Software Generated Interrupt (SGI)
+    Private Peripheral Interrupt (PPI)
+    Shared Peripheral Interrupt (SPI)
+  + 可编程中断允许设置：
+    Security state for an interrupt. 中断安全状态
+    Priority level of an interrupt.  中断优先级
+    Enabling or disabling of an interrupt. 允许/禁止中断
+    Processors that receive an interrupt. 处理器接收中断
+  + 安全/不安全中断
+    安全中断可以接收IRQ或FIQ中断到目标处理器
+    不安全中断只能接收IRQ中断请求到目标处理器
+  + 术语
+    Interrupt states 中断状态
+    Interrupt types  中断类型
+    Model for Handling Interrupts
+    Processor Security State and Secure and Non-Secure GIC Accesses
+    Banking
+  + 中断状态
+    + Inactive：An interrupt that is not active or pending.
+      中断未激活或等待
+    + Pending:等待
+      一个来自GIC的硬件中断或者软中断，等待目标处理器的服务
+    + Active
+      一个来自GIC的中断源已经得到处理器应答，且该服务没完成
+    + Active and Pending
+      处理器服务一个中断，GIC有一个来自同一个源的等待中断
+    + 中断分配器 Distributer AXI
+    + CPU接口   CPU Interface AXI
+    + AMBA Slave Interfaces
+      GIC提供两个AMBA，一个是为了分配器，一个是为了CPU接口分享
+    + Distributer 中断分配器
+      为最高优先级中断提供对应的CPU接口；将一个中断优先级较低的转发给适当的CPU接口变为最高
+      优先级时等待
+      + 功能
+        使能中断能到全部CPU接口
+        使能/禁止每个中断
+        设置每个中断优先级
+        设置每个中断的目标处理器列表
+        设置每个外部中断为 level-sensitive 或者变沿触发
+        如果GIC实现安全扩展，设置每个中断为安全或者不安全中断
+        发送SGI到一个或更多目标处理器
+        软件机制设置或清除外部中断挂起状态
+    + CPU Interface CPU接口
+      可编程中断优先级掩码
+      + 每个CPU接口块支持
+        使能/禁止通过CPU接口接受中断信号请求
+        确认一个中断
+        指示完成一个中断处理
+        为处理器设置中断优先级掩码
+        为处理器定义抢占策略
+        为处理器确定最高优先级等待中断
+  + 寄存器地图
+    + 分配器
+      + ICDDCR  Distributor control register
+        允许/禁止转发等待中断到CPU接口
+        即开启分配启总开关
+      + ICDICTR  Interrupt controller type register
+      + ICDIIDR  Distributor implementer identification register
+      + ICDISRn_CPUn  Interrupt security registers
+        0是响应中断是安全的
+        1是响应中断是不安全的
+        + 看关系图 Figure 9-6
+        + 注意 ::
+                 只有CPU0才支持SPI(共享中断);
+                 SGI,PPI这两中中断方式，CPU0~CPU3都支持,这也是为什么SPI中断使用CPU0
+                 的原因
+      + ICDISERn_CPUn  Interrupt set-enable register
+        功能：允许响应中断
+        + 读时：
+          0 = 禁止响应中断
+          1 = 允许响应中断
+        + 写时：
+          0 = 没影响
+          1 = 允许响应中断
+        + 图 Figure 9-7
+        + 注意 ::
+                 只有CPU0才支持SPI(共享中断);
+                 SGI,PPI这两中中断方式，CPU0~CPU3都支持
+      + ICDICERn_CPUn  Interrupt clear-enable register
+        功能：禁止响应中断
+        + 读
+          0 = 禁止响应中断
+          1 = 允许响应中断
+        + 写
+          0 = 没影响
+          1 = 禁止响应中断
+        + 看关系图 Figure 9-8
+        + 注意 ::
+                 只有CPU0才支持SPI(共享中断);
+                 SGI,PPI这两中中断方式，CPU0~CPU3都支持
+      + ICDISPRn_CPUn  Interrupt pending-set register
+        + 读
+          0 = 响应中断不等待任意处理器
+          1 = SGIs, PPIs: 响应中断等待这个处理器，SPIs：响应中断等待至少一个处理器
+        + 写
+          0 = 没影响
+          1 = 看下面
+          + Edge-Triggered
+            Pending：如果上个状态是inactive
+            Active and pending：如果上个状态是active
+            如果中断已经是等待，就没影响
+          + Level Sensitive
+            Pending：如果上个状态是inactive
+            Active and pending：如果上个状态是active
+            如果中断已经是等待:
+            有点复杂，过段时间再讲
+            SGIs，写忽略
+        + 注意 ::
+                 只有CPU0才支持SPI(共享中断);
+                 SGI,PPI这两中中断方式，CPU0~CPU3都支持
+      + ICDICPRn_CPUn  Interrupt pending-clear register
+        + 读
+          0 = 响应中断不等待任意处理器
+          1 = SGIs, PPIs: 响应中断等待这个处理器，SPIs：响应中断等待至少一个处理器
+        + 写
+          0 = 没影响
+          1 = 看下面
+          + Edge-Triggered
+            inactive：如果上个状态是Pending
+            Active：如果上个状态是active and pending
+            如果中断已经是等待，就没影响
+          + Level Sensitive
+            Inactive：如果上个状态是pending
+            Active：如果上个状态是active and pending
+            如果中断已经是等待:
+            有点复杂，过段时间再讲
+            SGIs,写忽略
+        + 注意 ::
+                 只有CPU0才支持SPI(共享中断);
+                 SGI,PPI这两中中断方式，CPU0~CPU3都支持
+      + ICDABRn_CPUn  Active bit register
+        0 = 响应中断没激活
+        1 = 响应中断激活
+        + 注意 ::
+                 只有CPU0才支持SPI(共享中断);
+                 SGI,PPI这两中中断方式，CPU0~CPU3都支持
+      + ICDIPRn_CPUn  Priority level register
+        优先级0～255之间，值越低，优先级越高
+        + 注意 ::
+                 只有CPU0才支持SPI(共享中断);
+                 SGI,PPI这两中中断方式，CPU0~CPU3都支持
+      + ICDIPTRn_CPUn  Processor targets register
+        + 选着处理中断的目标处理器，
+        + Table 9-10
+        + 注意 ::
+                 只有CPU0才支持SPI(共享中断);
+                 SGI,PPI这两中中断方式，CPU0~CPU3都支持
+      + ICDICFRn_CPUn  Interrupt configuration register
+        + 只能读
+          0 = 应答中断是电平中断
+          1 = 应答中断是边沿触发中断
+        + 注意 ::
+                 只有CPU0才支持SPI(共享中断);
+                 SGI,PPI这两中中断方式，CPU0~CPU3都支持
+      + PPI_STATUS_CPUn  PPI status register
+        Bit[x] = 0   ppi_c<n>[x]是低电平
+        Bit[x] = 1   ppi_c<n>[x]是高电平
+      + SPI_STATUSn  SPI[31:0] status register
+        Bit[x] = 0 spi[x]是低电平
+        Bit[x] = 1 spi[x]是高电平
+      + ICDSGIR  Software generated interrupt register
+        略
+    + CPU接口
+      + ICCICR_CPUn CPU接口控制寄存器
+        全局使能中断信号由CPU接口到连接处理器
+        0: 静止中断信号
+        1：允许中断信号
+      + ICCPMR_CPUn 中断优先级掩码寄存器
+        只有优先级高于寄存器设置的，才能被处理器接收
+        值在0～255之间
+      + ICCBPR_CPUn Binary point register
+      + ICCIAR_CPUn  Interrupt acknowledge register
+        CPUID：软中断，返回CPU接口数量，其他中断反回0
+        ACKINTID：应答中断ID号 0～1023
+      + ICCEOIR_CPU0  End of interrupt register
+        EOIINTID：
+      + ICCRPR_CPUn   Running priority register
+      + ICCHPIR_CPUn  Highest pending interrupt register
+      + ICCABPR_CPUn  Aliased binary point register
+      + INTEG_EN_C_CPUn   Integration test enable register
+      + INTERRUPT_OUT_CPUn Interrupt output register
+      + ICCIIDR   CPU interface identification register
+        GIC身份号码

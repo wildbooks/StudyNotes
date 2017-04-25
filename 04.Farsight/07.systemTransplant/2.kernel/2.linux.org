@@ -1,0 +1,3 @@
+先 vmlinux
+vmlinux.lds
+arch/arm/kernel/head.S	系统入口点

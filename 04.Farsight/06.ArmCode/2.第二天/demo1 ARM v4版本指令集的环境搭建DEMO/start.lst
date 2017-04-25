@@ -1,0 +1,44 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 area             first, code, readonly ;定义一个
+                                                            代码段 first
+    2 00000000                 code32
+    3 00000000                 entry
+    4 00000000         start
+    5 00000000 E3A00001        mov              r0, #1
+    6 00000004 E3A01002        mov              r1, #2
+    7 00000008 E0810001        add              r0, r1, r1
+    8 0000000C E1A00000        nop
+    9 00000010 EAFFFFFA        b                start
+   10 00000014         
+   11 00000014                 end
+Command Line: --debug --xref --cpu=ARM920T --apcs=interwork --depend=start.d -o
+start.o -IC:\Keil\ARM\INC -IC:\Keil\ARM\INC\Samsung --list=start.lst start.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+first 00000000
+
+Symbol: first
+   Definitions
+      At line 1 in file start.s
+   Uses
+      None
+Comment: first unused
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 4 in file start.s
+   Uses
+      At line 9 in file start.s
+Comment: start used once
+2 symbols
+325 symbols in table

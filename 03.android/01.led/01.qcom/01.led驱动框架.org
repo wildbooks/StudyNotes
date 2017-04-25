@@ -1,0 +1,341 @@
+* 简介
+编写驱动大致流程
+1. 注册设备号和字符设备
+   register_chrdev()
+2. 自动创建设备节点
+   1. 创建类
+      class_create() 在led-class.c中
+   2. 创建节点
+      device_create()
+3. 硬件初始化
+注销驱动
+1. 注销设备节点和类
+   device_destroy()
+   class_destroy()
+2. 注销字符设备
+* 参考文档
+wled:背光灯
+flash:闪光灯
+tourch:
+参考文档:kernel/Documentation/devicetree/bindings/leds
+* 重要函数介绍
+** module_platform_driver(front_flash_led_driver);
+展开形式,解释参考[[http://blog.csdn.net/jgw2008/article/details/52690602][函数module_platform_driver()]]
+static int __init front_flash_led_driver_init(void)
+{
+        return platform_driver_register(&front_flash_led_driver);
+}
+module_init(front_flash_led_driver_init);
+static void __exit front_flash_led_driver_init(void)
+{
+        return platform_driver_unregister(&front_flash_led_driver);
+}
+module_exit(front_flash_led_driver_exit);
+** devm_kzalloc()
+[[http://blog.csdn.net/u014628531/article/details/50711409][Linux内核 kmalloc, kzalloc & devm_kzalloc 区别]]
+首先，kzalloc()实现了kmalloc()+memset()的功能,而 devm_kzalloc() 是具
+有资源管理的 kzalloc()。使用资源管理（resource-managed）函数分配的内
+存，是会与所属设备相关联。当设备从系统中分离或者设备驱动被卸载，该内
+存会被自动释放。也可以通过devm_kfree()来释放内存。
+void * devm_kzalloc ( 	struct device * dev, size_t size, gfp_t gfp);
++ dev 申请内存的目标设备
++ size 申请的内存大小
++ gfp 申请内存的类型标志
++ 返回值 成功返回指针，失败返回NULL
+** int of_property_read_string(struct device_node *np, const char *propname, const char **out_string)
+从设备节点np中读取属性名为propname的字符串型属性值，保存在out_string中,成功
+返回0
+** static inline int of_property_read_u32(const struct device_node *np,const char *propname,u8 *out_value)
+从设备结点np中读取属性名为propname，类型为8、16、32位的属性值，并放入
+out_values。实际上这里调用的就是sz为1的XXX_array函数
+[[http://blog.csdn.net/xishuang_gongzi/article/details/51495967][linux下devicetree中惯用的of函数]]
+** static inline int of_get_named_gpio(struct device_node *np, const char *propname, int index)
+获取GPIO引脚,从设备节点np中读取名为propname,GPIO索引号为index，成功返回GPIO
+端口，失败返回errno
+** int of_parse_phandle_with_args(const struct device_node *np, const char *list_name, const char *cells_name, int index, struct of_phandle_args *out_args)
+** int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
+** static inline void gpio_set_value(unsigned gpio, int value)
+** gpio_set_value
+** printk函数的封装方法
+#define FRONT_LED_LOG_TAG "front_led"
+#define front_led_info(fmt, ...) \
+            printk(KERN_ALERT FRONT_LED_LOG_TAG ": " fmt "\n", ##__VA_ARGS__)
+
+* 框架
+  由/kernel/drivers/leds/Makefile可得Led几个重要文件led-core.c,led-class,
+  led-triggers.c, front_flash_idol4,前三个是led驱动的核心，最后一个由平台
+  决定
+FLASH_LED_FILE = "/sys/class/leds/led-flash/brightness";
+FLASH_LED_FILE_1 = "/sys/class/leds/led_torch/brightness";   这个有问题
+FLASH_LED_FILE_2 = "/sys/class/leds/led:torch_0/brightness"; 前灯
+FLASH_LED_FILE_3 = "/sys/class/leds/led:torch_1/brightness"; 前灯
+FLASH_LED_SWITCH = "/sys/class/leds/led:switch/brightness";
+
+LCD_FILE = "/sys/class/leds/lcd-backlight/brightness";
+KEY_FILE = "/sys/class/leds/button-backlight/brightness";
+LED_ORANGE_FILE = "/sys/class/leds/led_G/brightness";
+LED_RED_FILE = "/sys/class/leds/red/brightness";
+
++ 设备树 n8976/kernel/arch/arm64/boot/dts/idol4/msm8952-mtp.dtsi
+  #+begin_src cpp
+  front_pwm_led:tcl,front_pwm_led {
+            compatible = "tcl,front_flash_led";   //靠这个匹配
+            linux,name = "led_G";                 //设备名/sys/class/xx/led_G
+            led-mode = <0>;                       //工作模式
+            qcom,default-led-trigger = "pwm_trigger";//触发方式
+            qcom,enable-gpio = <&pmi8950_gpios 1 0>;
+            qcom,flash-gpio = <&msm_gpio 33 0>;
+            qcom,pwm-gpio = <&msm_gpio 38 0>;
+            pwms = <&pmi8950_pwm 0 0>;//
+  };
+  front_flash_led:tcl,front_flash_led {
+            compatible = "tcl,front_flash_led";
+            linux,name = "led_flash";
+            led-mode = <1>;
+            qcom,max-current = <200>;
+            qcom,current = <120>;
+            qcom,default-led-trigger = "flash_trigger";
+            qcom,enable-gpio = <&pmi8950_gpios 1 0>;
+            qcom,flash-gpio = <&msm_gpio 33 0>;
+            qcom,pwm-gpio = <&msm_gpio 38 0>;
+  };
+  front_torch_led:tcl,front_torch_led {
+            compatible = "tcl,front_flash_led";
+            linux,name = "led_torch";
+            led-mode = <2>;
+            qcom,max-current = <200>;
+            qcom,current = <120>;
+            qcom,default-led-trigger = "torch_trigger";
+            qcom,enable-gpio = <&pmi8950_gpios 1 0>;
+            qcom,flash-gpio = <&msm_gpio 33 0>;
+            qcom,pwm-gpio = <&msm_gpio 38 0>;
+  };
+  #+end_src
++ 这可能没用
+  #+begin_src cpp
+  qcom,pm8950@0 {
+      qcom,leds@a300 {
+           status = "okay";
+           qcom,led_mpp_4 {
+                label = "mpp";
+                linux,name = "button-backlight";
+                linux,default-trigger = "none";
+                qcom,default-state = "off";
+                qcom,max-current = <40>;
+                qcom,current-setting = <5>;
+                qcom,id = <6>;
+                qcom,mode = "manual";
+                qcom,source-sel = <1>;
+                qcom,mode-ctrl = <0x60>;
+          };
+      };
+  };
+  qcom,pmi8950@3 {
+     qcom,leds@d300 {
+             compatible = "qcom,qpnp-flash-led";
+             status = "okay";
+             reg = <0xd300 0x100>;
+             pinctrl-names = "flash_led_enable","flash_led_disable";
+             pinctrl-0 = <&flash_led_enable>;
+             pinctrl-1 = <&flash_led_disable>;
+             qcom,follow-otst2-rb-disabled;
+      };
+  }
+  #+end_src
++ 一些函数
+  led->cdev.name == "led_touch"
+  led->mode = 2
+
+  leds-msm-gpio-flash.c
+  leds-triggers.c
+  leds-gpio.c     没有
+  leds-qpnp-flash.c 有  spmi总线 mmitest俩后灯　手电筒用的是这个,后摄像头灯一个 leds-qpnp.c         没有
+  leds-qpnp-wled.c     lcd背光灯熄灭 后面摄像头灯
+  ledtrig-backlight.c
+  ledtrig-default-on.c 没有
+  front-flash-idol4.c
+qcom,led-flash
+qcom,led-flash1
+qcom,leds-gpio-flash
+front_flash_led
+* front-flash-idol4.c流程
++ 涉及到的文件
+  + front-flash-idol4.c
+  + led-class.c
++ 第一步: platform驱动模块的注册和注销
+  #+begin_src cpp
+  module_platform_driver(front_flash_led_driver);
+  #+end_src
+  等价于
+  #+begin_src cpp
+    module_platform_driver(front_flash_led_driver);
+    static int __init front_flash_led_driver_init(void)
+    {
+            return platform_driver_register(&front_flash_led_driver);
+    }
+    module_init(front_flash_led_driver_init);
+    static void __exit front_flash_led_driver_init(void)
+    {
+            return platform_driver_unregister(&front_flash_led_driver);
+    }
+    module_exit(front_flash_led_driver_exit);
+  #+end_src
+    front_flash_led_driver结构体变量必须先填充，填充过程在下面
++ 第二步：填充platform_driver类型变量
+    #+begin_src cpp
+      static struct of_device_id front_flash_led_match_table[] = {
+        { .compatible = "tcl,front_flash_led",},
+        { },
+      };
+
+      static struct platform_driver front_flash_led_driver = {
+        .probe = front_flash_led_probe,
+        .remove = front_flash_led_remove,
+        .driver = {
+          .owner = THIS_MODULE,
+          .name = "front_flash_led",
+          .of_match_table = front_flash_led_match_table,//匹配设备树用的
+        },
+      };
+    #+end_src
+  1. front_flash_led_driver变量被填充好了，但有一个尴尬的问题是上面这个
+     函数不存在，所以我们要封装这些函数
+  2. 当有设备插入时，系统会执行front_flash_led_probe函数，当设备被拔掉时，
+     系统会执行front_flash_led_remove函数
++ 第三步：封装函数
+    #+begin_src cpp
+      static int front_flash_led_probe(struct platform_device *pdev)
+      {
+            struct led_data *led;
+            int rc;
+            struct device_node *node;
+            node = pdev->dev.of_node;
+            //分配内核内存空间,设备被拔掉，驱动被卸载时，内存会自动被释放
+            led = devm_kzalloc(&pdev->dev,sizeof(struct led_data), GFP_KERNEL);
+            if (!led) {
+             dev_err(&pdev->dev, "Unable to allocate memory\n");
+             return -ENOMEM;
+            }
+            led->dev = pdev;
+            //解析设备树
+            rc = parse_dts(led,node);
+            if(rc<0)
+            {
+            dev_err(&pdev->dev, "unable to parse dts, rc=%d\n",rc);
+            goto fail_id_check;
+            }
+            led->cdev.brightness_set    = flash_led_set;
+            led->cdev.brightness_get    = flash_led_get;
+            //创建设备节点
+            rc = led_classdev_register(&pdev->dev, &led->cdev);
+            if (rc) {
+            dev_err(&pdev->dev, "unable to register led, rc=%d\n",rc);
+            goto fail_id_check;
+            }
+            //创建sysfs系统文件
+          rc = sysfs_create_file(&led->cdev.dev->kobj, &dev_attr_blink.attr);
+          if(rc)
+            goto fail_id_check;
+            dev_set_drvdata(&pdev->dev, led);
+            return 0;
+
+          fail_id_check:
+               led_classdev_unregister(&led->cdev);
+          return rc;
+      }
+    #+end_src
+  + 解析设备树
+    #+begin_src cpp
+    static int parse_dts(struct led_data *led,
+    struct device_node *node)
+    {
+        int rc;
+        rc = of_property_read_string(node, "linux,name",
+          &led->cdev.name);
+        front_led_info("name = %s\n",led->cdev.name);
+        if (rc < 0) {
+      dev_err(&led->dev->dev,"Failure reading led name, rc = %d\n", rc);
+        }
+        rc = of_property_read_u32(node, "led-mode",
+          &led->mode);
+        front_led_info("mode = %d\n",led->mode);
+
+        led->enable_gpio = of_get_named_gpio(node, "qcom,enable-gpio", 0);
+
+        front_led_info("enable_gpio = %d\n",led->enable_gpio);
+
+        led->flash_gpio = of_get_named_gpio(node, "qcom,flash-gpio", 0);
+
+        front_led_info("flash_gpio = %d\n",led->flash_gpio);
+
+        led->pwm_gpio = of_get_named_gpio(node, "qcom,pwm-gpio", 0);
+
+        front_led_info("pwm_gpio = %d\n",led->pwm_gpio);
+        if(led->mode ==LED_PWM)//sun zhangyang add for pwm
+      {
+               led->pwm_dev = of_pwm_get(node, NULL);
+            }
+
+
+        rc = of_property_read_string(node, "qcom,default-led-trigger",
+            &led->cdev.default_trigger);
+        return rc;
+    }
+    #+end_src
+    +
+  + 创建设备节点
+    #+begin_src cpp
+    int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+    {
+      //创建设备节点/sys/class/led/xx
+      led_cdev->dev = device_create(leds_class, parent, 0, led_cdev,
+                  "%s", led_cdev->name);
+      if (IS_ERR(led_cdev->dev))
+        return PTR_ERR(led_cdev->dev);
+
+    #ifdef CONFIG_LEDS_TRIGGERS
+      init_rwsem(&led_cdev->trigger_lock);
+    #endif
+      /* add to the list of leds */
+      down_write(&leds_list_lock);
+      list_add_tail(&led_cdev->node, &leds_list);
+      up_write(&leds_list_lock);
+
+      if (!led_cdev->max_brightness)
+        led_cdev->max_brightness = LED_FULL;
+
+      led_update_brightness(led_cdev);
+
+      INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
+
+      init_timer(&led_cdev->blink_timer);
+      led_cdev->blink_timer.function = led_timer_function;
+      led_cdev->blink_timer.data = (unsigned long)led_cdev;
+
+    #ifdef CONFIG_LEDS_TRIGGERS
+      led_trigger_set_default(led_cdev);
+    #endif
+
+      dev_dbg(parent, "Registered led device: %s\n",
+          led_cdev->name);
+
+      return 0;
+    }
+    #+end_src
+    #+begin_src cpp
+    #+end_src
+    #+begin_src cpp
+    #+end_src
+    #+begin_src cpp
+    #+end_src
+  + front_flash_led_remove
+   #+begin_src cpp
+   static int front_flash_led_remove(struct platform_device *pdev)
+  {
+    struct led_data *led;
+    led = dev_get_drvdata(&pdev->dev);
+    led_classdev_unregister(&led->cdev);
+
+    return 0;
+  }
+  #+end_src

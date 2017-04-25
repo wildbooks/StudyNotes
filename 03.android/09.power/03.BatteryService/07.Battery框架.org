@@ -1,0 +1,804 @@
+* 参考文档
+[[http://blog.csdn.net/gaugamela/article/details/52920222][Android7.0 Battery Service]]
+* 一些常识
+  + ServiceManager
+    整个Android(native或者framework)的Service都需要加入ServiceManager中进行统一
+    管理
+  + Binder(进程间通信)
+    这些Service进程间就是通过Binder进行通信
+  + 智能指针sp
+    + 轻量级指针(Light Pointer)
+    + 强指针(Strong Pointer) sp
+    + 弱指针(Weak Pointer)
+* battery框架
+   app接口层(BatteryManager.java)
+                  ||
+                  \/
+            framework层(BatteryStatsService.java)
+                  ||
+                  \/
+jni层(com_android_server_am_BatteryStatsService.cpp)
+                  ||
+                  \/
+                native
+                  ||
+                  \/
+                kernel
+* 涉及到的一些技术
+1. binder通信
+2. SystemServer
+3. 监听机制
+   注册
+* java 
+** 启动BatteryService过程
+   BatteryService与系统中的其他服务一样，也是由SystemServer启动的,启动
+   SystemServer服务的代码片段如下：
+   + SystermServer.java
+     #+begin_src java
+     ......
+     startBootstrapServices();//创建ActivityManagerService，PowerManagerService 开始服务
+     startCoreServices();//创建BatteryService服务
+     startOtherServices();
+
+
+     startBootstrapServices();
+     //BatteryService在startCoreServices中创建的
+     startCoreServices();
+     ......
+     #+end_src
+   + startCoreServices()
+     #+begin_src java
+     private void startCoreServices() {
+         // Tracks the battery level.  Requires LightService.
+         mSystemServiceManager.startService(BatteryService.class);
+         ......
+     }
+     #+end_src
+** res资源路径
+   n8976/frameworks/base/core/res/res/values/config.xml
+** BatteryService.java
+   + 阅读说明 ::
+      为了描述方便，我给类中的方法都抽离出去了，仅仅把方法名写在
+      BatteryService.java    
+     #+begin_src java
+     public final class BatteryService extends SystemService {
+       //类名:BatteryService
+       private static final String TAG = BatteryService.class.getSimpleName();
+       ....
+       //
+   
+       /*构造函数*/
+       public BatteryService(Context context) {
+       }
+   
+       @Override
+       public void onStart() {
+       }
+   
+       @Override
+       public void onBootPhase(int phase) {
+       }
+   
+       private void updateBatteryWarningLevelLocked() {
+       }
+       
+       private boolean isPoweredLocked(int plugTypeSet) {
+       }
+       
+       private boolean shouldSendBatteryLowLocked() {
+       }
+       
+       private void shutdownIfWeakChargerEmptySOCLocked() {
+       }
+       
+       private void shutdownIfWeakChargerVoltageCheckLocked() {
+       }
+   
+       private void shutdownIfNoPowerLocked() {
+       }
+   
+       private void shutdownIfOverTempLocked() {
+       }
+   
+       private void update(BatteryProperties props) {
+       }
+   
+       private void processValuesLocked(boolean force) {
+       }
+       
+       private void playChargingRingtone () {
+       }
+   
+       private void sendIntentLocked() {
+       }
+   
+       private void logBatteryStatsLocked() {
+       }
+       
+       private void logOutlierLocked(long duration) {
+       }
+   
+       private int getIconLocked(int level) {
+       }
+   
+       class Shell extends ShellCommand {
+       }
+   
+       static void dumpHelp(PrintWriter pw) {
+       }
+       
+       int onShellCommand(Shell shell, String cmd) {
+       }
+   
+       private void dumpInternal(FileDescriptor fd, PrintWriter pw, String[] args) {
+       }
+   
+       private final class Led {
+       }
+       
+       private boolean isHvdcpPresent() {
+       }
+   
+       public void updateLightsLocked() {
+       }
+   
+       private final class BatteryListener extends IBatteryPropertiesListener.Stub {
+       }
+   
+       private final class BinderService extends Binder {
+       }
+   
+       private final class LocalService extends BatteryManagerInternal {
+       }
+   
+       /*注册广播接收者*/
+       private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
+       }
+     }
+     #+end_src
+*** Runnable()
+    + 功能
+      当电量为0(mBatteryProps.batteryLevel == 0)时,申请低电量关机
+      检测/sys/class/power_supply/battery/voltage_now是否存在，如果存在就读取
+      它的电压值,并检查值是否小于关机电压，小于就关机,不小于就30s后再运行
+      Runnable(),
+    + Runnable()
+      #+begin_src java
+      private Runnable runnable = new Runnable() {
+          public void run() {
+              synchronized (mLock) { //一种同步锁
+                  //如果不存在voltage_now文件，则默认关闭间隔
+                  if(mVoltageNowFile.exists())//判断文件是否存在
+                      shutdownIfWeakChargerVoltageCheckLocked();
+                  else//不存在该设备文件
+                      shutdownIfWeakChargerEmptySOCLocked();
+              }
+          }
+      };
+      #+end_src
+    + shutdownIfWeakChargerVoltageCheckLocked()
+      #+begin_src java
+      private void shutdownIfWeakChargerVoltageCheckLocked() {
+          int vbattNow = 0;
+          FileReader fileReader;
+          BufferedReader br;
+
+          try {
+              /*读取当前电池电压值/sys/class/power_supply/battery/voltage_now*/
+              fileReader = new FileReader(mVoltageNowFile);
+              br = new BufferedReader(fileReader);
+              vbattNow =  Integer.parseInt(br.readLine());
+              /* convert battery voltage from uV to mV */
+              vbattNow =  vbattNow / 1000;
+              br.close();
+              fileReader.close();
+          } catch (FileNotFoundException e) {
+              Slog.e(TAG, "Failure in reading battery voltage", e);
+          } catch (IOException e) {
+              Slog.e(TAG, "Failure in reading battery voltage", e);
+          }
+
+          if (mBatteryProps.batteryLevel == 0) {  //0%的电量,对应文件节点capacity
+
+              if (vbattNow <= mWeakChgCutoffVoltageMv) {//当前电压小于截止电压
+                 if (ActivityManagerNative.isSystemReady()) {//检测系统是否准备读取就绪
+                     Slog.e(TAG, "silent_reboot shutdownIfWeakChargerVoltageCheckLocked");
+
+                     /*请求关机*/
+                     Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+                     intent.putExtra(Intent.EXTRA_KEY_CONFIRM, false);
+                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                     mContext.startActivityAsUser(intent, UserHandle.CURRENT);
+                 }
+              } else {
+                   /*以下实现了每30秒执行下runnable*/
+                   mHandler.removeCallbacks(runnable);//删除消息队列中的等等处理的runnable
+                   mHandler.postDelayed(runnable, mVbattSamplingIntervalMsec);//每30秒执行下runnable
+              }
+          } else {
+               mWeakChgSocCheckStarted = 0;// 在中使用processValuesLocked()
+          }
+      }
+      #+end_src
+    + shutdownIfWeakChargerEmptySOCLocked()
+      #+begin_src java
+      private void shutdownIfWeakChargerEmptySOCLocked() {
+
+          if (mBatteryProps.batteryLevel == 0) {
+              if (mInitiateShutdown) {
+                 if (ActivityManagerNative.isSystemReady()) {//检测系统是否处于读取就绪
+                      Slog.e(TAG, "silent_reboot shutdownIfWeakChargerEmptySOCLocked");
+                      
+                      /*请求关机*/
+                      Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+                      intent.putExtra(Intent.EXTRA_KEY_CONFIRM, false);
+                      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                      mContext.startActivityAsUser(intent, UserHandle.CURRENT);
+                  }
+              } else {
+              
+                   mInitiateShutdown = true;
+                   /*定时30s检测一下,有点像定时器，每30秒执行一下runnable*/
+                   mHandler.removeCallbacks(runnable);//关闭回调函数runnable
+                   mHandler.postDelayed(runnable, mWeakChgMaxShutdownIntervalMsecs);//30秒后执行runnable()
+              }
+          } else {
+               mInitiateShutdown = false;
+               mWeakChgSocCheckStarted = 0;
+          }
+      }
+      #+end_src
+*** BatteryService()
+   #+begin_src java
+   /*构造函数 只是从资源中取一些值*/
+   public BatteryService(Context context) {
+       super(context);  //调用父类的方法
+
+       mContext = context;
+       mHandler = new Handler(true /*async*/);//创建一个中断对象，并允许中断
+
+       //内部类led,控制不同电量下led灯的颜色
+       mLed = new Led(context, getLocalService(LightsManager.class));
+
+       //获取电量统计服务 BatteryStatsService
+       mBatteryStats = BatteryStatsService.getService();
+
+
+       /*以下是根据配置文件，定义不同电量对应的等级*/
+
+
+       //从ro.cutoff_voltage_mv获取截止电压3200
+       mWeakChgCutoffVoltageMv = SystemProperties.getInt("ro.cutoff_voltage_mv", 0);
+       /* 2700mV UVLO voltage 欠压锁定电压*/
+       if (mWeakChgCutoffVoltageMv > 2700)
+          mVoltageNowFile = new File("/sys/class/power_supply/battery/voltage_now");//获取当前电压
+
+       //电池危急的电量；当电池电量低于此值时，将强制关机  ==5
+       mCriticalBatteryLevel = mContext.getResources().getInteger(
+               com.android.internal.R.integer.config_criticalBatteryWarningLevel);
+       //低电警告的电量；当电池电量低于此值时，系统报警，例如闪烁LED灯等==15
+       mLowBatteryWarningLevel = mContext.getResources().getInteger(
+               com.android.internal.R.integer.config_lowBatteryWarningLevel);
+       //关闭低电警告的电量；当电池电量高于此值时，结束低电状态，停止警示灯==5
+       mLowBatteryCloseWarningLevel = mLowBatteryWarningLevel + mContext.getResources().getInteger(
+               com.android.internal.R.integer.config_lowBatteryCloseWarningBump);
+       //关机电池的温度==680
+       mShutdownBatteryTemperature = mContext.getResources().getInteger(
+               com.android.internal.R.integer.config_shutdownBatteryTemperature);
+
+
+       //如果invalid_charger开关存在，则监视无效的充电器消息
+       //监控终端是否连接不匹配的充电器
+       if (new File("/sys/devices/virtual/switch/invalid_charger/state").exists()) {
+
+           //UEventObserver是一个从内核接收UEvent的抽象类
+           UEventObserver invalidChargerObserver = new UEventObserver() {
+               @Override
+               public void onUEvent(UEvent event) {
+                   final int invalidCharger = "1".equals(event.get("SWITCH_STATE")) ? 1 : 0;
+                   synchronized (mLock) {//一种同步机制，
+                       if (mInvalidCharger != invalidCharger) {
+                           mInvalidCharger = invalidCharger;
+                       }
+                   }
+               }
+           };
+           invalidChargerObserver.startObserving(
+                   "DEVPATH=/devices/virtual/switch/invalid_charger");
+       }
+   }
+   #+end_src
+*** onStart()
+    + onStart()
+      #+begin_src java
+      public void onStart() {
+            //获取电源属性服务的BinderProxy对象
+            //电源属性服务运行在android的healthd进程中
+            //对应文件为system/core/healthd/BatteryPropertiesRegistrar.cpp
+            //这个写法确实很风骚，java层通过Binder直接与native层通信
+            IBinder b = ServiceManager.getService("batteryproperties");
+            //xx.Stub.asInterface(b)继承xx对象，即batteryproperties
+            final IBatteryPropertiesRegistrar batteryPropertiesRegistrar =
+                    IBatteryPropertiesRegistrar.Stub.asInterface(b);
+            try {
+                //向电源属性服务注册一个回调接口
+                //当电源属性发生变化时，BatteryListener的batteryPropertiesChanged函数将被调用
+                //注册监听器,更改属性
+                batteryPropertiesRegistrar.registerListener(new BatteryListener());
+            } catch (RemoteException e) {
+                // Should never happen.
+            }
+
+            mBinderService = new BinderService();
+            //与PMS等很多系统服务一样，将自己注册到service manager进程中
+            publishBinderService("battery", mBinderService);//存在进程间通信
+            //对于基于LocalServices管理的对象而言，这个函数调用相当于单例模式的进阶版
+            //以后BatteryManagerInternal接口类型的对象，只能有BatteryService的内部类LocalService一个
+            //publishLocalService 只是本进程使用,不存在进程间通信问题
+            publishLocalService(BatteryManagerInternal.class, new LocalService());
+      }
+      #+end_src
+    + BatteryListener
+      #+begin_src java
+      private final class BatteryListener extends IBatteryPropertiesListener.Stub {
+          @Override public void batteryPropertiesChanged(BatteryProperties props) {
+          
+              //重置当前线程UID/PID标识
+              final long identity = Binder.clearCallingIdentity();
+              try {
+                  /*电源属性发生变化后，回调BatteryService的update函数*/
+                  BatteryService.this.update(props);
+              } finally {
+                  Binder.restoreCallingIdentity(identity);//恢复到以前线程的UID/PID标识
+              }
+         }
+      }
+      #+end_src
+    + BatteryService类中的update()
+      #+begin_src java
+      private void update(BatteryProperties props) {
+          synchronized (mLock) {
+              /*从代码来看，mUpdatesStopped默认为false，通过shell command才有可能改变*/
+              if (!mUpdatesStopped) {
+
+                  /*更新mBatteryProps属性*/
+                  mBatteryProps = props;
+                  // Process the new values.
+                  //更新电源相关的信息，后文详细介绍
+                  //false不强制刷新
+                  processValuesLocked(false);//实现广播电池发生改变的消息
+              } else {
+                  mLastBatteryProps.set(props);//设置电池属性
+              }
+          }
+      }
+      #+end_src
+    + processValuesLocked()
+      #+begin_src java
+      private void processValuesLocked(boolean force) {
+          /*force表示是否强制更新信息,当force为false时，只有新旧信息不一致才更新*/
+          boolean logOutlier = false;
+          long dischargeDuration = 0;
+
+          /*判断当前电量是否危险;mBatteryProps由电源属性服务提供,危险为true*/
+          mBatteryLevelCritical = (mBatteryProps.batteryLevel <= mCriticalBatteryLevel);
+          
+          /*以下是得到充电的类型*/
+          if (mBatteryProps.chargerAcOnline) {
+              mPlugType = BatteryManager.BATTERY_PLUGGED_AC;
+          } else if (mBatteryProps.chargerUsbOnline) {
+              mPlugType = BatteryManager.BATTERY_PLUGGED_USB;
+          } else if (mBatteryProps.chargerWirelessOnline) {
+              mPlugType = BatteryManager.BATTERY_PLUGGED_WIRELESS;
+          } else {
+              mPlugType = BATTERY_PLUGGED_NONE;
+          }
+
+          if (DEBUG) {
+              Slog.d(TAG, "Processing new values: "
+                      + "chargerAcOnline=" + mBatteryProps.chargerAcOnline
+                      + ", chargerUsbOnline=" + mBatteryProps.chargerUsbOnline
+                      + ", chargerWirelessOnline=" + mBatteryProps.chargerWirelessOnline
+                      + ", maxChargingCurrent" + mBatteryProps.maxChargingCurrent
+                      + ", maxChargingVoltage" + mBatteryProps.maxChargingVoltage
+                      + ", chargeCounter" + mBatteryProps.batteryChargeCounter
+                      + ", batteryStatus=" + mBatteryProps.batteryStatus
+                      + ", batteryHealth=" + mBatteryProps.batteryHealth
+                      + ", batteryPresent=" + mBatteryProps.batteryPresent
+                      + ", batteryLevel=" + mBatteryProps.batteryLevel
+                      + ", batteryTechnology=" + mBatteryProps.batteryTechnology
+                      + ", batteryVoltage=" + mBatteryProps.batteryVoltage
+                      + ", batteryTemperature=" + mBatteryProps.batteryTemperature
+                      + ", batteryThermalTemperature=" + mBatteryProps.xothermalTemp // MODIFIED by v-nj-fuyin.liu, 2016-05-20,BUG-2167030
+                      + ", mBatteryLevelCritical=" + mBatteryLevelCritical
+                      + ", mPlugType=" + mPlugType);
+          }
+
+          //把电池属性放到电池状态里
+          try {
+
+              /*将信息提交给电源统计服务，我们介绍BatteryStatsService时，再分析该函数*/
+              /*更新电池数据*/
+              mBatteryStats.setBatteryState(mBatteryProps.batteryStatus, mBatteryProps.batteryHealth,
+                      mPlugType, mBatteryProps.batteryLevel, mBatteryProps.batteryTemperature,
+                      mBatteryProps.batteryVoltage, mBatteryProps.batteryChargeCounter);
+          } catch (RemoteException e) {
+              // Should never happen.
+          }
+
+          /*
+           * Schedule Weak Charger shutdown thread if:
+           * Battery level = 0, Charger is pluggedin and cutoff voltage is valid.
+           */
+           /*如果电量为0，充电器插入，截止电压有效，则调度弱电量充电关机线程*/
+          if ((mBatteryProps.batteryLevel == 0)
+                   && (mWeakChgSocCheckStarted == 0)
+                   && (mWeakChgCutoffVoltageMv > 0)
+                   && (mPlugType != BATTERY_PLUGGED_NONE)) {
+
+                   /*定时30s后，执行runnable()关机*/
+                   mWeakChgSocCheckStarted = 1;
+                   mHandler.removeCallbacks(runnable);
+                   mHandler.postDelayed(runnable, mVbattSamplingIntervalMsec);
+          }
+
+          /*电池没电了(batteryLevel==0)且未充电时，拉起关机对话框*/
+          shutdownIfNoPowerLocked();
+          
+          /*电池温度过高(默认为68C),拉起关机对话框*/
+          shutdownIfOverTempLocked();
+
+          /*强制更新，或电源相关属性发生变化时，进行对应操作*/
+          /*force为强制刷新控制，当前电池属性与上次属性不同时，则执行下面的*/
+          if (force || (mBatteryProps.batteryStatus != mLastBatteryStatus ||
+                  mBatteryProps.batteryHealth != mLastBatteryHealth ||
+                  mBatteryProps.batteryPresent != mLastBatteryPresent ||
+                  mBatteryProps.batteryLevel != mLastBatteryLevel ||
+                  mPlugType != mLastPlugType ||
+                  mBatteryProps.batteryVoltage != mLastBatteryVoltage ||
+                  mBatteryProps.batteryTemperature != mLastBatteryTemperature ||
+                  mBatteryProps.maxChargingCurrent != mLastMaxChargingCurrent ||
+                  mBatteryProps.maxChargingVoltage != mLastMaxChargingVoltage ||
+                  mBatteryProps.batteryChargeCounter != mLastChargeCounter ||
+                  mInvalidCharger != mLastInvalidCharger)) {
+
+              /*充电状态发生变化(不关注充电的方式,即usb变为AC之类的,只是关注充电
+              变为未充电等事件)*/
+              if (mPlugType != mLastPlugType) {
+                  if (mLastPlugType == BATTERY_PLUGGED_NONE) {//插上充电器
+                      // discharging -> charging
+
+                      // There's no value in this data unless we've discharged at least once and the
+                      // battery level has changed; so don't log until it does.
+                      /*记录一下不充电待机的情况下,放电持续时间*/
+                      if (mDischargeStartTime != 0 && mDischargeStartLevel != mBatteryProps.batteryLevel) {
+                          dischargeDuration = SystemClock.elapsedRealtime() - mDischargeStartTime;
+                          logOutlier = true;
+                          /*写日志*/
+                          EventLog.writeEvent(EventLogTags.BATTERY_DISCHARGE, dischargeDuration,
+                                  mDischargeStartLevel, mBatteryProps.batteryLevel);
+                          // make sure we see a discharge event before logging again
+                          mDischargeStartTime = 0;
+                      }
+                  } else if (mPlugType == BATTERY_PLUGGED_NONE) {//拔掉充电器
+                      // charging -> discharging or we just powered up
+                      /*本次充电结束,重新开始计算耗电情况,于是初始化下面的变量*/
+                      mDischargeStartTime = SystemClock.elapsedRealtime();
+                      mDischargeStartLevel = mBatteryProps.batteryLevel;
+                  }
+              }
+              
+              /*以下是记录电源的状态信息,电量信息*/
+              if (mBatteryProps.batteryStatus != mLastBatteryStatus ||
+                      mBatteryProps.batteryHealth != mLastBatteryHealth ||
+                      mBatteryProps.batteryPresent != mLastBatteryPresent ||
+                      mPlugType != mLastPlugType) {
+                  EventLog.writeEvent(EventLogTags.BATTERY_STATUS,
+                          mBatteryProps.batteryStatus, mBatteryProps.batteryHealth, mBatteryProps.batteryPresent ? 1 : 0,
+                          mPlugType, mBatteryProps.batteryTechnology);
+              }
+              if (mBatteryProps.batteryLevel != mLastBatteryLevel) {
+                  // Don't do this just from voltage or temperature changes, that is
+                  // too noisy.
+                  EventLog.writeEvent(EventLogTags.BATTERY_LEVEL,
+                          mBatteryProps.batteryLevel, mBatteryProps.batteryVoltage, mBatteryProps.batteryTemperature);
+              }
+
+              /*电池电量低到危险的程度,且没充电,记录耗电时间*/
+              if (mBatteryLevelCritical && !mLastBatteryLevelCritical &&
+                      mPlugType == BATTERY_PLUGGED_NONE) {
+                  // We want to make sure we log discharge cycle outliers
+                  // if the battery is about to die.
+                  dischargeDuration = SystemClock.elapsedRealtime() - mDischargeStartTime;
+                  logOutlier = true;
+              }
+
+              /*以下是判断电源是否处于低电模式*/
+              if (!mBatteryLevelLow) {
+                  // Should we now switch in to low battery mode?
+                  /*当前未充电,且当前电量小于提醒电量,设置低电量为true*/
+                  if (mPlugType == BATTERY_PLUGGED_NONE
+                          && mBatteryProps.batteryLevel <= mLowBatteryWarningLevel) {
+                      mBatteryLevelLow = true;
+                  }
+              } else {
+                  // Should we now switch out of low battery mode?
+                  if (mPlugType != BATTERY_PLUGGED_NONE) {
+                      /*开始充电了,退出低电量模式*/
+                      mBatteryLevelLow = false;
+                  } else if (mBatteryProps.batteryLevel >= mLowBatteryCloseWarningLevel)  {
+                      /*电池电量充足,退出低电量模式*/
+                      mBatteryLevelLow = false;
+                  } else if (force && mBatteryProps.batteryLevel >= mLowBatteryWarningLevel) {
+                      // If being forced, the previous state doesn't matter, we will just
+                      // absolutely check to see if we are now above the warning level.
+                      /*强制刷新时,忽略之前的状态*/
+                      mBatteryLevelLow = false;
+                  }
+              }
+
+              /*发送广播ACTION_BATTERY_CHANGED到BatteryManager,内含电源当前的全部信息,BatteryManager再把
+              消息发送给所有用户*/
+              sendIntentLocked();
+
+              // Separate broadcast is sent for power connected / not connected
+              // since the standard intent will not wake any applications and some
+              // applications may want to have smart behavior based on this.
+              /*发送广播，通知电源已连接*/
+              
+              /*手机连接电源 && 上次充电状态为不充电*/
+              if (mPlugType != 0 && mLastPlugType == 0) {
+                  mHandler.post(new Runnable() {
+                      @Override
+                      public void run() {
+                          Intent statusIntent = new Intent(Intent.ACTION_POWER_CONNECTED);
+                          statusIntent.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY_BEFORE_BOOT);
+                          mContext.sendBroadcastAsUser(statusIntent, UserHandle.ALL);
+                          // MODIFIED by fan.zhou, 2016-12-20,BUG-3694712
+                          final boolean enabled = Settings.Global.getInt(mContext.getContentResolver(),
+                                Settings.Global.CHARGING_SOUNDS_ENABLED, 1) != 0;
+                          if(enabled){
+                              playChargingRingtone(); //充电铃声
+                          }
+                          // MODIFIED by fan.zhou, 2016-12-20,BUG-3694712
+                      }
+                  });
+              }
+              /*未连接电源 && 上次状态为充电状态*/
+              else if (mPlugType == 0 && mLastPlugType != 0) {
+                  mHandler.post(new Runnable() {//发送消息到消息队列中
+                      @Override
+                      public void run() {
+                          Intent statusIntent = new Intent(Intent.ACTION_POWER_DISCONNECTED);
+                          statusIntent.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY_BEFORE_BOOT);
+                          mContext.sendBroadcastAsUser(statusIntent, UserHandle.ALL);
+                          String value = SystemProperties.get("sys.boot_completed", "0");
+                          if ("1".equals(value)) {
+                             final boolean enabled = Settings.Global.getInt(mContext.getContentResolver(),
+                                   Settings.Global.CHARGING_SOUNDS_ENABLED, 1) != 0;
+                             if(enabled){
+                                 playChargingRingtone();//响铃
+                             }
+                          }
+                      }
+                  });
+              }
+
+              /*低电量状态*/
+              if (shouldSendBatteryLowLocked()) {
+                  mSentLowBatteryBroadcast = true;
+                  /*发送广播，低电量*/
+                  mHandler.post(new Runnable() {
+                      @Override
+                      public void run() {
+                          Intent statusIntent = new Intent(Intent.ACTION_BATTERY_LOW);
+                          statusIntent.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY_BEFORE_BOOT);
+                          mContext.sendBroadcastAsUser(statusIntent, UserHandle.ALL);
+                      }
+                  });
+              /*发送广播 电池电量OK状态*/
+              } else if (mSentLowBatteryBroadcast && mLastBatteryLevel >= mLowBatteryCloseWarningLevel) {
+                  mSentLowBatteryBroadcast = false;
+                  mHandler.post(new Runnable() {
+                      @Override
+                      public void run() {
+                          Intent statusIntent = new Intent(Intent.ACTION_BATTERY_OKAY);
+                          statusIntent.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY_BEFORE_BOOT);
+                          mContext.sendBroadcastAsUser(statusIntent, UserHandle.ALL);
+                      }
+                  });
+              }
+
+              // Update the battery LED
+              /*根据电源的电量和状态,改变LED灯的颜色*/
+              mLed.updateLightsLocked();
+
+              /*log打印相关的,我无需关注它*/
+              // This needs to be done after sendIntent() so that we get the lastest battery stats.
+              if (logOutlier && dischargeDuration != 0) {
+                  logOutlierLocked(dischargeDuration);
+              }
+
+              /*更新本地变量*/
+              mLastBatteryStatus = mBatteryProps.batteryStatus;
+              mLastBatteryHealth = mBatteryProps.batteryHealth;
+              mLastBatteryPresent = mBatteryProps.batteryPresent;
+              mLastBatteryLevel = mBatteryProps.batteryLevel;
+              mLastPlugType = mPlugType;
+              mLastBatteryVoltage = mBatteryProps.batteryVoltage;
+              mLastBatteryTemperature = mBatteryProps.batteryTemperature;
+              mLastMaxChargingCurrent = mBatteryProps.maxChargingCurrent;
+              mLastMaxChargingVoltage = mBatteryProps.maxChargingVoltage;
+              mLastChargeCounter = mBatteryProps.batteryChargeCounter;
+              mLastBatteryLevelCritical = mBatteryLevelCritical;
+              mLastInvalidCharger = mInvalidCharger;
+          }
+      }
+      #+end_src
+    + setBatteryState()
+      BatteryStateService.java
+      #+begin_src java
+      public void setBatteryState(final int status, final int health, final int plugType,
+            final int level, final int temp, final int volt, final int chargeUAh) {
+          enforceCallingPermission();
+
+          // BatteryService calls us here and we may update external state. It would be wrong
+          // to block such a low level service like BatteryService on external stats like WiFi.
+          mHandler.post(new Runnable() {
+              @Override
+              public void run() {
+                  synchronized (mStats) {
+                      final boolean onBattery = plugType == BatteryStatsImpl.BATTERY_PLUGGED_NONE;
+                      if (mStats.isOnBattery() == onBattery) {
+                          // The battery state has not changed, so we don't need to sync external
+                          // stats immediately.
+                          mStats.setBatteryStateLocked(status, health, plugType, level, temp, volt,
+                                  chargeUAh);
+                          return;
+                      }
+                  }
+
+                  // Sync external stats first as the battery has changed states. If we don't sync
+                  // immediately here, we may not collect the relevant data later.
+                  updateExternalStatsSync("battery-state", BatteryStatsImpl.ExternalStatsSync.UPDATE_ALL);
+                  synchronized (mStats) {
+                      mStats.setBatteryStateLocked(status, health, plugType, level, temp, volt,
+                              chargeUAh);
+                  }
+              }
+          });
+      }
+      #+end_src
+    + BinderService()
+      #+begin_src java
+      private final class BinderService extends Binder {
+          @Override protected void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
+              if (mContext.checkCallingOrSelfPermission(android.Manifest.permission.DUMP)
+                      != PackageManager.PERMISSION_GRANTED) {
+
+                  pw.println("Permission Denial: can't dump Battery service from from pid="
+                          + Binder.getCallingPid()
+                          + ", uid=" + Binder.getCallingUid());
+                  return;
+              }
+
+              dumpInternal(fd, pw, args);
+          }
+
+          @Override public void onShellCommand(FileDescriptor in, FileDescriptor out,
+                  FileDescriptor err, String[] args, ResultReceiver resultReceiver) {
+              (new Shell()).exec(this, in, out, err, args, resultReceiver);
+          }
+      }
+      #+end_src
+    + shutdownIfNoPowerLocked()
+      #+begin_src java
+      private void shutdownIfNoPowerLocked() {
+          /*如果我们的电池严重不足,也没有电源关机.请等待系统引导，然后再尝试显示关闭对话框*/
+
+          //[Charge] PowerOn/PowerOff Condition
+          /*电池没电 && 没充电*/
+          boolean needShutDown = (mBatteryProps.batteryLevel == 0 && !isPoweredLocked(BatteryManager.BATTERY_PLUGGED_ANY));
+          
+          /*低电压关机*/
+          if (mContext.getResources().getBoolean(com.android.internal.R.bool.feature_tctfw_lowVoltageShutDown_on)) {
+              needShutDown = needShutDown || mBatteryProps.batteryVoltage <= 3100;
+          }
+          //if (mBatteryProps.batteryLevel == 0 && !isPoweredLocked(BatteryManager.BATTERY_PLUGGED_ANY)) {
+          if (needShutDown) {
+              mHandler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                      if (ActivityManagerNative.isSystemReady()) {
+                          Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+                          intent.putExtra(Intent.EXTRA_KEY_CONFIRM, false);
+                          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                          mContext.startActivityAsUser(intent, UserHandle.CURRENT);
+                      }
+                  }
+              });
+          }
+      }
+      #+end_src
+*** onBootPhase()
+    + onBootPhase()
+      #+begin_src java
+      @Override
+      public void onBootPhase(int phase) {
+      /*BatteryService只需要在PHASE_ACTIVITY_MANAGER_READY后，在进行部分的初始化即可
+      其它的服务也是通过这种方式，按需实现阶段化的初始化*/
+      if (phase == PHASE_ACTIVITY_MANAGER_READY) {
+              // check our power situation now that it is safe to display the shutdown dialog.
+              synchronized (mLock) {
+                  ContentObserver obs = new ContentObserver(mHandler) {
+                      @Override
+                      public void onChange(boolean selfChange) {
+                          synchronized (mLock) {
+                              updateBatteryWarningLevelLocked();
+                          }
+                      }
+                  };
+                  final ContentResolver resolver = mContext.getContentResolver();
+                  /*监听设置中低电量警告的电量值是否改变，改变时调用updateBatteryWarningLevelLocked函数*/
+                  resolver.registerContentObserver(Settings.Global.getUriFor(
+                          Settings.Global.LOW_POWER_MODE_TRIGGER_LEVEL),
+                          false, obs, UserHandle.USER_ALL);
+                  updateBatteryWarningLevelLocked();
+              }
+          }
+      }
+      #+end_src
+    + updateBatteryWarningLevelLocked()
+      #+begin_src java
+      private void updateBatteryWarningLevelLocked() {
+          final ContentResolver resolver = mContext.getContentResolver();
+
+          /*获取XML中配置的默认警告电量值*/
+          int defWarnLevel = mContext.getResources().getInteger(
+                  com.android.internal.R.integer.config_lowBatteryWarningLevel);
+
+          /*获取设置中用户定义的电量警告值*/
+          mLowBatteryWarningLevel = Settings.Global.getInt(resolver,
+                  Settings.Global.LOW_POWER_MODE_TRIGGER_LEVEL, defWarnLevel);
+
+          /*用户没有定义，则使用默认的*/
+          if (mLowBatteryWarningLevel == 0) {
+              mLowBatteryWarningLevel = defWarnLevel;
+          }
+
+          /**/
+          /*警告值不能低于危险值*/
+          if (mLowBatteryWarningLevel < mCriticalBatteryLevel) {
+              mLowBatteryWarningLevel = mCriticalBatteryLevel;
+          }
+          /*计算出关闭警告的电量值*/
+          mLowBatteryCloseWarningLevel = mLowBatteryWarningLevel + mContext.getResources().getInteger(
+                  com.android.internal.R.integer.config_lowBatteryCloseWarningBump);
+
+          /*更新电池信息(前面已提到，注册的接口回调时也会调用该函数)*/
+          processValuesLocked(true);
+      }
+      #+end_src
+*** 
+* cpp
+  + BatteryService.cpp
+    #+begin_src cpp
+    BatteryService::BatteryService() {
+        const sp<IServiceManager> sm(defaultServiceManager());//获取ServiceManager
+        if (sm != NULL) {
+            const String16 name("batterystats");
+            mBatteryStatService = interface_cast<IBatteryStats>(sm->getService(name));//batterystats服务
+        }
+    }
+    bool BatteryService::addSensor(uid_t uid, int handle) {
+        Mutex::Autolock _l(mActivationsLock);
+        Info key(uid, handle);
+        ssize_t index = mActivations.indexOf(key);
+        if (index < 0) {
+            index = mActivations.add(key);
+        }
+        Info& info(mActivations.editItemAt(index));
+        info.count++;
+        return info.count == 1;
+    }
+    #+end_src

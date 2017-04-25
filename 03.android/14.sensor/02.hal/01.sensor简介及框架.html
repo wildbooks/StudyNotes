@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-02-20 一 09:27 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="wildbook" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline2">1. 简介</a>
+<ul>
+<li><a href="#orgheadline1">1.1. 手机sensor类别</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline3">2. sysfs</a></li>
+<li><a href="#orgheadline9">3. 关键结构体</a>
+<ul>
+<li><a href="#orgheadline4">3.1. sensors<sub>module</sub><sub>t</sub></a></li>
+<li><a href="#orgheadline5">3.2. hw<sub>module</sub><sub>t</sub></a></li>
+<li><a href="#orgheadline6">3.3. sensor<sub>t</sub></a></li>
+<li><a href="#orgheadline7">3.4. sensors<sub>event</sub><sub>t</sub></a></li>
+<li><a href="#orgheadline8">3.5. sensors<sub>poll</sub><sub>device</sub><sub>t</sub></a></li>
+</ul>
+</li>
+<li><a href="#orgheadline10">4. 关键函数</a></li>
+<li><a href="#orgheadline11">5. dlopen()</a></li>
+<li><a href="#orgheadline12">6. dlsym()</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2"><span class="section-number-2">1</span> 简介</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li>参考文档
+<a href="http://blog.csdn.net/loongembedded/article/details/51442241">android sensor架构</a>
+<a href="http://blog.csdn.net/kevinx_xu/article/details/9180171">转G-sensor 架构分析</a></li>
+<li><b>CODE:</b> hardware/qcom/sensors
+hardware/libhardware/include/hardware/sensors.h</li>
+</ul>
+</div>
+<div id="outline-container-orgheadline1" class="outline-3">
+<h3 id="orgheadline1"><span class="section-number-3">1.1</span> 手机sensor类别</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+<b>加速度传感器 (accelerometer)</b>
+<b>磁力传感器(magnetic field)</b>
+<b>方向传感器(orientation)</b>
+<b>陀螺仪(gyroscope)</b>
+<b>环境光照传感器(light)</b>
+<b>压力传感器(pressure)</b>
+<b>温度传感器(temperature)</b>
+<b>距离传感器(proximity)</b>
+<b>重力传感器(gravity)</b>
+</p>
+<ul class="org-ul">
+<li>工具: <b>android sensor box</b></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3"><span class="section-number-2">2</span> sysfs</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+<b>sysfs</b> /sys/class/sensors
+<b>input</b> /sys/class/input
+        /dev/input/eventX
+**
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline9" class="outline-2">
+<h2 id="orgheadline9"><span class="section-number-2">3</span> 关键结构体</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-orgheadline4" class="outline-3">
+<h3 id="orgheadline4"><span class="section-number-3">3.1</span> sensors<sub>module</sub><sub>t</sub></h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+传感器结构体
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">sensors_module_t</span> {
+     <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">hw_module_t</span> <span style="color: #268bd2;">common</span>;
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#33719;&#21462;&#20256;&#24863;&#22120;&#21015;&#34920;,&#36820;&#22238;&#21015;&#34920;&#20256;&#24863;&#22120;&#30340;&#25968;&#37327;*/</span>
+     <span style="color: #b58900;">int</span> (*<span style="color: #268bd2;">get_sensors_list</span>)(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">sensors_module_t</span>* <span style="color: #268bd2;">module</span>,
+             <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">sensor_t</span> <span style="color: #859900; font-weight: bold;">const</span>** <span style="color: #268bd2;">list</span>);
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#35774;&#32622;&#20256;&#24863;&#22120;&#25805;&#20316;&#27169;&#24335;</span>
+<span style="color: #93a1a1;">       0 -&#27491;&#24120;&#25805;&#20316;&#27169;&#24335;&#65292;&#27169;&#22359;&#40664;&#35748;&#27169;&#24335;</span>
+<span style="color: #93a1a1;">       1 -&#22238;&#29615;&#27169;&#24335;,&#22312;&#27492;&#27169;&#24335;&#19979;,&#20256;&#24863;&#22120;&#26381;&#21153;&#20026;&#25903;&#25345;&#30340;&#20256;&#24863;&#22120;&#27880;&#20837;&#25968;&#25454;</span>
+<span style="color: #93a1a1;">       @return 0 &#25104;&#21151;</span>
+<span style="color: #93a1a1;">              -EINVAL:&#27169;&#24335;&#19981;&#25903;&#25345;</span>
+<span style="color: #93a1a1;">              -EPERM:&#19981;&#20801;&#35768;&#25805;&#20316;</span>
+<span style="color: #93a1a1;">     */</span>
+     <span style="color: #b58900;">int</span> (*<span style="color: #268bd2;">set_operation_mode</span>)(<span style="color: #b58900;">unsigned</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">mode</span>);
+ };
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline5" class="outline-3">
+<h3 id="orgheadline5"><span class="section-number-3">3.2</span> hw<sub>module</sub><sub>t</sub></h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">typedef</span> <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">hw_module_t</span> {
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#26631;&#31614;&#24517;&#39035;&#21021;&#22987;&#21270;&#20026;HARDWARE_MODULE_TAG*/</span>
+    <span style="color: #b58900;">uint32_t</span> <span style="color: #268bd2;">tag</span>;
+    <span style="color: #b58900;">uint16_t</span> <span style="color: #268bd2;">module_api_version</span>;
+<span style="color: #268bd2;">#define</span> <span style="color: #268bd2;">version_major</span> module_api_version
+    <span style="color: #b58900;">uint16_t</span> <span style="color: #268bd2;">hal_api_version</span>;
+<span style="color: #268bd2;">#define</span> <span style="color: #268bd2;">version_minor</span> hal_api_version
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#27169;&#22359;&#26631;&#35782;&#31526;*/</span>
+    <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">id</span>;
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#27169;&#22359;&#21517;*/</span>
+    <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">name</span>;
+
+    <span style="color: #93a1a1;">/**</span><span style="color: #93a1a1;">&#27169;&#22359;&#30340;&#20316;&#32773;/&#25152;&#26377;&#32773;/&#23454;&#29616;&#32773;*/</span>
+    <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">author</span>;
+
+    <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#27169;&#22359;&#26041;&#27861;*/</span>
+    <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">hw_module_methods_t</span>* <span style="color: #268bd2;">methods</span>;
+
+    <span style="color: #93a1a1;">/** </span><span style="color: #93a1a1;">module's dso */</span>
+    <span style="color: #b58900;">void</span>* <span style="color: #268bd2;">dso</span>; <span style="color: #93a1a1;">//</span><span style="color: #93a1a1;">&#21160;&#24577;&#24211;&#21477;&#26564;</span>
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline6" class="outline-3">
+<h3 id="orgheadline6"><span class="section-number-3">3.3</span> sensor<sub>t</sub></h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+表示传感器
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">sensor_t</span> {
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Name of this sensor.</span>
+<span style="color: #93a1a1;">      * All sensors of the same "type" must have a different "name".</span>
+<span style="color: #93a1a1;">      */</span>
+     <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">char</span>*     <span style="color: #268bd2;">name</span>;<span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20256;&#24863;&#22120;&#21517;,&#30456;&#21516;&#31867;&#22411;&#30340;&#20256;&#24863;&#22120;&#21517;&#23383;&#24517;&#39035;&#19981;&#21516;*/</span>
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#30828;&#20214;&#37096;&#20998;&#30340;&#20379;&#24212;&#21830;*/</span>
+     <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">char</span>*     <span style="color: #268bd2;">vendor</span>;
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#29256;&#26412;&#21495;*/</span>
+     <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">version</span>;
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20256;&#24863;&#22120;&#21477;&#26564;,&#21644;fd&#26377;&#28857;&#31867;&#20284;*/</span>
+     <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">handle</span>;
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20256;&#24863;&#22120;&#31867;&#22411;*/</span>
+     <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">type</span>;
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20256;&#24863;&#22120;&#20540;&#30340;&#26368;&#22823;&#33539;&#22260;*/</span>
+     <span style="color: #b58900;">float</span>           <span style="color: #268bd2;">maxRange</span>;
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20256;&#24863;&#22120;&#25253;&#21578;&#20004;&#20540;&#20043;&#38388;&#30340;&#26368;&#23567;&#24046;&#20540;*/</span>
+     <span style="color: #b58900;">float</span>           <span style="color: #268bd2;">resolution</span>;
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20256;&#24863;&#22120;&#30340;&#21151;&#32791;(ma)*/</span>
+     <span style="color: #b58900;">float</span>           <span style="color: #268bd2;">power</span>;
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">this value depends on the reporting mode:</span>
+<span style="color: #93a1a1;">      *</span>
+<span style="color: #93a1a1;">      *   continuous: minimum sample period allowed in microseconds</span>
+<span style="color: #93a1a1;">      *   on-change : 0</span>
+<span style="color: #93a1a1;">      *   one-shot  :-1</span>
+<span style="color: #93a1a1;">      *   special   : 0, unless otherwise noted</span>
+<span style="color: #93a1a1;">      */</span>
+     <span style="color: #b58900;">int32_t</span>         <span style="color: #268bd2;">minDelay</span>;
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">number of events reserved for this sensor in the batch mode FIFO.</span>
+<span style="color: #93a1a1;">      * If there is a dedicated FIFO for this sensor, then this is the</span>
+<span style="color: #93a1a1;">      * size of this FIFO. If the FIFO is shared with other sensors,</span>
+<span style="color: #93a1a1;">      * this is the size reserved for that sensor and it can be zero.</span>
+<span style="color: #93a1a1;">      */</span>
+     <span style="color: #b58900;">uint32_t</span>        <span style="color: #268bd2;">fifoReservedEventCount</span>;
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">maximum number of events of this sensor that could be batched.</span>
+<span style="color: #93a1a1;">      * This is especially relevant when the FIFO is shared between</span>
+<span style="color: #93a1a1;">      * several sensors; this value is then set to the size of that FIFO.</span>
+<span style="color: #93a1a1;">      */</span>
+     <span style="color: #b58900;">uint32_t</span>        <span style="color: #268bd2;">fifoMaxEventCount</span>;
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">type of this sensor as a string. Set to corresponding</span>
+<span style="color: #93a1a1;">      * SENSOR_STRING_TYPE_*.</span>
+<span style="color: #93a1a1;">      * When defining an OEM specific sensor or sensor manufacturer specific</span>
+<span style="color: #93a1a1;">      * sensor, use your reserve domain name as a prefix.</span>
+<span style="color: #93a1a1;">      * ex: com.google.glass.onheaddetector</span>
+<span style="color: #93a1a1;">      * For sensors of known type, the android framework might overwrite this</span>
+<span style="color: #93a1a1;">      * string automatically.</span>
+<span style="color: #93a1a1;">      */</span>
+     <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">char</span>*    <span style="color: #268bd2;">stringType</span>;
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">permission required to see this sensor, register to it and receive data.</span>
+<span style="color: #93a1a1;">      * Set to "" if no permission is required. Some sensor types like the</span>
+<span style="color: #93a1a1;">      * heart rate monitor have a mandatory require_permission.</span>
+<span style="color: #93a1a1;">      * For sensors that always require a specific permission, like the heart</span>
+<span style="color: #93a1a1;">      * rate monitor, the android framework might overwrite this string</span>
+<span style="color: #93a1a1;">      * automatically.</span>
+<span style="color: #93a1a1;">      */</span>
+     <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #b58900;">char</span>*    <span style="color: #268bd2;">requiredPermission</span>;
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">This value is defined only for continuous mode and on-change sensors. It is the delay between</span>
+<span style="color: #93a1a1;">      * two sensor events corresponding to the lowest frequency that this sensor supports. When lower</span>
+<span style="color: #93a1a1;">      * frequencies are requested through batch()/setDelay() the events will be generated at this</span>
+<span style="color: #93a1a1;">      * frequency instead. It can be used by the framework or applications to estimate when the batch</span>
+<span style="color: #93a1a1;">      * FIFO may be full.</span>
+<span style="color: #93a1a1;">      *</span>
+<span style="color: #93a1a1;">      * </span><span style="color: #d0bf8f;">NOTE</span><span style="color: #93a1a1;">: 1) period_ns is in nanoseconds where as maxDelay/minDelay are in microseconds.</span>
+<span style="color: #93a1a1;">      *              continuous, on-change: maximum sampling period allowed in microseconds.</span>
+<span style="color: #93a1a1;">      *              one-shot, special : 0</span>
+<span style="color: #93a1a1;">      *   2) maxDelay should always fit within a 32 bit signed integer. It is declared as 64 bit</span>
+<span style="color: #93a1a1;">      *      on 64 bit architectures only for binary compatibility reasons.</span>
+<span style="color: #93a1a1;">      * Availability: SENSORS_DEVICE_API_VERSION_1_3</span>
+<span style="color: #93a1a1;">      */</span>
+<span style="color: #268bd2;">     #ifdef</span> __LP64__
+        <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">maxDelay</span>;
+<span style="color: #268bd2;">     #else</span>
+        <span style="color: #b58900;">int32_t</span> <span style="color: #268bd2;">maxDelay</span>;
+<span style="color: #268bd2;">     #endif</span>
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Flags for sensor. See SENSOR_FLAG_* above. Only the least significant 32 bits are used here.</span>
+<span style="color: #93a1a1;">      * It is declared as 64 bit on 64 bit architectures only for binary compatibility reasons.</span>
+<span style="color: #93a1a1;">      * Availability: SENSORS_DEVICE_API_VERSION_1_3</span>
+<span style="color: #93a1a1;">      */</span>
+<span style="color: #268bd2;">     #ifdef</span> __LP64__
+        <span style="color: #b58900;">uint64_t</span> <span style="color: #268bd2;">flags</span>;
+<span style="color: #268bd2;">     #else</span>
+        <span style="color: #b58900;">uint32_t</span> <span style="color: #268bd2;">flags</span>;
+<span style="color: #268bd2;">     #endif</span>
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">reserved fields, must be zero */</span>
+     <span style="color: #b58900;">void</span>*           <span style="color: #268bd2;">reserved</span>[<span style="color: #6c71c4;">2</span>];
+ };
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline7" class="outline-3">
+<h3 id="orgheadline7"><span class="section-number-3">3.4</span> sensors<sub>event</sub><sub>t</sub></h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+传感器的数据结构体
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">typedef</span> <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">sensors_event_t</span> {
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">must be sizeof(struct sensors_event_t) */</span>
+     <span style="color: #b58900;">int32_t</span> <span style="color: #268bd2;">version</span>;
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20256;&#24863;&#22120;&#26631;&#35782;&#31526;*/</span>
+     <span style="color: #b58900;">int32_t</span> <span style="color: #268bd2;">sensor</span>;
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20256;&#24863;&#22120;&#31867;&#22411;*/</span>
+     <span style="color: #b58900;">int32_t</span> <span style="color: #268bd2;">type</span>;
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">&#20445;&#30041;:&#27809;&#29992; */</span>
+     <span style="color: #b58900;">int32_t</span> <span style="color: #268bd2;">reserved0</span>;
+
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#26102;&#38388;&#25139;:&#20197;&#32435;&#31186;&#20026;&#21333;&#20301;*/</span>
+     <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">timestamp</span>;
+
+     <span style="color: #859900; font-weight: bold;">union</span> {
+         <span style="color: #859900; font-weight: bold;">union</span> {
+             <span style="color: #b58900;">float</span>           <span style="color: #268bd2;">data</span>[<span style="color: #6c71c4;">16</span>];
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#21152;&#36895;&#24230;&#20540; &#21333;&#20301;m/s^2*/</span>
+             <span style="color: #b58900;">sensors_vec_t</span>   <span style="color: #268bd2;">acceleration</span>;
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#30913;&#30690;&#37327;&#20540;&#20197;&#24494;&#29305;&#26031;&#25289;&#65288;uT&#65289;*/</span>
+             <span style="color: #b58900;">sensors_vec_t</span>   <span style="color: #268bd2;">magnetic</span>;
+
+             <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">orientation values are in degrees */</span>
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#26041;&#21521;&#20540; &#21333;&#20301;&#24230;*/</span>
+             <span style="color: #b58900;">sensors_vec_t</span>   <span style="color: #268bd2;">orientation</span>;
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#38464;&#34746;&#20202;&#20540;  &#21333;&#20301;rad/s*/</span>
+             <span style="color: #b58900;">sensors_vec_t</span>   <span style="color: #268bd2;">gyro</span>;
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#28201;&#24230; &#21333;&#20301;&#25668;&#27663;&#24230;&#65288;&#8451;&#65289;*/</span>
+             <span style="color: #b58900;">float</span>           <span style="color: #268bd2;">temperature</span>;
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#36317;&#31163; &#21333;&#20301;&#21400;&#31859;*/</span>
+             <span style="color: #b58900;">float</span>           <span style="color: #268bd2;">distance</span>;
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#20809; &#22269;&#38469;&#21333;&#20301;(SI):lux(&#21202;&#20811;&#26031;)*/</span>
+             <span style="color: #b58900;">float</span>           <span style="color: #268bd2;">light</span>;
+
+             <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">pressure in hectopascal (hPa) */</span>
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#21387;&#24378; &#21333;&#20301;:hPa(&#30334;&#24085;&#26031;&#21345;)*/</span>
+             <span style="color: #b58900;">float</span>           <span style="color: #268bd2;">pressure</span>;
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#30456;&#23545;&#28287;&#24230;&#30334;&#20998;&#27604;*/</span>
+             <span style="color: #b58900;">float</span>           <span style="color: #268bd2;">relative_humidity</span>;
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#26410;&#26657;&#20934;&#30340;&#38464;&#34746;&#20202;&#20540;&#20197; rad/s */</span>
+             <span style="color: #b58900;">uncalibrated_event_t</span> <span style="color: #268bd2;">uncalibrated_gyro</span>;
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#26410;&#26657;&#20934;&#30913;&#21147;&#35745;&#20540;&#20197;&#24494;&#29305;&#26031;&#25289;*/</span>
+             <span style="color: #b58900;">uncalibrated_event_t</span> <span style="color: #268bd2;">uncalibrated_magnetic</span>;
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#24515;&#29575;&#25968;&#25454;&#21253;&#21547;bpm&#20013;&#30340;&#20540;&#21644;&#29366;&#24577;*/</span>
+             <span style="color: #b58900;">heart_rate_event_t</span> <span style="color: #268bd2;">heart_rate</span>;
+
+             <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">this is a special event. see SENSOR_TYPE_META_DATA above.</span>
+<span style="color: #93a1a1;">              * sensors_meta_data_event_t events are all reported with a type of</span>
+<span style="color: #93a1a1;">              * SENSOR_TYPE_META_DATA. The handle is ignored and must be zero.</span>
+<span style="color: #93a1a1;">              */</span>
+             <span style="color: #b58900;">meta_data_event_t</span> <span style="color: #268bd2;">meta_data</span>;
+
+             <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#21160;&#24577;&#20256;&#24863;&#22120;&#20803;&#20107;&#20214;&#12290;&#35831;&#21442;&#35265;SENSOR_TYPE_DYNAMIC_SENSOR_META&#31867;&#22411;*/</span>
+             <span style="color: #b58900;">dynamic_sensor_meta_event_t</span> <span style="color: #268bd2;">dynamic_sensor_meta</span>;
+
+             <span style="color: #93a1a1;">/*</span>
+<span style="color: #93a1a1;">              * special additional sensor information frame, see</span>
+<span style="color: #93a1a1;">              * SENSOR_TYPE_ADDITIONAL_INFO for details.</span>
+<span style="color: #93a1a1;">              */</span>
+             <span style="color: #b58900;">additional_info_event_t</span> <span style="color: #268bd2;">additional_info</span>;
+         };
+
+         <span style="color: #859900; font-weight: bold;">union</span> {
+             <span style="color: #b58900;">uint64_t</span>        <span style="color: #268bd2;">data</span>[<span style="color: #6c71c4;">8</span>];
+
+             <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">step-counter */</span>
+             <span style="color: #b58900;">uint64_t</span>        <span style="color: #268bd2;">step_counter</span>;
+         } <span style="color: #268bd2;">u64</span>;
+     };
+
+     <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Reserved flags for internal use. Set to zero. */</span>
+     <span style="color: #b58900;">uint32_t</span> <span style="color: #268bd2;">flags</span>;
+
+     <span style="color: #b58900;">uint32_t</span> <span style="color: #268bd2;">reserved1</span>[<span style="color: #6c71c4;">3</span>];
+ } <span style="color: #b58900;">sensors_event_t</span>;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline8" class="outline-3">
+<h3 id="orgheadline8"><span class="section-number-3">3.5</span> sensors<sub>poll</sub><sub>device</sub><sub>t</sub></h3>
+<div class="outline-text-3" id="text-3-5">
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">sensors_poll_device_t</span> {
+     <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">hw_device_t</span> <span style="color: #268bd2;">common</span>;
+     <span style="color: #b58900;">int</span> (*<span style="color: #268bd2;">activate</span>)(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">sensors_poll_device_t</span> *<span style="color: #268bd2;">dev</span>, <span style="color: #b58900;">int</span> <span style="color: #268bd2;">sensor_handle</span>, <span style="color: #b58900;">int</span> <span style="color: #268bd2;">enabled</span>);
+     <span style="color: #b58900;">int</span> (*<span style="color: #268bd2;">setDelay</span>)(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">sensors_poll_device_t</span> *<span style="color: #268bd2;">dev</span>, <span style="color: #b58900;">int</span> <span style="color: #268bd2;">sensor_handle</span>, <span style="color: #b58900;">int64_t</span> <span style="color: #268bd2;">sampling_period_ns</span>);
+     <span style="color: #93a1a1;">/*</span><span style="color: #93a1a1;">&#33719;&#21462;&#24213;&#23618;&#25968;&#25454;*/</span>
+     <span style="color: #b58900;">int</span> (*<span style="color: #268bd2;">poll</span>)(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">sensors_poll_device_t</span> *<span style="color: #268bd2;">dev</span>, <span style="color: #b58900;">sensors_event_t</span>* <span style="color: #268bd2;">data</span>, <span style="color: #b58900;">int</span> <span style="color: #268bd2;">count</span>);
+ };
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline10" class="outline-2">
+<h2 id="orgheadline10"><span class="section-number-2">4</span> 关键函数</h2>
+</div>
+<div id="outline-container-orgheadline11" class="outline-2">
+<h2 id="orgheadline11"><span class="section-number-2">5</span> dlopen()</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+打开一个动态链接库,并返回动态链接库的句柄
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline12" class="outline-2">
+<h2 id="orgheadline12"><span class="section-number-2">6</span> dlsym()</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+根据动态链接库操作句柄与符号,返回符号对应的地址,(函数/变量地址)
+</p>
+
+<p>
+hardware/libhardware/include/hardware/hardware.c
+</p>
+
+<p>
+hw<sub>get</sub><sub>module</sub>() -&gt; hw<sub>get</sub><sub>module</sub><sub>by</sub><sub>class</sub>() -&gt; hw<sub>module</sub><sub>exists</sub>()        -&gt; load
+                                          判断sensors.msm8952.so是否存在  加载文件,并匹配
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+<p>
+     \/
+sensors<sub>open</sub>()  -&gt; module-&gt;methods-&gt;open()
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+<p>
+     \/
+module-&gt;get<sub>sensors</sub><sub>list</sub>() 
+获取传感器列表
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: wildbook</p>
+<p class="date">Created: 2017-02-20 一 09:27</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

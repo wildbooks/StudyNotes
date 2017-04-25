@@ -1,0 +1,29 @@
+/*
+* digraph 是有向图 用->    ;graph 是无向图 用 --
+*
+*  执行命令： dot -Tjpg graph1.dot -o graph1.jpg  
+*  用Emacs打开, 然后按下 <C-c c> , 这样就成功编译 test.dot 文件.
+*  之后只需要按下 <C-c p> , 就能够预览 test.dot 编译成png的文件. 
+*
+*
+****/
+/*
+Hello
+
+    A "Hello World" example made by giving the command:
+    echo "digraph G {Hello->World}" | dot -Tpng >hello.png
+
+*/
+
+
+digraph G{              /* digraph为有向图，graph为无向图 */
+	rankdir = LR;   /* 方向由默认的上到下变为左到右*/
+	main -> parse -> execute;/*有向图用-> 无向图用--*/
+	main -> init;
+	main -> cleanup;
+	execute -> make_string;
+	execute -> printf;
+	init -> make_string;
+	main -> printf;
+	execute -> compare;
+} 

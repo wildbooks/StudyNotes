@@ -1,0 +1,39 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 area             first, code, readonly
+    2 00000000                 code32
+    3 00000000                 entry
+    4 00000000         start
+    5 00000000 E3A01001        mov              r1, #1
+    6 00000004 EAFFFFFD        b                start
+    7 00000008                 end
+Command Line: --debug --xref --cpu=ARM966E-S --apcs=interwork --depend=test.d -
+otest.o -IC:\Keil\ARM\INC -IC:\Keil\ARM\INC\ARM --list=test.lst test.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+first 00000000
+
+Symbol: first
+   Definitions
+      At line 1 in file test.s
+   Uses
+      None
+Comment: first unused
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 4 in file test.s
+   Uses
+      At line 6 in file test.s
+Comment: start used once
+2 symbols
+325 symbols in table

@@ -1,0 +1,565 @@
+#+FILE: Power supply子系统之框架
+#+AUTHOR:      wildbook
+#+DATE:        2017年01月12日18:13:13
+#+EMAIL:       www762268@foxmail.com
+#+DESCRIPTION: 掌握power supply子系统框架
+#+KEYWORDS:    power,pmic,bsp,linux
+#+LANGUAGE:    language for HTML, e.g. ‘en’ (org-export-default-language)
+#+TEXT:        Some descriptive text to be inserted at the beginning.
+#+TEXT:        Several lines may be given.
+#+OPTIONS:     H:2 num:t toc:t \n:nil @:t ::t |:t ^:t f:t TeX:t ...
+#+LINK_UP:     the ``up'' link of an exported page
+#+LINK_HOME:   the ``home'' link of an exported page
+#+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
+* 参考文档
+  + *Code*:
+    kernel/drivers/power/power_supply_core.c\\
+    kernel/drivers/power/power_supply_sysfs.c\\
+    kernel/drivers/power/power_supply_leds.c\\
+    kernel/drivers/power/power_supply.h *局部头文件*\\
+    kernel/include/linux/power_supply.h *全局头文件*\\
+  + *dts*:
+  + *docs*
+  + *sysfs*:
+* 提供的API
+**  power_supply.h:全部
+*** extern struct power_supply *power_supply_get_by_name(char *name);
+    + *功能*:通过名字获取power_supply设备
+    + *参数*
+    + *返回值*:成功返回地址,失败返回NULL
+*** extern void power_supply_changed(struct power_supply *psy);
+    + *功能*:改变充电状态灯
+    + *参数*
+    + *返回值*
+*** extern int power_supply_am_i_supplied(struct power_supply *psy);
+    + *功能*:不明白干吗的,但依赖驱动的get_property()函数,不匹配的话无法工作
+    + *参数*
+    + *返回值*
+*** extern int power_supply_set_battery_charged(struct power_supply *psy);
+    + *功能*:设置电池充电属性,
+      *注意*:依赖于set_charged()函数
+    + *参数*
+    + *返回值*
+*** extern int power_supply_set_current_limit(struct power_supply *psy, int limit);
+    + *功能*
+      设置最大充电电流,当limit=0时,将禁用充电器
+      *注意*:依赖于set_property()函数
+    + *参数*
+    + *返回值*
+*** extern int power_supply_set_voltage_limit(struct power_supply *psy, int limit);
+    + *功能*
+      设置最大充电电压,当limit=0时,将禁用充电器
+      *注意*:依赖于set_property()函数
+    + *参数*
+    + *返回值*
+*** extern int power_supply_set_online(struct power_supply *psy, bool enable);
+    + *功能*
+      设置电源的链接状态
+      *注意*:依赖于set_property()函数
+    + *参数*
+      允许/禁止电源链接
+    + *返回值*
+*** extern int power_supply_set_health_state(struct power_supply *psy, int health);
+    + *功能*:设置电源健康状态"过热,热,冷等等"
+      *注意*:依赖于set_property()函数
+    + *参数*
+    + *返回值*
+*** extern int power_supply_set_present(struct power_supply *psy, bool enable);
+    + *功能*
+      设置电源当前状态,电池是否存在
+    + *参数*
+      电池存在/不存在
+    + *返回值*
+*** extern int power_supply_set_scope(struct power_supply *psy, int scope);
+    + *功能*:设置电源范围"Unknown","System","Device"等等
+      *注意*:依赖于set_property()函数
+    + *参数*
+    + *返回值*
+*** extern int power_supply_set_charge_type(struct power_supply *psy, int type);
+    + *功能*:设置电源充电类型"Unknow","N/A","Fast"等等
+      *注意*:依赖于set_property()函数
+    + *参数*
+    + *返回值*
+*** extern int power_supply_set_supply_type(struct power_supply *psy, enum power_supply_type supply_type);
+    + *功能*:设置电源类型"Battery","USB","USB_DCP"等等
+      *注意*:依赖于set_property()函数
+    + *参数*
+    + *返回值*
+*** extern int power_supply_is_system_supplied(void);
+    + *功能*:不懂
+    + *参数*
+      *注意*:依赖于get_property()函数
+    + *返回值*
+*** extern int power_supply_register(struct device *parent, struct power_supply *psy);
+    + *功能*
+      power_supply设备的注册
+    + *参数*
+      parent:父节点
+      psy:
+    + *返回值*
+*** extern void power_supply_unregister(struct power_supply *psy);
+    + *功能*:power_supply设备的注销
+    + *参数*
+    + *返回值*
+*** extern int power_supply_powers(struct power_supply *psy, struct device *dev);
+    + *功能*:创建链接,软链接名为powers *未解决*:没找到对应的sysfs文件
+    + *参数*
+    + *返回值*
+**  power_supply.h:局部
+   + *power_supply_sysfs.c*
+     + extern void power_supply_init_attrs(struct device_type *dev_type);
+       *功能*:初始化dev_type,把power_supply_attrs.attr和power_supply_attr_is_visible,填充到
+       dev_type->groups中
+     + extern int power_supply_uevent(struct device *dev, struct kobj_uevent_env *env);
+       *功能*:将/sys/class/power_supply/battery/xxx里的信息发送到uevent文件中
+   + *power_supply_leds.c*
+     + extern void power_supply_update_leds(struct power_supply *psy);
+       *功能*:充电,发电功率触发led
+     + extern int power_supply_create_triggers(struct power_supply *psy);
+       *功能*:创建触发器
+     + extern void power_supply_remove_triggers(struct power_supply *psy);
+       *功能*:删除触发器
+* 关键结构体
+  1. power_supply
+     #+begin_src cpp
+     struct power_supply {
+        const char *name;  //名称，对应于/sys/class/power_supply/xxx/文件夹
+        enum power_supply_type type;//电源类型，表示该电源为电池，主电源，USB等
+        enum power_supply_property *properties;//提供属性的数组指针
+        size_t num_properties;//属性的数组大小
+
+        char **supplied_to;   //支持xx
+        size_t num_supplicants;//数量
+
+        char **supplied_from; //从xx获取支持
+        size_t num_supplies;//数量
+     #ifdef CONFIG_OF
+        struct device_node *of_node; //设备树中的设备节点
+     #endif
+        //获取属性
+        int (*get_property)(struct power_supply *psy, enum power_supply_property psp, union power_supply_propval *val);
+        //设置属性
+        int (*set_property)(struct power_supply *psy, enum power_supply_property psp, const union power_supply_propval *val);
+        //设置属性为可写的属性
+        int (*property_is_writeable)(struct power_supply *psy, enum power_supply_property psp);
+        //外部电源变化时所做的工作
+        void (*external_power_changed)(struct power_supply *psy);
+        //设置充电状态
+        void (*set_charged)(struct power_supply *psy);
+
+        /* For APM emulation, think legacy userspace. */
+        int use_for_apm;
+
+        /* private */
+        struct device *dev;
+        struct work_struct changed_work;
+        spinlock_t changed_lock;
+        bool changed;
+     #ifdef CONFIG_THERMAL
+	      struct thermal_zone_device *tzd;
+	      struct thermal_cooling_device *tcd;
+     #endif  
+
+     #ifdef CONFIG_LEDS_TRIGGERS  //led触发器
+	      struct led_trigger *charging_full_trig;
+	      char *charging_full_trig_name;
+	      struct led_trigger *charging_trig;
+	      char *charging_trig_name;
+	      struct led_trigger *full_trig;
+	      char *full_trig_name;
+	      struct led_trigger *online_trig;
+	      char *online_trig_name;
+	      struct led_trigger *charging_blink_full_solid_trig;
+	      char *charging_blink_full_solid_trig_name;
+     #endif
+     };
+     #+end_src
+  2. power_supply_type(电源类型)
+     #+begin_src cpp
+     enum power_supply_type {
+        POWER_SUPPLY_TYPE_UNKNOWN = 0,
+        POWER_SUPPLY_TYPE_BATTERY,  //电池
+        POWER_SUPPLY_TYPE_UPS,      //
+        POWER_SUPPLY_TYPE_MAINS,    //主电源
+        //标准充电端口
+        POWER_SUPPLY_TYPE_USB,		/* Standard Downstream Port */
+        //专业充电端口
+        POWER_SUPPLY_TYPE_USB_DCP,	/* Dedicated Charging Port */
+        //充电下线端口
+        POWER_SUPPLY_TYPE_USB_CDP,	/* Charging Downstream Port */
+        //附件充电器适配器
+        POWER_SUPPLY_TYPE_USB_ACA,	/* Accessory Charger Adapters */
+        //高压DCP
+        POWER_SUPPLY_TYPE_USB_HVDCP,	/* High Voltage DCP */
+        //高效率高压DCP
+        POWER_SUPPLY_TYPE_USB_HVDCP_3,	/* Efficient High Voltage DCP */
+        POWER_SUPPLY_TYPE_WIRELESS,	/* Accessory Charger Adapters 附件充电器适配器*/
+        POWER_SUPPLY_TYPE_BMS,		/* Battery Monitor System 电池检测系统*/
+        POWER_SUPPLY_TYPE_USB_PARALLEL,		/* USB Parallel Path ,USB并行路径*/
+        POWER_SUPPLY_TYPE_WIPOWER,		/* Wipower 无线充电*/
+      };
+     #+end_src
+  3. power_supply_property(电源属性)
+     #+begin_src cpp
+     enum power_supply_property {
+        /* properties of type `int' */
+        power_supply_prop_status = 0,   //类型
+        power_supply_prop_charge_type,  //充电类型
+        power_supply_prop_health,
+        power_supply_prop_present,      //电池是否存在
+        power_supply_prop_online,       //电源是否连接
+        power_supply_prop_authentic,
+        power_supply_prop_battery_charging_enabled, //电池充电允许
+        power_supply_prop_charging_enabled,  //允许充电
+        power_supply_prop_technology,
+
+        power_supply_prop_cycle_count,
+        power_supply_prop_voltage_max,   //最大电压
+        power_supply_prop_voltage_min,   //最小电压
+        power_supply_prop_voltage_max_design,
+        power_supply_prop_voltage_min_design,
+        power_supply_prop_voltage_now,
+        power_supply_prop_voltage_avg,
+        power_supply_prop_voltage_ocv,
+        power_supply_prop_input_voltage_regulation,
+        power_supply_prop_current_max,
+        power_supply_prop_input_current_max,
+        power_supply_prop_input_current_trim,
+        power_supply_prop_input_current_settled,
+        power_supply_prop_vchg_loop_dbc_bypass,
+        power_supply_prop_current_now,
+        power_supply_prop_current_avg,
+        power_supply_prop_power_now,
+        power_supply_prop_power_avg,
+
+        power_supply_prop_charge_full_design,
+        power_supply_prop_charge_empty_design,
+        power_supply_prop_charge_full,
+        power_supply_prop_charge_empty,
+        power_supply_prop_charge_now,
+        power_supply_prop_charge_now_raw,
+        power_supply_prop_charge_now_error,
+        power_supply_prop_charge_avg,
+        power_supply_prop_charge_counter,
+        power_supply_prop_charge_counter_shadow,
+        power_supply_prop_constant_charge_current,
+        power_supply_prop_constant_charge_current_max,
+        power_supply_prop_constant_charge_voltage,
+        power_supply_prop_constant_charge_voltage_max,
+        power_supply_prop_charge_control_limit,
+        power_supply_prop_charge_control_limit_max,
+
+        power_supply_prop_energy_full_design,
+        power_supply_prop_energy_empty_design,
+        power_supply_prop_energy_full,
+        power_supply_prop_energy_empty,
+        power_supply_prop_energy_now,
+        power_supply_prop_energy_avg,
+        power_supply_prop_hi_power,
+        power_supply_prop_low_power,
+        power_supply_prop_capacity, /* in percents! */
+        power_supply_prop_capacity_alert_min, /* in percents! */
+        power_supply_prop_capacity_alert_max, /* in percents! */
+        power_supply_prop_capacity_level,
+        power_supply_prop_capacity_raw,
+        power_supply_prop_temp,
+        power_supply_prop_temp_alert_min,
+        power_supply_prop_temp_alert_max,
+        power_supply_prop_cool_temp,
+        power_supply_prop_warm_temp,
+        power_supply_prop_temp_ambient,
+        power_supply_prop_temp_ambient_alert_min,
+        power_supply_prop_temp_ambient_alert_max,
+        power_supply_prop_time_to_empty_now,
+        power_supply_prop_time_to_empty_avg,
+        power_supply_prop_time_to_full_now,
+        power_supply_prop_time_to_full_avg,
+        power_supply_prop_type, /* use power_supply.type instead */
+        power_supply_prop_scope,
+        power_supply_prop_system_temp_level,
+        power_supply_prop_resistance,
+        power_supply_prop_resistance_capacitive,
+        /* unit is in ohms due to id being typically in kohm range */
+        power_supply_prop_resistance_id,
+        power_supply_prop_resistance_now,
+        /* local extensions */
+        power_supply_prop_usb_hc,
+        power_supply_prop_usb_otg,
+        power_supply_prop_charge_enabled,   //充电允许
+        power_supply_prop_flash_current_max,
+        power_supply_prop_update_now,
+        power_supply_prop_esr_count,
+        power_supply_prop_safety_timer_enable,
+        power_supply_prop_charge_done,
+        power_supply_prop_flash_active,
+        power_supply_prop_flash_trigger,
+        power_supply_prop_force_tlim,
+        power_supply_prop_dp_dm,
+        power_supply_prop_input_current_limited,
+        power_supply_prop_input_current_now,
+        power_supply_prop_rerun_aicl,
+        power_supply_prop_cycle_count_id,
+        power_supply_prop_safety_timer_expired,
+        power_supply_prop_restricted_charging,
+        //sun zhangyang add for task 1133932 begin
+      #if defined(config_tct_8x76_idol4)
+          power_supply_prop_tcl_fixtemp,
+          power_supply_prop_tcl_fixcapacity,
+      #endif
+          //sun zhangyang add for task 1133932 end
+        power_supply_prop_allow_hvdcp3,
+          power_supply_prop_xo_thermal,//[feature] mod-by sun zhangyang for defect2167030,2016.05.18
+        /* local extensions of type int64_t */
+        power_supply_prop_charge_counter_ext,
+        /* properties of type `const char *' */
+        power_supply_prop_model_name,
+        power_supply_prop_manufacturer,
+        power_supply_prop_serial_number,
+        power_supply_prop_battery_type,
+      };
+     #+end_src
+  4. power_supply_info
+     #+begin_src cpp
+     struct power_supply_info {
+        const char *name;      //名字
+        int technology;        //技术:电池类型
+        int voltage_max_design;//最大电压
+        int voltage_min_design;//最小电压
+        int charge_full_design;//充满电电压
+        int charge_empty_design;//
+        int energy_full_design; //
+        int energy_empty_design;//
+        int use_for_apm;//
+      };
+     #+end_src
+* Code
+**  power_supply_core.c
+   + 主要功能
+     1. 在/sys/class/创建类"power_supply"(即：/sys/class/power_supply/)
+   + 加载/卸载驱动模块
+     #+begin_src cpp
+     static int __init power_supply_class_init(void)
+      {
+        //创建类“power_supply”
+        power_supply_class = class_create(THIS_MODULE, "power_supply");
+
+        if (IS_ERR(power_supply_class))
+          return PTR_ERR(power_supply_class);
+
+        power_supply_class->dev_uevent = power_supply_uevent;
+        power_supply_init_attrs(&power_supply_dev_type);
+
+        return 0;
+      }
+
+      static void __exit power_supply_class_exit(void)
+      {
+        class_destroy(power_supply_class);//删除类
+      }
+
+      subsys_initcall(power_supply_class_init);//加载驱动
+      module_exit(power_supply_class_exit);//卸载驱动
+     #+end_src
+** power_supply_sysfs.c
+   1. POWER_SUPPLY_ATTR宏讲解
+      #+begin_src cpp
+      #define POWER_SUPPLY_ATTR(_name)					\
+       {									\
+         .attr = { .name = #_name },					\
+         .show = power_supply_show_property,				\
+         .store = power_supply_store_property,				\
+       }
+   
+       static struct device_attribute power_supply_attrs[] = {
+         /* Properties of type `int' */
+         POWER_SUPPLY_ATTR(status),
+         POWER_SUPPLY_ATTR(charge_type),
+         ...
+       }
+      #+end_src
+       以status为例，等价于
+      #+begin_src cpp
+       static struct device_attribute power_supply_attrs[] = {
+            {
+               .attr = { .name = "status" },
+               .show = power_supply_show_property,//显示属性到buf中
+               .store = power_supply_store_property,
+            }
+       }
+       #+end_src
+   2. power_supply_show_property()
+      #+begin_src cpp
+      static ssize_t power_supply_show_property(struct device *dev, struct device_attribute *attr, char *buf) {
+         //类型
+         //未知　电池　
+         static char *type_text[] = {
+           "Unknown", "Battery", "UPS", "Mains", "USB",
+           "USB_DCP", "USB_CDP", "USB_ACA",
+           "USB_HVDCP", "USB_HVDCP_3", "Wireless", "BMS", "USB_Parallel",
+           "Wipower"
+         };
+         //状态
+         //未知　充电 禁止充电　没充电　满电
+         static char *status_text[] = {
+           "Unknown", "Charging", "Discharging", "Not charging", "Full"
+         };
+         //充电类型
+         static char *charge_type[] = {
+           "Unknown", "N/A", "Trickle", "Fast", "Taper"
+         };
+   
+         //健康()
+         static char *health_text[] = {
+           "Unknown", "Good", "Overheat", "Warm", "Dead", "Over voltage",
+           "Unspecified failure", "Cold", "Cool", "Watchdog timer expire",
+           "Safety timer expire"
+         };
+   
+         //技术
+         //未知，镍氢电池　锂电池  锂聚合物电池  锂铁电池  镍镉电池　锂电池
+         static char *technology_text[] = {
+           "Unknown", "NiMH", "Li-ion", "Li-poly", "LiFe", "NiCd",
+           "LiMn"
+         };
+   
+         //容量
+         static char *capacity_level_text[] = {
+           "Unknown", "Critical", "Low", "Normal", "High", "Full"
+         };
+   
+         //范围
+         static char *scope_text[] = {
+           "Unknown", "System", "Device"
+         };
+         ssize_t ret = 0;
+         struct power_supply *psy = dev_get_drvdata(dev);
+   
+         //这是计算偏移量，它的偏移值和枚举类型中的power_supply_property值对应的
+         const ptrdiff_t off = attr - power_supply_attrs;
+         union power_supply_propval value;
+   
+         /*查看类型*/
+         if (off == POWER_SUPPLY_PROP_TYPE)
+           value.intval = psy->type;  //电源类型
+         else
+           //函数原型好像是这个smbchg_battery_get_property()
+           ret = psy->get_property(psy, off, &value);//类型也保存在value.intval
+   
+   
+         if (off == POWER_SUPPLY_PROP_STATUS)//状态
+           return sprintf(buf, "%s\n", status_text[value.intval]);
+   
+         else if (off == POWER_SUPPLY_PROP_CHARGE_TYPE)//充电类型
+           return sprintf(buf, "%s\n", charge_type[value.intval]);
+   
+         else if (off == POWER_SUPPLY_PROP_HEALTH) //充电健康程度
+           return sprintf(buf, "%s\n", health_text[value.intval]);
+   
+         else if (off == POWER_SUPPLY_PROP_TECHNOLOGY) //技术(电池种类)
+           return sprintf(buf, "%s\n", technology_text[value.intval]);
+   
+         else if (off == POWER_SUPPLY_PROP_CAPACITY_LEVEL)  //容量
+           return sprintf(buf, "%s\n", capacity_level_text[value.intval]);
+   
+         else if (off == POWER_SUPPLY_PROP_TYPE)  //类型
+           return sprintf(buf, "%s\n", type_text[value.intval]);
+   
+         else if (off == POWER_SUPPLY_PROP_SCOPE) //范围
+           return sprintf(buf, "%s\n", scope_text[value.intval]);
+   
+         else if (off >= POWER_SUPPLY_PROP_MODEL_NAME)//模型名
+           return sprintf(buf, "%s\n", value.strval);
+   
+         if (off == POWER_SUPPLY_PROP_CHARGE_COUNTER_EXT)//充电计数
+           return sprintf(buf, "%lld\n", value.int64val);
+         else
+           return sprintf(buf, "%d\n", value.intval);
+       }
+      #+end_src
+   3. power_supply_store_property()
+      #+begin_src cpp
+      static ssize_t power_supply_store_property(struct device *dev, struct device_attribute *attr, const char *buf, size_t count) {
+        ssize_t ret;
+        struct power_supply *psy = dev_get_drvdata(dev);
+        const ptrdiff_t off = attr - power_supply_attrs;
+        union power_supply_propval value;
+        long long_val;
+   
+        /* TODO: support other types than int */
+        ret = strict_strtol(buf, 10, &long_val);
+        if (ret < 0)
+          return ret;
+   
+        value.intval = long_val;
+   
+        //原型smbchg_battery_set_property()
+        ret = psy->set_property(psy, off, &value);
+        if (ret < 0)
+          return ret;
+   
+        return count;
+      }
+      #+end_src
+   4. static umode_t power_supply_attr_is_visible(struct kobject *kobj, struct attribute *attr, int attrno)
+      设备文件的访问权限设置
+   5. power_supply_uevent()
+      #+begin_src cpp
+      int power_supply_uevent(struct device *dev, struct kobj_uevent_env *env)
+       {
+         struct power_supply *psy = dev_get_drvdata(dev);//获取私有数据(内核空间)
+
+         //给环境变量写入env中
+         //将键值字符串添加到环境缓冲区env中
+         ret = add_uevent_var(env, "POWER_SUPPLY_NAME=%s", psy->name);
+
+         //分配内存,值都为0
+         prop_buf = (char *)get_zeroed_page(GFP_KERNEL);
+
+
+         for (j = 0; j < psy->num_properties; j++) {
+           struct device_attribute *attr;
+           char *line;
+
+           //在power_supply_sysfs.c
+           attr = &power_supply_attrs[psy->properties[j]];
+
+           ret = power_supply_show_property(dev, attr, prop_buf);
+           if (ret == -ENODEV || ret == -ENODATA) {
+             /* When a battery is absent, we expect -ENODEV. Don't abort;
+                send the uevent with at least the the PRESENT=0 property */
+             ret = 0;
+             continue;
+           }
+
+           if (ret < 0)
+             goto out;
+
+           //查找'\n'首次出现的位置  
+           line = strchr(prop_buf, '\n');
+           if (line)
+             *line = 0;
+
+           attrname = kstruprdup(attr->attr.name, GFP_KERNEL);
+           if (!attrname) {
+             ret = -ENOMEM;
+             goto out;
+           }
+
+           dev_dbg(dev, "prop %s=%s\n", attrname, prop_buf);
+
+           ret = add_uevent_var(env, "POWER_SUPPLY_%s=%s", attrname, prop_buf);
+           kfree(attrname);
+
+             goto out;
+         }
+
+       out:
+         free_page((unsigned long)prop_buf);
+
+         return ret;
+       }
+      #+end_src
+**  power_supply_leds.c
+   1. power_supply_update_bat_leds()
+      电池更新状态时,满电和充电时会出现亮灭，默认情况下是灭灯
+      

@@ -1,0 +1,74 @@
+/*
+* 点的参数
+        shape
+            record     由横的和竖的矩形组成的图形
+	    Mrecord    角是圆的，看例题
+	    polygon    多边形
+	    
+	sides 设置边数
+	peripheries 设置多边形的外框的层数
+	regular = true可以让多边形是一个规则的多边形
+	orientation=15 可以让你的多边形旋转一个角度 如15度
+	color
+	style
+	skew 值-1.0～1.0能让多边形斜切一个角度
+	label
+	distortion 让图形产生透视效果
+	
+	decorate      决定每条线的label与所属线的连接值：true,false
+	labelfontcolor决定headlabel和taillabel的颜色
+	fontcolor     决定label颜色
+	headlabel     起始点标签
+	taillabel     终点标签
+	label         
+* 
+*
+****/
+/*在dot中用html语言写一个table，在label后用<>而不是“”旧能引入html语言*/
+digraph html{              /* digraph为有向图，graph为无向图 */
+	/*表格*/
+	abc[shape=none,margin=0,label=<
+	    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="4">
+	    <TR><TD>0</TD><TD>1</TD><TD>2</TD><TD>3</TD><TD>4</TD>
+	    </TR>
+	    <TR><TD>1</TD><TD></TD><TD></TD><TD></TD><TD></TD>
+	    </TR>
+	    <TR><TD>2</TD><TD></TD><TD></TD><TD></TD><TD></TD>
+	    </TR>
+	    <TR><TD>3</TD><TD></TD><TD></TD><TD></TD><TD></TD>
+	    </TR>
+	    <TR><TD>4</TD><TD></TD><TD></TD><TD></TD><TD></TD>
+	    </TR>
+	    </TABLE>>];
+
+	    /**/
+	    abcd [shape=none, margin=0, label=< 
+
+	    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> 
+
+	    <TR><TD ROWSPAN="3"><FONT COLOR="red">hello</FONT><BR/>world</TD> 
+
+	    <TD COLSPAN="3">b</TD> 
+
+	    <TD ROWSPAN="3" BGCOLOR="lightgrey">g</TD> 
+
+	    <TD ROWSPAN="3">h</TD> 
+
+	    </TR> 
+
+	    <TR><TD>c</TD> 
+	    <TD PORT="here">d</TD> 
+
+	    <TD>e</TD> 
+
+	    </TR> 
+
+	    <TR><TD COLSPAN="3">f</TD> 
+
+	    </TR> 
+
+	    </TABLE>>]; 
+	
+}
+
+

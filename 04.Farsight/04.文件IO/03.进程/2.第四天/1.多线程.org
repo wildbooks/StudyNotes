@@ -1,0 +1,50 @@
+* 多线程
+  + int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
+                          void *(*start_routine) (void *), void *arg);
+    + 功能
+      创建一个线程
+    + 返回值
+      成功：0
+      失败：返回错误号
+  + int pthread_join(pthread_t thread, void **value_ptr)
+    + 功能
+      等待线程退出
+    + 返回值
+      成功：0
+      失败：返回错误号
+  + void pthread_exit(void *retval);
+    + 功能
+      线程退出
+    + 返回值
+      成功：0
+  + int pthread_cancel(pthread_t thead)
+    + 功能
+      thead线程退出
+    + 返回值
+      成功：0
+      失败：返回错误号
+  + pthread_attr_setdetachstate
+    + 功能
+      线程分离
+  + int pthread_mutex_init(pthread_mutex_t *mutex,
+    pthread_mutexattr_t *attr)
+    + 功能
+      初始化互斥锁
+  + int pthread_mutex_lock(pthread_mutex_t *mutex)
+    + 功能
+      上锁
+    + 返回值
+      成功：0
+      失败：返回错误号
+  + int pthread_mutex_unlock(pthread_mutex_t *mutex)
+    + 功能
+      解锁
+    + 返回值
+      成功：0
+      失败：返回错误号
+  + int pthread_mutex_destroy(pthread_mutex_t *mutex);
+    + 功能
+      销毁锁
+    + 返回值
+      成功：0
+      失败：返回错误号

@@ -1,0 +1,79 @@
+* Linux电源管理的组成
+  电源管理(Power Management)在Linux Kernel中,是一个比较庞大的子系统,涉及到
+  供电(Power Supply)、充电(Charger)、时钟(Clock)、频率(Frequency)、
+  电压(Voltage)、睡眠/唤醒(Suspend/Resume)等方面
+* 详解电源模块
+  + Power Supply
+    是一个供用户空间程序监控系统的供电状态(电池供电、USB供电、AC供电等等)的
+    class.通俗的讲，它是一个Battery&Charger驱动的Framework
+  + Clock Framework
+    Clock驱动的Framework，用于统一管理系统的时钟资源
+  + Regulator Framework
+    Voltage/Current Regulator驱动的Framework.该驱动用于调节CPU等模块的电压和
+    电流值
+  + Dynamic Tick/Clock Event
+    在传统的Linux Kernel中,系统Tick是固定周期(如10ms)的,因此每隔一个Tick,就会
+    产生一个Timer中断.这会唤醒处于Idle或者Sleep状态的CPU,而很多时候这种唤醒是
+    没有意义的.因此新的Kernel就提出了Dynamic Tick的概念,Tick不再是周期性的,而
+    是根据系统中定时器的情况,不规律的产生,这样可以减少很多无用的Timer中断
+  + CPU Idle
+    用于控制CPU Idle状态的Framework
+  + Generic PM
+    传统意义上的Power Management,如Power Off、Suspend to RAM、Suspend to Disk、
+    Hibernate等
+  + Runtime PM and Wakelock
+    运行时的Power Management,不再需要用户程序的干涉,由Kernel统一调度,实时的关闭
+    或打开设备,以便在使用性能和省电性能之间找到最佳的平衡
+    注3：Runtime PM是Linux Kernel亲生的运行时电源管理机制，Wakelock是由Android提出的机制。这两种机制的目的是一样的，因此只需要支持一种即可。另外，由于Wakelock机制路子太野了，饱受Linux社区的鄙视，因此我们不会对该机制进行太多的描述。
+  + CPU Freq/Device Freq
+    用于实现CPU以及Device频率调整的Framework
+  + OPP(Operating Performance Point)
+    是指可以使SOCs或者Devices正常工作的电压和频率组合。内核提供这一个Layer，是为了在众多的电压和频率组合中，筛选出一些相对固定的组合，从而使事情变得更为简单一些
+  + PM QOS
+    所谓的PM QOS，是指系统在指定的运行状态下（不同电压、频率，不同模式之间切换，等等）的工作质量，包括latency、timeout、throughput三个参数，单位分别为us、us和kb/s。通过QOS参数，可以分析、改善系统的性能
+* Source Code
+  + API Layer
+    提供一些系统调用或者sysfs文件系统(/sys/power/*)
+  + PM Core
+    kernel/power/*
+  + PM Driver
+    + PM Driver框架(framework)
+      drivers/base/power/*
+    + 平台相关的驱动
+      drivers/power/
+  + 其他
+    drivers/cpuidle/*
+    drivers/cpufreq/*
+    drivers/devfreq/*
+    include/linux/power_supply.h
+    include/linux/cpuidle.h
+    include/linux/cpufreq.h
+    include/linux/cpu_pm.h
+    include/linux/device.h
+    include/linux/pm.h
+    include/linux/pm domain.h
+    include/linux/pm runtime.h
+    include/linux/pm wakeup.h
+    include/linux/suspend.h
+    Documentation/power/*.txt
+* 专有名词
+  | English                   | Chinese  | DESCRIPTION                         |
+  |---------------------------+----------+-------------------------------------|
+  | Shutdown                  | 关机     |                                     |
+  | Standby or Hibernate      | 待机     |                                     |
+  | Reboot                    | 重启     |                                     |
+  | Shutdown                  | 关机     |                                     |
+  | Restart                   | 重启     |                                     |
+  | Hibernate                 | 冬眠     | 保存现场到硬盘后关机,开机后还会恢复 |
+  | Sleep/Suspend             | 睡眠     | 将现场保存到内存，内存要保存供电    |
+  | Auto Sleep                | 自动睡眠 | 多少分钟后自动进入睡眠模式          |
+  | Auto put display to sleep |          | 同上，只是显示屏睡眠                |
+* kernel支持的reboot方式
+  + reboot
+    RESTART: 正常的重启，默认的命令和模式
+    HALT:停止操作系统，然后把控制权交给其他代码
+    CAD_ON/CAD_OFF:允许/禁止通过Ctrl-Alt-Del组合键触发重启动作
+    POWER_OFF:正常的关机，执行该动作后，系统会停止操作系统，并去除所有的供电
+    RESTART2:可以使用命令字符串的重启系统
+    SW_SUSPEND:
+    KEXEC:重启并执行已经加载好的其它Kernel Image（需要CONFIG_KEXEC的支持），暂不涉及。 

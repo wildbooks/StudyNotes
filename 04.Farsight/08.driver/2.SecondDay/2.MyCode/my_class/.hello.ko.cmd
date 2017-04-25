@@ -1,0 +1,1 @@
+cmd_/home/wildbook/Documents/04.华清远见培训笔记/08.driver/2.SecondDay/my_class/hello.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/wildbook/Documents/04.华清远见培训笔记/08.driver/2.SecondDay/my_class/hello.ko /home/wildbook/Documents/04.华清远见培训笔记/08.driver/2.SecondDay/my_class/hello.o /home/wildbook/Documents/04.华清远见培训笔记/08.driver/2.SecondDay/my_class/hello.mod.o

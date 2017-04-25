@@ -1,0 +1,79 @@
+#+TITLE: bash快捷键
+#+AUTHOR:      野书
+#+DATE:        a date, fixed, of a format string for format-time-string
+#+EMAIL:       www762268@foxmail.com
+#+DESCRIPTION: bash快捷键，操作技巧等
+#+KEYWORDS:    bash,linux
+* 文档说明
+  + 本篇博客没有什么文字说明，主要是一些代码，给代码敲进命令行中，然后看现象就会明白大意
+* 快捷键
+  + 快捷键
+    | 快捷键             | 功能                             |
+    |--------------------+----------------------------------|
+    | ↑,↓方向键          | 查看命令历史                     |
+    | Tab                | 自动补全文件名，目录名和命令等等 |
+    | !!                 | 重复上条执行过的命令             |
+    | Shift+PgUp         | 终端向上翻一屏                   |
+    | Shift+PgDn         | 终端向下翻一屏                   |
+    | Ctrl+Shift+↑       | 终端向上翻一行                   |
+    | Ctrl+Shift+↓       | 终端向下翻一行                   |
+    | Ctrl+Alt+Del       | 关机/重启电脑                    |
+    | Ctrl+Alt+Backspace | 关机/重启X window                |
+    | Ctrl+a             | 到正在输入的命令行的首部         |
+    | Ctrl+e             | 到正在输入的命令行的尾部         |
+    | Ctrl+f             | 在当前命令输入中右移光标一个字符 |
+    | Ctrl+b             | 在当前命令输入中左移光标一个字符 |
+    | Ctrl+k             | 删除光标后的所有字符             |
+    | Ctrl+d             | 删除光标当前字符                 |
+    | CTRL+W             | 删除光标位置前的单词             |
+    | CTRL+U             | 清空行                           |
+    | Ctrl+R             | 搜索先前使用的命令               |
+    | Ctrl+s             | 停止终端传输                     |
+    | Ctrl+p             | 上一条执行的命令                 |
+    | Ctrl+n             | 下一条执行的命令                 |
+    | Ctrl+C             | 终止当前命令                     |
+    | Ctrl+D             | 退出登录Shell                    |
+    | Ctrl+T             | 调换光标前的两个单词             |
+* 通配符
+  + 通配符
+    | *     | 匹配任何字符串                 |
+    | ？    | 匹配任意单个字符               |
+    | [...] | 匹配方括号内的任意字符,如[abc] |
+* 技巧
+** 回调最近一次执行的以指定字符开头的命令
+   #+BEGIN_HTML
+   <div class="cnblogs_Highlighter">
+   <pre class="brush:cpp">
+
+   [wildbook@wildbook ~]$ ls
+   Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos
+   [wildbook@wildbook ~]$ pwd
+   /home/wildbook
+   [wildbook@wildbook ~]$ !l   //用!+(命令ls的开头字母l)
+   ls
+    Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos
+   [wildbook@wildbook ~]$
+
+   </pre>
+   </div>
+   #+END_HTML
+** 利用history命令回调历史命令
+   #+BEGIN_HTML
+   <div class="cnblogs_Highlighter">
+   <pre class="brush:cpp">
+
+   [wildbook@wildbook ~]$ history //查看历史命令
+   ...    //(此处是一些历史记录的省略)
+   1047  uptime
+   1048  ls
+   1049  pwd
+   1050  ls
+   1051  shistory
+   [wildbook@wildbook ~]$ !1049  //输入历史命令对应的行号
+   pwd                           //输出效果
+   /home/wildbook
+   [wildbook@wildbook ~]$
+
+   </pre>
+   </div>
+   #+END_HTML

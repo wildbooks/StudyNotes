@@ -1,0 +1,31 @@
+/*
+* 点的参数
+        shape
+	sides 设置边数
+	peripheries 设置多边形的外框的层数
+	regular = true可以让多边形是一个规则的多边形
+	orientation=15 可以让你的多边形旋转一个角度 如15度
+	color
+	style
+	skew 值-1.0～1.0能让多边形斜切一个角度
+	label
+	distortion 让图形产生透视效果
+	
+	
+* 
+*
+****/
+
+digraph G{              /* digraph为有向图，graph为无向图 */
+	/*用dir设置每条边箭头的方向*/
+	A -> B -> C;
+	B ->D;
+	/*5边形，*/
+	A[shape=polygon,sides=5,peripheries=3,color=lightblue,style=filled];
+	  
+	C[shape=polygon,sides=4,skew=.4,label="hello world"];
+	D[shape=invtriangle];
+	E[shape=polygon,sides=4,distortion=.7];  /*体会两者区别*/
+	//E[shape=polygon,sides=4,distortion=.7,orientation=15];
+	
+} 

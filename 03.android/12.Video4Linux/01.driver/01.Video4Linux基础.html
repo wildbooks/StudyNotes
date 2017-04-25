@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-02-14 二 14:09 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="wildbook" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline3">1. 简介</a>
+<ul>
+<li><a href="#orgheadline1">1.1. V4L2支持的设备接口</a></li>
+<li><a href="#orgheadline2">1.2. 参考文档</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline4">2. sysfs</a></li>
+<li><a href="#orgheadline10">3. 数据结构</a>
+<ul>
+<li><a href="#orgheadline5">3.1. v4l2<sub>device</sub></a></li>
+<li><a href="#orgheadline6">3.2. v4l2<sub>subdev</sub></a></li>
+<li><a href="#orgheadline7">3.3. v4l2<sub>fh</sub></a></li>
+<li><a href="#orgheadline8">3.4. video<sub>buf</sub></a></li>
+<li><a href="#orgheadline9">3.5. video<sub>device</sub></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3"><span class="section-number-2">1</span> 简介</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+V4L2是V4L的第二个版本
+</p>
+</div>
+<div id="outline-container-orgheadline1" class="outline-3">
+<h3 id="orgheadline1"><span class="section-number-3">1.1</span> V4L2支持的设备接口</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+<b>视频采集接口</b> (video capture interface)
+<b>视频输出接口</b> (video output interface)
+<b>视频间隔消隐信号接口</b> (VBI interface)
+<b>收音机接口</b> (radio interface)
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline2" class="outline-3">
+<h3 id="orgheadline2"><span class="section-number-3">1.2</span> 参考文档</h3>
+<div class="outline-text-3" id="text-1-2">
+<ul class="org-ul">
+<li><b>Docs</b>
+Documentation/video4linux/V4L2-framework.txt
+Documentation/video4linux/videobuf</li>
+<li><b>Code</b>
+     drivers/media/video目录下核心代码</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline4" class="outline-2">
+<h2 id="orgheadline4"><span class="section-number-2">2</span> sysfs</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>子设备用户空间API
+<b>/dev/v4l-subdevX</b>
+<b>/dev/fbX</b></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline10" class="outline-2">
+<h2 id="orgheadline10"><span class="section-number-2">3</span> 数据结构</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-orgheadline5" class="outline-3">
+<h3 id="orgheadline5"><span class="section-number-3">3.1</span> v4l2<sub>device</sub></h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+用于保存设备实例的数据
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">video_device</span>
+ {
+<span style="color: #268bd2;"> #if</span> <span style="color: #268bd2;">defined</span>(CONFIG_MEDIA_CONTROLLER)
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">media_entity</span> <span style="color: #268bd2;">entity</span>;
+<span style="color: #268bd2;"> #endif</span>
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">device ops */</span>
+   <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">v4l2_file_operations</span> *<span style="color: #268bd2;">fops</span>;
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">sysfs */</span>
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device</span> <span style="color: #268bd2;">dev</span>;    <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">v4l device */</span>
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">cdev</span> *<span style="color: #268bd2;">cdev</span>;    <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">character device */</span>
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Set either parent or v4l2_dev if your driver uses v4l2_device */</span>
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">device</span> *<span style="color: #268bd2;">parent</span>;    <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">device parent */</span>
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">v4l2_device</span> *<span style="color: #268bd2;">v4l2_dev</span>; <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">v4l2_device parent */</span>
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Control handler associated with this device node. May be NULL. */</span>
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">v4l2_ctrl_handler</span> *<span style="color: #268bd2;">ctrl_handler</span>;
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">vb2_queue associated with this device node. May be NULL. */</span>
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">vb2_queue</span> *<span style="color: #268bd2;">queue</span>;
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Priority state. If NULL, then v4l2_dev-&gt;prio will be used. */</span>
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">v4l2_prio_state</span> *<span style="color: #268bd2;">prio</span>;
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">device info */</span>
+   <span style="color: #b58900;">char</span> <span style="color: #268bd2;">name</span>[<span style="color: #6c71c4;">32</span>];
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">vfl_type</span>; <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">device type */</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">vfl_dir</span>;  <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">receiver, transmitter or m2m */</span>
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">'minor' is set to -1 if the registration failed */</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">minor</span>;
+   <span style="color: #b58900;">u16</span> <span style="color: #268bd2;">num</span>;
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">use bitops to set/clear/test flags */</span>
+   <span style="color: #b58900;">unsigned</span> <span style="color: #b58900;">long</span> <span style="color: #268bd2;">flags</span>;
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">attribute to differentiate multiple indices on one physical device */</span>
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">index</span>;
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">V4L2 file handles */</span>
+   <span style="color: #b58900;">spinlock_t</span>    <span style="color: #268bd2;">fh_lock</span>; <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Lock for all v4l2_fhs */</span>
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">list_head</span>  <span style="color: #268bd2;">fh_list</span>; <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">List of struct v4l2_fh */</span>
+
+   <span style="color: #b58900;">int</span> <span style="color: #268bd2;">debug</span>;      <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Activates debug level*/</span>
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Video standard vars */</span>
+   <span style="color: #b58900;">v4l2_std_id</span> <span style="color: #268bd2;">tvnorms</span>;    <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Supported tv norms */</span>
+   <span style="color: #b58900;">v4l2_std_id</span> <span style="color: #268bd2;">current_norm</span>; <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">Current tvnorm */</span>
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">callbacks */</span>
+   <span style="color: #b58900;">void</span> (*<span style="color: #268bd2;">release</span>)(<span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">video_device</span> *<span style="color: #268bd2;">vdev</span>);
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">ioctl callbacks */</span>
+   <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">v4l2_ioctl_ops</span> *<span style="color: #268bd2;">ioctl_ops</span>;
+   DECLARE_BITMAP(valid_ioctls, BASE_VIDIOC_PRIVATE);
+
+   <span style="color: #93a1a1;">/* </span><span style="color: #93a1a1;">serialization lock */</span>
+   DECLARE_BITMAP(disable_locking, BASE_VIDIOC_PRIVATE);
+   <span style="color: #859900; font-weight: bold;">struct</span> <span style="color: #b58900;">mutex</span> *<span style="color: #268bd2;">lock</span>;
+ };
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline6" class="outline-3">
+<h3 id="orgheadline6"><span class="section-number-3">3.2</span> v4l2<sub>subdev</sub></h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+代表子设备实例
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline7" class="outline-3">
+<h3 id="orgheadline7"><span class="section-number-3">3.3</span> v4l2<sub>fh</sub></h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+跟踪文件句柄实例
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline8" class="outline-3">
+<h3 id="orgheadline8"><span class="section-number-3">3.4</span> video<sub>buf</sub></h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+处理视频缓冲
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline9" class="outline-3">
+<h3 id="orgheadline9"><span class="section-number-3">3.5</span> video<sub>device</sub></h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+结构体保存V4L2设备节点的数据
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: wildbook</p>
+<p class="date">Created: 2017-02-14 二 14:09</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

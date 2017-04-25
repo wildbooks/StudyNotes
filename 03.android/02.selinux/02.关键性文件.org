@@ -1,0 +1,32 @@
+关键文件
+domain.te
+file_contexts
+port_contexts
+genfs_contexts
+initial_sid_contexts
+property_contexts
+service_contexts
+seapp_contexts
+
+
+
+global_macros   全局宏定义
+te_macros       宏定义函数
+
+解决log方法
+    有一个原则
+        不要改android配置文件(即system/sepolic下的文件)
+        不要改硬件厂商的配置文件(不如高通的device/qcom/sepolicy)
+
+    如果编译遇到neverallow问题,有以下３种方式
+
+    http://www.aichengxu.com/view/2506260
+        方法一：
+            改变:domain.te文件,这个方法不好，原因看下面链接
+            http://www.aichengxu.com/view/2506260
+        方法二：
+            从domain.te找一个替代域类型，进行修改方法见链接
+            http://www.aichengxu.com/view/2506260
+        方法三：
+            自己创建一个域类型,方法见链接
+

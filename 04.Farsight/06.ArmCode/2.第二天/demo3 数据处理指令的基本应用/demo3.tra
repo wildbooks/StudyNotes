@@ -1,0 +1,18 @@
+*** Creating Trace Output File 'demo3.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '"start.o"'
+### ADS-LD Command completed:
+--cpu ARM920T "start.o" --ro-base 0x00000000 --entry 0x00000000 --rw-base 0x40000000 --strict --autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\demo3.map" -o "demo3.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: 'demo3.axf'
+### ADS-LD Command File: 'demo3.lnp'
+### Checking for dirty Components...
+### Creating CmdFile 'demo3.lnp', Handle=0x00000644
+### Writing '.lnp' file
+### ADS-LD Command file 'demo3.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

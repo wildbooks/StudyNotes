@@ -1,0 +1,2 @@
+Dependencies for Project 'demo3', Target 'Target 1': (DO NOT MODIFY !)
+F (.\start.s)(0x55D2DCC5)(--cpu ARM920T --pd "__EVAL SETA 1" -g --apcs=interwork -I "C:\Keil\ARM\INC" -I "C:\Keil\ARM\INC\Samsung" --list "start.lst" --xref -o "start.o" --depend "start.d")

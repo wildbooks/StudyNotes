@@ -1,0 +1,147 @@
+* 简介
+* 参考文档
+  + Doc
+    kernel/Documentation/i2c
+  + sysfs
+  + Code
+    + i2c-core.c 实现i2c核心功能以及/sys/class/i2c/i2c-adapter
+      等接口
+    + i2c-dev.c
+      实现了i2c适配器设备文件的功能,每一个适配器都被分配一个
+      设备，通过适配器访设备时的主设备号都为89，次设备号为
+      0-255。I2c-dev.c并没有针对特定的设备而设计,只是提供了通
+      用的read(),write(),和ioctl()等接口，应用层可以借用这些
+      接口访问挂接在适配器上的I2C设备的存储空间或寄存器，并控
+      制I2C设备的工作方式
+    + busses文件夹包含了一些I2C总线的驱动,例如高通处理器i2c控制
+      器接口为i2c-msm-v2.c
+    + algos文件夹实现了一些I2C总线适配器的algorithm
+* 设备树
+* fa
+  + f
+    Bus    -> Algorithm算法
+              Adapter适配器 -- i2c模块的模型
+    Device -> Driver驱动
+              Client从设备
+  + fa
+    adaptor是i2c的总线驱动
+    dev和driver，client是i2c的设备驱动
+  + 
+* 关键结构体
+  + i2c_driver
+    表示i2c设备驱动,对应一套驱动方法,一个i2c_driver可以同时支持
+    多个同类型的i2c_client
+    #+begin_src cpp
+    struct i2c_driver {
+      unsigned int class;
+      
+      /*依附i2c_adapter函数*/
+      int (*attach_adapter)(struct i2c_adapter *) __deprecated;//总线回调(弃用)
+
+      /*设备(取消)绑定回调*/
+      int (*probe)(struct i2c_client *, const struct i2c_device_id *);
+      int (*remove)(struct i2c_client *);
+
+      /*电源管理使用的*/
+      void (*shutdown)(struct i2c_client *);//设备关机回调
+      int (*suspend)(struct i2c_client *, pm_message_t mesg);//设备休眠回调
+      int (*resume)(struct i2c_client *);//设备唤醒回调
+
+      /*警报回调，例如SMBus警报协议,数据值的格式和含义取决于协议*/
+      void (*alert)(struct i2c_client *, unsigned int data);
+
+      /*总线信令回调和ioctl类似*/ 
+      int (*command)(struct i2c_client *client, unsigned int cmd, void *arg);
+
+      struct device_driver driver;//设备驱动程序模型驱动
+      const struct i2c_device_id *id_table;//此驱动程序支持的i2c设备列表
+
+      /*自动设备创建的设备检测回调*/
+      int (*detect)(struct i2c_client *, struct i2c_board_info *);
+      const unsigned short *address_list;//i2c地址用于检测用
+      struct list_head clients;//从设备队列,(仅限i2c-core用)
+    };
+    #+end_src
+  + i2c_client
+    代表一个挂载到i2c总线上的i2c从设备,对应真实的i2c物理设备
+    device,每个i2c设备都需要一个i2c_client来描述
+    #+begin_src cpp
+    struct i2c_client {
+      unsigned short flags;		/*I2C_CLIENT_TEN表示10位地址,
+                              I2C_CLIENT_PEC表示7位地址*/
+      unsigned short addr;		/*从设备芯片i2c地址,低7位*/
+      char name[I2C_NAME_SIZE];/*从设备名,通常是通用芯片名称*/
+      struct i2c_adapter *adapter;	/* 从设备所挂载的的i2c适配器(管理i2c总线的驱动)*/
+      struct i2c_driver *driver;	/*i2c设备的驱动*/
+      struct device dev;		/*从设备的驱动模型设备节点*/
+      int irq;			/*表示由此设备生成的irq(如果有)*/
+      struct list_head detected;//链表头
+    };
+    #+end_src
+  + i2c_adapter
+    用于识别物理i2c总线以及访问它所需要的访问算法结构,对应于
+    物理上的一个适配器
+    #+begin_src cpp
+    struct i2c_adapter {
+      struct module *owner;   /*所属模块*/
+      unsigned int class;		  /* classes to allow probing for */
+      const struct i2c_algorithm *algo; /*访问该总线的算法*/
+      void *algo_data;  /*algo算法私有的数据*/
+
+      struct rt_mutex bus_lock;/*互斥锁*/
+
+      int timeout;			     /* in jiffies */
+      int retries;           /*重复次数*/
+      struct device dev;		/*i2c适配器设备*/
+
+      int nr;            /*次设备号*/
+      char name[48];     /*适配器名称*/
+      struct completion dev_released; /*用于同步*/
+
+      struct mutex userspace_clients_lock;
+      struct list_head userspace_clients;/*链表头*/
+      struct i2c_bus_recovery_info *bus_recovery_info;//i2c总线恢复信息
+    };
+    #+end_src
+  + i2c_algorithm
+    对应一套通信方法
+    #+begin_src cpp
+    struct i2c_algorithm {
+    
+      /*i2c算法访问*/
+      int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs,
+             int num);
+     /*smbus算法访问*/
+      int (*smbus_xfer) (struct i2c_adapter *adap, u16 addr,
+             unsigned short flags, char read_write,
+             u8 command, int size, union i2c_smbus_data *data);
+
+      /*确定适配器支持的内容*/
+      u32 (*functionality) (struct i2c_adapter *);
+    };
+    #+end_src
+  + i2c_msg
+    表示一个完整的数据
+    #+begin_src cpp
+    struct i2c_msg {
+      __u16 addr;	          /* 从设备地址 */
+      __u16 flags;          /*标志*/
+    #define I2C_M_TEN		0x0010	/* 10位的芯片地址 */
+    #define I2C_M_RD		0x0001	/* 从从设备读数据到主设备 */
+    #define I2C_M_STOP		0x8000	      /* if I2C_FUNC_PROTOCOL_MANGLING */
+    #define I2C_M_NOSTART		0x4000	    /* if I2C_FUNC_NOSTART */
+    #define I2C_M_REV_DIR_ADDR	0x2000	/* if I2C_FUNC_PROTOCOL_MANGLING */
+    #define I2C_M_IGNORE_NAK	0x1000	  /* if I2C_FUNC_PROTOCOL_MANGLING */
+    #define I2C_M_NO_RD_ACK		0x0800	  /* if I2C_FUNC_PROTOCOL_MANGLING */
+    #define I2C_M_RECV_LEN		0x0400	  /* length will be first received byte */
+      __u16 len;		/* msg 长度				*/
+      __u8 *buf;		/* pointer to msg data	*/
+    };
+    #+end_src
+  + 
+    #+begin_src cpp
+    
+    #+end_src
+* Code分析
+** i2c-core.c
+** i2c-dev.c

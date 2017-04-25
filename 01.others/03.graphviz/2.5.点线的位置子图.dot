@@ -1,0 +1,37 @@
+/*
+设立一条边时，我们可以制定这条边从起点的那个位置射出和从哪个位置结束。控制符有
+"n", "ne","e", "se", "s", "sw", "w" 和"nw"，具体效果见下：
+n是北；s是南；w是西；e是东
+
+也可以在record/Mrecord中给点定义一些port，因为record类型中都是一个个格子
+
+*/
+/*哈希表*/
+digraph G{              /* digraph为有向图，graph为无向图 */
+	label = "USB Framework"
+	subgraph cluster0{
+		node[style=filled, color=white];
+		style = filled;
+		color = lightgrey;
+		a0 -> a1 -> a2 -> a3;
+		label = "process #1";
+	}
+
+	subgraph cluster1{
+		node[style=filled, ];
+		b0 -> b1 -> b2 -> b3;
+		label = "process #2";
+		color = blue;
+	}
+	start -> a0;
+	start -> b0;
+	a1 -> b3;
+	b2 -> a3;
+	a3 -> a0;
+	a3 -> end;
+	b3 -> end;
+
+	start[shape=Mdiamond];
+	end[shape=Msquare];
+	
+}

@@ -1,0 +1,83 @@
+* 安装
+wget -qO- https://raw.github.com/ma6174/vim/master/setup.sh | sh -x
+* vim
+** 替代SourceIisignt方法
+** ctags
+*** 生成标签
+*** 开启标签
+    Ctrl + F12  生成ctags文件
+    set tags=(路径)/ctags
+    用ctags生成标签
+    需要安装软件ctags软件
+    apt-get installed ctags
+    | 快捷键       | 功能                       |
+    | Ctrl-]       | 跳转到光标所在符号的定义。 |
+    | Ctrl-t       | 回到上次跳转前的位置。     |
+    | :tag tagName | 跳到tagName标签            |
+    | ：            |                            |
+
+    --list-kinds
+    获取帮助： ：help usr_29
+*** 在uboot/linux内核中
+    1. 生成ctags文件
+       make ctags
+       这会在当前目录生成ctags文件
+       以下是u-boot中的Makefile中的生成ctags的方法;我们也可以仿写一个Makefile
+       tags ctags:
+                ctags -w -o $(OBJTREE)/ctags `find $(SUBDIRS) include \
+                                lib_generic board/$(BOARDDIR) cpu/$(CPU) lib_$(ARCH) \
+                                fs/cramfs fs/fat fs/fdos fs/jffs2 \
+                                net disk rtc dtt drivers drivers/sk98lin common \
+                        \( -name CVS -prune \) -o \( -name '*.[ch]' -print \)`
+    2. 用vim随便打开一个有标签的文件（注意：有的文件没标签，这可能会进入标签失败）
+       然后设置标签，命令如下：
+       ：set tags=(路径)/ctags
+    3. 操作技巧
+      | 快捷键 | 功能                       |
+      |--------+----------------------------|
+      | Ctrl-] | 跳转到光标所在符号的定义。 |
+      | Ctrl-t | 回到上次跳转前的位置。 |
+** taglist
+   + 开启/关闭  ：Tlist
+   + <CR>          跳到光标下tag所定义的位置，用鼠标双击此tag功能也一样
+   + o             在一个新打开的窗口中显示光标下tag
+   + <Space>       显示光标下tag的原型定义
+   + u             更新taglist窗口中的tag
+   + s             更改排序方式，在按名字排序和按出现顺序排序间切换
+   + x             taglist窗口放大和缩小，方便查看较长的tag
+   + +             打开一个折叠，同zo
+   + -             将tag折叠起来，同zc
+   + *             打开所有的折叠，同zR
+   + =             将所有tag折叠起来，同zM
+   + [ [           跳到前一个文件
+   + ]]            跳到后一个文件
+   + q             关闭taglist窗口
+   + <F1>          显示帮助
+
+** NERDTree
+   | 快捷键 | 功能     |
+   | F3     | NERDTree |
+   |        |          |
+** cscope
+   `:help if_cscop.txt
+
+*** 1.生成数据库
+
+***
+
+** cstag
+
+** supertab
+
+** 编译
+   F5 编译
+   F8 gdb
+
+* A
+  :3,6s/print/PRINT/g
+  :3.$s/print/PRINT/gc
+  gg=G
+  100G
+  + 注释
+    Ctrl+v 选中
+    A/I 然后打 //  最后 Esc

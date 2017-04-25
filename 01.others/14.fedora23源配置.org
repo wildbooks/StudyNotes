@@ -1,0 +1,16 @@
+* fedora
+  + fedora
+    wget -O /etc/yum.repos.d/fedora.repo http://mirrors.aliyun.com/repo/fedora.repo
+  + fedora updates
+    wget -O /etc/yum.repos.d/fedora-updates.repo http://mirrors.aliyun.com/repo/fedora-updates.repo
+* rpmfusion
+  + free
+    http://mirrors.aliyun.com/rpmfusion/free/fedora/
+  + nonfree
+    http://mirrors.aliyun.com/rpmfusion/nonfree/fedora/
+* FZUG
+  + FZUG源
+    dnf config-manager --add-repo=http://repo.fdzh.org/FZUG/FZUG.repo
+* adobe-linux
+* ubuntu16.04
+http://releases.ubuntu.com/16.04/ubuntu-16.04-desktop-amd64.iso

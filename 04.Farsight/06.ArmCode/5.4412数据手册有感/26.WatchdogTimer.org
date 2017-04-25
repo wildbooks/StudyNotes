@@ -1,0 +1,16 @@
+* 概述
+  + 看门狗频率设置公式
+    t_watchdog = 1/(PCLK/(Prescaler value + 1)/Division_factor)
+    相关寄存器WTCON[15:8], WTCON[4:3]
+* 寄存器地图
+  + WTCON  控制寄存器
+    + Prescaler Value
+      预分频
+    + WDT tiemr使能看门狗
+    + Clock select 时钟设置
+      分频
+    + 中断使能
+    + 重启看门狗使能
+  + WTDAT  数据寄存器 重新加载数据寄存器
+  + WTCNT  Watchdog timer count register
+  + WTCLRINT  清除中断标志

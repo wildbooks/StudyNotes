@@ -1,0 +1,20 @@
+* 创建Git版本仓库
+    mkdir learngit
+    cd learngit
+    git init    #初始化一个空的git仓库
+    git add file.txt  #添加文件
+    git commit -m "Initial commit"  #记录本提交的更改说明
+    git status    #显示工作树状态,是否有文件被修改
+    git diff      #可以查看修改内容
++ 注意：如果有文件被修改就需要更新下
+    git log  查看提交日志
+    git reset --hard commit_id 恢复到某版本
+    git reflog   查看未来的版本，再 git reset --hard commit_id
+* 在服务器中创建一个"裸仓库"
+    mkdir proj.git
+    cd proj.git
+    git init --bare
+* 把项目“推”到中心服务器中
+    git push central.server/path/to/proj.git HEAD
+* 从中心服务器中clone项目
+    git clone central.server/path/to/proj.git

@@ -1,0 +1,102 @@
+* 简介
+  Sensors驱动有专门的Sensors子系统,核心代码在sensors_class.c,提供
+  了两个接口注册/注销sensors驱动,触摸屏驱动用到这个了
+* 参考文档
+  + *Code*:kernel/drivers/sensors/sensors_class.c
+  + *TP中的virtual-proximity部分*:kernel/drivers/input/touchscreen/ft5436_idol4/ft5x06_ts.c
+* sysfs
+  + *sysfs*:/sys/class/sensors
+* 结构体
+** sensors_classdev
+   #+begin_src cpp
+   struct sensors_classdev {
+      struct device		*dev; //设备用于注册用
+      struct list_head	node;//所有传感器驱动的表
+      const char		*name; //传感器名
+      const char		*vendor;//硬件部分的厂商
+      int			version;//版本号
+      int			handle;//标识此传感器的句柄(应该用于区分传感器用的)
+      int			type;//传感器类型
+      const char		*max_range;//在国际单位中,传感器值的最大范围
+      const char		*resolution;//该传感器报告的两个值之间的最小差
+      const char		*sensor_power;//传感器功耗(mA)
+      
+      /*该值取决于触发模式
+          continuous: 允许的最小周期(微妙)
+ 			    on-change : 0
+ 			    one-shot :-1
+ 			    special : 0,除非另有说明
+      */
+      int			min_delay;
+      
+      int			fifo_reserved_event_count;//在批处理模式FIFO中为此传感器保留的事件数。
+      int			fifo_max_event_count;//此传感器可以批处理的最大事件数
+      int32_t			max_delay;//传感器支持的最慢速率(毫秒)
+      uint32_t		flags;//如果传感器是唤醒传感器,则应为“1”,否则设置为“0”
+
+      unsigned int		enabled;//存储传感器驱动器使能状态
+      unsigned int		delay_msec;//存储传感器驱动器延迟值(毫秒)
+      unsigned int		wakeup;//指示唤醒中断是否使能
+      unsigned int		max_latency;//最大报告延迟(ms)
+      char			*params;//传感器校准字符串格式到用户空间。
+      struct cal_result_t	cal_result;//传感器校准参数,cal_result是传感器的结构。
+      /*启用/禁用传感器的手柄*/
+      int	(*sensors_enable)(struct sensors_classdev *sensors_cdev, unsigned int enabled);
+      /*该句柄用于设置传感器轮询延迟时间*/
+      int	(*sensors_poll_delay)(struct sensors_classdev *sensors_cdev, unsigned int delay_msec);
+      /**/
+      int	(*sensors_self_test)(struct sensors_classdev *sensors_cdev);
+      /*设置传感器的最大报告延迟*/
+      int	(*sensors_set_latency)(struct sensors_classdev *sensor_cdev, unsigned int max_latency);
+      /*启用/禁用传感器的手柄*/
+      int	(*sensors_enable_wakeup)(struct sensors_classdev *sensor_cdev, unsigned int enable);
+      /*在FIFO中清除传感器事件并将其报告给用户空间*/
+      int	(*sensors_flush)(struct sensors_classdev *sensors_cdev);
+      /*传感器校准*/
+      int	(*sensors_calibrate)(struct sensors_classdev *sensor_cdev, int axis, int apply_now);
+      int	(*sensors_write_cal_params)(struct sensors_classdev *sensor_cdev, struct cal_result_t *cal_result);
+    };
+   #+end_src
+* 函数
+** sensors_init()
+   1. 创建sensors类
+** sensors_class_attrs
+   *功能*:在/sys/class/sensors/xx/下创建属性文件
+   #+begin_src cpp
+   static struct device_attribute sensors_class_attrs[] = {
+      
+      /*name:显示传感器名*/
+      __ATTR(name, 0444, sensors_name_show, NULL),
+      /**/
+      __ATTR(vendor, 0444, sensors_vendor_show, NULL),
+      /**/
+      __ATTR(version, 0444, sensors_version_show, NULL),//显示版本号
+      __ATTR(handle, 0444, sensors_handle_show, NULL),//
+      __ATTR(type, 0444, sensors_type_show, NULL),//显示类型
+      __ATTR(max_range, 0444, sensors_max_range_show, NULL),//显示最大范围
+      __ATTR(resolution, 0444, sensors_resolution_show, NULL),//
+      __ATTR(sensor_power, 0444, sensors_power_show, NULL),
+      __ATTR(min_delay, 0444, sensors_min_delay_show, NULL),
+      __ATTR(fifo_reserved_event_count, 0444, sensors_fifo_event_show, NULL),
+      __ATTR(fifo_max_event_count, 0444, sensors_fifo_max_show, NULL),
+      __ATTR(max_delay, 0444, sensors_max_delay_show, NULL),
+      __ATTR(flags, 0444, sensors_flags_show, NULL),
+      __ATTR(enable, 0664, sensors_enable_show, sensors_enable_store),
+      __ATTR(enable_wakeup, 0664, sensors_enable_wakeup_show, sensors_enable_wakeup_store),
+      __ATTR(poll_delay, 0664, sensors_delay_show, sensors_delay_store),
+      __ATTR(self_test, 0440, sensors_test_show, NULL),
+      __ATTR(max_latency, 0660, sensors_max_latency_show, sensors_max_latency_store),
+      __ATTR(flush, 0660, sensors_flush_show, sensors_flush_store),
+      __ATTR(calibrate, 0664, sensors_calibrate_show, sensors_calibrate_store),
+      __ATTR_NULL,
+    };
+   #+end_src
+** 注册/注销传感器设备
+   #+begin_src cpp
+   int sensors_classdev_register(struct device *parent, struct sensors_classdev *sensors_cdev)
+   void sensors_classdev_unregister(struct sensors_classdev *sensors_cdev)
+   *功能:注册传感器类设备
+   *参数:parent:父节点
+          sensors_cdev:被注册设备的结构体
+   返回值:成功0       
+   #+end_src

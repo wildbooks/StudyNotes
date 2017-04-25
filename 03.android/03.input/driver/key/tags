@@ -1,0 +1,86 @@
+ATTR_SHOW_FN	gpio_keys.c	/^#define ATTR_SHOW_FN(name, type, only_disabled)			/
+ATTR_STORE_FN	gpio_keys.c	/^#define ATTR_STORE_FN(name, type)					\\$/
+FRONT_LED_LOG_TAG	gpio_keys.c	33
+active_low	01.input之key.org	105
+button	01.input之key.org	119
+button	gpio_keys.c	37
+buttons	01.input之key.org	90
+can_disable	01.input之key.org	110
+code	01.input之key.org	103
+data	01.input之key.org	138
+data	gpio_keys.c	53
+debounce_interval	01.input之key.org	109
+desc	01.input之key.org	106
+disable	01.input之key.org	/^        void (*disable)(struct device *dev);$/
+disable_lock	01.input之key.org	137
+disable_lock	gpio_keys.c	52
+disabled	01.input之key.org	126
+disabled	gpio_keys.c	44
+enable	01.input之key.org	/^        int (*enable)(struct device *dev);$/
+front_led_info	gpio_keys.c	/^#define front_led_info(fmt, ...) \\$/
+get_n_events_by_type	gpio_keys.c	/^static inline int get_n_events_by_type(int type)$/
+gpio	01.input之key.org	104
+gpio_button_data	01.input之key.org	118
+gpio_button_data	gpio_keys.c	36
+gpio_keys	01.input之key.org	12
+gpio_keys_attr_group	gpio_keys.c	325
+gpio_keys_attr_show_helper	gpio_keys.c	/^static ssize_t gpio_keys_attr_show_helper(struct g/
+gpio_keys_attr_store_helper	gpio_keys.c	/^static ssize_t gpio_keys_attr_store_helper(struct /
+gpio_keys_attrs	gpio_keys.c	317
+gpio_keys_button	01.input之key.org	101
+gpio_keys_close	gpio_keys.c	/^static void gpio_keys_close(struct input_dev *inpu/
+gpio_keys_device_driver	gpio_keys.c	985
+gpio_keys_disable_button	gpio_keys.c	/^static void gpio_keys_disable_button(struct gpio_b/
+gpio_keys_drvdata	01.input之key.org	133
+gpio_keys_drvdata	gpio_keys.c	48
+gpio_keys_enable_button	gpio_keys.c	/^static void gpio_keys_enable_button(struct gpio_bu/
+gpio_keys_exit	gpio_keys.c	/^static void __exit gpio_keys_exit(void)$/
+gpio_keys_get_devtree_pdata	gpio_keys.c	/^gpio_keys_get_devtree_pdata(struct device *dev)$/
+gpio_keys_get_devtree_pdata	gpio_keys.c	/^gpio_keys_get_devtree_pdata(struct device *dev)$/
+gpio_keys_gpio_isr	gpio_keys.c	/^static irqreturn_t gpio_keys_gpio_isr(int irq, voi/
+gpio_keys_gpio_report_event	gpio_keys.c	/^static void gpio_keys_gpio_report_event(struct gpi/
+gpio_keys_gpio_timer	gpio_keys.c	/^static void gpio_keys_gpio_timer(unsigned long _da/
+gpio_keys_gpio_work_func	gpio_keys.c	/^static void gpio_keys_gpio_work_func(struct work_s/
+gpio_keys_init	gpio_keys.c	/^static int __init gpio_keys_init(void)$/
+gpio_keys_irq_isr	gpio_keys.c	/^static irqreturn_t gpio_keys_irq_isr(int irq, void/
+gpio_keys_irq_timer	gpio_keys.c	/^static void gpio_keys_irq_timer(unsigned long _dat/
+gpio_keys_of_match	gpio_keys.c	729
+gpio_keys_open	gpio_keys.c	/^static int gpio_keys_open(struct input_dev *input)/
+gpio_keys_pinctrl_configure	gpio_keys.c	/^static int gpio_keys_pinctrl_configure(struct gpio/
+gpio_keys_platform_data	01.input之key.org	89
+gpio_keys_probe	gpio_keys.c	/^static int gpio_keys_probe(struct platform_device /
+gpio_keys_remove	gpio_keys.c	/^static int gpio_keys_remove(struct platform_device/
+gpio_keys_report_state	gpio_keys.c	/^static void gpio_keys_report_state(struct gpio_key/
+gpio_keys_resume	gpio_keys.c	/^static int gpio_keys_resume(struct device *dev)$/
+gpio_keys_setup_key	gpio_keys.c	/^static int gpio_keys_setup_key(struct platform_dev/
+gpio_keys_suspend	gpio_keys.c	/^static int gpio_keys_suspend(struct device *dev)$/
+gpio_remove_key	gpio_keys.c	/^static void gpio_remove_key(struct gpio_button_dat/
+input	01.input之key.org	120
+input	01.input之key.org	136
+input	gpio_keys.c	38
+input	gpio_keys.c	51
+irq	01.input之key.org	112
+irq	01.input之key.org	124
+irq	gpio_keys.c	42
+key_pinctrl	01.input之key.org	135
+key_pinctrl	gpio_keys.c	50
+key_pressed	01.input之key.org	127
+key_pressed	gpio_keys.c	45
+lock	01.input之key.org	125
+lock	gpio_keys.c	43
+name	01.input之key.org	96
+nbuttons	01.input之key.org	91
+pdata	01.input之key.org	134
+pdata	gpio_keys.c	49
+poll_interval	01.input之key.org	92
+rep	01.input之key.org	93
+timer	01.input之key.org	121
+timer	gpio_keys.c	39
+timer_debounce	01.input之key.org	123
+timer_debounce	gpio_keys.c	41
+tlmm_gpio_key	01.input之key.org	55
+type	01.input之key.org	107
+value	01.input之key.org	111
+wakeup	01.input之key.org	108
+work	01.input之key.org	122
+work	gpio_keys.c	40

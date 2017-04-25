@@ -1,0 +1,196 @@
+arm 重理论实践   系统移植 重流程    驱动重框架
+系统移植学习目的：
+	在4412开发平台移植一个linux操作系统
+
+	操作系统作用：（1）方便开发。 （2）将硬件与软件隔离（保护硬件）
+
+内容安排：
+	1  环境搭建
+	2  引导程序（uboot）
+	3  引导程序+内核移植
+	4  内核移植
+	5  文件系统制作
+
+嵌入式操作系统组成
+	无os:  硬件---驱动---应用层
+	有os:  硬件--引导---内核---应用层 
+		内核：linux
+		      winCE
+		      vxworks(风河)
+			uc/os
+			mbed os
+			tiny os:无线传感网络。
+	
+嵌入式开发流程：
+	引导程序（uboot） ---  内核(linux)   ----文件系统
+	交叉编译器进行编译	
+
+内核五大功能：
+	进程管理，任务管理
+	内存管理
+	文件系统：vfs
+	设备控制
+	网络控制
+
+交叉环境硬件组成：
+	开发主机：linux
+	开发平台:4412
+	连接介质：串口（调试）， 网线（数据传输 ）， usb(烧录 -- dnw)
+
+	开发模式：
+		本地开发：
+		交叉开发：执行平台与编译平台不是同一平台。
+	软件组成：
+		putty,Xshell (串口调试)， tftp,nfs（网络数据下载)
+	
+	
+		开发模式：所有数据通过网络或串口直接下载到内存运行。
+		产品模式：所有数据都烧录到外存。
+
+
+交叉编译器：
+	gcc:编译程序
+		流程如下：
+		预处理：gcc -E xx.c -o xx.i
+		编译：gcc -S xx.i -o xx.s
+		汇编： gcc -c xx.s -o xx.o
+		链接： gcc xx.o -o xx
+	   常用选项：
+		-g :调试
+		-O: 优化
+		-D:宏定义
+		-L:链接库路径
+		-l:指定动态静态库
+		-I:指定头文件目录
+
+	binutils工具集：	
+		readelf:查看elf信息
+			运行平台，大小端，首地址，段信息
+			例：  readelf -a  elf可执行文件
+
+			.NOTE:可执行文件种类：
+			elf(unix/linux可执行文件)
+			bin(裸板支持二进制可执行文件)
+			srec(摩托罗拉支持的二进制文件)
+
+		as:汇编器，将汇编代码汇编成目标文件
+			gcc -c xx.s -o xx.o 
+			例： as xx.s -o xx.o
+
+		size:显示elf代码，数据，bss段大小
+		nm：列出符号信息
+		   例： 
+			gcc xx.c -o xx -g
+			nm  -A  xx
+			.NOTE:查看.symtab符号表信息（所有全局变量与函数的地址）
+		strip:elf 文件瘦身,符号表，调试信息都被裁剪掉
+		   例：
+			strip xx
+			ls -lh xx
+		strings:打印可打印字符串
+		  例：
+			strings  xx、
+		objdump:反汇编
+		  例：
+			gcc -c xx.c -o xx.o
+			objdump -d xx.o > xx.dis
+		objcopy:格式转换
+		  例：objcopy -O binary  xx  xx.bin
+		addr2line:将地址转换成行号  编译时加-g
+		  例：
+			gcc xx.c -o xx -g
+			nm xx
+			addr2line 0xxx  -e  xx -f
+		
+
+制作交叉编译器：
+	gcc,glibc,二进制工具集 ，通过crosstool,crosstool-ng脚本来实现
+
+安装交叉编译器：
+	下载gcc-4.6xx
+	解压
+		tar xvf  xx.tar.xx
+	配置PATH
+		sudo vi /etc/bash.bashrc 
+		或
+		sudo vi /etc/profile
+		
+		在最后一行添加：
+		export PATH=$PATH:/home/xxx/gcc-4.6xxx/bin
+		
+		source /etc/bash.basrc
+		或
+		source /etc/profile
+	
+	arm-linux-gcc -v 测试
+
+	.NOTE执行脚本
+			chmod xxx      ./xx.sh
+			bash  xx.sh
+			souce xx.sh
+			. xx.sh
+
+配置网络：
+	winip:  192.168.6.20
+	虚拟机Ip: 192.168.6.19
+	开发板ip: 192.168.6.18
+
+	配置虚拟机IP（桥接）:
+	sudo vi /etc/network/interfaces
+		auto eth0
+		iface eth0 inet static
+		address 192.168.xx.xx
+		netmask 255.255.0.0
+		gateway 192.168.1.1
+	
+	sudo /etc/init.d/networking restart
+
+
+	配置putty  : comx  115200  关闭flow control
+	配置开发板ip:
+	setenv ipaddr 192.168.xx.xx
+	setenv gatewayip 192.168.1.1
+	setenv netmask 255.255.0.0
+	saveenv
+
+	测试：
+	开发板输入： ping  虚拟机Ip   
+		成功 ：xxx  is  alive
+
+
+	开发模式：
+		引导程序，已经存在于mmc/sd卡
+		内核：通过tftp 下载 uImage (linux3.14  需要设备树)
+		根文件系统：通过nfs 挂载 rootfs 
+		
+
+	配置tftp 服务器
+	下载安装tftp
+	sudo apt-get install tftp-hpa tftpd-hpa
+	配置tftp
+	sudo  vi /etc/default/tftpd-hpa
+		将tftp_directory = "自己已存在的目录"
+		给目录777权限
+	重启tftp服务
+	sudo /etc/init.d/tftpd-hpa restart
+
+
+	测试 tftp 127.0.0.1   get/put/quit
+
+
+	复制内核与设备到开发板的内存41000000 42000000	
+	
+	设置开发板对应服务器的Ip
+	setenv serverip  虚拟机ip
+	saveenv
+	
+	开发板下载
+	tftp 41000000 uImage
+	tftp 42000000  exynos4412-fs4412.dtb	
+	bootm 41000000 - 42000000
+		
+		
+		
+		
+	
+	      

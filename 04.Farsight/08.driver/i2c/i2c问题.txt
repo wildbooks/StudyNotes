@@ -1,0 +1,56 @@
+一 问题
+
+(1)IIC总线上的设备是怎么描述的
+struct i2c_client
+{
+	struct device dev;
+	...
+};
+
+(2)IIC总线上的驱动是怎么描述的
+struct i2c_driver
+{
+	struct device_driver driver;
+};
+
+(2)IIC总线上的设备和驱动是怎么匹配的
+
+通过driver提供id_table和client->name匹配
+
+
+(3)如何告诉系统我们从设备的信息
+arch/arm/mach-s5c100/mac-smdkc100.c    【a8】
+
+struct i2c_borad_info i2c_des0[] = {
+
+	填写从设备的信息
+}
+a9是设备树初始化得来的
+adapter初始化的时候 最后调用了   i2c_new_device()函数
+
+
+(4)系统是如何找到我们的从设备信息，找到从设备信息后做了什么事情
+系统启动的时候，会把从设备信息，注册到_i2c_borad_list。
+总线驱动的匹配的时候，会调用
+i2c_add_numbered_adapter() 
+	   |
+i2c_register_adapter(adap)
+	   |
+i2c_scan_static_board_info()
+	   |
+i2c_new_device()
+{
+	1.产生了i2c_client (填充了从设备信息)
+	2.注册了client->device
+}
+
+adapter初始化的时候 最后调用了   i2c_new_device()函数
+
+
+(5)在IIC总线上驱动如何获取从设备的信息
+
+//i2c_driver的probe函数在调用的时候，会将i2c_client结构体传递过去，i2c_client包含了从设备的信息
+int xxx_probe(struct i2c_client  *client, const struct i2c_device_id *id)
+{
+		
+}

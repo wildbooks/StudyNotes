@@ -1,0 +1,37 @@
+参考文档
+   linux-3.14中的文档
+        Documentation/devicetree/bindings/arm/gic.txt
+        Documentation/devicetree/bindings/interrupt-controller/interrupt.txt
+
+
+    讲解在这Documentation/devicetree/bindings/interrupt-controller/interrupt.txt
+    fs4412-key{
+        compatible = "fs4412,key";
+        interrupt-parent = <&gpx1>;//父节点,因为 interrupt-cells为2，所以下面是是2个
+        interrupt = <1 2>,<2 2>;
+    };
+
+
+    讲解在这Documentation/devicetree/bindings/arm/gic.txt
+    gpx1: gpx1 {
+        gpio-controller;
+        #gpio-cells = <2>;
+
+        interrupt-controller;       //标志的节点作为中断控制器
+        interrupt-parent = <&gic>;  //父节点中的 interrupt-cells为3，所以下面是2
+        interrupts = <0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,   //[0-7]引脚 24~31指的是中断号
+                 <0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
+        #interrupt-cells = <2>;
+    };
+
+	gic: interrupt-controller@10490000 {
+		compatible = "arm,cortex-a9-gic";
+		#interrupt-cells = <3>; //必须为3
+		interrupt-controller;   //标识的节点作为中断控制器
+		reg = <0x10490000 0x1000>, <0x10480000 0x100>;
+            //gic分配器             gic cpu接口
+	};
+
+
+1. 此处研究的是在arm中断中如何使用设备树，
+    这里都是中断

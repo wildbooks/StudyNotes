@@ -1,0 +1,76 @@
+ABC类网络笔记链接:
+	http://note.youdao.com/share/?id=81529d0ca02e4aa65c16d1da0b69344d&type=note
+Linux网络配置:
+<参考笔记链接>
+	ip地址:4字节,32位。网络地址 + 主机地址;
+	A类:1个字节网络地址+3 字节主机地址;
+		以0开头;
+		
+	B类:2字节网络地址+ 3 字节主机地址;
+		以10开头;
+		eg:
+			180.97.33.108
+	C类:3字节网络地址 + 3 字节主机地址;
+		以110开头;
+		eg:
+			192.168.2.28
+			
+	掩码(netmask): 与Ip地址进行位与操作.	
+		eg: 255.255.255.0
+		
+	网关:(gateway): 默认是路由地址.
+		eg: 192.168.1.1 
+			
+	DNS: 域名解析服务器.
+		eg:114.114.114.114
+	
+相关命令:
+	ifconfig 
+		sudo ifconfig ethX  192.168.2.18  //X是数字,表示第几个网卡,如eth0。
+		sudo ifconfig ethX  netmask 255.255.255.0
+		sudo ifconfig ethX  192.168.2.18  netmask 255.255.255.0
+		ifconfig ethX //查看指定网卡信息。
+	dhclient 动态获取ip地址
+		分析dhcp地址租借的过程<卡罗牌举例>
+		参考P221
+	
+	netstat
+		netstat -r  显示路由表
+		netstat -i 显示网络接口列表.
+		<参考P225,关注对应配置文件/etc/net/route>
+	
+	ping 网络测试连接命令
+		ping 192.168.1.1 
+		ping www.baidu.com 
+
+	nsloopup
+		nsloopup www.google.com
+		nsloopup www.baidu.com 
+		<参考P231>
+
+相关配置文件:
+
+	/etc/network/interfaces 配置网卡ip地址<其中符号#表示注释>
+	/etc/resolv.conf  配置DNS
+
+配置流程:
+	
+Step1:	
+	//设置自动获取IP或静态IP
+	sudo vi /etc/network/interfaces  
+Step2:	
+	//设置DNS 
+	sduo vi /etc/resolv.conf	
+Step3:	
+	//服务重启
+	sudo /etc/init.d/networking  restart 
+Step4:	
+	//测试网络是否OK
+	ping www.baidu.com  
+
+拓展命令:	
+	sudo ifconfig  ethX down  //关闭网卡X
+	sudo ifconfig  ethX up	  //开启网卡X
+			
+	sudo /etc/init.d/networking  start/stop //启动/关闭服务
+	sudo /etc/init.d/networking  restart //重新读取配置文件启动

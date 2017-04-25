@@ -1,0 +1,69 @@
+* led简介
+  + RGB:(红绿蓝)三色灯
+    通常用于充电,通常分为两种:PWM控制和LPG控制
+  + WLED:背光灯
+    
+  + Flash LED:闪光灯
+    通常用于相机和视频闪光灯,也用于手电筒(flashlight)应用
+  + MPP LED:IO复用LED等
+* RGB
+** sysfs使用方法
+** RGB资料
+   + RGB LED driver source
+     kernel/drivers/leds/leds-qpnp.c
+   + DTSI documentation
+     kernel/Documentation/devicetree/bindings/leds/leds-qpnp.txt
+   + DTSI files
+     kernel/arch/arm/boot/dts/qcom/msm-pmi89<xx>.dtsi
+     PMI8998 only – kernel/arch/arm/boot/dts/qcom/msm-pmicobalt.dtsi
+* MPP LED
+  + MPP LED driver source
+    kernel/drivers/leds/leds-qpnp.c
+  + DTSI documentation
+    kernel/Documentation/devicetree/bindings/leds/leds-qpnp.txt
+  + DTSI files
+    kernel/arch/arm/boot/dts/qcom/msm-pmi<####>.dtsi
+* Flash LED
+** sysfs使用方法
+   + enable one flash
+     adb shell "echo 255 > /sys/class/leds/led:flash_1/brightness"
+     adb shell "echo 1 > /sys/class/leds/led:switch/brightness"
+   + enable flash
+     adb shell "echo 255 > /sys/class/leds/led:flash_0/brightness"
+     adb shell "echo 255 > /sys/class/leds/led:flash_1/brightness"
+     adb shell "echo 1 > /sys/class/leds/led:switch/brightness"
+   + disable flash
+     adb shell "echo 0 > /sys/class/leds/led:flash_0/brightness"
+     adb shell "echo 0 > /sys/class/leds/led:flash_1/brightness"
+     adb shell "echo 0 > /sys/class/leds/led:switch/brightness"
+   + torch(手电筒)
+     adb shell "echo 255 > /sys/class/leds/led:torch_0/brightness"
+     adb shell "echo 255 > /sys/class/leds/led:torch_1/brightness"
+     adb shell "echo 1 > /sys/class/leds/led:switch/brightness"
+   + enable flash
+   + disable tourch
+     adb shell "echo 0 > /sys/class/leds/led:torch_0/brightness"
+     adb shell "echo 0 > /sys/class/leds/led:torch_1/brightness"
+     adb shell "echo 0 > /sys/class/leds/led:switch/brightness"
+   + 注意 ::
+        brightness必须都为0时，闪光灯才会有效
+** Flash LED参考资料
+   + Flash driver source
+     kernel/drivers/leds/leds-qpnp-flash.c
+     (PMI8998) kernel/drivers/leds/leds-qpnp-flash-v2.c
+   + DTSI documentation
+     kernel/Documentation/devicetree/bindings/leds/leds-qpnp-flash.txt
+     (PMI8998) kernel/Documentation/devicetree/bindings/leds/leds-qpnp-flash-v2.txt
+   + DTSI files
+     kernel/arch/arm/boot/dts/qcom/msm-pmi<####>.dtsi
+     (PMI8998) kernel/arch/arm/boot/dts/qcom/msm-pmicobalt.dtsi
+* WLED
+** sysfs使用方法
+** WLED参考资料
+   + WLED driver source
+     kernel/drivers/leds/leds-qpnp-wled.c
+   + DTSI documentation
+     kernel/Documentation/devicetree/bindings/leds/leds-qpnp-wled.txt
+   + DTSI files
+     kernel/arch/arm/boot/dts/qcom/msm-pmi<####>.dtsi
+     (PMI8998 only) kernel/arch/arm/boot/dts/qcom/msm-pmicobalt.dtsi

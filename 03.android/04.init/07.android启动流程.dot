@@ -1,0 +1,6 @@
+digraph G{              /* digraph为有向图，graph为无向图 */
+	/*用dir设置每条边箭头的方向*/
+    init -> "init.rc" -> "Volume Daemon";
+            "init.rc" -> Zygote;
+                         Zygote -> systemserver -> AndroidService;
+}

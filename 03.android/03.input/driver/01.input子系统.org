@@ -1,0 +1,486 @@
+* 关键词
+#+begin_src cpp
+CONFIG_TOUCHPANEL_PROXIMITY_SENSOR   配置触摸板接近传感器
+FOCALTECH_TP_GESTURE  配置触摸手势
+#define VPS_NAME "virtual-proximity"   手写板
+#define FT_DEBUG_DIR_NAME	"ts_debug"
+suspended 对应的是　屏和亮屏状态
+"virtual-proximity"
+#+end_src
+* 输入子系统架构
+1. Linux系统提供了input子系统，按键、触摸屏、键盘、鼠标等输入都可以利用
+   input接口函数来实现设备驱动.
+2. 一个输入事件，如鼠标移动，键盘按键按下等都是通过
+   Driver -> InputCore -> Eventhandler -> userspace
+   的顺序到达用户空间传给应用程序
+   1. 驱动层(Drivers)功能
+      负责和底层的硬件设备打交道，将底层硬件设备对用户输入的响应转换为标
+      准的输入事件以后再向上发送给输入子系统核心层（Input Core)。
+   2. 输入子系统核心层(Input Core)
+      Input Core即Input Layer，由driver/input/input.c及相关头文件实现，
+      它对下提供了设备驱动层的接口，对上提供了事件处理层（Event Handler）
+      的编程接口。
+   3. 事件处理层(Event Handler)
+      事件处理层将硬件设备上报的事件分发到用户空间和内核
+* 涉及到函数
+创建工作队列  -> 创建工作  ->  条度  ->  注销工作队列
++ create_singlethread_workqueue(name)
+  ==>
+  #+begin_src cpp
+  struct workqueue_struct* create_singlethread_workqueue(char *name)
+  + 功能：创建工作队列
+    创建工作队列，用kzalloc动态开辟空间，并返回一个指针，所以在不使用该
+    work queue的情况下调用destroy_workqueue()释放该空间
+  + 参数
+    name : workqueue名
+  + 返回类型: struct workqueue_struct指针,失败返回NULL
+  #+end_src
+  工作队列参考文档: [[http://blog.csdn.net/myarrow/article/details/8090504][<<Linux workqueue工作原理>>]]
++ void destroy_workqueue(struct workqueue_struct *wq)
+  释放workqueue队列
++ i2c_add_driver
+  #+begin_src cpp
+  #define i2c_add_driver(driver) i2c_register_driver(THIS_MODULE, driver)
+  int i2c_register_driver(struct module *owner, struct i2c_driver *driver)
+  #+end_src
++ static inline int i2c_check_functionality(struct i2c_adapter *adap, u32 func)
+  + 功能
+    检查i2c适配器是否支持xxx,成功返回１，失败返回０
++ struct input_dev *input_allocate_device(void)
+  + 功能
+    为输入设备分配内存空间
+  + 返回值
+    失败:NULL
+    成功:地址
++ void input_free_device(struct input_dev *dev)
+  + 功能
+    释放输入设备内存空间
++ int input_register_device(struct input_dev *dev)
+  + 功能
+    注册输入设备
+  + 返回值
++ input_unregister_device()
+  + 功能
+    注销输入设备
++ INIT_WORK(_work, _func)
+  + 功能
+    创建工作
+  + 参数
+  + 返回值
++ int device_create_file(struct device *dev,const struct device_attribute *attr)
+  + 功能
+    为设备创建sysfs属性文件
+  + 参数
+  + 返回值
++ int request_threaded_irq(unsigned int irq, irq_handler_t handler, irq_handler_t thread_fn, unsigned long irqflags, const char *devname, void *dev_id)
+  + 功能
+    分配一个中断线
+  + 参数
+    + irq:被分配的中断线
+    + handler:中断处理函数
+    + thread_fn:线程处理函数
+    + irqflags:中断类型标志
+    + devname
+    + dev_id:
+  + 返回值
++ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
+  + 功能
+    在debugfs文件系统中创建文件夹
+  + 参数
+    name:目录的名字
+    parent:指定这个目录的上级目录，如果是NULL，则表示在debugfs的根目录里
+  + 返回值
+    失败：NULL
++ struct dentry *debugfs_create_file(const char *name, umode_t mode, struct dentry *parent, void *data, const struct file_operations *fops)
+  + 功能
+    在debugfs文件系统中创建文件
+  + 参数
+    name: 文件名
+    mode: 权限
+    parent:指定这个目录的上级目录，如果是NULL，则表示在debugfs的根目录里
+    data:数据
+    fops:文件操作
+  + 返回值
++ DEVICE_ATTR(name, mode, show, store)
+  #+begin_src cpp
+  #define __ATTR(_name,_mode,_show,_store) {   .attr = {.name = __stringify(_name), .mode = _mode, .owner = THIS_MODULE },   .show = _show,   .store = _store,  }
+  #define DEVICE_ATTR(_name,_mode,_show,_store)  struct device_attribute dev_attr_##_name = __ATTR(_name,_mode,_show,_store)
+  DEVICE_ATTR(force_update_fw, 0664, ft5x06_update_fw_show, ft5x06_force_update_fw_store);
+
+  ====>
+  struct device_attribute dev_attr_force_updata_fw = {
+      .attr = {
+          .name = __stringify(force_update_fw),     // = "force_update_fw"
+          .mode = 0644;
+          .owner = THIS_MODULE,
+      }
+      .show = ft5x06_update_fw_show,
+      .store = ft5x06_force_update_fw_store,
+  }
+  #+end_src
++ static inline void input_report_key(struct input_dev *dev, unsigned int code, int value)
+  + 功能
+  +
++ static inline void input_sync(struct input_dev *dev)
+
++ static inline void input_report_key(struct input_dev *dev, unsigned int code, int value)
+
++ static inline void input_sync(struct input_dev *dev)
+
++ void input_event(struct input_dev *dev, unsigned int type, unsigned int code, int value)
+  + 功能: 报告新输入事件
+  + dev: 产生事件的输入设备
+  + type: 事件类型
+    EV_SYN			   0x00    //表示设备支持所有的事件
+    EV_KEY			   0x01    //键盘或者按键，表示一个键码
+    EV_REL			   0x02    //鼠标设备，表示一个相对的光标位置结果
+    EV_ABS			   0x03    //手写板，产生的值，其是一个绝对整数值
+    EV_MSC			   0x04    //其他类型
+    EV_SW			     0x05
+    EV_LED			   0x11    //LED灯设备
+    EV_SND			   0x12    //蜂鸣器，输入声音
+    EV_REP			   0x14    //允许重复按键类型
+    EV_FF			     0x15
+    EV_PWR			   0x16    //电源管理事件
+    EV_FF_STATUS   0x17
+    EV_MAX			   0x1f
+    EV_CNT			   (EV_MAX+1)
+  + code
+    产生的事件
+  + value:事件的值
+* 关键结构体
++ struct i2c_client(表示从设备)
+  #+begin_src cpp
+  struct i2c_client {
+      unsigned short flags;		/* div., see below		*/
+      unsigned short addr;		/* chip address - NOTE: 7bit	*/
+              /* addresses are stored in the	*/
+              /* _LOWER_ 7 bits		*/
+      char name[I2C_NAME_SIZE];
+      struct i2c_adapter *adapter;	/*该i2c从设备所依附的i2c主设备*/
+      struct i2c_driver *driver;	/*该i2c从设备的驱动程序*/
+      struct device dev;		/* 设备结构体用来描述设备的*/
+      int irq;			/* 该设备irq中断*/
+      struct list_head detected;
+  };
+  #+end_src
++ struct i2c_adapter(适配器)
+  #+begin_src cpp
+  struct i2c_adapter {
+      struct module *owner;
+      unsigned int class;		  /* classes to allow probing for */
+      const struct i2c_algorithm *algo; /* the algorithm to access the bus */
+      void *algo_data;
+
+      /* data fields that are valid for all devices	*/
+      struct rt_mutex bus_lock;
+
+      int timeout;			/* in jiffies */
+      int retries;
+      struct device dev;		/* the adapter device */
+
+      int nr;
+      char name[48];
+      struct completion dev_released;
+
+      struct mutex userspace_clients_lock;
+      struct list_head userspace_clients;
+
+      struct i2c_bus_recovery_info *bus_recovery_info;
+  };
+  #+end_src
++ struct i2c_algorithm(该i2c主设备传输数据的一种算法)
+  #+begin_src cpp
+  struct i2c_algorithm {
+      int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs, int num);
+      int (*smbus_xfer) (struct i2c_adapter *adap, u16 addr, unsigned short flags, char read_write, u8 command, int size, union i2c_smbus_data *data);
+
+      /* To determine what the adapter supports */
+      u32 (*functionality) (struct i2c_adapter *);
+  };
+  #+end_src
+* 框架讲解
+** 代码路径ft5436_idol4/ft5x06_ts.c
++ ft5x06驱动的注册
+  #+begin_src cpp
+  static int __init ft5x06_ts_init(void)
+  {
+      //工作队列创建
+      ft5x06_wq = create_singlethread_workqueue("ft5x06_wq");
+      if (!ft5x06_wq)
+      {
+          printk("Creat ft5x06 workqueue failed. \n");
+          return -ENOMEM;
+      }
+      //很多工作队列创建，省略了
+      ...
+    //i2c驱动注册
+    return i2c_add_driver(&ft5x06_ts_driver);
+  }
+  #+end_src
++ 结构体ft5x06_ts_drive填充
+  #+begin_src cpp
+  static struct i2c_driver ft5x06_ts_driver = {
+    .probe = ft5x06_ts_probe,
+    .remove = ft5x06_ts_remove,
+    .driver = {
+         .name = "ft5x06_ts",   //匹配设备用的
+         .owner = THIS_MODULE,
+         .of_match_table = ft5x06_match_table, //匹配设备树用的
+         .pm = &ft5x06_ts_pm_ops,
+     },
+     .id_table = ft5x06_ts_id,
+  };
+  #+end_src
+  + ft5x06_ts_probe
+    #+begin_src cpp
+    static int ft5x06_ts_probe(struct i2c_client *client, const struct i2c_device_id *id)
+    {
+        if (client->dev.of_node) {
+            //如果设备节点存在，开辟内存空间,(平台数据)
+            pdata = devm_kzalloc(&client->dev, sizeof(struct ft5x06_ts_platform_data), GFP_KERNEL);
+            //解析设备树,解析的内容
+            err = ft5x06_parse_dt(&client->dev, pdata);
+        } else
+            pdata = client->dev.platform_data;
+
+        判断适配器是否支持函数
+        if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C));
+
+        //平台设备的所有集合数据
+        data = devm_kzalloc(&client->dev, sizeof(struct ft5x06_ts_data), GFP_KERNEL);
+
+        //以下是填充data结构体
+        data->fw_name = "ft_fw.bin"// = pdata->fw_name;
+        data->tch_data_len = 33;
+        //分配空间
+        data->tch_data = devm_kzalloc(&client->dev, data->tch_data_len, GFP_KERNEL);
+
+        //为输入设备分配空间
+        input_dev = input_allocate_device();
+
+        ft_g_client = client;
+        data->input_dev = input_dev;
+        data->client = client;
+        data->pdata = pdata;
+
+        input_dev->name = "ft5x06_ts";
+        input_dev->id.bustype = BUS_I2C;
+        input_dev->dev.parent = &client->dev;
+
+        input_set_drvdata(input_dev, data);//保存data到input_dev->dev->p->driver_data = data的私有变量中
+        i2c_set_clientdata(client, data); //保存data到client的私有变量中
+
+        //事件类型
+        __set_bit(EV_KEY, input_dev->evbit); //设置支持的事件类型为按键
+        __set_bit(EV_ABS, input_dev->evbit);  //绝对坐标事件，触摸屏每次发送的坐标都是绝对坐标，不同于鼠标的相对坐标
+        __set_bit(BTN_TOUCH, input_dev->keybit);//touch类型按键
+
+        //设备属性
+        __set_bit(INPUT_PROP_DIRECT, input_dev->propbit);//直接输入设备
+        //按键类型
+        input_set_capability(input_dev, EV_KEY, TCT_KEY_BACK);//设置支持的事件类型为EV_KEY,支持事件的代码
+        input_set_capability(input_dev, EV_KEY, TCT_KEY_HOME);
+        input_set_capability(input_dev, EV_KEY, TCT_KEY_MENU);
+
+        //触摸屏属性设置
+        input_mt_init_slots(input_dev, pdata->num_max_touches, 0);//报告最大支持的点数
+        input_set_abs_params(input_dev, ABS_MT_POSITION_X, pdata->x_min, pdata->x_max, 0, 0);//x坐标取值范围
+        input_set_abs_params(input_dev, ABS_MT_POSITION_Y, pdata->y_min, pdata->y_max, 0, 0);//y坐标取值范围
+
+        //INIT_WORK
+        ...
+
+        //注册输入设备
+        err = input_register_device(input_dev);
+
+        //电源初始化
+        err = ft5x06_power_init(data, true);
+
+        //电源待机
+        err = ft5x06_power_on(data, true);
+
+        //引脚控制初始化(相当于硬件初始化)
+        err = ft5x06_ts_pinctrl_init(data);
+
+        //irq_gpio引脚申请  此引脚用于irq中断
+        err = gpio_request(pdata->irq_gpio, "ft5x06_irq_gpio");
+
+        //设置irq_qpio引脚为输入模式
+        err = gpio_direction_input(pdata->irq_gpio);
+
+        //reset_gpio引脚申请,此引脚用于reset
+        err = gpio_request(pdata->reset_gpio, "ft5x06_reset_gpio");
+
+        //设置reset_qpio为输出模式,输出为０
+        err = gpio_direction_output(pdata->reset_gpio, 0);
+
+        //硬件初始化需要时间，所以睡眠一段时间提高系统的稳定性
+        msleep(data->pdata->hard_rst_dly);
+
+        //设置reset_qpio为输出模式,输出为1
+        gpio_direction_output(data->pdata->reset_gpio, 1);
+
+        //确保CTP已经完成启动过程
+        msleep(data->pdata->soft_rst_dly);
+
+        //配置接近触摸板
+        vps_ft5436 = kzalloc(sizeof(struct virtualpsensor), GFP_KERNEL);
+        virtual_psensor_input_register2( client ) ;
+        sys_device_create();  //创建类
+
+        //获取触摸屏采集的信息
+        err = request_threaded_irq(client->irq, NULL, ft5x06_ts_interrupt, pdata->irqflags | IRQF_ONESHOT|IRQF_TRIGGER_FALLING, client->dev.driver->name, data);
+
+        //创建设备节点
+        //创建debugfs文件系统文件夹和文件
+        data->dir = debugfs_create_dir(FT_DEBUG_DIR_NAME, NULL);
+        temp = debugfs_create_file("addr", S_IRUSR | S_IWUSR, data->dir, data, &debug_addr_fops);
+        ....
+
+        //获取寄存器信息
+        ...
+        ft5x06_update_fw_ver(data);//获取固件版本号:Firmware version
+        ft5x06_update_fw_vendor_id(data);//获取固件供应商id  [Fu]fw_vendor_id
+
+        firm_ver_attr_create();  //创建设备的固件版本相关的一些信息
+
+    }
+    #+end_src
+    + ft5x06_parse_dt(&client->dev, pdata)设备树解析分析
+      #+begin_src cpp
+      static int ft5x06_parse_dt(struct device *dev, struct ft5x06_ts_platform_data *pdata)
+      {
+
+        #if 0
+        pdata->name = "ft5436"; //focaltech,name
+        ft_tp_name = "ft5436"; //focaltech,name
+        pdata->panel_minx = coords[0]=0;//focaltech,panel-coords
+        pdata->panel_miny = coords[1]=0;
+        pdata->panel_maxx = coords[2]=1080;
+        pdata->panel_maxx = coords[3]=1920;
+        #endif
+        rc = ft5x06_get_dt_coords(dev, "focaltech,panel-coords", pdata);       #endif
+
+        #if 0
+        pdata->x_min = coords[0]=0;//focaltech,display-coords
+        pdata->y_min = coords[1]=0;
+        pdata->x_max = coords[2]=1080;
+        pdata->x_max = coords[3]=1920;
+        #endif
+        rc = ft5x06_get_dt_coords(dev, "focaltech,display-coords", pdata);
+
+        pdata->i2c_pull_up = true;   //"focaltech,i2c-pull-up"
+        pdata->no_force_update = true; //focaltech,no-force-update
+
+        #if 0
+        pdata->reset_gpio =  ?
+        pdata->reset_gpio_flags = ?
+        #endif
+        pdata->reset_gpio = of_get_named_gpio_flags(np, "focaltech,reset-gpio", 0, &pdata->reset_gpio_flags);
+
+        #if 0
+        pdata->irq_gpio =  ?
+        pdata->irq_gpio_flags = ?
+        #endif
+        pdata->irq_gpio = of_get_named_gpio_flags(np, "focaltech,irq-gpio", 0, &pdata->irq_gpio_flags);
+
+        pdata->fw_name = "ft_fw.bin"//focaltech,fw-name  这个不存在
+        #if 0
+        pdata->group_id = 1;//focaltech,group-id
+        pdata->hard_rst_dly = 20;//focaltech,hard-reset-delay-ms
+        pdata->soft_rst_dly = 150;//focaltech,soft-reset-delay-ms
+        pdata->num_max_touches = 5;//focaltech,num-max-touches
+        pdata->info.delay_aa = 30;//focaltech,fw-delay-aa-ms
+        pdata->info.delay_55 = 30;//focaltech,fw-delay-55-ms
+        pdata->info.upgrade_id_1 = 0x54;//focaltech,fw-upgrade-id1
+        pdata->info.upgrade_id_2 = 0x2c;//focaltech,fw-upgrade-id2
+        pdata->info.delay_readid = 10;//focaltech,fw-delay-readid-ms
+        pdata->info.delay_erase_flash = 2000;//focaltech,fw-delay-era-flsh-ms
+        pdata->info.auto_cal = false;//focaltech,fw-auto-cal
+        pdata->fw_vkey_support = false;//focaltech,fw-vkey-support
+        pdata->ignore_id_check = true;//focaltech,ignore-id-check
+        pdata->family_id = 0x12;//focaltech,family-id
+        #endif
+        #if 0
+        #endif
+      }
+      #+end_src
+      设备树
+      #+begin_src cpp
+      focaltech@38 {
+                compatible = "focaltech,5436";
+                reg = <0x38>;
+                interrupt-parent = <&msm_gpio>;
+                interrupts = <65 0x2008>;
+                vdd-supply = <&pm8950_l17>;
+
+                /* pins used by touchscreen */
+                pinctrl-names = "pmx_ts_active","pmx_ts_suspend","pmx_ts_release";
+                pinctrl-0 = <&ts_int_active &ts_reset_active>;
+                pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+                pinctrl-2 = <&ts_release>;
+                focaltech,name = "ft5436";
+                focaltech,family-id = <0x12>;
+                focaltech,reset-gpio = <&msm_gpio 64 0x0>;
+                focaltech,irq-gpio = <&msm_gpio 65 0x2008>;
+                focaltech,display-coords = <0 0 1080 1920>;
+                focaltech,panel-coords = <0 0 1080 1920>;
+                focaltech,button-map= <158 102 139>;
+                focaltech,no-force-update;
+                focaltech,i2c-pull-up;
+                focaltech,group-id = <1>;
+                focaltech,hard-reset-delay-ms = <20>;
+                focaltech,soft-reset-delay-ms = <150>;//TCTSH ZhaiQingbo optimize time from 200 to 150ms for defect 1707329 and task 1819042, 2013.3.15
+                focaltech,num-max-touches = <5>;
+                focaltech,fw-delay-aa-ms = <30>;
+                focaltech,fw-delay-55-ms = <30>;
+                focaltech,fw-upgrade-id1 = <0x54>;
+                focaltech,fw-upgrade-id2 = <0x2c>;
+                focaltech,fw-delay-readid-ms = <10>;
+                focaltech,fw-delay-era-flsh-ms = <2000>;
+                focaltech,ignore-id-check;
+        };
+      #+end_src
+    + ft5x06_ts_interrupt(int irq, void *dev_id)
+      #+begin_src cpp
+      static irqreturn_t ft5x06_ts_interrupt(int irq, void *dev_id)
+      {
+          /*手势FOCALTECH_TP_GESTURE*/
+          if( (data->gesture_id > 0) && (0x01 == data->gesture_set) ) {
+              ft_tp_interrupt(data);
+              return IRQ_HANDLED;
+          }
+          
+      }
+      #+end_src
+
+  + ft5x06_ts_remove
+  + ft5x06_ts_pm_ops
+#+begin_src cpp
+#+end_src
+* log分析
+#+begin_src cpp
+####################   关注地方  ###########################
+[   33.487029] [1970-01-06 05:54:15 GMT+0][pid:2044,cpu1,CAM_sensor]BUG: sleeping function called from invalid context at /home/wildbook/Code/n8976/kernel/drivers/gpio/gpiolib.c:1493
+[   49.685461] [1970-01-06 05:54:31 GMT+8][pid:3831,cpu1,AsyncTask #1]WARNING: at /home/wildbook/Code/n8976/kernel/kernel/irq/manage.c:549 irq_set_irq_wake+0x90/0xf4()
+
+##开屏动作被调用的函数(手点power键亮屏)
+[  352.440006] [1970-01-06 05:59:34 GMT+8][pid:485,cpu7,surfaceflinger]wildbook: ft5x06_power_on()
+[  352.621310] [1970-01-06 05:59:34 GMT+8][pid:258,cpu4,irq/419-ft5x06_]wildbook: ft5x06_ts_interrupt()
+[  352.622180] [1970-01-06 05:59:34 GMT+8][pid:78,cpu5,kworker/u16:3]wildbook: ft5x06_change_scanning_frq_switch()
+[  352.622232] [1970-01-06 05:59:34 GMT+8][pid:222,cpu5,kworker/u16:4]wildbook: ft5x06_change_leather_cover_switch()
+[  352.622253] [1970-01-06 05:59:34 GMT+8][pid:77,cpu5,kworker/u16:2]wildbook: ft5x06_change_vr_switch()
+
+##灭屏被调用的函数((手点power键灭屏))
+[  554.395307] [1970-01-06 06:02:56 GMT+8][pid:485,cpu0,surfaceflinger]wildbook: ft5x06_power_on()
+
+##点击事件所触发的函数
+[  418.097426] [1970-01-06 06:00:39 GMT+8][pid:258,cpu4,irq/419-ft5x06_]wildbook: ft5x06_ts_interrupt()
+#+end_src
+* 遇到的问题
++ 不知道创建的这几个工作是干嘛用的!!
+  + INIT_WORK(&data->work, ft5x06_change_scanning_frq_switch);
+  + INIT_WORK(&data->work_cover, ft5x06_change_leather_cover_switch);
+  + INIT_WORK(&data->work_vr, ft5x06_change_vr_switch);
++ 触摸屏里的一些硬件初始化不太了解，如果有个数据手册就好了

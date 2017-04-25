@@ -1,0 +1,29 @@
+* 安装zsh
+  + 安装
+    sudo dnf install zsh
+  + 设置zsh为默认shell
+    sudo chsh -s /bin/zsh
+  + 安装 oh-my-zsh
+    sudo wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh
+
+* 补全功能
+  Ctrl + /n/p/f/b
+*
+  d
+  0~9切换路径
+
+* autojump
+  + 安装autojump
+    sudo dnf install autojump-zsh
+  | j   |                      |
+  | jc  | 跳到先前到过的子目录 |
+  | jo  | 打开文件管理器              |
+  | jco |                      |
+
+
+  j -a    添加一个目录
+  j -i    增加权重
+  j -d    减少权重
+  j -cpm
+  j --purge 不存在的目录从数据库中移除
+  j -s    显示数据库的权重统计

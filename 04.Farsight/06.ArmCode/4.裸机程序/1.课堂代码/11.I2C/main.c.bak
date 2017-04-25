@@ -1,0 +1,231 @@
+/*
+ *Project:Cortex-A9 MPU6050
+ *Copyright:farsight
+ *Author:liujh@farsight.com.cn
+ *Date:2014.6.7
+ *Contact Us: http://dev.hqyj.com
+*/
+
+#include "exynos_4412.h"
+#include "uart.h"
+
+
+//****************************************
+// 定义MPU6050内部地址
+//****************************************
+#define	SMPLRT_DIV		0x19	//陀螺仪采样率，典型值：0x07(125Hz)
+#define	CONFIG			0x1A	//低通滤波频率，典型值：0x06(5Hz)
+#define	GYRO_CONFIG		0x1B	//陀螺仪自检及测量范围，典型值：0x18(不自检，2000deg/s)
+#define	ACCEL_CONFIG	0x1C	//加速计自检、测量范围及高通滤波频率，典型值：0x01(不自检，2G，5Hz)
+#define	ACCEL_XOUT_H	0x3B
+#define	ACCEL_XOUT_L	0x3C
+#define	ACCEL_YOUT_H	0x3D
+#define	ACCEL_YOUT_L	0x3E
+#define	ACCEL_ZOUT_H	0x3F
+#define	ACCEL_ZOUT_L	0x40
+#define	TEMP_OUT_H		0x41
+#define	TEMP_OUT_L		0x42
+#define	GYRO_XOUT_H		0x43
+#define	GYRO_XOUT_L		0x44
+#define	GYRO_YOUT_H		0x45
+#define	GYRO_YOUT_L		0x46
+#define	GYRO_ZOUT_H		0x47
+#define	GYRO_ZOUT_L		0x48
+#define	PWR_MGMT_1		0x6B	//电源管理，典型值：0x00(正常启用)
+#define	WHO_AM_I			0x75	//IIC地址寄存器(默认数值0x68，只读)
+#define	SlaveAddress	0xD0	//IIC写入时的地址字节数据，+1为读取
+
+
+/*
+ * Irq_rutine
+ * */
+void do_irq() {
+
+}
+
+/*
+ * my_delay
+ * */
+void mydelay(int time) {
+	int i, j;
+	for (i = 0; i < 1000; i++)
+		for (j = 0; j < time; j++);
+}
+
+/*
+ * iic_write
+ * */
+void iic_write (unsigned char slave_addr, unsigned char addr, unsigned char data)
+{
+#if 0
+
+#if 1
+	I2C5.I2CSTAT = 0xD0;
+	I2C5.I2CCON &= ~(1<<4);		/*clean interrupt pending bit  */
+#endif
+#endif
+
+
+	I2C5.I2CDS = slave_addr;
+	I2C5.I2CCON = 1<<7 | 1<<6 | 1<<5;/*ENABLE ACK BIT, PRESCALER:512, ,ENABLE RX/TX */
+	I2C5.I2CSTAT = 0x3 << 6 | 1<<5 | 1<<4;/*Master Trans mode ,START ,ENABLE RX/TX ,*/
+	while(!(I2C5.I2CCON & (1<<4)));
+
+	I2C5.I2CDS = addr;
+	I2C5.I2CCON &= ~(1<<4);	//Clear pending bit to resume.
+	while(!(I2C5.I2CCON & (1<<4)));
+
+	I2C5.I2CDS = data;	// Data
+	I2C5.I2CCON &= ~(1<<4);	//Clear pending bit to resume.
+	while(!(I2C5.I2CCON & (1<<4)));
+
+	I2C5.I2CSTAT = 0xD0; //stop
+
+	I2C5.I2CCON &= ~(1<<4);
+
+	mydelay(10);
+}
+
+
+/*
+ * iic_read
+ * read a byte
+ * */
+void iic_read(unsigned char slave_addr, unsigned char addr, unsigned char *data)
+{
+	I2C5.I2CDS = slave_addr;
+
+	I2C5.I2CCON = 1<<7 | 1<<6 | 1<<5;/*ENABLE ACK BIT, PRESCALER:512, ,ENABLE RX/TX */
+	I2C5.I2CSTAT = 0x3 << 6 | 1<<5 | 1<<4;/*Master Trans mode ,START ,ENABLE RX/TX ,*/
+	while(!(I2C5.I2CCON & (1<<4)));
+
+	I2C5.I2CDS = addr;
+	I2C5.I2CCON &= ~(1<<4);	//Clear pending bit to resume.
+	while(!(I2C5.I2CCON & (1<<4)));
+	I2C5.I2CSTAT = 0xD0; //stop
+
+
+	I2C5.I2CDS = slave_addr | 0x01;	// Read
+	I2C5.I2CCON = 1<<7 | 1<<6 | 1<<5;/*ENABLE ACK BIT, PRESCALER:512, ,ENABLE RX/TX */
+
+	I2C5.I2CSTAT = 2<<6 | 1<<5 | 1<<4;/*Master receive mode ,START ,ENABLE RX/TX ,*/
+	while(!(I2C5.I2CCON & (1<<4)));
+
+	I2C5.I2CCON &= ~((1<<7) | (1<<4));/* Resume the operation  & no ack*/
+	while(!(I2C5.I2CCON & (1<<4)));
+
+	I2C5.I2CSTAT = 0x90;
+	I2C5.I2CCON &= ~(1<<4);		/*clean interrupt pending bit  */
+
+	*data = I2C5.I2CDS;
+	mydelay(10);
+}
+
+
+
+void MPU6050_Init ()
+{
+	iic_write(SlaveAddress, PWR_MGMT_1, 0x00);
+	iic_write(SlaveAddress, SMPLRT_DIV, 0x07);
+	iic_write(SlaveAddress, CONFIG, 0x06);
+	iic_write(SlaveAddress, GYRO_CONFIG, 0x18);
+	iic_write(SlaveAddress, ACCEL_CONFIG, 0x01);
+
+	printf("\n");
+
+}
+
+int get_data(unsigned char addr)
+{
+	char data_h, data_l;
+	iic_read(SlaveAddress, addr, &data_h);
+	iic_read(SlaveAddress, addr+1, &data_l);
+	return (data_h<<8)|data_l;
+}
+
+
+int myprintf_data(int data)
+{
+	if(data & (1<<15))
+	{//symbol '-'
+		data = (~data & 0xffff) + 1;
+		printf("data: -%d\n", data);
+	}
+	else
+		printf("data: %d\n", data);
+}
+
+/*
+ * Main
+ * */
+int main(void)
+{
+	int data;
+
+	unsigned char zvalue, who_am_i, i;
+
+	GPX2.CON = 0x1 << 28;
+
+	GPB.CON = (GPB.CON & ~(0xF<<12)) | 0x3<<12; // GPBCON[3], I2C_5_SCL
+	GPB.CON = (GPB.CON & ~(0xF<<8)) | 0x3<<8;	// GPBCON[2], I2C_5_SDA
+	GPB.CONPDN = 0;
+
+	uart_init();
+
+/*---------------------------------------------------------------------*/
+	I2C5.I2CSTAT = 0xD0;
+	I2C5.I2CCON &= ~(1<<4);		/*clean interrupt pending bit  */
+/*
+ * 需要加上上面两两句指令才能正常工作。可能是由于uboot中使用了I2C。
+ */
+/*---------------------------------------------------------------------*/
+
+
+	mydelay(500);
+
+	MPU6050_Init();
+
+	while(1)
+	{
+		//Turn on
+		GPX2.DAT |= 0x1 << 7;
+
+		data = get_data(GYRO_ZOUT_H);
+		printf(" GYRO -->  Z <---:Hex: %0x,Dec: ", data);
+		myprintf_data(data);
+
+		data = get_data(GYRO_YOUT_H);
+		printf(" GYRO -->  Y <---:Hex: %0x,Dec: ", data);
+		myprintf_data(data);
+
+		data = get_data(GYRO_XOUT_H);
+		printf(" GYRO -->  X <---:Hex: %0x,Dec: ", data);
+		myprintf_data(data);
+		printf("\n");
+		printf("==========================================\n");
+
+		data = get_data(ACCEL_ZOUT_H);
+		printf(" ACCEL -->  Z <---:Hex: %0x,Dec: ", data);
+		myprintf_data(data);
+
+		data = get_data(ACCEL_YOUT_H);
+		printf(" ACCEL -->  Y <---:Hex: %0x,Dec: ", data);
+		myprintf_data(data);
+
+		data = get_data(ACCEL_XOUT_H);
+		printf(" ACCEL -->  X <---:Hex: %0x,Dec: ", data);
+		myprintf_data(data);
+		printf("\n");
+		printf("#############################################\n");
+
+
+
+		mydelay(2000);
+		//Turn off
+		GPX2.DAT &= ~(0x1 << 7);
+		mydelay(2000);
+	}
+
+
+	return 0;
+}

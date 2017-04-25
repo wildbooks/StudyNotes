@@ -1,0 +1,176 @@
+/*
+* 点的参数
+        shape
+            record     由横的和竖的矩形组成的图形
+	    Mrecord    角是圆的，看例题
+	    polygon    多边形
+	    plaintext
+	    box
+	    Mdiamond
+	    Msquare
+	rankdir       默认时图中的线是从上到下的，值：LR，RL，TB(默认)，BT   
+	sides 设置边数
+	peripheries 设置多边形的外框的层数
+	regular = true可以让多边形是一个规则的多边形
+	orientation=15 可以让你的多边形旋转一个角度 如15度
+	color
+	style
+	skew 值-1.0～1.0能让多边形斜切一个角度
+	label
+	distortion 让图形产生透视效果
+	
+	decorate      决定每条线的label与所属线的连接值：true,false
+	labelfontcolor决定headlabel和taillabel的颜色
+	fontcolor     决定label颜色
+	headlabel     起始点标签
+	taillabel     终点标签
+	label         标签
+	rank       当图中时间表之类的东西时，我们会需要点能排在一行（列），这时要用到rank，用花括号把rank=same然后把需要并排的点一次输入          
+
+	width   宽
+	height  高
+	nodesep
+
+
+	画一个子图 subgraph 
+
+	compound 把一条边连到一个子图的边界上，先输入compound = true,然后就能用lhead和ltail来设置连接的子图了
+* 
+*
+****/
+/*
+设立一条边时，我们可以制定这条边从起点的那个位置射出和从哪个位置结束。控制符有
+"n", "ne","e", "se", "s", "sw", "w" 和"nw"，具体效果见下：
+n是北；s是南；w是西；e是东
+
+也可以在record/Mrecord中给点定义一些port，因为record类型中都是一个个格子
+
+
+*/
+
+##"This is an example from a real-world application, where we were using Genetic Programming to do simple symbolic regression. We needed a good way to visualize the trees that were being created, and it didn't take long to code up some lisp to create a dot file that visualized multiple individuals. The next step was to provide color-coding of key nodes so that we could illustrate crossover and mutation of individuals before-and-after-style. This is a sample dot file from some early debugging." Contributed by Wayne Folta. 
+
+##Command to get the layout: "dot  -Tpng thisfile > thisfile.png"
+
+
+graph ""
+   {
+#   node [fontsize=10,width=".2", height=".2", margin=0];
+#   graph[fontsize=8];
+   label="((+ (* (X) (- (- (X) (X)) (X))) (% (+ (X) (X)) (COS (- (X) (X))))) (EXP (* (X) (X))) (+ (% (EXP (SIN (+ (X) (X)))) (SIN (* (X) (EXP (* (X) (X)))))) (* (X) (X))) (% (EXP (% (X) (% (X) (X)))) (EXP (SIN (X)))))"
+
+   subgraph cluster01
+   {
+   label="(+ (* (X) (- (- (X) (X)) (X))) (% (+ (X) (X)) (COS (- (X) (X)))))"
+   n002 ;
+   n002 [label="+"] ;
+   n002 -- n003 ;
+   n003 [label="*"] ;
+   n003 -- n004 ;
+   n004 [label="X"] ;
+   n003 -- n005 ;
+   n005 [label="-"] ;
+   n005 -- n006 ;
+   n006 [label="-"] ;
+   n006 -- n007 ;
+   n007 [label="X"] ;
+   n006 -- n008 ;
+   n008 [label="X"] ;
+   n005 -- n009 ;
+   n009 [label="X"] ;
+   n002 -- n010 ;
+   n010 [label="%"] ;
+   n010 -- n011 ;
+   n011 [label="+"] ;
+   n011 -- n012 ;
+   n012 [label="X"] ;
+   n011 -- n013 ;
+   n013 [label="X"] ;
+   n010 -- n014 ;
+   n014 [label="COS"] ;
+   n014 -- n015 ;
+   n015 [label="-"] ;
+   n015 -- n016 ;
+   n016 [label="X"] ;
+   n015 -- n017 ;
+   n017 [label="X"] ;
+   }
+
+   subgraph cluster17
+   {
+   label="(EXP (* (X) (X)))"
+   n018 ;
+   n018 [label="EXP"] ;
+   n018 -- n019 ;
+   n019 [label="*"] ;
+   n019 -- n020 ;
+   n020 [label="X"] ;
+   n019 -- n021 ;
+   n021 [label="X"] ;
+   }
+
+   subgraph cluster21
+   {
+   label="(+ (% (EXP (SIN (+ (X) (X)))) (SIN (* (X) (EXP (* (X) (X)))))) (* (X) (X)))"
+   n022 ;
+   n022 [label="+"] ;
+   n022 -- n023 ;
+   n023 [label="%"] ;
+   n023 -- n024 ;
+   n024 [label="EXP"] ;
+   n024 -- n025 ;
+   n025 [label="SIN"] ;
+   n025 -- n026 ;
+   n026 [label="+"] ;
+   n026 -- n027 ;
+   n027 [label="X"] ;
+   n026 -- n028 ;
+   n028 [label="X"] ;
+   n023 -- n029 ;
+   n029 [label="SIN"] ;
+   n029 -- n030 ;
+   n030 [label="*"] ;
+   n030 -- n031 ;
+   n031 [label="X"] ;
+   n030 -- n032 ;
+   n032 [label="EXP"] ;
+   n032 -- n033 ;
+   n033 [label="*"] ;
+   n033 -- n034 ;
+   n034 [label="X"] ;
+   n033 -- n035 ;
+   n035 [label="X"] ;
+   n022 -- n036 ;
+   n036 [label="*"] ;
+   n036 -- n037 ;
+   n037 [label="X"] ;
+   n036 -- n038 ;
+   n038 [label="X"] ;
+   }
+
+   subgraph cluster38
+   {
+   label="(% (EXP (% (X) (% (X) (X)))) (EXP (SIN (X))))"
+   n039 ;
+   n039 [label="%"] ;
+   n039 -- n040 ;
+   n040 [label="EXP"] ;
+   n040 -- n041 ;
+   n041 [label="%"] ;
+   n041 -- n042 ;
+   n042 [label="X"] ;
+   n041 -- n043 ;
+   n043 [label="%"] ;
+   n043 -- n044 ;
+   n044 [label="X"] ;
+   n043 -- n045 ;
+   n045 [label="X"] ;
+   n039 -- n046 ;
+   n046 [label="EXP"] ;
+   n046 -- n047 ;
+   n047 [label="SIN"] ;
+   n047 -- n048 ;
+   n048 [label="X"] ;
+   }
+   }
+

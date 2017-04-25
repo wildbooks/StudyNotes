@@ -1,0 +1,41 @@
+[[http://blog.csdn.net/lylianlll/article/details/8446675][解剖Android USB MTP的激活流程]]
+* bug描述
++ 手机已用usb和电脑链接，且已识别usb下进行下面操作
+  菜单栏下拉 --> 点击USB for xxx --> 随便选择一个选项
+  手机就无法用USB和电脑链接
++ 执行一下命令(USB可以链接电脑)
+  adb shell getprop | grep usb   #打印信息在下面
+  #+begin_src
+    [init.svc.qcom-usb-sh]: [stopped]
+    [persist.sys.usb.config]: [mtp,diag,adb]
+    [persist.sys.usb.config.extra]: [none]
+    [persist.sys.usb.protect]: [0]
+    [sys.usb.config]: [mtp,diag,adb]
+    [sys.usb.configfs]: [0]
+    [sys.usb.ffs.ready]: [1]
+    [sys.usb.rps_mask]: [0]
+    [sys.usb.state]: [mtp,diag,adb]
+  #+end_src
+
+  + 上面显示的配置文件，我继续追踪下
+    /data/property/persist.sys.usb.config  永久保持配置
+    sys.usb.config     存储当前USB设置的非持久性属性
+    sys.usb.state      存储当前USB实际状态的非持久性属性
+* UsbDeviceManager.java
+UsbDeviceManager在设备模式中管理USB状态
+* UsbManager.java
+* UsbSettings.java
+* UsbSettingsManager.java
+* StorageNotification.java
++ 主要用来处理存储设备相关动作的状态更新、通知。
++ 主要涉及两个方面：
+  1) 是插入usb cabel后的状态栏更新，主要针对ums功能。
+  2) 是storage状态发生改变时，会调用这个activity，如mount、unmount等。
+  所以入口主要有两个：onUsbMassStorageConnectionChanged和
+  onStorageStateChanged分别处理usb连接状态的改变和storage状态的改变。
+* UsbStorageActivity.java
+* Usbstring.c
+* UsbDevice.java
+* UsbDeviceConnection.java
+* UsbDisconnectedReceiver.java
+* UsbHostManager.java

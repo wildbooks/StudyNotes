@@ -1,0 +1,35 @@
+* 命令
+  | 命令            | 功能                                |
+  |-----------------+-------------------------------------|
+  | croot           | 切换到源码树的根目录                |
+  | m 	            | 在源码树的根目录执行 make           |
+  | mm              | 	Build当前目录下的模块             |
+  | mmm             | Build指定目录下的模块               |
+  | cgrep           | 	在所有C/C++ 文件上执行 grep       |
+  | jgrep           | 	在所有Java 文件上执行 grep        |
+  | resgrep         | 	在所有res/*.xml 文件上执行 grep   |
+  | godir           | 转到包含某个文件的目录路径          |
+  | printconfig     | 	显示当前 Build 的配置信息         |
+  | add_lunch_combo | 	在 lunch 函数的菜单中添加一个条目 |
+  |                 |                                     |
+  
+* 变量含义
+  | 变量名                               | 含义                            |
+  |--------------------------------------+---------------------------------|
+  | OUT_DIR                              | 代表"out"目录                   |
+  | PRODUCT_OUT                          | 代表目录:out/target/product/xx/ |
+  | LOCAL_SHARED_LIBRARIES               | 本地共享库                      |
+  | include $(call all-subdir-makefiles) | 调用当前目录的所有makefile      |
+  | $(call my-dir)                       | 当前路径                        |
+  |                                      |                                 |
+** LOCAL_MODULE:=xxx
+   user: 指该模块只在user版本下才编译
+   eng: 指该模块只在eng版本下才编译
+   tests: 指该模块只在tests版本下才编译
+   optional:指该模块在 所有版本下都编译，默认是optional
+* MakeFile增加宏定义
+  + *方法一*:-D DEFINES
+    gcc -DDEBUG hello.c //等价于 #define DEBUG
+  + *方法二*: -D DEFINES=CONDITION
+    gcc -DDEBUG1=1 hello.c //等价于 #define DEBUG1 1
+* 宏

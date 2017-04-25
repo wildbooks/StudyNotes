@@ -1,0 +1,49 @@
+#+TITLE:nfs文件系统挂载失败解决方法
+#+AUTHOR:野书
+#+EMAIL:www762268@foxmail.com
+#+KEYWORDS:bash fedora23
+#+DESCRIPTION: nfs挂载失败提示：nfs: server 192.168.1.88 not responding, still trying
+* 错误提示
+  #+BEGIN_HTML
+  <div class="cnblogs_Highlighter">
+  <pre class="brush:shell">
+  bootserver=255.255.255.255, rootserver=192.168.1.88, rootpath=
+  VFS: Mounted root (nfs filesystem) on device 0:12.
+  Freeing init memory: 136K
+  nfs: server 192.168.1.88 not responding, still trying
+  nfs: server 192.168.1.88 not responding, still trying
+  </pre>
+  </div>
+  #+END_HTML
+* 我的配置
+  #+BEGIN_HTML
+  <div class="cnblogs_Highlighter">
+  <pre class="brush:shell">
+  MINI6410 # prin
+  bootdelay=3
+  baudrate=115200
+  ethaddr=08:90:90:90:90:90
+  filesize=3ce68c
+  fileaddr=C0008000
+  gatewayip=192.168.1.1
+  netmask=255.255.255.0
+  ipaddr=192.168.1.230
+  serverip=192.168.1.88
+  bootcmd=tftp c0008000 uImage ;bootm c0008000
+  bootargs=root=/dev/nfs nfsroot=192.168.1.88:/home/wildbook/Documents/nfsboot/rootfs_tiny6410 ip=192.168.1.230 console=ttySAC0,115200 init=/linc
+  stdin=serial
+  stdout=serial
+  stderr=serial
+  </pre>
+  </div>
+  #+END_HTML
+  + 通过我各种排查，发现自己都没设置错误，在一个偶然的机会看到一帖[[http://blog.sina.com.cn/s/blog_603cc5600101o0zu.html][tiny210 用 nfs 成功 mount 根文件系统]] ,\\
+    上面讲是nfs文件系统设置的问题，在后面加上proto=tcp，就可以解决问题\\
+
+  #+BEGIN_HTML
+  <div class="cnblogs_Highlighter">
+  <pre class="brush:shell">
+  setenv bootargs root=/dev/nfs nfsroot=192.168.1.88:/home/wildbook/Documents/nfsboot/rootfs_tiny6410,proto=tcp ip=192.168.1.230 console=ttySAC0,115200 init=/linuxrc
+  </pre>
+  </div>
+  #+END_HTML

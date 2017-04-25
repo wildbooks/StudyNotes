@@ -1,0 +1,21 @@
+start_kernel()
+	|----printk(linux_baner)  // 打印内核版本信息
+	|----setup_arch(comxxxx)   //初始化mem_io
+		|----paging_init()
+			|---setup_machine
+				|---lookup_machine_type(汇编）  //机器号对应平台 
+			|---paging_init
+				|---devicemaps_init  //初始i/o,时钟，串口  //打印时钟
+		|---early_trap_init() //初始化异常向量表  （位于0xffff0000)
+	|--printk("Kernel command line:......");
+	|--vfs_caches_init_early()  初始化文件子系统
+	|--mm_init()  初始化mmu，内存管理 
+	|--sched_init() 进程调度
+	|--init_IRQ() 初始化软中断，中断底半部
+	|--console_init() 初始化控制终端
+	|--rest_init()  启动内核线程
+		|--kernel_thread(kernel_init)
+			|---kernel_init
+				|--do_basic_setup  (初始化工作队列)	
+					|--do_initcalls();(初始化大部分硬件）
+				|--init_post()加载第一个应用程序

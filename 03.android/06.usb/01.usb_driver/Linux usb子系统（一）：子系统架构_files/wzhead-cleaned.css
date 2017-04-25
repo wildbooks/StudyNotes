@@ -1,0 +1,143 @@
+.lan A:link {
+	COLOR: #2d609f; TEXT-DECORATION: none
+}
+.lan A:visited {
+	COLOR: #2d609f; TEXT-DECORATION: none
+}
+.lan A:hover {
+	COLOR: #2d609f; TEXT-DECORATION: underline;
+	
+}
+
+.name A:link {
+	COLOR: #588600; TEXT-DECORATION: none
+}
+.name A:visited {
+	COLOR: #588600; TEXT-DECORATION: none
+}
+.name A:hover {
+	COLOR: #588600; TEXT-DECORATION: underline;
+}
+.mainnav{height:36px;background-color:#f1f1f1;width:100%;min-width:1000px;}
+.mainnav1{margin:0px auto;width:1000px; text-align:left; }
+
+.navwz1{ font-size:16px; font-weight:bold; color:#5f5f5f; text-align:center; padding-top:4px;cursor:pointer;
+}
+.navxt{
+	text-align: left;
+	border: none;
+	background-image: url(http://pubimage.360doc.com/index/sy-3.gif);
+	background-repeat: repeat-x;
+	 height:15px; border-top:1px solid #fff; width:100%; margin-top:-1px;min-width:1000px;
+}
+.navwz1 A:link {
+	COLOR: #5f5f5f; TEXT-DECORATION: none
+}
+.navwz1 A:visited {
+	COLOR: #5f5f5f; TEXT-DECORATION: none
+}
+.navwz1 A:hover {
+	COLOR: #588600; TEXT-DECORATION: none;
+}
+
+.serch{
+	background-image: url(http://pubimage.360doc.com/index/sy-21.gif);
+	background-repeat: no-repeat; width:187px; height:25px;
+}
+.serchpt{text-align:left; height:16px;background-color: #ffffff;font-size:12px;line-height:16px; border:1px solid #fff; padding:2px 2px;width:173px; color:#b2b2b2; margin:1px 0px 0px 2px;}
+.ssuo{width:37px; height:25px; float:left;}
+.ssuo a:link,.ssuo a:visited{
+	display:block;
+	width:37px; height:25px;
+	background-image: url(http://pubimage.360doc.com/newsite/sousuo.gif);
+	background-repeat: no-repeat;
+}
+.ssuo a:hover{display:block;
+	width:37px; height:25px;
+	background-image: url(http://pubimage.360doc.com/newsite/sousuo_a.gif);
+	background-repeat: no-repeat;}
+.denglbj{
+	background-image: url(http://pubimage.360doc.com/index/sy-30.gif);
+	background-repeat: no-repeat; width:131px; height:25px; line-height:25px; 
+    float:right;
+}
+.denglbj1 {
+	width: 114px; height: 25px; line-height: 25px; float: right; background-image: url("http://pubimage.360doc.com/index/sy-3011.gif"); background-repeat: no-repeat;
+}
+	.lan2 A:link {
+	COLOR: #2d609f; TEXT-DECORATION: none
+}
+.lan2 A:visited {
+	COLOR: #2d609f; TEXT-DECORATION: none
+}
+.lan2 A:hover {
+	COLOR: #2d609f; TEXT-DECORATION: none;
+}
+
+.denglbj2{
+	background-image: url(http://pubimage.360doc.com/index/sy-31.gif);
+	background-repeat: no-repeat; width:131px; height:25px; line-height:25px; 
+float:right;
+}
+
+.denglbj3{
+	background-image: url(http://pubimage.360doc.com/index/sy-32.gif);
+	background-repeat: no-repeat; width:131px; height:25px; line-height:25px; 
+float:right;
+}
+.boxwid{ width:45px;_width:44px; float:left; text-align: center;}
+.tipzhu3{border:1px solid #d4d4d4; width:94px;background-color:#fff; z-index:0; margin-top:-1px;}
+
+.tipzhu3 ul{ margin:0px; padding:0px;}
+.tipzhu3 li{  margin:0px; padding:0px;height:27px; line-height:27px;padding-left:13px; }
+.tugduo3{ width:37px;z-index:100;position:relative;}
+.xinngdui{width:40px; padding-top:7px;*padding-top:2px;_ padding-top:7px;z-index:2000000; position:relative;}
+
+
+.zhhaocss{position: absolute; margin-left:104px; padding-top:27px; width:96px;}
+.zhhaobox{width:50px; height:26px; border:1px solid #d4d4d4; border-bottom:none; background-color:#fff;z-index:2000000; position:relative;}
+.zhhaobox1{width:50px; height:24px; border:1px solid #fff;border-bottom:none;}
+.hui2 li A:link {
+	COLOR: #666; TEXT-DECORATION: none
+}
+.hui2 li A:visited {
+	COLOR: #666; TEXT-DECORATION: none
+}
+.hui2 li A:hover {
+	COLOR: #666; TEXT-DECORATION: none;
+}
+
+.serchboxx{ border:1px solid #cacaca; border-top:none; width:185px; background-color:#fff; color:#666;}
+
+.paixucssright{padding-top:8px;padding-left:4px;float:left;}
+
+
+.bjyellow2{background-color:#fef9d1; line-height:26px; padding-left:6px; cursor:pointer;}
+.bjwhite2{background-color:#fffff7;line-height:26px;padding-left:6px;cursor:pointer;}
+
+
+.tugduo{ width:32px; height:26px;z-index:100;position:relative;border:1px solid #d4d4d4;border-bottom:1px solid #fff; margin-right:8px;}
+
+.tipzhu{border:1px solid #d4d4d4;width:94px; background-color:#fff; z-index:0; margin-top:-1px;margin-right:7px;}
+.tipzhu2{ width:180px;}
+.tipzhu ul{ margin:0px; padding:0px;}
+.tipzhu li{  margin:0px; padding:0px;height:27px; line-height:27px; padding-left:10px; padding-right:5px; }
+
+
+.tipzhua{border:1px solid #d4d4d4;width:85px; background-color:#fff; z-index:0; margin-top:-1px;}
+
+.tipzhua ul{ margin:0px; padding:0px;}
+.tipzhua li{  margin:0px; padding:0px;height:27px; line-height:27px; padding-left:14px; }
+
+.denglbj4{
+	background-image: url(http://pubimage.360doc.com/newsite/11.gif);
+	background-repeat: no-repeat;
+	width:131px;
+	height:25px;
+	line-height:25px;
+	float:right; position:absolute;
+}
+.boxwid11{ width:37px;_width:36px; float:left; text-align: center;}
+.xinngdui11{z-index:2000000; position:relative;}
+.tugduo4{ width:37px;z-index:100;position:relative;}
+

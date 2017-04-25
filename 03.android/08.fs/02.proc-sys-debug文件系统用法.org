@@ -1,0 +1,19 @@
+* procfs
+** 驱动层
++ struct proc_dir_entry *proc_mkdir(const char *name, struct proc_dir_entry *parent)
+  + 功能：在proc文件系统中创建文件夹
+  + 参数
+    name:文件夹名
+    parent:
++ static inline struct proc_dir_entry *proc_create(const char *name, umode_t mode, struct proc_dir_entry *parent, const struct file_operations *proc_fops)
+
+  + 功能：在proc文件系统中创建文件
+  + 参数
+    name:文件名
+    mode:
+    parent
+    proc_fops:文件操作函数
++ int seq_open(struct file *file, const struct seq_operations *op)
++ ssize_t seq_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
++ loff_t seq_lseek(struct file *file, loff_t offset, int whence)
++

@@ -1,0 +1,77 @@
+* 获取文件属性
+  + 基础知识
+    + 文件类型
+      普通文件（regular file）
+      目录文件（directory file）
+      块特殊文件（block special file）
+      字符特殊文件（character special file）
+      FIFO（进程管道）
+      套接字（socket）
+      符号连接（symbolic link）
+    + stat结构中st_mode的参数
+      S_IFSOCK 0140000 socket
+      S_IFLNK 0120000 符号连接
+      S_IFREG 0100000 常规文件
+      S_IFBLK 0060000 块设备
+      S_IFDIR 0040000 目录
+      S_IFCHR 0020000 字符设备
+      S_IFIFO 0010000 管道
+
+      S_IRUSR 00400 所有者有可read
+      S_IWUSR 00200 所有者有可write
+      S_IXUSR 00100 所有者有可execute
+      S_IRGRP 00040 所有者的group可 read
+      S_IWGRP 00020 所有者的group可write
+      S_IXGRP 00010 所有者的group可execute
+      S_IROTH 00004 其他用户可read
+      S_IWOTH 00002 其他用户可write
+      S_IXOTH 00001 其他用户可execute
+  + int stat(const char *pathname, struct stat *buf);
+    + 功能
+      获取文件的属性信息，保存到指定的buf中
+    + 反回值
+      成功：0
+      失败：-1
+  + int fstat(int fd, struct stat *buf);
+    + 功能
+      获取文件的属性信息，保存到指定的buf中
+    + 反回值
+      成功：0
+      失败：-1
+  + int lstat(const char *pathname, struct stat *buf);
+    + 功能
+      获取文件的属性信息，保存到指定的buf中
+    + 反回值
+      成功：0
+      失败：-1
+  + int fstatat(int dirfd, const char *pathname, struct stat *buf,int flags);
+    + 功能
+    + 反回值
+      成功：0
+      失败：-1
+* 设置群用户ID 和设置组ID
+** PID GID UID获取
+   + pid_t getpid(void)
+     + 功能
+       获取进程ID
+     + 返回值
+       成功：返回PID
+       失败：
+   + uid_t getuid(void)
+     + 功能
+       获取用户id
+     + 返回值
+       成功返回uid
+   + gid_t getgid(void)
+     + 功能
+       获取用户组id
+     + 返回值
+       成功：返回gid
+   + DIR *opendir(const char *name)
+   + DIR *fdopendir(int fd)
+   + int chdir(const char *path)
+   + fchdir(int fd)
+   + int readdir(unsigned int fd, struct old_linux_dirent *dirp,
+                   unsigned int count);
+   +
+   + closedir

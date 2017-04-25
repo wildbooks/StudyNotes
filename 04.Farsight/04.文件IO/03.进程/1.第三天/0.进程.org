@@ -1,0 +1,28 @@
+* 进程
+  + 获取pid/ppid
+    pid_t getpid(void)
+    pid_t getppid(void)
+  + 创建子进程
+    pid_t fork(void)
+    + 返回值：
+      + 成功:
+        0：子进程
+        子进程的ID：父进程
+      失败：-1
+  + 等待进程结束
+  + exec函数族
+    进程替换
+    + int execl(const char *path, const char *arg, ...
+                       /* (char  *) NULL */);
+    + int execlp(const char *file, const char *arg, ...
+                      /* (char  *) NULL */);
+* 守护进程
+  + pd_t setsid(void)
+    功能：
+  + 1.创建子进程，父进程退出
+    + 功能
+      改变当前目录为根目录
+  + 2.在子进程中创建新会话
+  + 3.重设文件权限掩码
+  + 4.关闭文件描述符
+  int daemon(int nochdir, int noclose);

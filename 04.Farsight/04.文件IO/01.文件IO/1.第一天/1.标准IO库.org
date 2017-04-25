@@ -1,0 +1,214 @@
+* 常识
+  + int型返回值：
+    + 错误：-1
+    + 成功：非符数
+  + 指针型返回值：
+    + 错误：NULL
+    + 成功：指针
+  stream(流)
+  stream's orientation(流的定向)
+* 标准输入，标准输出，标准错误
+  STDIN_FILENO     -->  stdin     ->   0
+  STDOUT_FILENO    -->  stdout    ->   1
+  STDERR_FILENO    -->  stderr    ->   2
+* fopen(打开流)
+  + FILE *fopen(const char *path, const char *mode)
+    + 参数
+      + FILE
+        是一个结构体
+      + path
+      + mode
+        r：为读而打开
+        r+：为读和写而打开
+        w：为写而创建
+        w+：为读写而打开
+        a：追加
+        a+
+    + 返回
+      成功：返回指针
+      失败：NULL
+* fclose
+  + int fclose(FILE *stream);
+    + 功能：
+      关闭一个打开的流
+    + 参数：
+    + 返回值：
+      成功：0
+      失败：EOF
+* 读流
+  + int fgetc(FILE *stream);
+    + 功能：
+      字符读入
+    + 参数：
+    + 返回值：
+      成功：返回一个字符ascii
+      失败：EOF
+  + char *fgets(char *s, int size, FILE *stream);
+    + 功能：
+      字符串读入
+    + 参数
+    + 返回值：
+      成功：返回一个字符ascii
+      失败：EOF
+  + size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+    + 功能：
+      直接I/O
+* 写流
+  + int fputc(int c, FILE *stream);
+    + 功能：
+      输出
+    + 参数：
+    + 返回值：
+      成功：
+      失败：EOF 文件结束
+  + int fputs(const char *s, FILE *stream);
+  + size_t fwrite(const void *ptr, size_t size, size_t nmemb,FILE *stream);
+    + 功能
+    + 参数
+      ptr:要读入的缓冲区指针
+      size:
+      nmemb:
+      stream:
+    + 返回值
+      成功：
+      失败：
+* 设置定向流
+  + int fseek(FILE *stream, long offset, int whence);
+    + 功能：
+
+    + 参数
+      + offset
+      + whence
+        SEEK_SET：文件头
+        SEEK_END：文件尾
+        SEEK_CUR：当前位置
+    + 返回值
+      成功：0
+      失败：-1
+  + long ftell(FILE *stream)
+    + 功能
+      得到文件位置指针当前位置相对于文件首的偏移字节数
+    + int fwide(FILE *fp, int mode);
+      + 功能：
+        设置流定向
+      + 参数：
+        + fp
+        + mode
+          若参数为负，流是字节定向
+          若参数为正，流是宽定向
+          若参数为0，流是未定向
+    + 返回值：
+      若流是等宽定向的，返回正值，
+      若流是字节定向的，返回负值
+      若流是未定向的，返回0
+  + void rewind(FILE *stream);
+  + int feof(FILE *stream);
+    + 功能
+      文件结束标志
+    + 返回值
+      成功：1
+      失败：0
+  + int ferror(FILE *stream);
+    + 功能
+      出错标志
+    + 返回值
+      成功：1
+      失败：0
+  + void clearerr(FILE *stream);
+    + 功能：
+      清除以上俩标志
+* 更改缓冲类型
+  + void setbuf(FILE *stream, char *buf);
+  + int setvbuf(FILE *stream, char *buf, int mode, size_t size);
+    + 参数：
+      + mode
+        _IOFBF 全缓冲
+        _IOLBF 行缓冲
+        _IOnBF 不阿带缓冲
+    + 返回值：
+      成功：0
+      失败：非0
+* 清空缓冲区
+  + int fflush(FILE *stream);
+    + 返回值
+      成功：1
+      失败：0
+    + 参数
+      stream: 当stream为NULL时，清空所有输缓存区
+    + 返回值
+      成功：0
+      失败：EOF
+* 格式化输出
+  + int printf(const char *format, ...);数据写到标准输出
+  + int fprintf(FILE *stream, const char *format, ...);
+    写至指定的流
+  + int dprintf(int fd, const char *format, ...);
+    写到指定的文件描述符中
+    + 前三个返回值
+      成功：返回输出字符数
+      失败：返回负数
+  + int sprintf(char *str, const char *format, ...);
+    将格式化数据写至数组buf中
+    + 返回值
+      成功：返回存入数组的字符数
+      失败：若编码错误，返回负数
+  + int snprintf(char *str, size_t size, const char *format, ...);
+    + 返回值
+      成功：若缓冲区足够大，返回存入数组的字符数
+      失败：若编码错误，返回负数
+* 格式化输入
+  + int scanf(const char *format, ...);
+  + int fscanf(FILE *stream, const char *format, ...);
+  + int sscanf(const char *str, const char *format, ...);
+* access函数
+  + int access(const char *pathname, int mode);
+    + 功能
+      确定文件的访问权限
+    + 参数
+      + mode:
+        R_OK  4 只判断是否有读权限
+        W_OK  2 只判断是否有写权限
+        X_OK  1 判断是否有执行权限
+        F_OK  0 只判断是否存在
+    + 返回值
+      成功：0
+      失败：-1，errno被设为某个值
+* truncate函数
+  + int truncate(const char *path, off_t length);
+    + 功能
+      将文件大小改为length指定的文件大小,如果原大小>length,超过部分删除
+    + 参数
+    + 返回值
+      成功：反回0
+      失败：返回-1 错误原因存在errno
+* 二进制I/O
+* fileno
+  int fileno(FILE *fp)
+  + 功能
+    获取流对应的文件描述符
+* 临时文件
+  + 创建临时文件
+    + FILE *tmpfile(void);
+    + char *tmpnam(char *s);
+  + 创建临时目录
+    + char *mkdtemp(char *template);
+    + int mkstemp(char *template);
+* 内存流
+  + 创建内存流
+    + FILE *fmemopen(void *buf, size_t size, const char *mode);
+      + 参数
+        + buf
+          指向缓冲区的开始位置
+        + size
+          指定缓冲区大小的字节数
+        + mode
+          r
+          w
+          a
+          r+
+          w+
+          a+
+      +
+      + 返回值：
+        成功：返回流指针
+        失败：NULL

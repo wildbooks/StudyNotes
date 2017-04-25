@@ -1,0 +1,11 @@
+* 简介
+* 寄存器地图
+  + I2CCONn   控制寄存器
+    应答允许
+    设置IIC时钟
+    中断开关
+    中断标志
+  + I2CSTATn  状态寄存器
+  + I2CADDn   地址寄存器
+  + I2CDSn    Tx/Rx数据偏移寄存器
+  + I2CLCn  Specifies the I2C-bus interface0 multi-master line control register

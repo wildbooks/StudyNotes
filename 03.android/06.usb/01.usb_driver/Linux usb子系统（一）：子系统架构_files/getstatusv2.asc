@@ -1,0 +1,1 @@
+doccheckart([ { "result":0}])

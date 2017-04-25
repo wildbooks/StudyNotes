@@ -1,0 +1,84 @@
+* 简介
+* 时钟
+  DIV_VAL = UBRDIVn + UFRACVAL/16
+  或者DIV_VAL = (SCLK_UART/(bps x 16)) - 1
+  具体配置过程看以下寄存器即公式
+  寄存器：UBRDIVn  UFRACVALn
+* 寄存器地图
+  + ULCONn     Specifies line control
+    + 普通模式 红外模式
+    + 奇偶校验模式
+    + 停止位
+    + 有效数据长度
+  + UCONn      Specifies control
+    + 设置TxDMA缓存区大小
+    + 设置RxDMA缓存区大小
+    + 接收超时中断间隔
+    + 接收超时开关
+    + 超时DMA暂停开关
+    + 发送中断类型
+    + 接收中断类型
+    + 接收超时开关
+    + 接收错误状态中断开关
+    + 回环模式
+    + 打断信号：打断发送
+    + 发送模式
+      禁止 中断或轮询模式，DMA模式
+    + 接收模式
+      禁止 中断或轮询模式，DMA模式
+  + UFCONn     Specifies FIFO control
+    + Tx FIFO触发深度
+    + Rx FIFO触发深度
+    + Tx FIFO复位
+    + Rx FIFO复位
+    + FIFO使能
+  + UMCONn     Specifies modem control
+    + RTS(请求发送)触发深度
+    + 自动流控制(AFC)使能
+    + 调制解调器(MODEM)中断使能
+    + 请求发送
+  + UTRSTATn   Specifies Tx/Rx status
+    + RX FIFO count in RX time-out status
+    + TX DMA FSM State
+    + RX DMA FSM State
+    + Rx接收超时状态
+    + 发送器空
+    + 发送缓冲器空
+      发送完后，缓冲器自动为空
+    + 接收缓冲器数据就绪
+  + UERSTATn   Specifies Rx error status
+    + Break Detect
+      和break signal有关
+    + 帧错误
+    + 奇偶校验错误
+    + 溢出错误(Overrun Error)
+  + UFSTATn    Specifies FIFO status
+    + Tx FIFO满
+    + Tx FIFO计数
+    + Rx FIFO错误
+    + Rx FIFO满
+    + Rx FIFO计数
+  + UMSTATn    Specifies modem status
+    + Delta CTS
+    + Clear to Send
+  + UTXHn      Specifies transmit buffer
+    发送寄存器
+  + URXHn      Specifies receive buffer
+    接收寄存器
+  + UBRDIVn    指定波特率因子
+    配置波特率
+  + UFRACVALn  指定因子分数值
+    配置波特率
+  + UINTPn     Specifies interrupt pending
+    中断发送
+    中断错误
+    中断接收
+  + UINTSPn     Specifies interrupt source pending
+    1. 当UINTSPn设置为1，UINTMn设置为0时，CPU服务接收相应的中断源
+    2. UINTMn位置1，会屏蔽掉中断源
+  + UINTMn     Specifies interrupt mask
+    Generates modem interrupt
+    中断发送
+    中断错误
+    中断接收
+    + 1是屏蔽中断

@@ -1,0 +1,76 @@
+/*
+* 点的参数
+        shape
+            record     由横的和竖的矩形组成的图形
+	    Mrecord    角是圆的，看例题
+	    polygon    多边形
+	    plaintext
+	    box
+	    Mdiamond
+	    Msquare
+	rankdir       默认时图中的线是从上到下的，值：LR，RL，TB(默认)，BT
+	sides 设置边数
+	peripheries 设置多边形的外框的层数
+	regular = true可以让多边形是一个规则的多边形
+	orientation=15 可以让你的多边形旋转一个角度 如15度
+	color
+	style
+	skew 值-1.0～1.0能让多边形斜切一个角度
+	label
+	distortion 让图形产生透视效果
+
+	decorate      决定每条线的label与所属线的连接值：true,false
+	labelfontcolor决定headlabel和taillabel的颜色
+	fontcolor     决定label颜色
+	headlabel     起始点标签
+	taillabel     终点标签
+	label         标签
+	rank       当图中时间表之类的东西时，我们会需要点能排在一行（列），这时要用到rank，用花括号把rank=same然后把需要并排的点一次输入          
+
+	width   宽
+	height  高
+	nodesep
+
+
+	画一个子图 subgraph 
+
+	compound 把一条边连到一个子图的边界上，先输入compound = true,然后就能用lhead和ltail来设置连接的子图了
+* 
+*
+****/
+/*
+设立一条边时，我们可以制定这条边从起点的那个位置射出和从哪个位置结束。控制符有
+"n", "ne","e", "se", "s", "sw", "w" 和"nw"，具体效果见下：
+n是北；s是南；w是西；e是东
+
+也可以在record/Mrecord中给点定义一些port，因为record类型中都是一个个格子
+
+
+*/
+/*哈希表*/
+
+/**/
+digraph G{              /* digraph为有向图，graph为无向图 */
+	
+	compound = true;
+	
+	subgraph cluster0{
+		a -> b;
+		a -> c;
+		b -> d;
+		c -> d;
+	}
+
+	subgraph cluster1{
+		e -> g;
+		e -> f;
+	}
+	b -> f[lhead=cluster1];
+	d -> e;
+	c -> g[ltail=cluster0, lhead=cluster1];
+	c -> e[ltail=cluster0];
+	d -> h;
+
+	label = "例程:边连接子图边界"
+
+}

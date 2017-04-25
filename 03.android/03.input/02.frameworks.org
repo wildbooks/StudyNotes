@@ -1,0 +1,302 @@
+* frameworks
+  + *Code*:
+    kernel/drivers/input/input.c
+    kernel/include/linux/input.h
+    kernel/include/uapi/linux/input.h
+  + *dts*:
+  + *docs*
+  + *sysfs*:
+    *sysfs*:
+    *debugfs*:
+    *proc*:
+* 提供的API
+** input.h
+*** struct input_dev __must_check *input_allocate_device(void);
+    + *功能*:为新的输入设备分配内存,未注册,需要我们注册和释放
+    + *参数*:
+    + *返回值*:成功返回地址,失败返回NULL
+    + *注意*:使用input_free_device()释放尚未注册的设备；input_unregister_device（）应该用于已经注册的设备
+*** struct input_dev __must_check *devm_input_allocate_device(struct device *);
+    + *功能*:分配管理输入设备,他会自动注册和释放
+    + *参数*:所有者设备
+    + *返回值*:成功返回地址,失败返回NULL
+    + *注意*:不需要我们额外注册和注销
+*** void input_free_device(struct input_dev *dev);
+    + *功能*:释放input_dev结构体变量占用的内存
+    + *参数*:被释放的输入设备
+    + *返回值*:
+    + *注意*:尚未注册或注册失败使用它释放；注册成功使用input_unregister_device()注销设备
+*** static inline struct input_dev *input_get_device(struct input_dev *dev)
+    + *功能*:从dev设备中获得input_dev设备,让引用计数器加一
+    + *参数*:
+    + *返回值*:成功返回地址，失败返回NULL
+    + *注意*:使用引用计数，每使用一次加一
+*** static inline void input_put_device(struct input_dev *dev)
+    + *功能*:释放对dev的引用，引用计数器减一
+    + *参数*:
+    + *返回值*:成功返回地址，失败返回NULL
+    + *注意*:使用引用计数，每使用一次减一
+*** static inline void *input_get_drvdata(struct input_dev *dev)
+    + *功能*:获取dev中的私有数据
+    + *参数*:
+    + *返回值*:成功返回地址，失败返回NULL
+    + *注意*:
+*** static inline void input_set_drvdata(struct input_dev *dev, void *data)
+    + *功能*:设置dev中的私有数据
+    + *参数*:
+    + *返回值*:成功返回0，失败返回error
+    + *注意*:
+*** int __must_check input_register_device(struct input_dev *);
+    + *功能*:向input内核中注册设备
+    + *参数*:被注册的设备
+    + *返回值*:
+    + *注意*:注册前使用input_allocate_device()分配空间,并在注册前初始化相应的功能。
+      注册成功使用input_unregister_device进行注销设备；如果失败使用input_free_device()释放空间
+*** void input_unregister_device(struct input_dev *);
+    + *功能*:注销设备
+    + *参数*:被注销的设备
+    + *返回值*:
+    + *注意*:
+*** void input_reset_device(struct input_dev *);
+    + *功能*:复位/恢复输入设备的状态
+    + *参数*:需要复位状态的输入设备
+    + *返回值*:
+    + *注意*:此功能尝试重置打开的输入设备的状态
+*** int __must_check input_register_handler(struct input_handler *);
+    + *功能*:注册一个新的输入处理程序
+    + *参数*:
+    + *返回值*:
+    + *注意*:该功能为系统中的输入设备注册新的输入处理程序（接口），
+      并将其附加到与处理程序兼容的所有输入设备。
+*** void input_unregister_handler(struct input_handler *);
+    + *功能*:注销一个输入处理程序
+    + *参数*:
+    + *返回值*:
+    + *注意*:此功能将处理程序与其输入设备断开连接，并将其从已知处理程序的列表中删除。
+*** int __must_check input_get_new_minor(int legacy_base, unsigned int legacy_num, bool allow_dynamic);
+    + *功能*:分配一个新的输入次设备号
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** void input_free_minor(unsigned int minor);
+    + *功能*:释放输入设备的次设备号
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** int input_handler_for_each_handle(struct input_handler *, void *data, int (*fn)(struct input_handle *, void *));
+    + *功能*:
+    + *参数*:
+      handler
+      data:回调函数中的数据
+      fn:为每个handle回调函数
+    + *返回值*:
+    + *注意*:
+*** int input_register_handle(struct input_handle *);
+    + *功能*:注册一个新的input_handle
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** void input_unregister_handle(struct input_handle *);
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** int input_grab_device(struct input_handle *);
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** void input_release_device(struct input_handle *);
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** int input_open_device(struct input_handle *);
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** void input_close_device(struct input_handle *);
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** int input_flush_device(struct input_handle *handle, struct file *file);
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** void input_event(struct input_dev *dev, unsigned int type, unsigned int code, int value);
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** void input_inject_event(struct input_handle *handle, unsigned int type, unsigned int code, int value);
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** static inline void input_report_key(struct input_dev *dev, unsigned int code, int value)
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** static inline void input_report_rel(struct input_dev *dev, unsigned int code, int value)
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** static inline void input_report_abs(struct input_dev *dev, unsigned int code, int value)
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** static inline void input_report_ff_status(struct input_dev *dev, unsigned int code, int value)
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** static inline void input_report_switch(struct input_dev *dev, unsigned int code, int value)
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** static inline void input_sync(struct input_dev *dev)
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** static inline void input_mt_sync(struct input_dev *dev)
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*:
+*** void input_set_capability(struct input_dev *dev, unsigned int type, unsigned int code);
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*
+*** static inline void input_set_events_per_packet(struct input_dev *dev, int n_events)
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*
+*** void input_alloc_absinfo(struct input_dev *dev);
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*
+*** ss
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*
+*** f
+    + *功能*:
+    + *参数*:
+    + *返回值*:
+    + *注意*
+* 关键结构体
+** input.h
+*** struct input_dev
+    (结构体表示输入设备)
+    #+begin_src cpp
+    struct input_dev {
+      const char *name;  //设备名
+      const char *phys;  //
+      const char *uniq;  //设备的唯一标识码（如果设备有）
+      struct input_id id;　//设备id
+
+      unsigned long propbit[BITS_TO_LONGS(INPUT_PROP_CNT)]; //设备属性位图
+
+      unsigned long evbit[BITS_TO_LONGS(EV_CNT)];  //设备支持的事件类型的位图（EV_KEY，EV_REL等）
+      unsigned long keybit[BITS_TO_LONGS(KEY_CNT)]; //此设备具有的键/按钮的位图
+      unsigned long relbit[BITS_TO_LONGS(REL_CNT)]; //设备的相对轴位图
+      unsigned long absbit[BITS_TO_LONGS(ABS_CNT)]; //设备的绝对轴位图
+      unsigned long mscbit[BITS_TO_LONGS(MSC_CNT)]; //Misc设备支持的其他事件的位图
+      unsigned long ledbit[BITS_TO_LONGS(LED_CNT)]; //存在于设备上的leds的位图
+      unsigned long sndbit[BITS_TO_LONGS(SND_CNT)]; //sound设备支持的音效的位图
+      unsigned long ffbit[BITS_TO_LONGS(FF_CNT)];  //force-feedback设备支持的力反馈效应的位图
+      unsigned long swbit[BITS_TO_LONGS(SW_CNT)];  //Switch设备上存在的开关位图
+
+      unsigned int hint_events_per_packet;  //平均数据包中设备生成的事件（EV_SYN / SYN_REPORT事件之间）。 由事件处理程序用于估计保存事件所需的缓冲区大小。
+
+      unsigned int keycodemax;  //键码表的大小
+      unsigned int keycodesize;  //键码表中元素的大小
+      void *keycode;  //扫描代码映射到此设备的键码
+
+      //可选方法改变当前的keymap，用于实现
+      int (*setkeycode)(struct input_dev *dev, const struct input_keymap_entry *ke, unsigned int *old_keycode);
+      //可选的传统方法来检索当前键盘映射。
+      int (*getkeycode)(struct input_dev *dev, struct input_keymap_entry *ke);
+
+      struct ff_device *ff;
+
+      unsigned int repeat_key;
+      struct timer_list timer;
+
+      int rep[REP_CNT];   //Autorepeat
+
+      struct input_mt *mt;
+
+      struct input_absinfo *absinfo;
+
+      unsigned long key[BITS_TO_LONGS(KEY_CNT)];//key
+      unsigned long led[BITS_TO_LONGS(LED_CNT)];//led
+      unsigned long snd[BITS_TO_LONGS(SND_CNT)];//sound
+      unsigned long sw[BITS_TO_LONGS(SW_CNT)];//swbit
+
+      int (*open)(struct input_dev *dev);
+      void (*close)(struct input_dev *dev);
+      int (*flush)(struct input_dev *dev, struct file *file);
+      int (*event)(struct input_dev *dev, unsigned int type, unsigned int code, int value);
+
+      struct input_handle __rcu *grab;
+
+      spinlock_t event_lock;
+      struct mutex mutex;
+
+      unsigned int users;
+      bool going_away;
+
+      struct device dev;
+
+      struct list_head	h_list;
+      struct list_head	node;
+
+      unsigned int num_vals;
+      unsigned int max_vals;
+      struct input_value *vals;
+
+      bool devres_managed;
+    };
+    #+end_src
+*** input_absinfo
+    #+begin_src cpp
+    //used by EVIOCGABS/EVIOCSABS ioctls
+    //使用EVIOCGABS/EVIOCSABS命令获取/设置abs的值
+    struct input_absinfo {
+        __s32 value;    //轴的最新报告值
+        __s32 minimum;  //指定轴的最小值
+        __s32 maximum;  //指定轴的最大值
+        __s32 fuzz;     //指定用于过滤来自事件流的噪声的fuzz值
+        __s32 flat;     //
+        __s32 resolution;//指定轴报告的值的分辨率
+    };
+    #+end_src
+    主轴(ABS_X, ABS_Y, ABS_Z)的分辨率以mm为单位报告的,旋转
+    轴(ABS_RX, ABS_RY, ABS_RZ)分辨率以每弧度为单位报告
+
+*** input_keymap_entry
+    *功能*:该结构体用于检索和修改键盘映射数据
+    #+begin_src cpp
+    //使用EVIOCGKEYCODE/EVIOCSKEYCODE命令获得/设置keycode
+    struct input_keymap_entry {
+    #define INPUT_KEYMAP_BY_INDEX	(1 << 0)
+        __u8  flags;  //INPUT_KEYMAP_BY_INDEX表示内核应该通过@index而不是@scancode在键盘映射(keymap)中执行查找
+        __u8  len;//驻留在@scancode缓冲区中scancode的长度
+        __u16 index;  //键盘的index可以代替scancode
+        __u32 keycode; //分配键码(keycode)到此扫描码
+        __u8  scancode[32];  //扫描码(scancode)以机器码格式表示
+    };
+    #+end_src

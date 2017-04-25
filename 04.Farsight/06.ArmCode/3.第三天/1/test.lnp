@@ -1,0 +1,4 @@
+--cpu ARM966E-S "test.o" --strict --scatter "test.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\test.map" -o "test.axf"

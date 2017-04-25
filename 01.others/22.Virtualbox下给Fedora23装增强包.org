@@ -1,0 +1,12 @@
+* 1.下载VBoxGuestAdditions_5.0.16.iso
+  点击【设备】 ->  安装g增强功能   ->  自动下载这个文件
+* 安装以下，以防失败
+  + 安装 gcc
+    sudo dnf install gcc-5.3.1-6.fc23.i686
+  + 安装 kernel-devel
+    sudo dnf install kernel-devel-4.5.7-202.fc23.i686
+  + 安装 kernel-headers
+    sudo dnf install kernel-headers-4.5.7-202.fc23.i686
+* 安装增强工具包
+  sudo sh ./VBoxLinuxAdditions.run
+  然后重启

@@ -1,0 +1,68 @@
+* 简介
+Android系统基于Linux实现。针对传统Linux系统，NSA开发了一套安全机制SELinux，
+用来加强安全性。然而，由于Android系统有着独特的用户空间运行时，因此
+SELinux不能完全适用于Android系统。为此，NSA针对Android系统，在SELinux
+基础上开发了SEAndroid。本文就对SEAndroid安全机制框架进行分析，
+** 基本概念
++ DAC(自主存取控制)
+  如传统的Linux　UID/GID机制
++ MAC(强制存取控制)
++ TE(类型强制)
+  访问控制都是以关联的客体和主体的某种类型的访问控制属性为基础的,在
+  SELinux中
+  + 客体指的是文件,进程间通讯通道,套接字等
+  + 主体指的是进程
+  + 控制属性指的是安全上下文
+    安全上下文由以下４部分组成
+    + 用户(user)
+    + 角色(role)
+    + 类型标识符(type)     这个对我们而言最重要
+      | 类型      | 功能                         |
+      |-----------+------------------------------|
+      | file_type | 用来标注文件的安全上下文类型 |
+      | domain    | 用来标注进程的安全上下文类型 |
+    + 安全上下文的解析由以下四个关键文件决定
+      mac_permissions.xml、
+      seapp_contexts、
+      file_contexts和
+      property_contexts 属性的安全上下文和file_contexts类似
+      位于目录system/sepolicy下
+      mac_permissions.xml ->  seapp_contexts  ->  file_contexts
+                                              ->  property_contexts
+    + Sensitivity(安全级别)
+  + 查看命令
+    #+begin_src shell
+    ls -Z //查看客体的安全上下文属性
+    ps -Z //查看主体的安全上下文属性
+    #+end_src
++ SELINUX的三种模式
+  ENFORCING   ---SELinux security policy is enforced
+  PERMISSIVE---SELinux grants access but prints out error(avc denied)message
+  DISABLED--- No SELinux policy is loaded
++ 规则添加神器audit2allow安装
+  sudo apt-get install policycoreutils
++ 注意 ::
+     selinux的权限是由GID/UID机制　和　上下文控制的
+* SEAndroid框架
+[[file:./picture/01.SEAndroid安全机制框架.png]]
+从图可以看到，以SELinux文件系统接口为边界，SEAndroid安全机制包含有内核空间
+和用户空间两部分支持。在内核空间，主要涉及到一个称为SELinux LSM的模块。而
+在用户空间中，涉及到Security Context、Security Server和SEAndroid Policy等
+模块。这些内核空间模块和用户空间模块的作用以及交互如下所示：
+ 1. 内核空间的SELinux LSM模块负责内核资源的安全访问控制。
+ 2. 用户空间的SEAndroid Policy描述的是资源安全访问策略。系统在启动的时候，
+    用户空间的Security Server需要将这些安全访问策略加载内核空间的SELinux LSM
+    模块中去。这是通过SELinux文件系统接口实现的。
+    n8976/device/tct/common/sepolicy/路径下的文件对应于本模块
+    n8976/system/sepolicy
+ 3. 用户空间的Security Context描述的是资源安全上下文。SEAndroid的安全访问策略就是在资源的安全上下文基础上实现的。
+ 4. 用户空间的Security Server一方面需要到用户空间的Security Context去检索对象的安全上下文，另一方面也需要到内核空间去操作对象的安全上下文。
+ 5. 用户空间的selinux库封装了对SELinux文件系统接口的读写操作。用户空间的
+    Security Server访问内核空间的SELinux LSM模块时，都是间接地通过selinux进行的。这样可以将对SELinux文件系统接口的读写操作封装成更有意义的函数调用。
+ 6. 用户空间的Security Server到用户空间的Security Context去检索对象的安全上下文时，同样也是通过selinux库来进行的。
+* Security Context(安全上下文)
+* SEAndroid Policy(安全策略)
+SEAndroid安全机制中的安全策略是在安全上下文的基础上进行描述的，也就是说，
+它通过主体和客体的安全上下文，定义主体是否有权限访问客体。
+* 参考文档
+[[http://blog.csdn.net/luoshengyang/article/details/35392905][<<SEAndroid安全机制简要介绍和学习计划>>]]

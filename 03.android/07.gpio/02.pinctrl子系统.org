@@ -1,0 +1,221 @@
+* 简介
+  PINCTRL (PIN CONTROL) subsystem:引脚控制子系统
+  + 枚举和命名可控引脚
+  + gpio所具有的属性
+    输入输出方向
+    中断配置
+    电流驱动能力
+    上下拉配置
+* 参考文档
+  + *Docs*:\\
+    [[http://blog.rongpmcu.com/gpiozi-xi-tong-he-pinctrlzi-xi-tong/][ gpio子系统和pinctrl子系统]]\\
+    [[http://www.wowotech.net/sort/gpio_subsystem][蜗窝科技:linux内核中的GPIO系统]]\\
+    Documentation/pinctrl.txt\\
+  + *Cods*:\\
+    drivers/pinctrl/core.c       pin control subsystem的核心驱动\\
+    drivers/pinctrl/core.h\\
+    drivers/pinctrl/devicetree.c 设备树支持\\
+    drivers/pinctrl/devicetree.h\\
+    drivers/pinctrl/pinconf.c 支持引脚配置控制器\\
+    drivers/pinctrl/pinconf.h\\
+    drivers/pinctrl/pinmux.c  支持多路复用控制器\\
+    drivers/pinctrl/pinmux.h\\
+    drivers/pinctrl/pinctrl-xxx.c 我们是以高通平台为例pinctrl-msm-tlmm.c\\
+    drivers/pinctrl/pinctrl-msm.h\\
+  + *API*:\\
+    include/linux/pinctrl/consumer.h *重要*\\
+    include/linux/pinctrl/machine.h\\
+    include/linux/pinctrl/pinconf.h *略*\\
+    include/linux/pinctrl/pinctrl-state.h *略*\\
+    include/linux/pinctrl/devinfo.h *略*\\
+    include/linux/pinctrl/pinconf-generic.h *略*\\
+    include/linux/pinctrl/pinctrl.h *重要*\\
+    include/linux/pinctrl/pinmux.h *略*\\
+  + *sysfs*\\
+    *debugfs*:/sys/kernel/debug/pinctrl/
+    --------------------
+* 关键结构体
+** pinmux_ops
+   #+begin_src cpp
+   struct pinmux_ops {
+      int (*request) (struct pinctrl_dev *pctldev, unsigned offset);
+      int (*free) (struct pinctrl_dev *pctldev, unsigned offset);
+      int (*get_functions_count) (struct pinctrl_dev *pctldev);
+      const char *(*get_function_name) (struct pinctrl_dev *pctldev,
+                unsigned selector);
+      int (*get_function_groups) (struct pinctrl_dev *pctldev,
+              unsigned selector,
+              const char * const **groups,
+              unsigned * const num_groups);
+      int (*enable) (struct pinctrl_dev *pctldev, unsigned func_selector,
+               unsigned group_selector);
+      void (*disable) (struct pinctrl_dev *pctldev, unsigned func_selector,
+           unsigned group_selector);
+      int (*gpio_request_enable) (struct pinctrl_dev *pctldev,
+                struct pinctrl_gpio_range *range,
+                unsigned offset);
+      void (*gpio_disable_free) (struct pinctrl_dev *pctldev,
+               struct pinctrl_gpio_range *range,
+               unsigned offset);
+      int (*gpio_set_direction) (struct pinctrl_dev *pctldev,
+               struct pinctrl_gpio_range *range,
+               unsigned offset,
+               bool input);
+    };
+   #+end_src
+** pinconf_ops
+   #+begin_src cpp
+   struct pinconf_ops {
+    #ifdef CONFIG_GENERIC_PINCONF
+      bool is_generic;
+    #endif
+      int (*pin_config_get) (struct pinctrl_dev *pctldev,
+                 unsigned pin,
+                 unsigned long *config);
+      int (*pin_config_set) (struct pinctrl_dev *pctldev,
+                 unsigned pin,
+                 unsigned long config);
+      int (*pin_config_group_get) (struct pinctrl_dev *pctldev,
+                 unsigned selector,
+                 unsigned long *config);
+      int (*pin_config_group_set) (struct pinctrl_dev *pctldev,
+                 unsigned selector,
+                 unsigned long config);
+      int (*pin_config_dbg_parse_modify) (struct pinctrl_dev *pctldev,
+                 const char *arg,
+                 unsigned long *config);
+      void (*pin_config_dbg_show) (struct pinctrl_dev *pctldev,
+                 struct seq_file *s,
+                 unsigned offset);
+      void (*pin_config_group_dbg_show) (struct pinctrl_dev *pctldev,
+                 struct seq_file *s,
+                 unsigned selector);
+      void (*pin_config_config_dbg_show) (struct pinctrl_dev *pctldev,
+                  struct seq_file *s,
+                  unsigned long config);
+    };
+   #+end_src
+** pinctrl_ops
+   #+begin_src cpp
+   struct pinctrl_ops {
+      int (*get_groups_count) (struct pinctrl_dev *pctldev);
+      const char *(*get_group_name) (struct pinctrl_dev *pctldev,
+                   unsigned selector);
+      int (*get_group_pins) (struct pinctrl_dev *pctldev,
+                 unsigned selector,
+                 const unsigned **pins,
+                 unsigned *num_pins);
+      void (*pin_dbg_show) (struct pinctrl_dev *pctldev, struct seq_file *s,
+            unsigned offset);
+      int (*dt_node_to_map) (struct pinctrl_dev *pctldev,
+                 struct device_node *np_config,
+                 struct pinctrl_map **map, unsigned *num_maps);
+      void (*dt_free_map) (struct pinctrl_dev *pctldev,
+               struct pinctrl_map *map, unsigned num_maps);
+    };
+   #+end_src
+* 关键API
+** consumer.h
+   #+begin_src cpp
+   /* 外部接口到引脚控制 */
+   
+   /*
+   功能：请求单个引脚用作GPIO
+     gpio:GPIO引脚号从GPIO子系统号空间
+   */
+   extern int pinctrl_request_gpio(unsigned gpio);
+   extern void pinctrl_free_gpio(unsigned gpio);
+
+   /*
+   功能：请求GPIO引脚进入输入/出模式
+   */
+   extern int pinctrl_gpio_direction_input(unsigned gpio);
+   extern int pinctrl_gpio_direction_output(unsigned gpio);
+
+   /*
+   功能：从pinctrl句柄中检索状态句柄
+     p:要检测的句柄
+     name:要检索的状态名称
+   */
+   extern struct pinctrl_state * __must_check pinctrl_lookup_state(struct pinctrl *p, const char *name);
+
+   /*
+   功能：选择/激活/编程pinctrl状态到HW
+    p:请求配置的设备的pinctrl句柄
+    s:被选择/激活/编程的状态句柄
+   */
+   extern int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *s);
+
+   /*
+   功能:资源管理获取获取pinctrl
+    dev:从dev设备中获取pinctrl资源
+    释放用devm_pinctrl_put()
+   */
+   extern struct pinctrl * __must_check devm_pinctrl_get(struct device *dev);
+   extern void devm_pinctrl_put(struct pinctrl *p);
+
+   /*和devm_pinctrl_get()有点类似,区别在于pinctrl_get没有注册到设备中*/
+   extern struct pinctrl * __must_check pinctrl_get(struct device *dev);
+   extern void pinctrl_put(struct pinctrl *p);
+   #+end_src
+* 专业术语
+  | 缩写 | 全写                       | 中文           |
+  |------+----------------------------+----------------|
+  | BLSP | BAM Low-Speed Peripheral   |                |
+  | TLMM | top-level mode multiplexer | 顶级模式复用器 |
+* 函数讲解
+** pinctrl-msm.c
+   主要功能是对pinctrl_ops,pinconf_ops,pinctrl_ops结构体类型变量进行填充,
+   然后再全部封装到函数msm_pinctrl_probe()(TLMM的普通配置)中并把该函数导出,让其他模块也能
+   使用
+** pinctrl-msm-tlmm.c
+   完成高通处理器内部gpio控制器启动的注册
+* 总结
+  linux内核pinctrl子系统框架主要是由核心代码core.c驱动注册,并提供一些API和
+  debugfs接口(/sys/kernel/debug/pinctrl/),并提供一些接口,而平台相关的代码是
+  由pinctrl-xxx.c,我们以高通平台为例，代码是pinctrl-msm-tlmm.c,大致流程是这
+  样的
+  #+begin_src cpp
+  用户层接口(sysfs,API)
+  
+  ------------------------------------------------------
+  |各种驱动如LED,LCD,KEY等硬件设备,通过调用这个接口控制| ==> 其他驱动使用gpio
+  |gpio引脚                                            |
+  ------------------------------------------------------
+        ||(API)
+        \/
+  ------------------------------------------------------
+  |  core.c                                            |
+  |硬件抽象层(对各种gpio控制器的封装,为上层提供        |
+  |一个统一的API,让我们忽略硬件差异对我们造成的困扰)   |
+  |     ||                                             |
+  |     \/                                             |
+  |                                                    |
+  |pinctrl-msm-tlmm.c                                  |
+  |gpio控制驱动层(各种gpio控制器的驱动程序,            |  ==>这是pinctrl框架
+  |让硬件可以正常工作)                                 |
+  |     ||                                             |
+  |     \/                                             |
+  |硬件层(各种gpio控制器,比如高通,                     |
+  |三星等硬件厂商生产的处理器芯片内部集                |
+  |成的控制器,或挂载在芯片上的控制器)                  |
+  ------------------------------------------------------
+  #+end_src
+  
+  #+begin_src cpp
+      ------------------                                                      ----------------------
+      |devicetree.c    |-------------------主要功能:完成设备树的解析    |===> |pinctrl-msm-tlmm.c  |
+      ------------------               ||                               |     |pinctrl-msm.c       |==>说明:这部分是由bsp完成的,
+                                       \/                               |     |完成gpio驱动的注册  |    主要是gpio驱动的编写
+      ------------------            ------------------                  |     ----------------------
+  +---|pinconf.c       |----------> |core.c          |------------------+     
+  |   ------------------            ------------------                  |     ----------------------
+  |                                    /\                               |     |为其他驱动(usb,lcd等|
+  |   ------------------               ||                               |===> |等)提供gpio接口     |==>说明:
+  |   |pinmux.c        |------+----------                                     |                    |
+  |   ------------------      |                                               |                    |
+  |                           |                                               ----------------------
+  |=>pinconf.c主要功能:       |=>pinmux.c主要完成pin复用功能                  
+     配置pin引脚的功能                      
+     
+ #+end_src

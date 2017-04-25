@@ -1,0 +1,339 @@
+/*
+* 点的参数
+        shape
+            record     由横的和竖的矩形组成的图形
+	    Mrecord    角是圆的，看例题
+	    polygon    多边形
+	    plaintext
+	    box
+	    Mdiamond
+	    Msquare
+	rankdir       默认时图中的线是从上到下的，值：LR，RL，TB(默认)，BT   
+	sides 设置边数
+	peripheries 设置多边形的外框的层数
+	regular = true可以让多边形是一个规则的多边形
+	orientation=15 可以让你的多边形旋转一个角度 如15度
+	color
+	style
+	skew 值-1.0～1.0能让多边形斜切一个角度
+	label
+	distortion 让图形产生透视效果
+	
+	decorate      决定每条线的label与所属线的连接值：true,false
+	labelfontcolor决定headlabel和taillabel的颜色
+	fontcolor     决定label颜色
+	headlabel     起始点标签
+	taillabel     终点标签
+	label         标签
+	rank       当图中时间表之类的东西时，我们会需要点能排在一行（列），这时要用到rank，用花括号把rank=same然后把需要并排的点一次输入          
+
+	width   宽
+	height  高
+	nodesep
+
+
+	画一个子图 subgraph 
+
+	compound 把一条边连到一个子图的边界上，先输入compound = true,然后就能用lhead和ltail来设置连接的子图了
+* 
+*
+****/
+/*
+设立一条边时，我们可以制定这条边从起点的那个位置射出和从哪个位置结束。控制符有
+"n", "ne","e", "se", "s", "sw", "w" 和"nw"，具体效果见下：
+n是北；s是南；w是西；e是东
+
+也可以在record/Mrecord中给点定义一些port，因为record类型中都是一个个格子
+*/
+
+/*
+Synchronous Digital Hierarchy Stack
+
+    A diagram of the relationships between objects in an SDH (Synchronous Digital Hierarchy) network. This graph was created to show a multiplicity of semantic relationships in a single graph.
+
+    In the graph file, the setting of the global page size, graph layout size, aspect ratio (to fill the allowed layout size) and centering means that the layout will be placed in a box that is precisely 7.5" wide by 7" high and centered on an 8.5x11 page. The default node is to draw nodes unlabeled. Subgraphs are employed to mark sets of nodes to be placed on the same rank (level) in the layout, and as local scopes for node or edge attribute initialization. 
+*/
+digraph G {
+	graph [bgcolor=black];	/* set background */
+	edge [color=white];
+	graph[page="8.5,11",size="7.5,7",ratio=fill,center=1];
+	node[style=filled,label=""];
+	subgraph ds3CTP {
+		rank = same;
+		node[shape=box,color=green];
+		ds3CTP_1_1;
+		ds3CTP_1_2;
+		ds3CTP_5_1;
+		ds3CTP_5_2;
+	}
+	subgraph t3TTP {
+		rank = same;
+		node[shape=invtriangle,color=red];
+		t3TTP_1_1;
+		t3TTP_5_2;
+	}
+	subgraph vc3TTP {
+		rank = same;
+		node[shape=invtriangle,color=red];
+		vc3TTP_1_2;
+		vc3TTP_5_1;
+	}
+	subgraph fabric {
+		rank = same;
+		node[shape=hexagon,color=blue];
+		fabric_1_2;
+		fabric_4_1;
+		fabric_5_1;
+	}
+	subgraph xp {
+		rank = same;
+		node[shape=diamond,color=blue];
+		xp_1_2;
+		xp_4_1;
+		xp_5_1;
+	}
+	subgraph au3CTP {
+		rank = same;
+		node[shape=box,color=green];
+		au3CTP_1_2;
+		au3CTP_4_1;
+		au3CTP_4_2;
+		au3CTP_5_1;
+	}
+	subgraph aug {
+		rank = same;
+		node[shape=invtrapezium,color=pink];
+		aug_1_2;
+		aug_4_1;
+		aug_4_2;
+		aug_5_1;
+	}
+	subgraph protectionTTP {
+		rank = same;
+		node[shape=invtriangle,color=red];
+		prTTP_1_2;
+		prTTP_4_1;
+		prTTP_4_2;
+		prTTP_5_1;
+	}
+	subgraph protectionGroup {
+		rank = same;
+		node[shape=hexagon,color=blue];
+		pg_1_2;
+		pg_4_1;
+		pg_4_2;
+		pg_5_1;
+	}
+	subgraph protectionUnit {
+		rank = same;
+		node[shape=diamond,color=blue];
+		pu_1_2;
+		pu_4_1;
+		pu_4_2;
+		pu_5_1;
+	}
+	subgraph protectionCTP {
+		node[shape=box,color=green];
+		prCTP_1_2;
+		prCTP_4_1;
+		prCTP_4_2;
+		prCTP_5_1;
+	}
+	subgraph msTTP {
+		rank = same;
+		node[shape=invtriangle,color=red];
+		msTTP_1_2;
+		msTTP_4_1;
+		msTTP_4_2;
+		msTTP_5_1;
+	}
+	subgraph msCTP {
+		rank = same;
+		node[shape=box,color=green];
+		msCTP_1_2;
+		msCTP_3_1;
+		msCTP_3_2;
+		msCTP_4_1;
+		msCTP_4_2;
+		msCTP_5_1;
+	}
+	subgraph rsTTP {
+		rank = same;
+		node[shape=invtriangle,color=red];
+		rsTTP_1_2;
+		rsTTP_3_1;
+		rsTTP_3_2;
+		rsTTP_4_1;
+		rsTTP_4_2;
+		rsTTP_5_1;
+	}
+	subgraph rsCTP {
+		rank = same;
+		node[shape=box,color=green];
+		rsCTP_1_2;
+		rsCTP_2_1;
+		rsCTP_2_2;
+		rsCTP_3_1;
+		rsCTP_3_2;
+		rsCTP_4_1;
+		rsCTP_4_2;
+		rsCTP_5_1;
+	}
+	subgraph spiTTP {
+		rank = same;
+		node[shape=invtriangle,color=red];
+		spiTTP_1_2;
+		spiTTP_2_1;
+		spiTTP_2_2;
+		spiTTP_3_1;
+		spiTTP_3_2;
+		spiTTP_4_1;
+		spiTTP_4_2;
+		spiTTP_5_1;
+	}
+	subgraph me {
+		rank = same;
+		node[shape=box,peripheries=2];
+		me_1;
+		me_2;
+		me_3;
+		me_4;
+		me_5;
+	}
+	subgraph client_server {
+		edge[style=dotted,dir=none,weight=100];
+		ds3CTP_1_1->t3TTP_1_1;
+		ds3CTP_1_2->vc3TTP_1_2;
+		au3CTP_1_2->aug_1_2->prTTP_1_2;
+		prCTP_1_2->msTTP_1_2;
+		msCTP_1_2->rsTTP_1_2;
+		rsCTP_1_2->spiTTP_1_2;
+		rsCTP_2_1->spiTTP_2_1;
+		rsCTP_2_2->spiTTP_2_2;
+		msCTP_3_1->rsTTP_3_1;
+		rsCTP_3_1->spiTTP_3_1;
+		msCTP_3_2->rsTTP_3_2;
+		rsCTP_3_2->spiTTP_3_2;
+		au3CTP_4_1->aug_4_1->prTTP_4_1;
+		prCTP_4_1->msTTP_4_1;
+		msCTP_4_1->rsTTP_4_1;
+		rsCTP_4_1->spiTTP_4_1;
+		au3CTP_4_2->aug_4_2->prTTP_4_2;
+		prCTP_4_2->msTTP_4_2;
+		msCTP_4_2->rsTTP_4_2;
+		rsCTP_4_2->spiTTP_4_2;
+		ds3CTP_5_1->vc3TTP_5_1;
+		au3CTP_5_1->aug_5_1->prTTP_5_1;
+		prCTP_5_1->msTTP_5_1;
+		msCTP_5_1->rsTTP_5_1;
+		rsCTP_5_1->spiTTP_5_1;
+		ds3CTP_5_2->t3TTP_5_2;
+	}
+	subgraph trail {
+		edge[style=dashed,dir=none];
+		vc3TTP_1_2->vc3TTP_5_1;
+		prTTP_1_2->prTTP_4_1;
+		prTTP_4_2->prTTP_5_1;
+		msTTP_1_2->msTTP_4_1;
+		msTTP_4_2->msTTP_5_1;
+		rsTTP_1_2->rsTTP_3_1;
+		rsTTP_3_2->rsTTP_4_1;
+		rsTTP_4_2->rsTTP_5_1;
+		spiTTP_1_2->spiTTP_2_1;
+		spiTTP_2_2->spiTTP_3_1;
+		spiTTP_3_2->spiTTP_4_1;
+		spiTTP_4_2->spiTTP_5_1;
+	}
+	subgraph contain {
+		pu_1_2->pg_1_2;
+		pu_4_1->pg_4_1;
+		pu_4_2->pg_4_2;
+		pu_5_1->pg_5_1;
+		xp_1_2->fabric_1_2;
+		xp_4_1->fabric_4_1;
+		xp_5_1->fabric_5_1;
+		fabric_1_2->me_1;
+		fabric_4_1->me_4;
+		fabric_5_1->me_5;
+		pg_1_2->me_1;
+		pg_4_1->me_4;
+		pg_4_2->me_4;
+		pg_5_1->me_5;
+		t3TTP_1_1->me_1;
+		t3TTP_5_2->me_5;
+		vc3TTP_1_2->me_1;
+		vc3TTP_5_1->me_5;
+		prTTP_1_2->me_1;
+		prTTP_4_1->me_4;
+		prTTP_4_2->me_4;
+		prTTP_5_1->me_5;
+		msTTP_1_2->me_1;
+		msTTP_4_1->me_4;
+		msTTP_4_2->me_4;
+		msTTP_5_1->me_5;
+		rsTTP_1_2->me_1;
+		rsTTP_3_1->me_3;
+		rsTTP_3_2->me_3;
+		rsTTP_4_1->me_4;
+		rsTTP_4_2->me_4;
+		rsTTP_5_1->me_5;
+		spiTTP_1_2->me_1;
+		spiTTP_2_1->me_2;
+		spiTTP_2_2->me_2;
+		spiTTP_3_1->me_3;
+		spiTTP_3_2->me_3;
+		spiTTP_4_1->me_4;
+		spiTTP_4_2->me_4;
+		spiTTP_5_1->me_5;
+	}
+	subgraph connectedBy {
+		vc3TTP_1_2->fabric_1_2;
+		au3CTP_1_2->fabric_1_2;
+		au3CTP_4_1->fabric_4_1;
+		au3CTP_4_2->fabric_4_1;
+		vc3TTP_5_1->fabric_5_1;
+		au3CTP_5_1->fabric_5_1;
+		prTTP_1_2->pg_1_2;
+		prTTP_4_1->pg_4_1;
+		prTTP_4_2->pg_4_2;
+		prTTP_5_1->pg_5_1;
+		prCTP_1_2->pg_1_2;
+		prCTP_4_1->pg_4_1;
+		prCTP_4_2->pg_4_2;
+		prCTP_5_1->pg_5_1;
+	}
+	subgraph crossConnection {
+		edge[style=dotted,dir=none];
+		vc3TTP_1_2->xp_1_2->au3CTP_1_2;
+		prTTP_1_2->pu_1_2->prCTP_1_2;
+		prTTP_4_1->pu_4_1->prCTP_4_1;
+		au3CTP_4_1->xp_4_1->au3CTP_4_2;
+		prTTP_4_2->pu_4_2->prCTP_4_2;
+		prTTP_5_1->pu_5_1->prCTP_5_1;
+		vc3TTP_5_1->xp_5_1->au3CTP_5_1;
+	}
+	subgraph bindingConnection {
+		edge[style=bold,dir=none,weight=100];
+		ds3CTP_1_1->ds3CTP_1_2;
+		vc3TTP_1_2->au3CTP_1_2;
+		prTTP_1_2->prCTP_1_2;
+		msTTP_1_2->msCTP_1_2;
+		rsTTP_1_2->rsCTP_1_2;
+		rsCTP_2_1->rsCTP_2_2;
+		rsTTP_3_1->rsCTP_3_1;
+		msCTP_3_1->msCTP_3_2;
+		rsTTP_3_2->rsCTP_3_2;
+		prTTP_4_1->prCTP_4_1;
+		msTTP_4_1->msCTP_4_1;
+		rsTTP_4_1->rsCTP_4_1;
+		au3CTP_4_1->au3CTP_4_2;
+		prTTP_4_2->prCTP_4_2;
+		msTTP_4_2->msCTP_4_2;
+		rsTTP_4_2->rsCTP_4_2;
+		prTTP_5_1->prCTP_5_1;
+		msTTP_5_1->msCTP_5_1;
+		rsTTP_5_1->rsCTP_5_1;
+		ds3CTP_5_1->ds3CTP_5_2;
+		vc3TTP_5_1->au3CTP_5_1;
+	}
+}

@@ -1,0 +1,384 @@
+* 简介
+  参考文档: [[http://wiki.osdev.org/Universal_Serial_Bus#][Universal Serial Bus]]
+  抓取usb log方法: [[http://blog.csdn.net/xiaojsj111/article/details/14127607][linux下的usb抓包方法]]
+* 专业术语
+  | 缩写       | 全写                                 | 说明                 |
+  |------------+--------------------------------------+----------------------|
+  | USB        | Universal Serial Bus                 | 通用串行总线         |
+  | idle       |                                      | 空闲                 |
+  | sync       |                                      |                      |
+  | in         |                                      |                      |
+  | addr       |                                      |                      |
+  | endp       |                                      |                      |
+  | crc5       |                                      |                      |
+  | eop        |                                      |                      |
+  | urb        | USB Request Block                    | usb请求块            |
+  | OHCI       | Open Host Controller Interface       | usb1.1时代的主控制器 |
+  | UHCI       | Universal Host Controller Interface  | usb1.1时代的主控制器 |
+  | EHCI       | Enhanced Host Controller Interface   | usb2.0时代的主控制器 |
+  | XHCI       | eXtensible Host Controller Interface | usb3.0的标准接口     |
+  | SuperSpeed |                                      | 5 GB/s               |
+  | High-speed |                                      | 480 Mb/s             |
+  | Full-speed |                                      | 12 Mb/s              |
+  | Low-speed  |                                      | 1.5 Mb/s             |
+  | hub        |                                      | 集线器               |
+  |            |                                      |                      |
+* Host Controllers(主控制器)
+** USB 1.0 Host Controllers
+   UHCI(Universal Host Controller Interface)
+   参考文档[[
+   OHCI(Open Host Controller Interface)
+** USB 2.0 Host Controllers
+   EHCI(Enhanced Host Controller Interface)
+   参考文档[[http://www.intel.com/content/www/us/en/io/universal-serial-bus/ehci-specification.html][手册]]
+** USB 3.0 Host Controllers
+   XHCI(eXtensible Host Controller Interface)
+   参考文档[[http://www.intel.com/content/www/us/en/io/universal-serial-bus/extensible-host-controler-interface-usb-xhci.html][xHCI for Universal Serial Bus: Specification]]
+* pipes
+  + Stream pipes
+    传输的数据没有结构
+    单向传输
+  + Message pipes
+    传输的数据有结构
+    双向传输
+* 协议栈
+** 传输包分类
+   + 令牌包(Token Packets)
+     |同步字段|令牌包|EOP|
+   + 数据包(Data Packets)
+     |同步字段|数据包|EOP|
+   + 握手包(Handshake Packets)
+     |同步字段|握手包|EOP|
+** usb协议的四种传输类型
+   + 控制传输方式(Control)
+     | SetupStage | DataStage | StatusStage |
+     |------------+-----------+-------------|
+     |            |           |             |
+   + 批量传输方式(Synchronization)
+   + 中断传输方式(Interrupt)
+   + 实时传输方式(Bulk)
+   
+** 设备描述符
+   usb_device_descriptor
+   #+begin_src cpp
+   struct usb_device_descriptor {
+      __u8  bLength;         //描述符长度
+      __u8  bDescriptorType; //描述符类型
+
+      __le16 bcdUSB;         //USB版本号
+      __u8  bDeviceClass;    //USB分配的设备类
+      __u8  bDeviceSubClass; //USB分配的设备子类
+      __u8  bDeviceProtocol; //USB分配的协议
+      __u8  bMaxPacketSize0; //端点0最大包大小
+      __le16 idVendor;       //厂商ID
+      __le16 idProduct;      //产品id
+      __le16 bcdDevice;      //设备出厂编号
+      __u8  iManufacturer;   //描述厂商字符串的索引
+      __u8  iProduct;        //描述产品字符串的索引
+      __u8  iSerialNumber;   //描述设备系列号字符串的索引
+      __u8  bNumConfigurations;//可能的配置数量
+    } __attribute__ ((packed));//对齐方式
+    //占用18个字节
+   #+end_src
+** 配置描述符
+   usb_config_descriptor
+   #+begin_src cpp
+   struct usb_config_descriptor {
+      __u8  bLength;  //描述符长度
+      __u8  bDescriptorType;//描述符类型编号
+
+      __le16 wTotalLength;//配置所返回的所有数据的大小
+      __u8  bNumInterfaces;//配置所支持的接口数
+      __u8  bConfigurationValue;//set_configuration命令需要的参数值
+      __u8  iConfiguration;//描述该配置的字符串的索引值
+      __u8  bmAttributes;  //供电模式的选择
+      __u8  bMaxPower;     //设备从总线提取的最大电流
+    } __attribute__ ((packed)); //对齐方式
+    //占用9个字节
+   #+end_src
+** 接口描述符
+   usb_interface_descriptor
+   #+begin_src cpp
+   struct usb_interface_descriptor {
+      __u8  bLength;//描述符长度
+      __u8  bDescriptorType;//描述符类型
+
+      __u8  bInterfaceNumber;//接口编号
+      __u8  bAlternateSetting;//备用的接口描述符编号
+      __u8  bNumEndpoints; //该接口使用的端点数
+      __u8  bInterfaceClass;//接口类型
+      __u8  bInterfaceSubClass;//接口子类型
+      __u8  bInterfaceProtocol;//接口协议
+      __u8  iInterface;//描述该接口的字符串索引值
+    } __attribute__ ((packed));//对齐方式
+    //占用9个字节
+   #+end_src
+** 端点描述符
+   usb_endpoint_descriptor
+   #+begin_src cpp
+   struct usb_endpoint_descriptor {
+      __u8  bLength;//描述符长度
+      __u8  bDescriptorType;//描述符类型
+
+      __u8  bEndpointAddress;//端点地址及输入输出属性
+      __u8  bmAttributes;//端点的传输类型属性
+      __le16 wMaxPacketSize;//端点收/发的最大包的大小
+      __u8  bInterval;//主机查询端点的时间间隔
+
+      /*以下两个仅在audio端点使用*/
+      __u8  bRefresh;
+      __u8  bSynchAddress;
+    } __attribute__ ((packed));//对齐方式
+    //占用7个或9个字节
+    #define USB_DT_ENDPOINT_SIZE		7
+    #define USB_DT_ENDPOINT_AUDIO_SIZE	9	/* Audio extension */
+   #+end_src
+** 字符串描述符
+   usb_string_descriptor
+   #+begin_src cpp
+   struct usb_string_descriptor {
+      __u8  bLength;  //设备字符描述符的字节数大小
+      __u8  bDescriptorType;//描述符类型编号
+
+      __le16 wData[1];		/* UTF-16LE encoded */
+    } __attribute__ ((packed));
+   #+end_src
+* 关键宏
+** MODULE_DEVICE_TABLE
+   #+begin_src cpp
+   MODULE_DEVICE_TABLE(usb, skel_table)
+
+   #define MODULE_DEVICE_TABLE(type,name) \
+      MODULE_GENERIC_TABLE(type##_device,name)
+
+   #define MODULE_GENERIC_TABLE(gtype,name)  \
+      extern const struct gtype##_id __mod_##gtype##_table   __attribute__ ((unused, alias(__stringify(name))))
+
+   ==>
+   (usb_device,skel_table)
+   extern const struct usb_device_id ___mod_usb_device_table
+   #+end_src
+** module_usb_driver
+   #+begin_src cpp
+   module_usb_driver(skel_driver);
+
+   #define module_usb_driver(__usb_driver) \
+	   module_driver(__usb_driver, usb_register, \
+		       usb_deregister)
+
+   #define module_driver(__driver, __register, __unregister, ...) \
+   static int __init __driver##_init(void) \
+   { \
+   	return __register(&(__driver) , ##__VA_ARGS__); \
+   } \
+   module_init(__driver##_init); \
+   static void __exit __driver##_exit(void) \
+   { \
+   	__unregister(&(__driver) , ##__VA_ARGS__); \
+   } \
+   module_exit(__driver##_exit);
+
+
+   ====>>>>
+   
+   static int __init skel_driver_init(void)
+   { 
+   	return usb_register(&skel_driver);
+   } 
+   module_init(skel_driver_init);
+
+   static void __exit skel_driver_exit(void)
+   { 
+   	usb_deregister(&skel_driver);
+   }
+   module_exit(skel_driver_exit);
+   #+end_src
+* 关键结构体
+** usb_device
+   #+begin_src cpp
+   内核表示usb设备
+   struct usb_device {
+      int		devnum;        //设备编号；在usb总线上的地址
+      char		devpath[16]; //设备id字符串
+      u32		route;
+      enum usb_device_state	state;//设备状态
+      enum usb_device_speed	speed;//设备速度
+
+      struct usb_tt	*tt;
+      int		ttport;
+
+      unsigned int toggle[2];
+
+      struct usb_device *parent;//our hub, unless we're the root
+      struct usb_bus *bus;
+      struct usb_host_endpoint ep0;
+
+      struct device dev;//通用设备接口
+
+      struct usb_device_descriptor descriptor;//usb设备描述符
+      struct usb_host_bos *bos;
+      struct usb_host_config *config;//所有设备的配置
+
+      struct usb_host_config *actconfig;//激活配置
+      struct usb_host_endpoint *ep_in[16];//输入端点数组
+      struct usb_host_endpoint *ep_out[16];//输出端点数组
+
+      char **rawdescriptors;
+
+      unsigned short bus_mA;//总线可用的电流
+      u8 portnum;//父端口号
+      u8 level;//usb集线器祖先数量
+
+      unsigned can_submit:1;
+      unsigned persist_enabled:1;
+      unsigned have_langid:1;
+      unsigned authorized:1;
+      unsigned authenticated:1;
+      unsigned wusb:1;
+      unsigned lpm_capable:1;
+      unsigned usb2_hw_lpm_capable:1;
+      unsigned usb2_hw_lpm_enabled:1;
+      unsigned usb3_lpm_enabled:1;
+      int string_langid;
+
+      /* static strings from the device */
+      char *product;
+      char *manufacturer;
+      char *serial;
+
+      struct list_head filelist;
+
+      int maxchild;
+
+      u32 quirks;
+      atomic_t urbnum;
+
+      unsigned long active_duration;
+
+    #ifdef CONFIG_PM
+      unsigned long connect_time;
+
+      unsigned do_remote_wakeup:1;
+      unsigned reset_resume:1;
+      unsigned port_is_suspended:1;
+    #endif
+      struct wusb_dev *wusb_dev;
+      int slot_id;
+      enum usb_device_removable removable;
+      struct usb3_lpm_parameters u1_params;
+      struct usb3_lpm_parameters u2_params;
+      unsigned lpm_disable_count;
+    };
+   #+end_src
+** usb_class_driver
+   标识一个usb驱动使用usb的主设备号
+   #+begin_src cpp
+   struct usb_class_driver {
+      char *name;//usb类设备备名称为此驱动的名,将显示在sysfs
+      char *(*devnode)(struct device *dev, umode_t *mode);
+      const struct file_operations *fops;//文件操作函数集
+      int minor_base;//次设备号起始地址
+    };
+   #+end_src
+** usb_driver
+   识别usbcore的usb接口驱动程序
+   #+begin_src cpp
+   struct usb_driver {
+      const char *name;//驱动程序名称,通常与模块名称相同
+
+      /*设备和驱动匹配函数*/
+      int (*probe) (struct usb_interface *intf, const struct usb_device_id *id);
+
+      /*当接口不可用时调用,通常是模块被卸载或设备断开链接*/
+      void (*disconnect) (struct usb_interface *intf);
+
+      /*iotl控制*/
+      int (*unlocked_ioctl) (struct usb_interface *intf, unsigned int code, void *buf);
+
+      /*系统休眠或运行上下文挂起时调用 */
+      int (*suspend) (struct usb_interface *intf, pm_message_t message);
+      /*从挂起中恢复*/
+      int (*resume) (struct usb_interface *intf);
+      /*当暂停的设备已重置时调用*/
+      int (*reset_resume)(struct usb_interface *intf);
+      /**/
+      int (*pre_reset)(struct usb_interface *intf);
+      int (*post_reset)(struct usb_interface *intf);
+
+      //usb设备id表，usb驱动程序靠它支持热插拔
+      const struct usb_device_id *id_table;
+
+      //用于保存此驱动程序的动态添加的设备id列表
+      struct usb_dynids dynids;
+      struct usbdrv_wrap drvwrap;
+      unsigned int no_dynamic_id:1;
+      unsigned int supports_autosuspend:1;//1为支持自动休眠
+      unsigned int disable_hub_initiated_lpm:1;//
+      //如果为1，则在调用disconnect方法之前,usb内核不会终止urb和禁用端点
+      unsigned int soft_unbind:1;
+    };
+   #+end_src
+** usb_bus
+** usb_device_id
+   识别用于探测和热插拔的USB设备
+   #+begin_src cpp
+   struct usb_device_id {
+      /* which fields to match against? */
+      __u16		match_flags; //确定设备信息去和结构体中哪几个字段匹配来判断驱动的适用性
+
+      __u16		idVendor;  //供应商id
+      __u16		idProduct; //产品id
+      __u16		bcdDevice_lo;//usb设备的产品版本号最低值和
+      __u16		bcdDevice_hi;//最高值,以BCD码来表示
+
+      /* Used for device class matches */
+      __u8		bDeviceClass;//设备的类
+      __u8		bDeviceSubClass;//设备的子类
+      __u8		bDeviceProtocol;//设备的协议
+
+      /* Used for interface class matches */
+      __u8		bInterfaceClass;//接口的类
+      __u8		bInterfaceSubClass;//接口的子类
+      __u8		bInterfaceProtocol;//接口的协议
+
+      /* Used for vendor-specific interface matches */
+      __u8		bInterfaceNumber;
+
+      /* not matched against */
+      kernel_ulong_t	driver_info //这个值不用来匹配驱动的
+        __attribute__((aligned(sizeof(kernel_ulong_t))));
+    };
+   #+end_src
+** usb_interface
+   #+begin_src cpp
+   struct usb_interface {
+      /* array of alternate settings for this interface,
+       * stored in no particular order */
+      struct usb_host_interface *altsetting;
+
+      struct usb_host_interface *cur_altsetting;	/* the currently
+               * active alternate setting */
+      unsigned num_altsetting;	/* number of alternate settings */
+
+      /* If there is an interface association descriptor then it will list
+       * the associated interfaces */
+      struct usb_interface_assoc_descriptor *intf_assoc;
+
+      int minor;			//本接口绑定的次设备号
+      enum usb_interface_condition condition;	//接口是否绑定
+      unsigned sysfs_files_created:1;	//文件系统存在的文件的属性
+      unsigned ep_devs_created:1;	//端点设备存在
+      unsigned unregistering:1;	 //标识卸载接口
+      unsigned needs_remote_wakeup:1;	/* driver requires remote wakeup */
+      unsigned needs_altsetting0:1;	/* switch to altsetting 0 is pending */
+      unsigned needs_binding:1;	/* needs delayed unbind/rebind */
+      unsigned reset_running:1;
+      unsigned resetting_device:1;	/* true: bandwidth alloc after reset */
+
+      struct device dev;		/* interface specific device info */
+      struct device *usb_dev;//
+      atomic_t pm_usage_cnt;		/* usage counter for autosuspend */
+      struct work_struct reset_ws;	/* for resets in atomic context */
+    };
+    #define	to_usb_interface(d) container_of(d, struct usb_interface, dev)
+   #+end_src

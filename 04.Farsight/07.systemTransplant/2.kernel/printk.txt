@@ -1,0 +1,23 @@
+
+内核通过 printk() 输出的信息具有日志级别，日志级别是通过在 printk() 输出的字符串前加一个带尖括号的整数来控制的，如 printk("<6>Hello, world!/n");。内核中共提供了八种不同的日志级别，在 linux/kernel.h 中有相应的宏对应。
+
+#define KERN_EMERG    "<0>"    /* system is unusable */
+#define KERN_ALERT    "<1>"    /* action must be taken immediately */
+#define KERN_CRIT     "<2>"    /* critical conditions */
+#define KERN_ERR      "<3>"    /* error conditions */
+#define KERN_WARNING  "<4>"    /* warning conditions */
+#define KERN_NOTICE   "<5>"    /* normal but significant */
+#define KERN_INFO     "<6>"    /* informational */
+#define KERN_DEBUG    "<7>"    /* debug-level messages */
+
+所以 printk() 可以这样用：printk(KERN_INFO "Hello, world!/n");。
+
+未指定日志级别的 printk() 采用的默认级别是 DEFAULT_MESSAGE_LOGLEVEL，这个宏在 kernel/printk.c 中被定义为整数 4，即对应KERN_WARNING。
+
+在 /proc/sys/kernel/printk 会显示4个数值（可由 echo 修改），
+分别表示当前 控制台日志级别、未明确指定日志级别的默认消息日志级别、最小（最高）允许设置的控制台日志级别、引导时默认的日志级别。
+
+当 printk() 中的消息日志级别小于当前控制台日志级别时，printk 的信息（要有/n符）就会在控制台上显示。但无论当前控制台日志级别是何值，通过 /proc/kmsg （或使用dmesg）总能查看。另外如果配置好并运行了 syslogd 或 klogd，没有在控制台上显示的 printk 的信息也会追加到 /var/log/messages.log 中。
+
+char myname[] = "chinacodec/n";
+printk(KERN_INFO "Hello, world %s!/n", myname);

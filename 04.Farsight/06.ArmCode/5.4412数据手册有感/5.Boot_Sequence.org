@@ -1,0 +1,14 @@
+* 简介
+  4412有64KB的iROM和256KB的SRAM(iRAM)
+  + 支持启动
+    NandFlash
+    SD/MMC内存
+    eMMC内存
+    USB启动
+  + 启动流程
+    iROM里的程序，三星已经固化好
+    系统开机从iROM开时执行
+    + First boot loader(BL1)
+      片内初始化
+    + (Second boot loader)BL2
+      片外初始化

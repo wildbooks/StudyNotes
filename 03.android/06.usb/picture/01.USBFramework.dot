@@ -1,0 +1,54 @@
+digraph G{              /* digraph为有向图，graph为无向图 */
+	label = "USB Framework"
+
+	subgraph cluster0{
+		//node[style=filled, color=white];
+		node[style=filled, color=white];
+		style = filled;
+		color = lightgrey;
+        Client
+		label = "Client:StorageManager";
+	}
+
+	subgraph cluster1{
+        rankdir = LR;
+		node[style=filled, color=white];
+        IMountServiceaidl文件 -> IMountService;
+        rankdir = LR;
+        IMountServiceListeneraidl文件 -> IMountServiceListener;
+		style = filled;
+		color = lightgrey;
+		label = "AIDL";
+	}
+	subgraph cluster2{
+		node[style=filled];
+		label = "Java Framework"
+        "Android Service: MountService";
+        "NativeDaemonConnector"
+		color = blue;
+	}
+
+	subgraph cluster3{
+		node[style=filled];
+		label = "Native Framework";
+        "Native Service: Volume Daemon";
+        "NetLinkManager"
+		color = blue;
+	}
+
+
+	subgraph cluster4{
+		node[style=filled];
+		label = "Kernel";
+        Kernel
+        "Sysfs Uevent"
+		color = blue;
+	}
+
+    Client -> IMountService -> "Android Service: MountService" -> "Native Service: Volume Daemon" -> Kernel;
+    "Sysfs Uevent" -> "Native Service: Volume Daemon" -> "Android Service: MountService" -> IMountServiceListener -> Client;
+    //c -> g[ltail=cluster0, lhead=cluster1];
+    //"Sysfs Uevent" -> "Native Service: Volume Daemon"[ltail=cluster4];
+    //"Native Service: Volume Daemon" -> Kernel[lhead=cluster4];
+
+}

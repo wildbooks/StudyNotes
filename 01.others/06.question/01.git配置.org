@@ -1,0 +1,21 @@
+* 创建github仓库
+    echo "# StudyNotes" >> README.md
+    git init
+    git add README.md
+    git commit -m "first commit"
+    git remote add origin https://github.com/wildbooks/StudyNotes.git
+    git push -u origin master
+* git配置文件简介
+    git config --system     #配置文件保存在/etc/gitconfig
+    git config --global     #配置文件保存在~/.gitconfig
+    git config              #配置文件保存在当前路径.git/config
+* git中文乱码问题
+    git config -global core.quotepath false
+* 配置用户信息
+    git config --global user.name "wildbook"
+    git config --global user.email "www762268@foxmail.com"
+* 文本编辑器
+    git config --global core.editor vim
+* 差异分析工具
+    git config --global merge.tool vimdiff
+* github网站设置
