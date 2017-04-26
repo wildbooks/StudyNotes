@@ -1,0 +1,44 @@
+配置文件
+cp /usr/share/doc/rtorrent/rtorrent.rc ~/.rtorrent.rc
+# 配置参考文档
+http://forum.ubuntu.org.cn/viewtopic.php?t=165069
+https://wiki.archlinux.org/index.php/RTorrent_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)
+
+
+Rakshasa's BitTorrent client version 0.9.6.
+
+All value pairs (f.ex rate and queue size) will be in the UP/DOWN
+order. Use the up/down/left/right arrow keys to move between screens.
+
+Usage: rtorrent [OPTIONS]... [FILE]... [URL]...
+  -h                Display this very helpful text
+  -n                Don't try to load ~/.rtorrent.rc on startup
+  -b <a.b.c.d>      Bind the listening socket to this IP
+  -i <a.b.c.d>      Change the IP that is sent to the tracker
+  -p <int>-<int>    Set port range for incoming connections
+  -d <directory>    Save torrents to this directory by default
+  -s <directory>    Set the session directory
+  -o key=opt,...    Set options, see 'rtorrent.rc' file
+
+Main view keys:
+  backspace         Add a torrent url or path
+  ^s                Start torrent
+  ^d                Stop torrent or delete a stopped torrent
+  ^r                Manually initiate hash checking
+  ^q                Initiate shutdown or skip shutdown process
+  a,s,d,z,x,c       Adjust upload throttle
+  A,S,D,Z,X,C       Adjust download throttle
+  I                 Toggle whether torrent ignores ratio settings
+  right             View torrent
+
+下载查看键
+  spacebar          Depends on the current view
+  1,2               Adjust max uploads
+  3,4,5,6           Adjust min/max connected peers
+  t/T               Query tracker for more peers / Force query
+  *                 Snub peer
+  right             View files
+  p                 View peer information
+  o                 View trackers
+
+Report bugs to <sundell.software@gmail.com>.

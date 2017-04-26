@@ -1,0 +1,11 @@
+# torrent
+ rtorrent
+ Deluge-console
+ Transmission
+#
+ wget
+ curl
+ git
+ w3m
+ Elinks
+ aria2  下载百度云资源
