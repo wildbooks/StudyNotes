@@ -94,103 +94,99 @@
    VIDIOC_QUERYSTD：检查当前视频设备支持的标准，例如PAL或NTSC。
    这些IO调用，有些是必须的，有些是可选择的。
 * ioctl指令
-  VIDIOC_QUERYCAP    //查询设备属性
-  VIDIOC_ENUM_FMT    //枚举图像格式
-  VIDIOC_TRY_FMT     //查询是否支持某种格式
-  VIDIOC_G_FMT       //获取数据格式
-  VIDIOC_S_FMT       //设置数据格式
-  VIDIOC_REQBUFS     //启动内存映射或用户指针I/O
-  VIDIOC_QUERYBUF    //查询缓冲区的状态
-  VIDIOC_G_FBUF      //获取帧缓冲区覆盖参数
-  VIDIOC_S_FBUF      //设置帧缓冲区覆盖参数
-  VIDIOC_QBUF        //与驱动程序交换缓冲区;将缓冲区加入队尾，用来采集数据
-  VIDIOC_EXPBUF
-  VIDIOC_DQBUF       //与驱动程序交换缓冲区;出对列以取得已采集数据的帧缓冲，取得原始数据
-  VIDIOC_OVERLAY     //开始或停止视频叠加
-  VIDIOC_STREAMON    //启动流I/O
-  VIDIOC_STREAMOFF   //关闭流I/O
-  VIDIOC_G_PARM      //获取流参数
-  VIDIOC_S_PARM      //设置流参数
-  VIDIOC_G_STD        //查询当前输入的视频标准
-  VIDIOC_S_STD        //设置当前输入的视频标准
-  VIDIOC_ENUMSTD      //枚举支持的视频标准
-  VIDIOC_ENUMINPUT    //枚举视频输入
-  VIDIOC_G_CTRL       //获取控件的值
-  VIDIOC_S_CTRL       //设置控件的值
-  VIDIOC_G_TUNER      //获取调谐器属性
-  VIDIOC_S_TUNER       //设置调谐器属性
-  VIDIOC_G_AUDIO       //查询当前音频输入及其属性
-  VIDIOC_S_AUDIO       //设置当前音频输入及其属性
-  VIDIOC_QUERYCTRL     //枚举控件项
-  VIDIOC_QUERYMENU     //枚举菜单项
-  VIDIOC_G_INPUT      //查询当前视频输入
-  VIDIOC_S_INPUT      //设置当前视频输入
-  VIDIOC_G_OUTPUT     //查询当前视频输出
-  VIDIOC_S_OUTPUT     //设置当前视频输出
-  VIDIOC_ENUMOUTPUT   //枚举视频输出
-  VIDIOC_G_AUDOUT     //查询当前音频输出
-  VIDIOC_S_AUDOUT     //设置当前音频输出
-  VIDIOC_G_MODULATOR  //获取调制器属性
-  VIDIOC_S_MODULATOR  //设置调制器属性
-  VIDIOC_G_FREQUENCY  //获取调谐器或调制器射频
-  VIDIOC_S_FREQUENCY  //设置调谐器或调制器射频
-  VIDIOC_CROPCAP   //有关视频裁剪和缩放功能的信息
-  VIDIOC_G_CROP    //获取当前的裁剪矩形
-  VIDIOC_S_CROP    //设置当前的裁剪矩形
-  VIDIOC_G_JPEGCOMP
-  VIDIOC_S_JPEGCOMP
-  VIDIOC_QUERYSTD    //检测当前输入接收到的视频标准
-  VIDIOC_ENUMAUDIO   //枚举音频输入
-  VIDIOC_ENUMAUDOUT  //枚举音频输出
-  VIDIOC_G_PRIORITY  //查询与文件描述符关联的访问优先级
-  VIDIOC_S_PRIORITY  //设置与文件描述符关联的访问优先级
-  VIDIOC_G_SLICED_VBI_CAP  //查询分片的VBI功能
-  VIDIOC_LOG_STATUS        //记录驱动程序状态信息
-  VIDIOC_G_EXT_CTRLS        //获取几个控件的值
-  VIDIOC_S_EXT_CTRLS        //设置几个控件的值
-  VIDIOC_TRY_EXT_CTRLS      //尝试控件值
-  VIDIOC_ENUM_FRAMESIZES       //枚举帧大小
-  VIDIOC_ENUM_FRAMEINTERVALS   //枚举帧间隔
-  VIDIOC_G_ENC_INDEX           //获取有关压缩视频流的元数据
-  VIDIOC_ENCODER_CMD       //执行编码器命令
-  VIDIOC_TRY_ENCODER_CMD  //执行编码器命令
+  VIDIOC_QUERYCAP    //查询设备属性\\
+  VIDIOC_ENUM_FMT    //枚举图像格式\\
+  VIDIOC_TRY_FMT     //查询是否支持某种格式\\
+  VIDIOC_G_FMT       //获取数据格式\\
+  VIDIOC_S_FMT       //设置数据格式\\
+  VIDIOC_REQBUFS     //启动内存映射或用户指针I/O\\
+  VIDIOC_QUERYBUF    //查询缓冲区的状态\\
+  VIDIOC_G_FBUF      //获取帧缓冲区覆盖参数\\
+  VIDIOC_S_FBUF      //设置帧缓冲区覆盖参数\\
+  VIDIOC_QBUF        //与驱动程序交换缓冲区;将缓冲区加入队尾，用来采集数据\\
+  VIDIOC_EXPBUF\\
+  VIDIOC_DQBUF       //与驱动程序交换缓冲区;出对列以取得已采集数据的帧缓冲，取得原始数据\\
+  VIDIOC_OVERLAY     //开始或停止视频叠加\\
+  VIDIOC_STREAMON    //启动流I/O\\
+  VIDIOC_STREAMOFF   //关闭流I/O\\
+  VIDIOC_G_PARM      //获取流参数\\
+  VIDIOC_S_PARM      //设置流参数\\
+  VIDIOC_G_STD        //查询当前输入的视频标准\\
+  VIDIOC_S_STD        //设置当前输入的视频标准\\
+  VIDIOC_ENUMSTD      //枚举支持的视频标准\\
+  VIDIOC_ENUMINPUT    //枚举视频输入\\
+  VIDIOC_G_CTRL       //获取控件的值\\
+  VIDIOC_S_CTRL       //设置控件的值\\
+  VIDIOC_G_TUNER      //获取调谐器属性\\
+  VIDIOC_S_TUNER       //设置调谐器属性\\
+  VIDIOC_G_AUDIO       //查询当前音频输入及其属性\\
+  VIDIOC_S_AUDIO       //设置当前音频输入及其属性\\
+  VIDIOC_QUERYCTRL     //枚举控件项\\
+  VIDIOC_QUERYMENU     //枚举菜单项\\
+  VIDIOC_G_INPUT      //查询当前视频输入\\
+  VIDIOC_S_INPUT      //设置当前视频输入\\
+  VIDIOC_G_OUTPUT     //查询当前视频输出\\
+  VIDIOC_S_OUTPUT     //设置当前视频输出\\
+  VIDIOC_ENUMOUTPUT   //枚举视频输出\\
+  VIDIOC_G_AUDOUT     //查询当前音频输出\\
+  VIDIOC_S_AUDOUT     //设置当前音频输出\\
+  VIDIOC_G_MODULATOR  //获取调制器属性\\
+  VIDIOC_S_MODULATOR  //设置调制器属性\\
+  VIDIOC_G_FREQUENCY  //获取调谐器或调制器射频\\
+  VIDIOC_S_FREQUENCY  //设置调谐器或调制器射频\\
+  VIDIOC_CROPCAP   //有关视频裁剪和缩放功能的信息\\
+  VIDIOC_G_CROP    //获取当前的裁剪矩形\\
+  VIDIOC_S_CROP    //设置当前的裁剪矩形\\
+  VIDIOC_G_JPEGCOMP\\
+  VIDIOC_S_JPEGCOMP\\
+  VIDIOC_QUERYSTD    //检测当前输入接收到的视频标准\\
+  VIDIOC_ENUMAUDIO   //枚举音频输入\\
+  VIDIOC_ENUMAUDOUT  //枚举音频输出\\
+  VIDIOC_G_PRIORITY  //查询与文件描述符关联的访问优先级\\
+  VIDIOC_S_PRIORITY  //设置与文件描述符关联的访问优先级\\
+  VIDIOC_G_SLICED_VBI_CAP  //查询分片的VBI功能\\
+  VIDIOC_LOG_STATUS        //记录驱动程序状态信息\\
+  VIDIOC_G_EXT_CTRLS        //获取几个控件的值\\
+  VIDIOC_S_EXT_CTRLS        //设置几个控件的值\\
+  VIDIOC_TRY_EXT_CTRLS      //尝试控件值\\
+  VIDIOC_ENUM_FRAMESIZES       //枚举帧大小\\
+  VIDIOC_ENUM_FRAMEINTERVALS   //枚举帧间隔\\
+  VIDIOC_G_ENC_INDEX           //获取有关压缩视频流的元数据\\
+  VIDIOC_ENCODER_CMD       //执行编码器命令\\
+  VIDIOC_TRY_ENCODER_CMD  //执行编码器命令\\
 * 支持的函数函数
-  open()
-  ioctl()
-  mmap()      将设备内存映射到应用程序地址空间
-  munmap()    取消映射设备内存
-  poll()      等待文件描述符上的一些事件
-  read()      从V4L2设备中读取
-  select()    同步I/O复用
-  write()     写入v4l2设备
+  open()\\
+  ioctl()\\
+  mmap()      将设备内存映射到应用程序地址空间\\
+  munmap()    取消映射设备内存\\
+  poll()      等待文件描述符上的一些事件\\
+  read()      从V4L2设备中读取\\
+  select()    同步I/O复用\\
+  write()     写入v4l2设备\\
 * 设置采集方式
 * 处理采集数据
 * 关闭视频设备
-
-
 * 打开和关闭设备
-
 * 查询能力
-  VIDIOC_QUERYCAP
-  VIDIOC_ENUMINPUT
+  VIDIOC_QUERYCAP\\
+  VIDIOC_ENUMINPUT\\
 * 应用程序优先级
 * 视频输入和输出
-  VIDIOC_ENUMINPUT
-  VIDIOC_G_INPUT
-  VIDIOC_S_INPUT
-  VIDIOC_ENUMOUTPUT
-  VIDIOC_G_OUTPUT
-  VIDIOC_S_OUTPUT
+  VIDIOC_ENUMINPUT\\
+  VIDIOC_G_INPUT\\
+  VIDIOC_S_INPUT\\
+  VIDIOC_ENUMOUTPUT\\
+  VIDIOC_G_OUTPUT\\
+  VIDIOC_S_OUTPUT\\
 * 音频输入和输出
-  VIDIOC_G_AUDIO
-  VIDIOC_S_AUDIO
-  VIDIOC_ENUMAUDIO
-  VIDIOC_G_AUDOUT
-  VIDIOC_S_AUDOUT
-  VIDIOC_ENUMAUDOUT
+  VIDIOC_G_AUDIO\\
+  VIDIOC_S_AUDIO\\
+  VIDIOC_ENUMAUDIO\\
+  VIDIOC_G_AUDOUT\\
+  VIDIOC_S_AUDOUT\\
+  VIDIOC_ENUMAUDOUT\\
 * 调谐器和调制器
 * 视频标准
-
 * fasfsdf
   打开设备: open()
   选择输入设备：ioctl()  fd, VIDIOC_S_INPUT

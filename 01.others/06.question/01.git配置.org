@@ -5,6 +5,10 @@
     git commit -m "first commit"
     git remote add origin https://github.com/wildbooks/StudyNotes.git
     git push -u origin master
+
+* git恢复被修改的文件
+    git checkout        #恢复文件
+    git reset HEAD      #取消暂存的文件
 * git配置文件简介
     git config --system     #配置文件保存在/etc/gitconfig
     git config --global     #配置文件保存在~/.gitconfig
