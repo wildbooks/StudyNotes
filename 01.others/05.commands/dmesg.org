@@ -1,0 +1,51 @@
+* dmesg
+  显示或控制内核环形缓冲区,开机信息保存在/var/log目录中,名称为dmesg的文件
+  #+begin_src cpp
+  Usage:
+  dmesg [options]
+  选项：
+  -C, --clear                 清空内核环形缓冲区
+  -c, --read-clear            读取并清空内核环形缓冲区
+  -D, --console-off           禁止打印消息到控制台
+  -E, --console-on            允许打印消息到控制台
+  -F, --file <file>           使用文件取代内核日志缓冲区
+  -f, --facility <list>       将输出限制到定义的设施
+  -H, --human                 人类可读的输出
+  -k, --kernel                显示内核信息
+  -L, --color[=<when>]        彩色化消息(auto,always or never),默认启动颜色
+  -l, --level <list>          将输出限制为定义的级别
+  -n, --console-level <level> 设置打印到控制台的消息级别
+  -P, --nopager               不要将输出管道输送到寻呼机中
+  -r, --raw                   打印原始消息缓冲区
+  -S, --syslog                强制使用syslog(2)而不是/dev/kmsg
+  -s, --buffer-size <size>    缓冲区大小来查询内核环缓冲区
+  -u, --userspace             显示用户空间消息
+  -w, --follow                等待新消息
+  -x, --decode                解码设备和级别到可读字符串
+  -d, --show-delta            显示打印消息之间的时间差
+  -e, --reltime               以可读格式显示本地时间和时间增量
+  -T, --ctime                 显示可读时间戳（可能不准确！）
+  -t, --notime                不要打印消息时间戳
+  --time-format <format>      使用格式显示时间戳:
+                               [delta|reltime|ctime|notime|iso]
+
+  支持的日志功能:
+      kern - kernel messages
+      user - random user-level messages
+      mail - mail system
+      daemon - system daemons
+      auth - security/authorization messages
+      syslog - messages generated internally by syslogd
+      lpr - line printer subsystem
+      news - network news subsystem
+
+  支持的日志级别：
+      emerg - system is unusable
+      alert - action must be taken immediately
+      crit - critical conditions
+      err - error conditions
+      warn - warning conditions
+      notice - normal but significant condition
+      info - informational
+      debug - debug-level messages
+  #+end_src

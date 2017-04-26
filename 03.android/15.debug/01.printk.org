@@ -1,10 +1,9 @@
 * 参考文档
   Documentation/printk-formats.txt
-
-  显示函数和行号
-  #+begin_src cpp
-  printk(KERN_ALERT "DEBUG:Passed%s%d\n",__ FUNCTION __,__ LINE__);
-  #+end_src
+  + 显示函数和行号
+    #+begin_src cpp
+    printk(KERN_ALERT "DEBUG:Passed%s%d\n",__ FUNCTION __,__ LINE__);
+    #+end_src
 * 日志级别
   + 头文件：include/linux/kern_levels.h
     include/linux/printk.h
@@ -24,8 +23,10 @@
     #+begin_src bash
     cat /proc/sys/kernel/printk  #显示日志级别
         7 4 1 7
-        #第一个整数显示当前的日志级别
-        #第二个整数显示默认的日志级别
-        #第二个整数显示默认的日志级别
+        #第一个表示当前控制台的日志级别(current console_loglevel)
+        #第二个表示默认消息的日志级别(DEFAULT_ MESSAGE_LOGLEVEL)
+        #第三个整数显示默认的日志级别(MINIMUM_CONSOLE_LOGLEVEL)
+        #第四个整数显示默认控制台的日志级别(DEFAULT_CONSOLE_LOGLEVEL)
         #控制台日志级别、默认的消息日志级别、最低的控制台日志级别和默认的控制台日志级别
+        # 当前 默认 最小 启动时间默认
     #+end_src
