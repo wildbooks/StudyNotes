@@ -1,0 +1,31 @@
+* 参考文档
+  Documentation/printk-formats.txt
+
+  显示函数和行号
+  #+begin_src cpp
+  printk(KERN_ALERT "DEBUG:Passed%s%d\n",__ FUNCTION __,__ LINE__);
+  #+end_src
+* 日志级别
+  + 头文件：include/linux/kern_levels.h
+    include/linux/printk.h
+    | 名称             | 字符串  | 含义                                                   | 别名功能                              |
+    |------------------+---------+--------------------------------------------------------+---------------------------------------|
+    | KERN_EMERG	   | "0"     | 	紧急信息，系统即将崩溃或不稳定                     | pr_emerg                              |
+    | KERN_ALERT	   | "1"	 | 发生不好的事情，必须立即采取行动                       | pr_alert                              |
+    | KERN_CRIT	    | "2"	 | 一个严重的情况就像严重的硬件/软件故障	              | pr_crit                               |
+    | KERN_ERR	     | "3"	 | 错误状态，由司机经常用来指示硬件的困难	             | pr_err                                |
+    | KERN_WARNING	 | "4"	 | 一个警告，本身并不重要，但可能表明问题	             | pr_warning                            |
+    | KERN_NOTICE	  | "5"	 | 没有什么是严重的，但特别是。通常用于报告安全事件。	 | pr_notice                             |
+    | KERN_INFO	    | "6"	 | 参考信息，例如驱动程序初始化时的启动信息	           | pr_info                               |
+    | KERN_DEBUG	   | "7"	 | 调试消息                                               | 	pr_debug，pr_devel如果DEBUG被定义 |
+    | KERN_DEFAULT	 | "d"	 | 默认的内核日志级别                                     |                                       |
+    | KERN_CONT	    | ""	  | 继续”行日志打印（仅在没有包围的行之后完成\ n）	    | pr_cont                               |
+  + 更改日志级别
+    #+begin_src bash
+    cat /proc/sys/kernel/printk  #显示日志级别
+        7 4 1 7
+        #第一个整数显示当前的日志级别
+        #第二个整数显示默认的日志级别
+        #第二个整数显示默认的日志级别
+        #控制台日志级别、默认的消息日志级别、最低的控制台日志级别和默认的控制台日志级别
+    #+end_src
