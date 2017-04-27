@@ -1,12 +1,65 @@
 * 参考文档
+  [[http://elinux.org/Debugging_by_printing][Debugging by printing]]
   Documentation/printk-formats.txt
+  Documentation / dynamic-debug-howto.txt
+  Documentation/networking/netconsole.txt
+  kernel/printk.c
+  include/linux/kern_levels.h
+  include/linux/printk.h
+* 使用
   + 显示函数和行号
     #+begin_src cpp
     printk(KERN_ALERT "DEBUG:Passed%s%d\n",__ FUNCTION __,__ LINE__);
     #+end_src
+  + printk从用户
+    #+begin_src cpp
+    # echo "Hello Kernel-world" > /dev/kmsg
+    #+end_src
+  + 更改printk缓冲区的大小
+  + 速率限制
+    #+begin_src cpp
+    //默认每5秒打印不超过10次
+    printk_ratelimited(...)
+    #+end_src
+  + 一次性消息
+    #+begin_src cpp
+    //它只打印一次
+    printk_once(...)
+    #+end_src
+  + printk时间的运行控制
+    #+begin_src cpp
+    # 查看时间戳是否启用
+    cat /sys/module/printk/parameters/time
+    # 启用printk时间戳
+    echo 1 > /sys/module/printk/parameters/time
+
+    # 测试
+    dmesg
+    [3814526.197336] ...   #显示是这样的
+    #+end_src
+  + 控制台输出控制
+    *参考文档*:Documentation/kernel-parameters.txt中的"loglevel="参数
+  + 使用内核符号调试
+    1. 找到一个函数行
+       #+begin_src cpp
+       #1. dmesg得到的信息
+       [71.030609] msm_adsp_disable() 'AUDPREPROCTASK'
+
+       #2. 根据函数msm_adsp_disable()获取该函数所对应的地址
+       grep msm_adsp_disable System.map
+         c029ff0c t msm_adsp_disable_locked
+         c029ff68 T msm_adsp_disable
+         c047fe98 r __ksymtab_msm_adsp_disable
+         c049030e r __kstrtab_msm_adsp_disable
+
+       #3. 注意行号c029ff68,我们使用addr2line:
+       arm-none-linux-gnueabi-addr2line -f -e vmlinux c029ff68
+       /home/gnutoo/embedded/htcdream/SHR/kernel/linux/sound/soc/msm/adsp.c:1033
+       #+end_src
+       addr2line
+  + 内核调试器:kdb
+  + 内核远程调试器:Kgdb
 * 日志级别
-  + 头文件：include/linux/kern_levels.h
-    include/linux/printk.h
     | 名称             | 字符串  | 含义                                                   | 别名功能                              |
     |------------------+---------+--------------------------------------------------------+---------------------------------------|
     | KERN_EMERG	   | "0"     | 	紧急信息，系统即将崩溃或不稳定                     | pr_emerg                              |
@@ -21,7 +74,8 @@
     | KERN_CONT	    | ""	  | 继续”行日志打印（仅在没有包围的行之后完成\ n）	    | pr_cont                               |
   + 更改日志级别
     #+begin_src bash
-    cat /proc/sys/kernel/printk  #显示日志级别
+    #显示日志级别
+    cat /proc/sys/kernel/printk
         7 4 1 7
         #第一个表示当前控制台的日志级别(current console_loglevel)
         #第二个表示默认消息的日志级别(DEFAULT_ MESSAGE_LOGLEVEL)
@@ -29,4 +83,15 @@
         #第四个整数显示默认控制台的日志级别(DEFAULT_CONSOLE_LOGLEVEL)
         #控制台日志级别、默认的消息日志级别、最低的控制台日志级别和默认的控制台日志级别
         # 当前 默认 最小 启动时间默认
+
+    # 更改日志级别方法一
+    echo 8 > /proc/sys/kernel/printk
+
+    # 更改日志级别方法二
+    dmesg -n 5
+
+    # 更改日志级别方法三
+    使用loglevel引导参数在启动时指定console_loglevel 参考Documentation/kernel-parameters.txt
+    #+end_src
+    #+begin_src bash
     #+end_src
