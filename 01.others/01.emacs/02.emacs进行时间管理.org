@@ -1,73 +1,37 @@
-#  #+startup:showall
-#  #+startup:hidestars
-#  #+tags:{@Offics(o) @Home(h) @Computer(c) @Call(C) @Way(w) @Lunchtime(l)}
-* Tasks
-:为了使各个分类项目的标题在日程表（Agenda View）1中显示，需要在项目名称下面写【#+CATEGORY】。
-#+CATEGORY:Tasks
-** DONE [#A] 测试任务1                                                          :测试:文档:@Lunchtime:
-   :LOGBOOK:
-   CLOCK: [2016-04-30 六 23:33]--[2016-04-30 六 23:40] =>  0:07
-   :END:
-#+BEGIN: clocktable :maxlevel 2 :scope subtree
-#+CAPTION: Clock summary at [2016-04-30 六 23:41]
-| Headline                  | Time   |      |
-|---------------------------+--------+------|
-| *Total time*              | *0:07* |      |
-|---------------------------+--------+------|
-| \emsp DONE [#A] 测试任务1 |        | 0:07 |
-#+END:
-
-   :PROPERTIES:
-   :ORDERED:
-   :END:
-
-** TODO [#B] 关联到文档                                                         :文档:@Office:
-   SCHEDULED: <2016-04-30 六>
-   任务说明
-   :~/.emacs.d/init.el::))
-** CANCELLED [#C] 日程                                                          :@way:
-   DEADLINE: <2016-04-30 六>
-
-#+BEGIN: clocktable :maxlevel 2 :scope subtree
-#+CAPTION: Clock summary at [2016-04-30 六 23:40]
-| Headline     | Time   |
-|--------------+--------|
-| *Total time* | *0:00* |
-#+END:
-
-#+BEGIN: clocktable :maxlevel 2 :scope subtree
-#+CAPTION: Clock summary at [2016-04-30 六 23:41]
-| Headline     | Time   |
-|--------------+--------|
-| *Total time* | *0:00* |
-#+END:
-
-   CLOSED: [2016-04-30 六 20:16]
-   :LOGBOOK:
-   :END:
+#+startup:showall
+#+startup:hidestars
+#+tags:{@Offics(o) @Home(h) @Computer(c) @Call(C) @Way(w) @Lunchtime(l)}
+* 简介
+  为了使各个分类项目的标题在议程表（Agenda View）中显示，需要在项目名称下面写【#+CATEGORY】。
 * 快捷键
-** 标签（TAG）
-   在标题后面用 :tag:标注任务情景
-   C+c C+q 可以编写TAG
-** 任务优先级A,B,C级
-   :LOGBOOK:
-   CLOCK: [2016-04-30 六 23:32]--[2016-04-30 六 23:33] =>  0:01
-   :END:
-   :PROPERTIES:
-   :Effort:   19:25
-   :END:
-   Shift + 上/下键
-** 任务安排
-   C+c  C+s 规划时间
-   C+c C+d 设置期限
-** 任务状态
-   C+c C+t 可以添加TODO ,DONE等状态状态
-   C+S Enter 直接添加TODO状态的任务
-** 记录与分析时间
-*** 记录时间
-    C+c C+x C+t 开始计时
-    C+c C+x C+o 结束计时
-*** 分析时间
-    C+c C+x C+r 创建今日的时间统计表格
-    C+c a 进入Agenda View + 使用C+c
-** 导出
+  | 命令        | 函数       | 功能                   | 标记                       |
+  |-------------+------------+------------------------+----------------------------|
+  | M-S-RET     |            | 创建TODO项目           | *TODO                      |
+  | C-S-RET     |            | 创建TODO项目           | *TODO                      |
+  | C-c C-t     |            | 改变项目状态           | 任意选择状态               |
+  | S-right     |            | 改变项目状态           | TODO -> STARTED -> DONE    |
+  | S-left      |            | 改变项目状态           | DONE -> STARTED -> TODO    |
+  | S-down/up   |            | 改变项目优先级         | A <-> B <-> c              |
+  | C-c C-s     |            | 选择想要完成的时间     | SCHEDULED: <2017-04-27 四> |
+  | C-c C-d     |            | 选择想要结束的时间     | DEADLINE: <2017-04-27 四>  |
+  | C-c a       | org-agenda | 打开Agenda模式菜单     |                            |
+  | C-c C-x C-i |            | 开始计时               |                            |
+  | C-c C-x C-o |            | 结束计时               |                            |
+  | C+c C+x C+r |            | 创建今日的时间统计表格 |                            |
+  | C-c C-q     |            | 添加TAG标签            |                            |
+  | C-c c       |            | org-capture            |                            |
+* 议程文件
+  | 命令      | 函数                               | 功能                           |
+  |-----------+------------------------------------+--------------------------------|
+  | C-c [     | org-agenda-file-to-front           | 将当前文件添加到议程文件列表中 |
+  | C-c ]     | org-remove-file                    | 从议程文件列表中删除当前文件   |
+  | C-'       | org-cycle-agenda-files             | 循环切换议程文件列表           |
+  | C-c b     | org-iswitchb                       | 切换议程文件列表               |
+  | C-c C-x < | org-agenda-set-restriction-lock    | 永久限制议程到当前的子树       |
+  | C-c C-x > | org-agenda-remove-restriction-lock | 删除由C-c C-x <创建的永久限制  |
+  |           |                                    |                                |
+* 议程调度员
+  C-c a
+  | 命令 | 函数 | 功能 |
+  |------+------+------|
+  | a    |      |      |
