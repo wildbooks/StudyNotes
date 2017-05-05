@@ -1,0 +1,95 @@
+* dd命令详解
+  #+begin_src
+  用法：dd [操作数] ...
+  　或：dd 选项
+  Copy a file, converting and formatting according to the operands.
+  根据操作数复制文件，转换和格式化。
+
+    bs=BYTES        一次读写的BYTES字节数,可代替ibs和obs
+    cbs=BYTES       一次转换BYTES个字节,即转换缓冲区大小
+    conv=CONVS      按照逗号分隔符号列表转换文件
+    count=N         拷贝N个块，块大小等于ibs指定的字节数
+    ibs=BYTES       一次读入BYTES个字节数(即一个块大小为BYTES个字节数,默认为512个字节)
+    if=FILE         输入文件名，缺省为标准输入
+    iflag=FLAGS     按照逗号分隔符号列表进行输入
+    obs=BYTES       一次写入BYTES个字节数(即一个块大小为BYTES个字节数,默认为512个字节)
+    of=FILE         输出文件名，缺省为标准输出
+    oflag=FLAGS     按照逗号分隔符号列表进行写入
+    seek=N          从输出文件开头跳过N个块后开始复制
+    skip=N          从输入文件开头跳过N个块后开始复制
+    status=LEVEL    要打印到stderr的信息级别;
+                    'none' 禁止除了错误信息之外的所有内容
+                    'noxfer' 抑制最总转移统计
+                    'progress' 显示定期转移统计数据
+
+  N 和 BYTES之后可以是以下乘法后缀：
+  c =1, w =2, b =512, kB =1000, K =1024, MB =1000*1000, M =1024*1024, xM =M
+  GB =1000*1000*1000, G =1024*1024*1024, and so on for T, P, E, Z, Y.
+
+  转换参数：
+
+    ascii     from EBCDIC to ASCII
+    ebcdic    from ASCII to EBCDIC
+    ibm       from ASCII to alternate EBCDIC
+    block     pad newline-terminated records with spaces to cbs-size
+    unblock   replace trailing spaces in cbs-size records with newline
+    lcase     change upper case to lower case
+    ucase     change lower case to upper case
+    sparse    try to seek rather than write the output for NUL input blocks
+    swab      swap every pair of input bytes
+    sync      pad every input block with NULs to ibs-size; when used
+              with block or unblock, pad with spaces rather than NULs
+    excl		fail if the output file already exists
+    nocreat	do not create the output file
+    notrunc	不截断输出文件
+    noerror	读取数据发生错误后仍然继续
+    fdatasync	结束前将输出文件数据写入磁盘
+    fsync	类似上面，但是元数据也一同写入
+
+  FLAG 符号可以是：
+
+    append	追加模式(仅对输出有意义；隐含了conv=notrunc)
+    direct	使用直接I/O 存取模式
+    directory	除非是目录，否则 directory 失败
+    dsync		使用同步I/O 存取模式
+    sync		与上者类似，但同时也对元数据生效
+    fullblock	为输入积累完整块(仅iflag)
+    nonblock	使用无阻塞I/O 存取模式
+    noatime	不更新存取时间
+    nocache   Request to drop cache.  See also oflag=sync
+    noctty	不根据文件指派控制终端
+    nofollow	不跟随链接文件
+    count_bytes  treat 'count=N' as a byte count (iflag only)
+    skip_bytes  treat 'skip=N' as a byte count (iflag only)
+    seek_bytes  treat 'seek=N' as a byte count (oflag only)
+
+  Sending a USR1 signal to a running 'dd' process makes it
+  print I/O statistics to standard error and then resume copying.
+
+  #+end_src
+* 用法
+  #+begin_src bash
+  #1. 把软盘内容拷贝到另一个文件中
+  $ dd if=/dev/fd0 of=/tmp/tmpfile
+
+  #2. 创建一个100M的空文件
+  $ dd if=/dev/zero of=hello.text bs=100M count=1
+
+  #3. 启动U盘制作
+  $ dd if=xxx.ios of=/dev/sdb bs=1M
+
+  #4. 拷贝内存内容到硬盘
+  $ dd if=/dev/mem of=/root/mem.bin bs=1024
+
+  #5. 测试硬盘的读写速度
+  # 通过以上两个命令输出的命令执行时间,可以计算出硬盘的读、写速度。
+  $ dd if=/dev/zero bs=1024 count=1000000 of=/root/1Gb.file
+  dd if=/root/1Gb.file bs=64k | dd of=/dev/null
+
+  #6. 确定硬盘的最佳块大小:
+  #通过比较以下命令输出中所显示的命令执行时间,即可确定系统最佳的块大小。
+  dd if=/dev/zero bs=1024 count=1000000 of=/root/1Gb.file
+  dd if=/dev/zero bs=2048 count=500000 of=/root/1Gb.file
+  dd if=/dev/zero bs=4096 count=250000 of=/root/1Gb.file
+  dd if=/dev/zero bs=8192 count=125000 of=/root/1Gb.file
+  #+end_src

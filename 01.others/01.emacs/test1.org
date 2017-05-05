@@ -1,0 +1,6 @@
+
+* STARTED iils
+  :LOGBOOK:
+  - State "STARTED"    from "DONE"       [2017-04-30 日 12:05]
+  - State "DONE"       from "STARTED"    [2017-04-30 日 12:05]
+  :END:
