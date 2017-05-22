@@ -14,7 +14,7 @@
     git config --global     #配置文件保存在~/.gitconfig
     git config              #配置文件保存在当前路径.git/config
 * git中文乱码问题
-    git config -global core.quotepath false
+    git config --global core.quotepath false
 * 配置用户信息
     git config --global user.name "wildbook"
     git config --global user.email "www762268@foxmail.com"
