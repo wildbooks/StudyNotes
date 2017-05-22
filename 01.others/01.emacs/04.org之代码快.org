@@ -1,0 +1,43 @@
+* Source Code
+  #+NAME: <name>
+  #+BEGIN_SRC <language> <switches> <header arguments>
+      <body>
+  #+END_SRC
+  + <language>支持的语言
+    | Language	  | Identifier	 | Language                  | Identifier |
+    |---------------+----------------+---------------------------+------------|
+    | Asymptote	 | asymptote      | 	Awk	               | awk        |
+    | C	         | C              | C++                       | C++        |
+    | Clojure	   | clojure        | CSS                       | css        |
+    | D	         | d              | ditaa                     | ditaa      |
+    | Graphviz	  | dot            | Emacs Calc	            | calc       |
+    | Emacs         | Lisp           | emacs-lisp	Fortran	 | fortran    |
+    | gnuplot	   | gnuplot        | Haskell                   | haskell    |
+    | Java	      | java           | Javascript	            | js         |
+    | LaTeX	     | latex          | Ledger	                | ledger     |
+    | Lisp	      | lisp           | Lilypond                  | lilypond   |
+    | Lua	       | lua            | MATLAB	                | matlab     |
+    | Mscgen	    | mscgen         | 	Objective Caml        | ocaml      |
+    | Octave   	 | octave	     | Org mode                  | org        |
+    | Oz	        | oz             | Perl                      | perl       |
+    | Plantuml	  | plantuml       | Processing.js             | processing |
+    | Python	    | python         | R                         | R          |
+    | Ruby          | ruby           | Sass                      | sass       |
+    | Scheme        | 	scheme     | GNU Screen	            | screen     |
+    | Sed           | sed            | 	shell                 | sh         |
+    | SQL           | sql	        | SQLite	                | sqlite     |
+    #+begin_src c :includes<stdio.h>
+      void int main(int argc, char *argv[])
+      {
+          int a=1;
+          int b=2;
+          printf("%d\n",a+b);
+          printf("%d\n",a+b);
+          return 0;
+      }
+    #+end_src
+* 快捷键
+  | 快捷键 | 函数             | 功能                                            |
+  |--------+------------------+-------------------------------------------------|
+  | C-c '  | org-edit-special | 打开/关闭一个新的主模式编辑缓冲区编译当前代码块 |
+  |        |                  |                                                 |
