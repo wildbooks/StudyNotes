@@ -29,12 +29,7 @@
   | C-c b     | org-iswitchb                       | 切换议程文件列表               |
   | C-c C-x < | org-agenda-set-restriction-lock    | 永久限制议程到当前的子树       |
   | C-c C-x > | org-agenda-remove-restriction-lock | 删除由C-c C-x <创建的永久限制  |
-<<<<<<< HEAD
-  |           |                                    |                                |
-* 议程调度员(The agenda dispatcher)
-=======
 * 议程调度员(Agenda dispatcher)
->>>>>>> 1780e7299008271157ae98f89d604728eea5361e
   C-c a
   | 命令 | 函数            | 功能                                                                             |
   |------+-----------------+----------------------------------------------------------------------------------|
@@ -53,9 +48,7 @@
   | #    |                 | 列出"卡主(stuck)"项目                                                            |
   | !    |                 | 配置"卡主(stuck)"意思                                                            |
   | C    |                 | 配置自定义议程命令                                                               |
-<<<<<<< HEAD
 * 演示和排序
-=======
 * 内置议程视图(Built-in agenda views)
   每周/每日议程
   全球TODO列表
@@ -70,4 +63,3 @@
   - State "WAITING"    from "DONE"       [2017-04-30 日 12:02]
   - State "DONE"       from "STARTED"    [2017-04-30 日 12:02]
   :END:
->>>>>>> 1780e7299008271157ae98f89d604728eea5361e
