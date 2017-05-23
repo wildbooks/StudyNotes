@@ -1,0 +1,3 @@
+* 系统升级到fedora25
+dnf install dnf-plugin-system-upgrade
+dnf system-upgrade download --releasever=25
