@@ -2,8 +2,11 @@
   + code
     kernel/drivers/input/keyboard/gpio_keys.c
   + sysfs
+    /proc/bus/input/
+    /sys/class/input/
+    /sys/module/uinput
+    /dev/input/
     /sys/devices/soc.0/gpio_keys.102/
-    /proc/bus/input/devices
   + Doc
     kernel/Documentation/devicetree/bindings/pinctrl/msm-pinctrl.txt
     kernel/Documentation/devicetree/bindings/gpio/gpio_keys.txt
@@ -139,8 +142,6 @@
         struct gpio_button_data data[0];
     };
     #+end_src
-* code
-  见源代码
 * 总结
   input中的按键报点是这样的:如果有gpio外部中断,它会进入中断处理函数
   gpio_keys_gpio_isr(),然后在这里重启启按键消抖定时器,定时器时间到后，

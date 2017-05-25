@@ -127,10 +127,15 @@
     + *返回值*:
     + *注意*:
 *** void input_event(struct input_dev *dev, unsigned int type, unsigned int code, int value);
-    + *功能*:
+    + *功能*:上报新输入事件
     + *参数*:
+      dev:发生事件的设备
+      type:上报事件类型
+      value:事件值
     + *返回值*:
     + *注意*:
+    +
+
 *** void input_inject_event(struct input_handle *handle, unsigned int type, unsigned int code, int value);
     + *功能*:
     + *参数*:
@@ -162,7 +167,7 @@
     + *返回值*:
     + *注意*:
 *** static inline void input_sync(struct input_dev *dev)
-    + *功能*:
+    + *功能*:同步上报事件
     + *参数*:
     + *返回值*:
     + *注意*:
@@ -172,8 +177,11 @@
     + *返回值*:
     + *注意*:
 *** void input_set_capability(struct input_dev *dev, unsigned int type, unsigned int code);
-    + *功能*:
+    + *功能*:标记设备能够进行某种事件
     + *参数*:
+      dev:能够发出或接受事件的装置
+      type:事件类型(EV_KEY,EV_REL,...)
+      code:事件码
     + *返回值*:
     + *注意*
 *** static inline void input_set_events_per_packet(struct input_dev *dev, int n_events)
@@ -300,3 +308,19 @@
         __u8  scancode[32];  //扫描码(scancode)以机器码格式表示
     };
     #+end_src
+** 事件类型(event types)
+   #+begin_src cpp
+   EV_SYN                  0x00//同步事件()
+   EV_KEY                  0x01//按键事件()
+   EV_REL                  0x02//相对坐标(),如鼠标上报的坐标
+   EV_ABS                  0x03//绝对坐标(),如触摸屏上报的坐标
+   EV_MSC                  0x04//其他事件(Misc events)
+   EV_SW                   0x05//开关事件(switch event)
+   EV_LED                  0x11//LED
+   EV_SND                  0x12//声音(sounds)
+   EV_REP                  0x14//自动重复值(Autorepeat values)
+   EV_FF                   0x15//力反馈(force-feedback effects)
+   EV_PWR                  0x16//电源
+   EV_FF_STATUS            0x17//力反馈状态(status of force-feedback effects)
+   EV_MAX                  0x1f
+   #+end_src

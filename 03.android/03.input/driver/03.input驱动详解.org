@@ -41,5 +41,3 @@
       return -ENOMEM;
     }
     #+end_src
-* 遇到的问题
-/home/wildbook/Code/n8976/kernel/include/linux/

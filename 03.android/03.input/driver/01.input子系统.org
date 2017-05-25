@@ -22,6 +22,7 @@ suspended 对应的是　屏和亮屏状态
       的编程接口。
    3. 事件处理层(Event Handler)
       事件处理层将硬件设备上报的事件分发到用户空间和内核
+   4. 用户空间层
 * 涉及到函数
 创建工作队列  -> 创建工作  ->  条度  ->  注销工作队列
 + create_singlethread_workqueue(name)
@@ -478,9 +479,3 @@ suspended 对应的是　屏和亮屏状态
 ##点击事件所触发的函数
 [  418.097426] [1970-01-06 06:00:39 GMT+8][pid:258,cpu4,irq/419-ft5x06_]wildbook: ft5x06_ts_interrupt()
 #+end_src
-* 遇到的问题
-+ 不知道创建的这几个工作是干嘛用的!!
-  + INIT_WORK(&data->work, ft5x06_change_scanning_frq_switch);
-  + INIT_WORK(&data->work_cover, ft5x06_change_leather_cover_switch);
-  + INIT_WORK(&data->work_vr, ft5x06_change_vr_switch);
-+ 触摸屏里的一些硬件初始化不太了解，如果有个数据手册就好了
