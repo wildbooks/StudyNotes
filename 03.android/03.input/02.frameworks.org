@@ -6,6 +6,11 @@
   + *dts*:
   + *docs*
   + *sysfs*:
+    /proc/bus/input/
+    /sys/class/input/
+    /sys/module/uinput
+    /dev/input/
+    /sys/devices/soc.0/gpio_keys.102/
     *sysfs*:
     *debugfs*:
     *proc*:

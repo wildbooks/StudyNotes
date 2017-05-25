@@ -1,0 +1,27 @@
+* 简介
+* API
+** kobject_create_and_add()
+  #+begin_src c
+    struct kobject_create_and_add(const char *name, struct kobject *parent)
+    /*
+      功能: 动态创建kboject并注册到sysfs中
+      @name: kobject的名字
+      @parent: kobject父kobject
+      例子:
+      kobject_create_and_add("hello", NULL);
+      会在/sys/目录下创建"hello"目录
+    */
+  #+end_src
+** sysfs_create_file()
+  #+begin_src c
+    int sysfs_create_file(struct kobject *kobj, const struct attribute *attr)
+    /*
+      @功能: 为object创建一个属性文件
+      @kobj: 在kobject目录下创建文件
+      @attr: 属性描述符
+    ,*/
+    int sysfs_create_files(struct kobject *kobj, const struct attribute **ptr)
+    /*
+      @功能: 功能一样，只是该函数创建很多个属性文件
+    */
+  #+end_src
