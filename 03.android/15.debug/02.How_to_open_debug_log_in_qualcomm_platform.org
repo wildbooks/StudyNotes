@@ -1,0 +1,45 @@
+* How to open debug log in Qualcomm platform
+1 lk uart log
+2 kernel uart log
+3 如何打开某个文件的pr_debug
+4 memdump的使用
+5 minicom的使用
+* lk uart log
+  bootable/bootloader/lk/project/pixi355.mk    DEFINES += WITH_DEBUG_UART=1
+  //CFG_USB_UART_SWITCH
+* kernel uart log
+  kernel/arch/arm/configs/pixi355_defconfig
+  CONFIG_SERIAL_MSM_HSL=y
+  CONFIG_SERIAL_MSM_HSL_CONSOLE=y
+  a. 串口线
+  b. adb shell cat /proc/kmsg
+  c. *#*#0574#*#*
+* 如何打开某个文件的pr_debug
+  a:
+  adb root
+  adb remount
+  adb shell
+  mount -t debugfs none /d
+  echo -n "file mdss_dsi.c +tp" > d/dynamic_debug/control
+  echo -n "file mdss_dsi_host.c +tp" > d/dynamic_debug/control
+  echo -n "file mdss_fb.c +tp" > d/dynamic_debug/control
+
+  b:
+  #undef pr_debug
+  #define pr_debug(fmt, ...) \
+  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+
+  c:
+  device/tct/idol347/BoardConfig.mk
+  BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom user_debug=30
+  msm_rtb.filter=0x3F ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1
+  ignore_loglevel dynamic_debug.verbose=1 dyndbg=\"file mdss_dsi.c +p;file mdss_dsi_cmd.c +p;file mdss_fb.c +p;file mdss_dsi_panel.c +p;file mdss_mdp_intf_video.c\"
+* memdump的使用
+  python ramparse.py --nm-path=/data/workspace/l8936_idol347/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-nm
+  --gdb-path=/data/workspace/l8936_idol347/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-gdb -o /home/sdduser/Desktop/outdir/
+  --auto-dump=/home/sdduser/Desktop/Port_COM5/ -v /data/workspace/l8936_wifi_display/out/target/product/idol347/obj/KERNEL_OBJ/vmlinux --everything
+* minicom的使用
+  a.apt-get install minicom
+  b.sudo minicom
+  c.配置端口： ctrl+A+O  “Serial port setup”  /dev/ttyUSB0，
+  设置保存路径： ctrl +A + L  退出： ctrl +A + Q  help:ctrl +A + Z

@@ -1,0 +1,425 @@
+* 总结
+* 总结
+  + *Code*:\\
+    kernel/include/video\\
+    kernel/include/linux/fb.h\\
+    kernel/drivers/video/\\
+    kernel/drivers/video/fbmem.c
+    kernel/drivers/video/fb_defio.c
+    kernel/drivers/video/fbsysfs.c
+    kernel/drivers/video/fbmon.c
+    kernel/drivers/video/modedb.c
+    kernel/drivers/video/fbcmap.c
+  + *dts*:
+  + *docs*:
+  + *sysfs*:\\
+    *sysfs*:\\
+    *debugfs*:/sys/kernel/debug/pwm\\
+    *proc*:\\
+* 关键结构体
+  1. fb_info
+     #+begin_src c
+       struct fb_info {
+           atomic_t count;
+           int node;
+           int flags;
+           struct mutex lock;		/* Lock for open/release/ioctl funcs */
+           struct mutex mm_lock;		/* Lock for fb_mmap and smem_* fields */
+           struct fb_var_screeninfo var;	/*当前缓冲区的可变参数*/
+           struct fb_fix_screeninfo fix;	/*当前缓冲区的固定参数*/
+           struct fb_monspecs monspecs;	/* Current Monitor specs当前显示器规格 */
+           struct work_struct queue;	/* 帧缓冲事件队列 */
+           struct fb_pixmap pixmap;	/* 图像硬件 mapper(映射器) */
+           struct fb_pixmap sprite;	/* 光标硬件 mapper */
+           struct fb_cmap cmap;		/* Current cmap当前的调色板 */
+           struct list_head modelist;      /* mode list */
+           struct fb_videomode *mode;	/* 当前的视频模式 */
+           struct file *file;		/* current file node当前文件节点 */
+
+       #ifdef CONFIG_FB_DEFERRED_IO
+           struct delayed_work deferred_work;
+           struct fb_deferred_io *fbdefio;
+       #endif
+
+           struct fb_ops *fbops;        /*帧缓冲操作函数集*/
+           struct device *device;		/* 父设备 */
+           struct device *dev;		/* This is this fb device */
+           int class_flag;                    /* private sysfs flags */
+       #ifdef CONFIG_FB_TILEBLITTING
+           struct fb_tile_ops *tileops;    /* Tile Blitting */
+       #endif
+           char __iomem *screen_base;	/* 虚拟基地址 */
+           unsigned long screen_size;	/* Amount of ioremapped VRAM or 0 */
+           void *pseudo_palette;		/* Fake palette of 16 colors */
+       #define FBINFO_STATE_RUNNING	0
+       #define FBINFO_STATE_SUSPENDED	1
+           u32 state;			/* Hardware state i.e suspend */
+           void *fbcon_par;                /* fbcon use-only private area */
+           /* From here on everything is device dependent */
+           void *par;
+           /* we need the PCI or similar aperture base/size not
+              smem_start/size as smem_start may just be an object
+              allocated inside the aperture so may not actually overlap */
+           struct apertures_struct {
+               unsigned int count;
+               struct aperture {
+                   resource_size_t base;
+                   resource_size_t size;
+               } ranges[0];
+           } *apertures;
+
+           bool skip_vt_switch; /* no VT switch on suspend/resume required */
+       };
+     #+end_src
+  2. fb_ops
+     #+begin_src c
+       /*
+        * 帧缓冲操作集(Frame buffer operations)
+        */
+
+       struct fb_ops {
+           /*打开/释放 和使用标记(marking)*/
+           struct module *owner;
+           int (*fb_open)(struct fb_info *info, int user);
+           int (*fb_release)(struct fb_info *info, int user);
+
+           /* For framebuffers with strange non linear layouts or that do not
+            * work with normal memory mapped access
+            */
+           ssize_t (*fb_read)(struct fb_info *info, char __user *buf,
+                              size_t count, loff_t *ppos);
+           ssize_t (*fb_write)(struct fb_info *info, const char __user *buf,
+                               size_t count, loff_t *ppos);
+
+           /* checks var and eventually tweaks it to something supported,
+            * DO NOT MODIFY PAR */
+            /*检测可变参数，并调整到支持的值*/
+           int (*fb_check_var)(struct fb_var_screeninfo *var, struct fb_info *info);
+
+           /* set the video mode according to info->var */
+           int (*fb_set_par)(struct fb_info *info);//设置视频模式
+
+           /*设置颜色寄存器*/
+           int (*fb_setcolreg)(unsigned regno, unsigned red, unsigned green,
+                               unsigned blue, unsigned transp, struct fb_info *info);
+
+           /*批量设置颜色寄存器*/
+           int (*fb_setcmap)(struct fb_cmap *cmap, struct fb_info *info);
+
+           /* blank display */
+           /*blank显示*/
+           int (*fb_blank)(int blank, struct fb_info *info);
+
+           /* pan display */
+           int (*fb_pan_display)(struct fb_var_screeninfo *var, struct fb_info *info);
+
+           /* Draws a rectangle */
+           void (*fb_fillrect) (struct fb_info *info, const struct fb_fillrect *rect);
+           /*将数据从区域复制到另一个区域*/
+           void (*fb_copyarea) (struct fb_info *info, const struct fb_copyarea *region);
+           /*绘制图像到显示*/
+           void (*fb_imageblit) (struct fb_info *info, const struct fb_image *image);
+
+           /* 绘制光标 */
+           int (*fb_cursor) (struct fb_info *info, struct fb_cursor *cursor);
+
+           /*旋转显示*/
+           void (*fb_rotate)(struct fb_info *info, int angle);
+
+           /* wait for blit idle, optional */
+           int (*fb_sync)(struct fb_info *info);
+
+           /* perform fb specific ioctl (optional) */
+           int (*fb_ioctl)(struct fb_info *info, unsigned int cmd,
+                           unsigned long arg);
+
+           /* Handle 32bit compat ioctl (optional) */
+           int (*fb_compat_ioctl)(struct fb_info *info, unsigned cmd,
+                                  unsigned long arg);
+
+           /* perform fb specific mmap */
+           int (*fb_mmap)(struct fb_info *info, struct vm_area_struct *vma);
+
+           /* get capability given var */
+           void (*fb_get_caps)(struct fb_info *info, struct fb_blit_caps *caps,
+                               struct fb_var_screeninfo *var);
+
+           /* teardown any resources to do with this framebuffer */
+           void (*fb_destroy)(struct fb_info *info);
+
+           /* called at KDB enter and leave time to prepare the console */
+     	  int (*fb_debug_enter)(struct fb_info *info);
+     	  int (*fb_debug_leave)(struct fb_info *info);
+       };
+     #+end_src
+  3. fb_var_screeninfo
+     #+begin_src c
+       struct fb_var_screeninfo {
+           __u32 xres;			/* visible resolution可见分辨率	*/
+           __u32 yres;
+           __u32 xres_virtual;		/*可见分辨率*/
+           __u32 yres_virtual;
+           __u32 xoffset;			/*从虚拟偏移到可见*/
+           __u32 yoffset;			/* resolution解析度	*/
+
+           __u32 bits_per_pixel;		/* guess what			*/
+           __u32 grayscale;		/* 0 = color, 1 = grayscale(灰阶),	*/
+           /* >1 = FOURCC			*/
+           struct fb_bitfield red;		/* bitfield in fb mem if true color, */
+           struct fb_bitfield green;	/* else only length is significant */
+           struct fb_bitfield blue;
+           struct fb_bitfield transp;	/* transparency	透明度	*/
+
+           __u32 nonstd;		/* != 0 Non standard pixel format非标准像素格式 */
+
+           __u32 activate;			/* see FB_ACTIVATE_*		*/
+
+           __u32 height;			/* height of picture in mm 图片高度以mm为单位 */
+           __u32 width;			/* width of picture in mm 图片宽度(mm)*/
+
+           __u32 accel_flags;		/*（OBSOLETE）请参阅fb_info.flags*/
+
+           /* Timing: All values in pixclocks, except pixclock (of course) */
+           __u32 pixclock;			/* 像素时钟in ps (pico seconds微妙) */
+           __u32 left_margin;		/* time from sync to picture	*/
+           __u32 right_margin;		/* time from picture to sync	*/
+           __u32 upper_margin;		/* time from sync to picture	*/
+           __u32 lower_margin;
+           __u32 hsync_len;		/* length of horizontal sync	*/
+           __u32 vsync_len;		/* length of vertical sync	*/
+           __u32 sync;			/* see FB_SYNC_*		*/
+           __u32 vmode;			/* see FB_VMODE_*		*/
+           __u32 rotate;			/* angle we rotate counter clockwise */
+           __u32 colorspace;		/* colorspace for FOURCC-based modes */
+           __u32 reserved[4];		/* Reserved for future compatibility */
+       };
+     #+end_src
+  4. fb_fix_screeninfo
+     #+begin_src c
+       struct fb_fix_screeninfo {
+           char id[16];			/* 识别字符串例如"TT Builtin" */
+           unsigned long smem_start;	/* Start of frame buffer mem */
+           /* (physical address) */
+           __u32 smem_len;			/* 帧缓冲存储区的长度 */
+           __u32 type;			/* see FB_TYPE_*		*/
+           __u32 type_aux;			/* Interleave for interleaved Planes */
+           __u32 visual;			/* see FB_VISUAL_*		*/
+           __u16 xpanstep;			/* zero if no hardware panning  */
+           __u16 ypanstep;			/* zero if no hardware panning  */
+           __u16 ywrapstep;		/* zero if no hardware ywrap    */
+           __u32 line_length;		/* length of a line in bytes    */
+           unsigned long mmio_start;	/* Start of Memory Mapped I/O   */
+           /* (physical address) */
+           __u32 mmio_len;			/* Length of Memory Mapped I/O  */
+           __u32 accel;			/* Indicate to driver which	*/
+           /*  specific chip/card we have	*/
+           __u16 capabilities;		/* see FB_CAP_*			*/
+           __u16 reserved[2];		/* Reserved for future compatibility */
+       };
+     #+end_src
+  5. fb_cmap
+     #+begin_src c
+       /**
+        * struct fb_cmap - 描述调色板
+        * @width：以像素为单位的显示宽度
+        */
+       struct fb_cmap {
+           __u32 start;			/* First entry	*/
+           __u32 len;			/* Number of entries */
+           __u16 *red;			/* Red values	*/
+           __u16 *green;
+           __u16 *blue;
+           __u16 *transp;			/* transparency(透明度), can be NULL */
+       };
+     #+end_src
+  6. fbtft
+     #+begin_src c
+       /**
+        * struct fbtft_display - 描述显示属性
+        * @width：以像素为单位的显示宽度
+        * @height：显示高度（以像素为单位）
+        * @regwidth：LCD控制器寄存器宽度（以位为单位）
+        * @buswidth：以位显示接口总线宽度
+        * @backlight：背光类型。
+        * @fbtftops：由驱动程序或设备提供的FBTFT操作（platform_data）
+        * @bpp：每像素的位数
+        * @fps：每秒帧数
+        * @txbuflen：发送缓冲区的大小
+        * @init_sequence：指向LCD初始化数组的指针
+        * @gamma：Gamma曲线的字符串表示形式
+        * @gamma_num：伽玛曲线的数量
+        * @gamma_len：每个伽玛曲线的数值
+        * @debug：初始调试值
+        *
+        * 除了init_sequence，FBTFT不存储此结构。
+        */
+       struct fbtft_display {
+           unsigned width;
+           unsigned height;
+           unsigned regwidth;
+           unsigned buswidth;
+           unsigned backlight;
+           struct fbtft_ops fbtftops;
+           unsigned bpp;
+           unsigned fps;
+           int txbuflen;
+           int *init_sequence;
+           char *gamma;
+           int gamma_num;
+           int gamma_len;
+           unsigned long debug;
+       };
+
+       /**
+        * struct fbtft_ops - FBTFT操作结构
+        * @write：写入接口总线
+        * @read：从接口总线读取
+        * @write_vmem：写入显示内存
+        * @write_reg：写入控制器寄存器
+        * @set_addr_win：设置GRAM更新窗口
+        * @reset：重置LCD控制器
+        * @mkdirty：标记显示更新的行
+        * @update_display：更新显示
+        * @init_display：初始化显示
+        * @blank：空白显示(可选)
+        * @request_gpios_match：将引脚命名为gpio匹配
+        * @request_gpios：从内核请求gpios
+        * @free_gpios：免费以前要求的gpios
+        * @verify_gpios：验证是否存在必需的gpios(可选)
+        * @register_backlight：用于注册背光设备(可选)
+        * @unregister_backlight：注销背光设备(可选)
+        * @set_var：使用@rotate和@bgr等变量的值配置LCD (可选的)
+        * @set_gamma：设置伽玛曲线（可选）
+        *
+        * 大部分这些操作都具有fbtft_framebuffer_alloc()中的默认功能,
+        */
+       struct fbtft_ops {
+           int (*write)(struct fbtft_par *par, void *buf, size_t len);//GPIO写
+           int (*read)(struct fbtft_par *par, void *buf, size_t len);//GPIO读
+           int (*write_vmem)(struct fbtft_par *par, size_t offset, size_t len);
+           void (*write_register)(struct fbtft_par *par, int len, ...);//写寄存器
+
+           void (*set_addr_win)(struct fbtft_par *par,
+                                int xs, int ys, int xe, int ye);
+           void (*reset)(struct fbtft_par *par);
+           void (*mkdirty)(struct fb_info *info, int from, int to);
+           void (*update_display)(struct fbtft_par *par,
+                                  unsigned start_line, unsigned end_line);
+           int (*init_display)(struct fbtft_par *par);
+           int (*blank)(struct fbtft_par *par, bool on);
+
+           unsigned long (*request_gpios_match)(struct fbtft_par *par,
+                                                const struct fbtft_gpio *gpio);
+           int (*request_gpios)(struct fbtft_par *par);
+           int (*verify_gpios)(struct fbtft_par *par);
+
+           void (*register_backlight)(struct fbtft_par *par);
+           void (*unregister_backlight)(struct fbtft_par *par);
+
+           int (*set_var)(struct fbtft_par *par);
+           int (*set_gamma)(struct fbtft_par *par, unsigned long *curves);
+       };
+       /**
+        * struct fbtft_par - 主FBTFT数据结构
+        *
+        * 此结构保存所有相关数据以操作显示
+        *
+        * 请参阅源文件以获取文档，因为kernel-doc不支持嵌套的结构体。
+        *
+        */
+       /**
+        * @spi：设置是否为SPI设备
+        * @pdev：设置是否是平台设备
+        * @info：指向framebuffer fb_info结构的指针
+        * @pdata：指向平台数据的指针
+        * @ssbuf：未使用
+        * @pseudo_palette：由fb_set_colreg()使用
+        * @txbuf.buf：发送缓冲区
+        * @txbuf.len：发送缓冲区长度
+        * @buf：在SPI上写入初始化数据时使用的小缓冲区
+        * @startbyte：某些控制器在SPI模式下使用。
+        *         格式：6位器件ID + RS位+ RW位
+        * @fbtftops：由驱动程序或设备提供的FBTFT操作（platform_data）
+        * @dirty_lock：保护dirty_lines_start和dirty_lines_end
+        * @dirty_lines_start：开始更新显示的位置
+        * @dirty_lines_end：在哪里结束更新显示
+        * @gpio.reset：GPIO用于重置显示
+        * @gpio.dc：数据/命令信号，也称为RS
+        * @gpio.rd：读取锁存信号
+        * @gpio.wr：写锁存信号
+        * @gpio.latch：总线锁存信号，例如16-> 8位总线锁存器
+        * @gpio.cs：采用并行接口总线的LCD芯片选择
+        * @gpio.db [16]：并行数据总线
+        * @gpio.led [16]：LED控制信号
+        * @gpio.aux [16]：辅助信号，不由核心使用
+        * @init_sequence：指向LCD初始化数组的指针
+        * @gamma.lock：用于Gamma曲线锁定的Mutex
+        * @gamma.curves：指向Gamma曲线数组的指针
+        * @gamma.num_values：每个伽玛曲线的数值
+        * @gamma.num_curves：伽玛曲线的数量
+        * @debug：指向调试值的指针
+        * @current_debug：
+        * @first_update_done：仅用于第一次显示更新
+        * @update_time：用于在调试输出中计算'fps'
+        * @bgr：BGR模式/ \ n
+        * @extra：驾驶员需要额外的信息
+        */
+       struct fbtft_par {
+           struct spi_device *spi;
+           struct platform_device *pdev;
+           struct fb_info *info;
+           struct fbtft_platform_data *pdata;
+           u16 *ssbuf;
+           u32 pseudo_palette[16];
+           struct {
+               void *buf;
+               dma_addr_t dma;
+               size_t len;
+           } txbuf;
+           u8 *buf;
+           u8 startbyte;
+           struct regulator *vio;
+           struct regulator *vcc;
+           struct fbtft_ops fbtftops;
+           spinlock_t dirty_lock;
+           unsigned dirty_lines_start;
+           unsigned dirty_lines_end;
+           struct {
+               int reset;
+               int dc;
+               int rd;
+               int wr;
+               int latch;
+               int cs;
+               int db[16];
+               int led[16];
+               int aux[16];
+           } gpio;
+           int *init_sequence;
+           struct {
+               struct mutex lock;
+               unsigned long *curves;
+               int num_values;
+               int num_curves;
+           } gamma;
+           unsigned long debug;
+           bool first_update_done;
+           struct timespec update_time;
+           bool bgr;
+           void *extra;
+       };
+     #+end_src
+
+  ./data/kernel-tests/fbtest
+  ./data/kernel-tests/fbtest.sh
+  ./data/backup/fb-schedule
+  ./dev/graphics/fb1
+  ./dev/graphics/fb0
+  ./system/etc/security/cacerts/fb126c6d.0
+  ./sys/devices/virtual/graphics/fb0
+  ./sys/devices/virtual/graphics/fb1
+  ./sys/class/graphics/fb0
+  ./sys/class/graphics/fb1
+  ./sys/kernel/debug/mdss_panel_fb0/intf1/fbc
+  ./sys/kernel/debug/mdss_panel_fb0/intf0/fbc
+  ./proc/fb

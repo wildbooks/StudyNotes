@@ -1,0 +1,15 @@
+* 简介
+  linux内核中的PWM子系统分为两部分,pwm核心(core.c)框架,硬件相关(pwm_xx.c)
+* spi核心
+** 总结
+   + *Code*:\\
+     kernel/drivers/pwm/core.c\\
+     kernel/include/linux/spi/spi.h\\
+   + *dts*:
+   + *docs*:
+   + *sysfs*:\\
+     *sysfs*:\\
+     *debugfs*:/sys/kernel/debug/pwm\\
+     *proc*:\\
+** 结构体
+** pwm核心提供的API

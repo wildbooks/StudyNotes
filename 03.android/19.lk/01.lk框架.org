@@ -1,0 +1,14 @@
+* LK简介
+   LK是Little Kernel它是appsbl(Applications ARM Boot Loader)流程代码,little kernel是小内核小操作系统.
+   LK代码在bootable/bootloadler/lk目录下
+   | 目录     | 功能描述     |
+   |----------+--------------|
+   | app      | 应用相关     |
+   | arch     | arm 体系     |
+   | dev      | 设备相关     |
+   | include  | 头文件       |
+   | kernel   | lk系统相关   |
+   | platform | 相关驱动     |
+   | projiect | makefile文件 |
+   | scripts  | Jtag 脚本    |
+   | target   | 具体板子相关 |
