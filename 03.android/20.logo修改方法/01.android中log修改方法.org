@@ -1,0 +1,12 @@
+* android需要修改的logo简介
+  android在开机的过程中，首先是加载bootloader对硬件做初始化，为android的内核(linux)启动做好准备。
+  在内核启动之后，再启动android相关的各种service。在这个过程中会产生以下几种logo
+  #+begin_src c
+  1. bootloader启动时，会产生开机logo
+  2. kernel启动时也会产生开机logo,修改kernel/drivers/video/logo目录下的文件
+  3. android系统显示的静态开机画面
+  4. Android显示的"android"文字开机画面
+  #+end_src
+* 参考文档
+  [[http://blog.csdn.net/smart_qiang/article/details/11605657][《修改linux/Android启动logo/开机画面》]]
+  [[http://blog.csdn.net/LEAD_SOLO/article/details/50561585][《高通平台开机LOGO修改LK(bootloader)下实现》]]

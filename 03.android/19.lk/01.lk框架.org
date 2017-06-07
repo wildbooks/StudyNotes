@@ -12,3 +12,126 @@
    | projiect | makefile文件 |
    | scripts  | Jtag 脚本    |
    | target   | 具体板子相关 |
+* LK流程分析
+  在 bootable/bootloadler/lk/arch/arm/ssystem-onesegment.ld连接文件中ENTRY(_start)指定LK从_start函数开始,_start在lk/arch/crt0.S中.crt0.S主要做一些基本的CPU的初始化再通过bl kmain;跳转到C代码中.kmain在lk/kernel/main.c中
+  kmain()
+  kmain 主要做两件事：1、本身 lk 这个系统模块的初始化；2、boot 的启动初始化动作.kmain 源码分析：
+  #+begin_src c
+    void kmain()
+    {
+        //1.初始化进程（lk 中的简单进程）相关结构体。
+        thread_init_early();
+        //2.做一些如 关闭 cache，使能 mmu 的 arm 相关工作。
+        arch_early_init();
+        //3.相关平台的早期初始化
+        platform_early_init();
+        //4.现在就一个函数跳转，初始化UART（板子相关）
+        target_early_init();
+        //5.构造函数相关初始化
+        call_constructors();
+        //6.lk系统相关的堆栈初始化
+        heap_init();
+        //7.简短的初始化定时器对象
+        thread_init();
+        //8.lk系统控制器初始化（相关事件初始化）
+        dpc_init();
+        //9.初始化lk中的定时器
+        timer_init();
+        //10.新建线程入口函数 bootstrap2 用于boot 工作（重点）
+        thread_resume(thread_create("bootstrap2", &bootstrap2, NULL, DEFAULT_PRIORITY, DEFAULT_STACK_SIZE));
+    }
+    //以上与boot启动初始化相关函数是arch_early_init、platform_early_init、bootstrap2，这些是启动的重点，我们下面慢慢来看。
+   #+end_src
+  arch_early_init()
+  #+begin_src c
+    体系架构相关的初始化我们一般用的 ARM 体系
+    1.关闭cache
+    arch_disable_cache(UCACHE);
+    2.设置向量基地址（中断相关）
+    set_vector_base(MEMBASE);
+    3.初始化MMU
+    arm_mmu_init();
+    4.初始化MMU映射__平台相关
+    platform_init_mmu_mappings();
+    5.开启cache
+    arch_enable_cache(UCACHE)
+    6.使能 cp10 和 cp11
+    __asm__ volatile("mrc    p15, 0, %0, c1, c0, 2" : "=r" (val));
+    val |= (3<<22)|(3<<20);
+    __asm__ volatile("mcr    p15, 0, %0, c1, c0, 2" :: "r" (val));
+
+    7.设置使能 fpexc 位 （中断相关）
+    __asm__ volatile("mrc  p10, 7, %0, c8, c0, 0" : "=r" (val));
+    val |= (1<<30);
+    __asm__ volatile("mcr  p10, 7, %0, c8, c0, 0" :: "r" (val));
+    8.使能循环计数寄存器
+    __asm__ volatile("mrc    p15, 0, %0, c9, c12, 0" : "=r" (en));
+    en &= ~(1<<3); /*循环计算每个周期*/
+    en |= 1;
+    __asm__ volatile("mcr    p15, 0, %0, c9, c12, 0" :: "r" (en));
+    9.使能循环计数器
+    en = (1<<31);
+    __asm__ volatile("mcr    p15, 0, %0, c9, c12, 1" :: "r" (en));
+  #+end_src
+  platform_early_init()
+  #+begin_src c
+    平台相关初始化不同平台不同的初始化下面是msm7x30
+    1.初始化中断
+    platform_init_interrupts();
+    2.初始化定时器
+    platform_init_timer();
+  #+end_src
+  bootstrap2
+  #+begin_src c
+    bootstrap2 在kmain的末尾以线程方式开启。主要分三步：platform_init、target_init、apps_init。
+    1.platform_init
+    platform_init 中主要是函数 acpu_clock_init。
+    在 acpu_clock_init 对 arm11 进行系统时钟设置，超频
+    2.target_init
+    针对硬件平台进行设置。主要对 arm9 和 arm11 的分区表进行整合，初始化flash和读取FLASH信息
+    3.apps_init
+    apps_init 是关键，对 LK 中所谓 app 初始化并运行起来，而 aboot_init 就将在这里开始被运行，Android Linux 内核的加载工作就在 aboot_init 中完成的.
+  #+end_src
+  aboot_init
+  #+begin_src c
+    1.设置NAND/ EMMC读取信息页面大小
+    if (target_is_emmc_boot())
+    {
+        page_size = 2048;
+        page_mask = page_size - 1;
+    }
+    else
+    {
+        page_size = flash_page_size();
+        page_mask = page_size - 1;
+    }
+    2.读取按键信息，判断是正常开机，还是进入 fastboot ,还是进入recovery 模式
+        。。。。。。。。。
+        通过一系列的 if (keys_get_state() == XXX) 判断
+        。。。。。。。。。
+    3.从nand 中加载 内核
+        boot_linux_from_flash();
+        partition_dump();
+        sz = target_get_max_flash_size();
+        fastboot_init(target_get_scratch_address(), sz);
+        udc_start(); // 开始 USB 协议
+  #+end_src
+  boot_linux_from_flash
+  #+begin_src c
+    主要是内核的加载过程，我们的 boot.img 包含：kernel 头、kernel、ramdisk、second stage（可以没有）。
+    1.读取boot 头部
+    flash_read(p, offset, raw_header, 2048)
+    offset += 2048;
+    2.读取 内核
+    memcmp(hdr->magic, BOOT_MAGIC, BOOT_MAGIC_SIZE)
+    n = (hdr->kernel_size + (FLASH_PAGE_SIZE - 1)) & (~(FLASH_PAGE_SIZE - 1));
+    flash_read(p, offset, (void*) hdr->kernel_addr, n)
+    offset += n;
+    3.读取 ramdisk
+    n = (hdr->ramdisk_size + (FLASH_PAGE_SIZE - 1)) & (~(FLASH_PAGE_SIZE - 1));
+    flash_read(p, offset, (void*) hdr->ramdisk_addr, n)
+    offset += n;
+    4.启动内核，
+    boot_linux()；//在boot_linux 中entry(0,machtype,tags);从kernel加载在内核中的地址开始运行了。
+    到这里LK的启动过程就结束了。
+  #+end_src

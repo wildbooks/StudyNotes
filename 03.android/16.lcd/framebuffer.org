@@ -1,24 +1,28 @@
 * 总结
-* 总结
   + *Code*:\\
-    kernel/include/video\\
     kernel/include/linux/fb.h\\
+    kernel/include/uapi/linux/fb.h\\
+    kernel/include/video\\
     kernel/drivers/video/\\
-    kernel/drivers/video/fbmem.c
-    kernel/drivers/video/fb_defio.c
-    kernel/drivers/video/fbsysfs.c
-    kernel/drivers/video/fbmon.c
-    kernel/drivers/video/modedb.c
-    kernel/drivers/video/fbcmap.c
+    kernel/drivers/video/core/fb_defio.c\\
+    kernel/drivers/video/fbsysfs.c\\
+    kernel/drivers/video/fbmon.c\\
+    drivers/video/fbdev/core/fb_notify.c//简单\\
+    drivers/video/fbdev/core/fbmem.c //Frame Buffer Memory\\
+    drivers/video/console/fbcon.c  //Frame Buffer Console\\
+    drivers/video/fbdev/core/fbcmap.c   //Frame Buffer Colormap\\
+    drivers/video/fbdev/core/modedb.c //Frame Buffer Video Mode Database\\
+    drivers/video/fbdev/macmodes.c   //Frame Buffer Macintosh Video Mode Database(mac电脑，忽略)\\
   + *dts*:
   + *docs*:
   + *sysfs*:\\
     *sysfs*:\\
     *debugfs*:/sys/kernel/debug/pwm\\
     *proc*:\\
-* 关键结构体
+* structure
   1. fb_info
      #+begin_src c
+     fb_info定义特定视频卡的当前状态.在fb_info中,存在一个fb_ops结构,它是fbdev和fbcon所需的函数的集合.fb_info只对内核可见。
        struct fb_info {
            atomic_t count;
            int node;
@@ -154,6 +158,7 @@
      #+end_src
   3. fb_var_screeninfo
      #+begin_src c
+     //fb_var_screeninfo用于描述用户定义的视频卡的功能.使用fb_var_screeninfo可以定义深度和分辨率等内容.
        struct fb_var_screeninfo {
            __u32 xres;			/* visible resolution可见分辨率	*/
            __u32 yres;
@@ -195,6 +200,7 @@
        };
      #+end_src
   4. fb_fix_screeninfo
+     //下一个结构是fb_fix_screeninfo。 这定义了在设置模式时创建的卡的属性，否则不能更改。 一个很好的例子就是帧缓冲存储器的启动。 这将“锁定”缓冲存储器的地址，使其不能被更改或移动。
      #+begin_src c
        struct fb_fix_screeninfo {
            char id[16];			/* 识别字符串例如"TT Builtin" */
@@ -217,7 +223,40 @@
            __u16 reserved[2];		/* Reserved for future compatibility */
        };
      #+end_src
-  5. fb_cmap
+  5. fb_monspecs
+     #+begin_src c
+       struct fb_monspecs {
+           struct fb_chroma chroma;
+           struct fb_videomode *modedb;	/* mode database */
+           __u8  manufacturer[4];		/* Manufacturer */
+           __u8  monitor[14];		/* Monitor String */
+           __u8  serial_no[14];		/* Serial Number */
+           __u8  ascii[14];		/* ? */
+           __u32 modedb_len;		/* mode database length */
+           __u32 model;			/* Monitor Model */
+           __u32 serial;			/* Serial Number - Integer */
+           __u32 year;			/* Year manufactured */
+           __u32 week;			/* Week Manufactured */
+           __u32 hfmin;			/* hfreq lower limit (Hz) */
+           __u32 hfmax;			/* hfreq upper limit (Hz) */
+           __u32 dclkmin;			/* pixelclock lower limit (Hz) */
+           __u32 dclkmax;			/* pixelclock upper limit (Hz) */
+           __u16 input;			/* display type - see FB_DISP_* */
+           __u16 dpms;			/* DPMS support - see FB_DPMS_ */
+           __u16 signal;			/* Signal Type - see FB_SIGNAL_* */
+           __u16 vfmin;			/* vfreq lower limit (Hz) */
+           __u16 vfmax;			/* vfreq upper limit (Hz) */
+           __u16 gamma;			/* Gamma - in fractions of 100 */
+           __u16 gtf	: 1;		/* supports GTF */
+           __u16 misc;			/* Misc flags - see FB_MISC_* */
+           __u8  version;			/* EDID version... */
+           __u8  revision;			/* ...and revision */
+           __u8  max_x;			/* Maximum horizontal size (cm) */
+           __u8  max_y;			/* Maximum vertical size (cm) */
+       };
+
+     #+end_src
+  7. fb_cmap
      #+begin_src c
        /**
         * struct fb_cmap - 描述调色板
@@ -232,7 +271,7 @@
            __u16 *transp;			/* transparency(透明度), can be NULL */
        };
      #+end_src
-  6. fbtft
+  8. fbtft
      #+begin_src c
        /**
         * struct fbtft_display - 描述显示属性
@@ -409,7 +448,339 @@
            void *extra;
        };
      #+end_src
+* API
+  1. Frame Buffer Memory
+     drivers/video/fbdev/core/fbmem.c
+     #+begin_src c
+       /**
+        *	register_framebuffer - registers a frame buffer device
+        *	@fb_info: frame buffer info structure
+        *
+        *	Registers a frame buffer device @fb_info.
+        *
+        *	Returns negative errno on error, or zero for success.
+        *
+        */
+       int register_framebuffer(struct fb_info *fb_info)
 
+       /**
+        *	unregister_framebuffer - 释放一个帧缓冲设备
+        *	@fb_info: frame buffer info structure
+        *
+        *	Unregisters a frame buffer device @fb_info.
+        *
+        *  错误返回负errno,成功返回0
+        *
+        *      This function will also notify the framebuffer console
+        *      to release the driver.
+        *
+        *      This is meant to be called within a driver's module_exit()
+        *      function. If this is called outside module_exit(), ensure
+        *      that the driver implements fb_open() and fb_release() to
+        *      check that no processes are using the device.
+        */
+       int unregister_framebuffer(struct fb_info *fb_info)
+
+       /**
+        *	fb_set_suspend - low level driver signals suspend
+        *	@info: framebuffer affected
+        *	@state: 0 = resuming, !=0 = suspending
+        *
+        *	This is meant to be used by low level drivers to
+        * 	signal suspend/resume to the core & clients.
+        *	It must be called with the console semaphore held
+        */
+       void fb_set_suspend(struct fb_info *info, int state)
+     #+end_src
+  2. Frame Buffer Colormap
+     drivers/video/fbdev/core/fbcmap.c
+     #+begin_src c
+       /**
+        *	fb_alloc_cmap - allocate a colormap
+        *	@cmap: frame buffer colormap structure
+        *	@len: length of @cmap
+        *	@transp: 如果布尔值为1有透明度(transparency),否则为0
+        *	@flags: flags for kmalloc memory allocation
+        *
+        *  为@cmap分配内存，@len是调色板的个数
+        *
+        *	失败返回负errno,成功返回0
+        *
+        */
+       int fb_alloc_cmap(struct fb_cmap *cmap, int len, int transp)
+
+       /**
+        *  fb_dealloc_cmap - deallocate a colormap
+        *  @cmap: frame buffer colormap structure
+        *
+        *  Deallocates a colormap that was previously allocated with
+        *  fb_alloc_cmap().
+        *
+        */
+       void fb_dealloc_cmap(struct fb_cmap *cmap)
+
+       /**
+        *	fb_copy_cmap - copy a colormap
+        *	@from: frame buffer colormap structure
+        *	@to: frame buffer colormap structure
+        *
+        *	Copy contents of colormap from @from to @to.
+        */
+       int fb_copy_cmap(const struct fb_cmap *from, struct fb_cmap *to)
+
+       /**
+        *	fb_set_cmap - set the colormap
+        *	@cmap: frame buffer colormap structure
+        *	@info: frame buffer info structure
+        *
+        *	Sets the colormap @cmap for a screen of device @info.
+        *
+        *	Returns negative errno on error, or zero on success.
+        *
+        */
+       int fb_set_cmap(struct fb_cmap *cmap, struct fb_info *info)
+
+       /**
+        *	fb_default_cmap - get default colormap
+        *	@len: size of palette for a depth
+        *
+        *	Gets the default colormap for a specific screen depth.  @len
+        *	is the size of the palette for a particular screen depth.
+        *
+        *	Returns pointer to a frame buffer colormap structure.
+        *
+        */
+       const struct fb_cmap *fb_default_cmap(int len)
+
+       /**
+        *	fb_invert_cmaps - invert all defaults colormaps
+        *
+        *	Invert all default colormaps.
+        *
+        */
+       void fb_invert_cmaps(void)
+     #+end_src
+  3. Frame Buffer Video Mode Database
+     drivers/video/fbdev/core/modedb.c
+     #+begin_src c
+       const struct fb_videomode *fb_find_best_display(
+           const struct fb_monspecs *specs, struct list_head *head)
+
+       /**
+        * fb_destroy_modelist - destroy modelist
+        * @head: struct list_head of modelist
+        */
+       void fb_destroy_modelist(struct list_head *head)
+
+       /**
+        * fb_videomode_to_var - convert fb_videomode to fb_var_screeninfo
+        * @var: pointer to struct fb_var_screeninfo
+        * @mode: pointer to struct fb_videomode
+        */
+       void fb_videomode_to_var(struct fb_var_screeninfo *var,
+                                const struct fb_videomode *mode)
+
+       /**
+        * fb_var_to_videomode - convert fb_var_screeninfo to fb_videomode
+        * @mode: pointer to struct fb_videomode
+        * @var: pointer to struct fb_var_screeninfo
+        */
+       void fb_var_to_videomode(struct fb_videomode *mode,
+                                const struct fb_var_screeninfo *var)
+
+       /**
+        * fb_mode_is_equal - compare 2 videomodes
+        * @mode1: first videomode
+        * @mode2: second videomode
+        *
+        * RETURNS:
+        * 1 if equal, 0 if not
+        */
+       int fb_mode_is_equal(const struct fb_videomode *mode1,
+                            const struct fb_videomode *mode2)
+
+       /**
+        * fb_add_videomode - adds videomode entry to modelist
+        * @mode: videomode to add
+        * @head: struct list_head of modelist
+        *
+        * NOTES:
+        * Will only add unmatched mode entries
+        */
+       int fb_add_videomode(const struct fb_videomode *mode, struct list_head *head)
+
+       /**
+        * fb_match_mode - find a videomode which exactly matches the timings in var
+        * @var: pointer to struct fb_var_screeninfo
+        * @head: pointer to struct list_head of modelist
+        *
+        * RETURNS:
+        * struct fb_videomode, NULL if none found
+        */
+       const struct fb_videomode *fb_match_mode(const struct fb_var_screeninfo *var,
+
+       /**
+        * fb_find_best_mode - find best matching videomode
+        * @var: pointer to struct fb_var_screeninfo
+        * @head: pointer to struct list_head of modelist
+        *
+        * RETURNS:
+        * struct fb_videomode, NULL if none found
+        *
+        * IMPORTANT:
+        * This function assumes that all modelist entries in
+        * info->modelist are valid.
+        *
+        * NOTES:
+        * Finds best matching videomode which has an equal or greater dimension than
+        * var->xres and var->yres.  If more than 1 videomode is found, will return
+        * the videomode with the highest refresh rate
+        */
+       const struct fb_videomode *fb_find_best_mode(
+           const struct fb_var_screeninfo *var, struct list_head *head)
+
+       /**
+        * fb_find_nearest_mode - find closest videomode
+        *
+        * @mode: pointer to struct fb_videomode
+        * @head: pointer to modelist
+        *
+        * Finds best matching videomode, smaller or greater in dimension.
+        * If more than 1 videomode is found, will return the videomode with
+        * the closest refresh rate.
+        */
+       const struct fb_videomode *fb_find_nearest_mode(
+           const struct fb_videomode *mode, struct list_head *head)
+
+       /**
+        * fb_videomode_to_modelist - convert mode array to mode list
+        * @modedb: array of struct fb_videomode
+        * @num: number of entries in array
+        * @head: struct list_head of modelist
+        */
+       void fb_videomode_to_modelist(const struct fb_videomode *modedb, int num,
+                                     struct list_head *head)
+
+       /**
+        *     fb_find_mode - finds a valid video mode
+        *     @var: frame buffer user defined part of display
+        *     @info: frame buffer info structure
+        *     @mode_option: string video mode to find
+        *     @db: video mode database
+        *     @dbsize: size of @db
+        *     @default_mode: default video mode to fall back to
+        *     @default_bpp: default color depth in bits per pixel
+        *
+        *     Finds a suitable video mode, starting with the specified mode
+        *     in @mode_option with fallback to @default_mode.  If
+        *     @default_mode fails, all modes in the video mode database will
+        *     be tried.
+        *
+        *     Valid mode specifiers for @mode_option:
+        *
+        *     <xres>x<yres>[M][R][-<bpp>][@<refresh>][i][m] or
+        *     <name>[-<bpp>][@<refresh>]
+        *
+        *     with <xres>, <yres>, <bpp> and <refresh> decimal numbers and
+        *     <name> a string.
+        *
+        *      If 'M' is present after yres (and before refresh/bpp if present),
+        *      the function will compute the timings using VESA(tm) Coordinated
+        *      Video Timings (CVT).  If 'R' is present after 'M', will compute with
+        *      reduced blanking (for flatpanels).  If 'i' is present, compute
+        *      interlaced mode.  If 'm' is present, add margins equal to 1.8%
+        *      of xres rounded down to 8 pixels, and 1.8% of yres. The char
+        *      'i' and 'm' must be after 'M' and 'R'. Example:
+        *
+        *      1024x768MR-8@60m - Reduced blank with margins at 60Hz.
+        *
+        *     NOTE: The passed struct @var is _not_ cleared!  This allows you
+        *     to supply values for e.g. the grayscale and accel_flags fields.
+        *
+        *     Returns zero for failure, 1 if using specified @mode_option,
+        *     2 if using specified @mode_option with an ignored refresh rate,
+        *     3 if default mode is used, 4 if fall back to any valid mode.
+        *
+        */
+       int fb_find_mode(struct fb_var_screeninfo *var, struct fb_info *info,
+                        const char *mode_option,
+                        const struct fb_videomode *db,
+                        unsigned int dbsize,
+                        const struct fb_videomode *default_mode,
+                        unsigned int default_bpp)
+
+       /**
+        * fb_find_mode_cvt - calculate mode using VESA(TM) CVT
+        * @mode: pointer to fb_videomode; xres, yres, refresh and vmode must be
+        *        pre-filled with the desired values
+        * @margins: add margin to calculation (1.8% of xres and yres)
+        * @rb: compute with reduced blanking (for flatpanels)
+        *
+        * RETURNS:
+        * 0 for success
+        * @mode is filled with computed values.  If interlaced, the refresh field
+        * will be filled with the field rate (2x the frame rate)
+        *
+        * DESCRIPTION:
+        * Computes video timings using VESA(TM) Coordinated Video Timings
+        *
+        * 函数原型： drivers/video/fbdev/core/fbcvt.c
+        */
+        int fb_find_mode_cvt(struct fb_videomode *mode, int margins, int rb)
+     #+end_src
+  4. Frame Buffer Macintosh Video Mode Database
+     drivers/video/fbdev/macmodes.c
+     #+begin_src c
+     #+end_src
+  5. fbsyfs
+     kernel/drivers/video/fbsysfs.c
+     #+begin_src c
+       /**
+        * framebuffer_alloc - creates a new frame buffer info structure
+        *
+        * @size: size of driver private data, can be zero
+        * @dev: pointer to the device for this fb, this can be NULL
+        *
+        * Creates a new frame buffer info structure. Also reserves @size bytes
+        * for driver private data (info->par). info->par (if any) will be
+        * aligned to sizeof(long).
+        *
+        * Returns the new structure, or NULL if an error occurred.
+        *
+        */
+       struct fb_info *framebuffer_alloc(size_t size, struct device *dev)
+
+       /**
+        * framebuffer_release - marks the structure available for freeing
+        *
+        * @info: frame buffer info structure
+        *
+        * Drop the reference count of the device embedded in the
+        * framebuffer info structure.
+        *
+        */
+       void framebuffer_release(struct fb_info *info)
+
+       /**
+        * 创建sysfs文件节点
+        */
+       int fb_init_device(struct fb_info *fb_info)
+
+       /**
+        * 删除sysfs文件节点
+        */
+       void fb_cleanup_device(struct fb_info *head)
+
+       /**
+        * This function generates a linear backlight curve
+        *
+        *     0: off
+        *   1-7: min
+        * 8-127: linear from min to max
+        */
+       void fb_bl_default_curve(struct fb_info *fb_info, u8 off, u8 min, u8 max)
+     #+end_src
+* fs
   ./data/kernel-tests/fbtest
   ./data/kernel-tests/fbtest.sh
   ./data/backup/fb-schedule
@@ -423,3 +794,9 @@
   ./sys/kernel/debug/mdss_panel_fb0/intf1/fbc
   ./sys/kernel/debug/mdss_panel_fb0/intf0/fbc
   ./proc/fb
+* config
+  CONFIG_FB=y          drivers/video/fbdev/core/
+  CONFIG_FB_MSM=y      drivers/video/fbdev/msm
+  CONFIG_FB_MSM_MDSS=y drivers/video/msm/mdss/
+  CONCONFIG_FB_MSM_MDSS_XLOG_DEBUG=y//多余
+  FIG_FB_MSM_MDSS_WRITEBACK=y drivers/video/msm/mdss/mdss_wb.c
