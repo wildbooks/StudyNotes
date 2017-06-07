@@ -1,0 +1,27 @@
+* 简介
+* d
+Client
+Server
+Service Manager
+Binder
+* 代码路径
++ frameworks/native/cmds/servicemanager/
+  service_manager.c,binder.c,binder.h
+  + service_manager.c主要功能
+    1. 打开Binder设备文件(/dev/binder)
+    2. 告诉Binder驱动程序自己是Binder上下文管理者(即守护进程)
+    3. 进入一个无限循环，充当Server的角色，等待Client的请求
++ kernel/drivers/android
+  + binder.c驱动主要做的事，我们需要关注的
+    1. 创建的设备节点
+       + debugfs
+         /sys/kernel/debug/binder/failed_transaction_log
+         /sys/kernel/debug/binder/proc
+         /sys/kernel/debug/binder/state
+         /sys/kernel/debug/binder/stats
+         /sys/kernel/debug/binder/transaction_log
+         /sys/kernel/debug/binder/transactions
++ frameworks/native/libs/binder
+  + IServiceManager.cpp
+    1. defaultServiceManager()获取Service Manager远程接口的函数
++
