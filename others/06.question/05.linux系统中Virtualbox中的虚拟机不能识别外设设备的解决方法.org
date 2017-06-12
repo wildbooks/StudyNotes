@@ -1,0 +1,21 @@
+* 问题描述
+  在ubuntu系统中安装一个VirtualBox虚拟机,再在虚拟机中安装了一个windows7系统，但是虚拟机中的windows7无法识别外设设备(如U盘)
+* 问题分析
+  发生这种问题的原因是用户没有打开linux系统中的驱动节点(/dev/xx),所以通常做法要给用户(wildbook)添加到vboxusers用户组中或者以root权限运行
+* 解决方法
+  + 方案一
+    以root权限运行VirtualBox
+  + 方案二
+    给用户添加到vboxusers组中
+    #+begin_src shell
+      # 1. 判断用户(用户名:wildbook)是否加入到vboxusers组中
+      $cat /etc/group | grep vbox
+      vboxusers:x:129:
+
+      # 2. 将当前用户加入vbox组
+      $sudo usermod -a -G vboxusers wildbook
+      $cat /etc/group | grep vbox
+      vboxusers:x:129:wildbook
+
+      # 3. 重启主机或者注销用户重新登入linux系统
+    #+end_src
