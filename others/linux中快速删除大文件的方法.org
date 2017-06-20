@@ -1,0 +1,11 @@
+* 删除大文件file 
+	+ 方案1 
+		echo 0 > file
+		rm file
+	+ 方案2 
+		clear > file
+		rm file
+	+ 方案3 
+		echo 0 > file
+		rm file
+* 删除大文件夹

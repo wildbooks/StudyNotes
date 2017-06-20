@@ -4,6 +4,7 @@
 | PBL        | Primary Boot Loader                                                 | 主启动加载程序                                 |
 | TZ         | TrustZone                                                           |                                                |
 | RPM        | Resource Power Manager                                              | 资源电源管理器                                 |
+| RPM        | Remote Power Manager                                                | 远程电源管理器                                  |
 | PMIC       | Power Management Integrated Circuit (with RTC)                      | 电源管理集成电路                               |
 | FLCB       | Fast Low Current Boot                                               | 快速低电流启动                                 |
 | APSD       | Automatic Power Source Detection                                    | 自动电源检测                                   |
@@ -77,7 +78,6 @@
 | QHEE       | Qualcomm Hypervisor Execution Environment                           |                                                |
 | VMM        | Virtual Machine Monitor                                             |                                                |
 | QSEE       | Qualcomm Secure Execution Environment                               |                                                |
-| RPM        | Remote Power Manager                                                |                                                |
 | SBL        | Secure Boot Loader                                                  |                                                |
 | SMMU       | System Memory Management Unit                                       |                                                |
 | TCM        | Tightly Coupled Memory                                              |                                                |

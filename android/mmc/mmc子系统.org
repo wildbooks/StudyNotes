@@ -1,0 +1,126 @@
+* 简介
+* 总结
+  + *Code*:\\
+    kernel/drivers/mmc/host/sdhci-msm.c
+  + *dts*:\\
+    kernel/arch/arm/boot/dts/appassionato/msm8996.dtsi => qcom,sdhci-msm
+  + *docs*:
+  + *sysfs*:\\
+    *sysfs*:\\
+    *debugfs*:
+    *proc*:\\
+* sysfs
+* SD and MMC 设备分区
+* 关键结构体
+  + sdhci
+    #+begin_src c
+      struct sdhci_host {
+      /* Data set by hardware interface driver */
+          const char *hw_name;	/* Hardware bus name */
+          unsigned int quirks;	/* Deviations from spec. */
+          unsigned int quirks2;	/* More deviations from spec. */
+          int irq;		/* Device IRQ */
+          void __iomem *ioaddr;	/* Mapped address */
+
+          const struct sdhci_ops *ops;	/* Low level hw interface */
+
+          /* Internal data */
+          struct mmc_host *mmc;	/* MMC structure */
+          u64 dma_mask;		/* custom DMA mask */
+          u64 coherent_dma_mask;
+          struct led_classdev led;	/* LED control */
+          char led_name[32];
+          spinlock_t lock;	/* Mutex */
+
+          int flags;		/* Host attributes */
+
+          unsigned int version;	/* SDHCI spec. version */
+
+          unsigned int max_clk;	/* Max possible freq (MHz) */
+          unsigned int timeout_clk;	/* Timeout freq (KHz) */
+          unsigned int clk_mul;	/* Clock Muliplier value */
+
+          unsigned int clock;	/* Current clock (MHz) */
+          u8 pwr;			/* Current voltage */
+          bool runtime_suspended;	/* Host is runtime suspended */
+          bool bus_on;		/* Bus power prevents runtime suspend */
+          bool preset_enabled;	/* Preset is enabled */
+
+          struct mmc_request *mrq;	/* Current request */
+          struct mmc_command *cmd;	/* Current command */
+          struct mmc_data *data;	/* Current data request */
+          unsigned int data_early:1;	/* Data finished before cmd */
+          unsigned int busy_handle:1;	/* Handling the order of Busy-end */
+
+          struct sg_mapping_iter sg_miter;	/* SG state for PIO */
+          unsigned int blocks;	/* remaining PIO blocks */
+
+          int sg_count;		/* Mapped sg entries */
+
+          u8 *adma_desc;		/* ADMA descriptor table */
+          u8 *align_buffer;	/* Bounce buffer */
+
+          unsigned int adma_desc_sz; /* ADMA descriptor table size */
+          unsigned int adma_desc_line_sz; /* ADMA descriptor line size */
+          unsigned int align_buf_sz; /* Bounce buffer size */
+          unsigned int align_bytes; /* Alignment bytes (4/8 for 32-bit/64-bit) */
+          unsigned int adma_max_desc; /* Max ADMA descriptos (max sg segments) */
+
+          dma_addr_t adma_addr;	/* Mapped ADMA descr. table */
+          dma_addr_t align_addr;	/* Mapped bounce buffer */
+
+          struct tasklet_struct finish_tasklet;	/* Tasklet structures */
+
+          struct timer_list timer;	/* Timer for timeouts */
+
+          u32 caps;		/* Alternative CAPABILITY_0 */
+          u32 caps1;		/* Alternative CAPABILITY_1 */
+
+          unsigned int            ocr_avail_sdio;	/* OCR bit masks */
+          unsigned int            ocr_avail_sd;
+          unsigned int            ocr_avail_mmc;
+          u32 ocr_mask;		/* available voltages */
+
+          unsigned		timing;		/* Current timing */
+
+          u32			thread_isr;
+
+          /* cached registers */
+          u32			ier;
+
+          wait_queue_head_t	buf_ready_int;	/* Waitqueue for Buffer Read Ready interrupt */
+          unsigned int		tuning_done;	/* Condition flag set when CMD19 succeeds */
+
+          unsigned int		tuning_count;	/* Timer count for re-tuning */
+          unsigned int		tuning_mode;	/* Re-tuning mode supported by host */
+          struct timer_list	tuning_timer;	/* Timer for tuning */
+
+          struct sdhci_next next_data;
+          ktime_t data_start_time;
+          enum sdhci_power_policy power_policy;
+
+          bool is_crypto_en;
+          bool crypto_reset_reqd;
+          bool sdio_irq_async_status;
+
+          u32 auto_cmd_err_sts;
+          struct ratelimit_state dbg_dump_rs;
+          struct cmdq_host *cq_host;
+          int reset_wa_applied; /* reset workaround status */
+          ktime_t reset_wa_t; /* time when the reset workaround is applied */
+          int reset_wa_cnt; /* total number of times workaround is used */
+
+          unsigned long private[0] ____cacheline_aligned;
+    #+end_src
+* config
+  CONFIG_MMC=y
+  CONFIG_MMC_PERF_PROFILING=y
+  CONFIG_MMC_CLKGATE=y
+  CONFIG_MMC_PARANOID_SD_INIT=y
+  CONFIG_MMC_BLOCK_MINORS=32
+  CONFIG_MMC_TEST=m
+  CONFIG_MMC_SDHCI=y
+  CONFIG_MMC_SDHCI_PLTFM=y
+  CONFIG_MMC_SDHCI_MSM=y  sdhci-msm.c
+  CONFIG_MMC_SDHCI_MSM_ICE=y  sdhci-msm-ice.c
+  CONFIG_MMC_CQ_HCI=y

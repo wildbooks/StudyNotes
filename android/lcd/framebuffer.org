@@ -7,14 +7,15 @@
     kernel/drivers/video/core/fb_defio.c\\
     kernel/drivers/video/fbsysfs.c\\
     kernel/drivers/video/fbmon.c\\
+    drivers/video/console/fbcon.c  //Frame Buffer Console\\
     drivers/video/fbdev/core/fb_notify.c//简单\\
     drivers/video/fbdev/core/fbmem.c //Frame Buffer Memory\\
-    drivers/video/console/fbcon.c  //Frame Buffer Console\\
     drivers/video/fbdev/core/fbcmap.c   //Frame Buffer Colormap\\
     drivers/video/fbdev/core/modedb.c //Frame Buffer Video Mode Database\\
     drivers/video/fbdev/macmodes.c   //Frame Buffer Macintosh Video Mode Database(mac电脑，忽略)\\
   + *dts*:
   + *docs*:
+    kernel/Documentation/devicetree/bindings/fb/
   + *sysfs*:\\
     *sysfs*:\\
     *debugfs*:/sys/kernel/debug/pwm\\
@@ -798,5 +799,5 @@
   CONFIG_FB=y          drivers/video/fbdev/core/
   CONFIG_FB_MSM=y      drivers/video/fbdev/msm
   CONFIG_FB_MSM_MDSS=y drivers/video/msm/mdss/
-  CONCONFIG_FB_MSM_MDSS_XLOG_DEBUG=y//多余
+  CONCONFIG_FB_MSM_MDSS_XLOG_DEBUG=y mdss_debug_xlog.c
   FIG_FB_MSM_MDSS_WRITEBACK=y drivers/video/msm/mdss/mdss_wb.c
