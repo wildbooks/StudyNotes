@@ -1,0 +1,18 @@
+* 简介
+* 帮助文档
+  + *Doc*\\
+    kernel/Documentation/leds/leds-class.txt
+  + *Code*\\
+  + *sysfs*\\
+    /sys/power
+* sysfs 
+  autosleep
+  pm_freeze_timeout
+  pm_test
+  wake_lock
+  wakeup_count 
+  pm_async
+  pm_print_times
+  state
+  wake_unlock 
+

@@ -13,6 +13,11 @@
   | ###2324#     | 查看并开关diag端口保护           |
   | ###666#      | All google apps enabled(包括gms) |
 ** 场景1
+   + cmd
+     sudo adb shell dumpsys batterystats --reset  #清空日志
+     sudo adb shell dumpsys batterystats|tee batterystats-"$(date +%Y-%m-%d\ %R)"_Preconditon1.log  #保存log
+     sudo adb bugreport > bugreport-"$(date +%Y-%m-%d\ %R)"_Preconditon1.log  #保存log
+   + Expect Results
    + Preconditon
      Enable airplane mode (启用飞行模式)
      Disable WIFI & BT & NFC(禁用WIFI、BT、NFC)
@@ -20,11 +25,6 @@
      Disable Auto Brightness (禁用自动亮度)
      GMS disabled (大陆goole被墙，需要关掉google相关服务，不然google相关应用会不停的唤醒,对测试结果有很大干扰)
      Disable Feedback
-   + cmd
-     sudo adb shell dumpsys batterystats --reset  #清空日志
-     sudo adb shell dumpsys batterystats|tee batterystats-"$(date +%Y-%m-%d\ %R)"_Preconditon1.log  #保存log
-     sudo adb bugreport > bugreport-"$(date +%Y-%m-%d\ %R)"_Preconditon1.log  #保存log
-   + Expect Results
    + Observed Results
      base current:4.85ma
      Average current: 6.71ma

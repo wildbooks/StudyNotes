@@ -1,0 +1,15 @@
+* NFS服务器简介
+* NFS服务器安装
+  + 安装
+    sudo apt-get install nfs-kernel-server #服务器
+    sudo apt-get install nfs-common​  #客户端
+  + 配置
+    修改/etc/exports
+    /home/USER/nfs *(rw,sync,no_root_squash,no_subtree_check)
+  + 重启nfs服务器
+    sudo service nfs-kernel-server restart
+* NFS测试
+  showmount -e​
+  + 挂载命令
+    sudo mount -t nfs 127.0.0.1:/home/guojian/nfsboot /mnt/
+    sudo mount -t nfs 172.26.14.159:/home/guojian/nfsboot /mnt/

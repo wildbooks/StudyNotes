@@ -1,0 +1,15 @@
+* 日常工具
+  Google Chrome
+  GParted 一个分区工具
+  网易云音乐
+  gimp 图片编辑器
+  vim
+  emacs
+  VirtualBox
+  rtorrent 种子下载工具
+  thunderbird 邮箱
+  okular  文档阅读工具，支持PDF、TIFF、CHM、ODF、EPUB、MOBI等文档格式
+  Remmina 远程左面软件
+* 系统工具
+* 开发工具
+* 终端工具
