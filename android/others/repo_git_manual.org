@@ -1,0 +1,5 @@
+1. repo　回退到具体某一天的提交
+repo forall -c 'ID=`Git log --before="2016-06-28 23:00" --after="2010-01-01" -1 --pretty=format:"%H"`;git reset --hard $ID'
+
+2. repo 回退当前所有的修改，和服务器上代码拉下来一样
+repo forall -c "git clean -df" && repo forall -c "git checkout ." && repo sync -j8

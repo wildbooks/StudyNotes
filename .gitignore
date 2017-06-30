@@ -1,3 +1,7 @@
 *.org_archive
 *.swp
 *.html
+#android/tools/bugreport/ChkBugReport/
+#android/tools/bugreport/battery-historian/
+ChkBugReport
+battery-historian

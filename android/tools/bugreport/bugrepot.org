@@ -1,0 +1,59 @@
+* BugReport简介
+* ChkBugReport
+  源代码路径[[https://github.com/sonyxperiadev/ChkBugReport][ChkBugReport]]
+  ChkBugReport是一个开发工具，用于处理在Android手机上生成的bugreport文件，并尽可能提取有用的数据。
+  请参阅维基文档[[https://github.com/sonyxperiadev/ChkBugReport/wiki][wiki]]
+* battery-historian
+* 测功耗
+  | 命令         | 功能                             |
+  |--------------+----------------------------------|
+  | *#3228#      | 看版本号                         |
+  | *#*#0574#*#* | feedback                         |
+  | *#2886#      | MMITest                          |
+  | ###2324#     | 查看并开关diag端口保护           |
+  | ###666#      | All google apps enabled(包括gms) |
+** 场景1
+   + Preconditon
+     Enable airplane mode (启用飞行模式)
+     Disable WIFI & BT & NFC(禁用WIFI、BT、NFC)
+     Disable GPS (Location) (禁用GPS（位置）)
+     Disable Auto Brightness (禁用自动亮度)
+     GMS disabled (大陆goole被墙，需要关掉google相关服务，不然google相关应用会不停的唤醒,对测试结果有很大干扰)
+     Disable Feedback
+   + cmd
+     sudo adb shell dumpsys batterystats --reset  #清空日志
+     sudo adb shell dumpsys batterystats|tee batterystats-"$(date +%Y-%m-%d\ %R)"_Preconditon1.log  #保存log
+     sudo adb bugreport > bugreport-"$(date +%Y-%m-%d\ %R)"_Preconditon1.log  #保存log
+   + Expect Results
+   + Observed Results
+     base current:4.85ma
+     Average current: 6.71ma
+     PowerMonitor每隔5分钟会出现一个长达30秒的抖动波形，平均电流在29ma,详情见附件PowerMonitor1.png
+   + Analyze
+     + log获取方式
+       sudo adb shell dumpsys batterystats --reset  #清空日志
+       sudo adb shell dumpsys batterystats|tee batterystats-"$(date +%Y-%m-%d\ %R)"_Preconditon1.log  #保存log
+       log见附件batterystats-2017-06-29 15:47_Preconditon1.log
+     + log分析
+         PID 0 wake time: +3s646ms
+         PID 2759 wake time: +2m30s261ms      ## com.tcl.ota
+         PID 1522 wake time: +13s79ms         ## system_server
+         PID 3003 wake time: +2m30s187ms      ## com.jrdcom.Elabel
+         PID 3295 wake time: +20ms            ## com.tct.phoneguard
+         PID 1963 wake time: +88ms            ## com.android.phone
+         PID 0 wake time: +6s375ms
+         PID 1522 wake time: +49ms
+         PID 2951 wake time: +44ms            ## com.android.providers.calendar
+         PID 1803 wake time: +28ms            ##com.android.systemui
+         PID 3569 wake time: +5s655ms         ## com.jrdcom.filemanager
+
+         主要是com.tcl.ota、 com.jrdcom.Elabel、com.jrdcom.filemanager唤醒的次数比较频繁;建议从这三个地方进行排查
+
+** 场景2
+   + Preconditon
+     Enable airplane mode (启用飞行模式)
+     Disable WIFI & BT & NFC(禁用WIFI和BT)
+     Disable GPS (Location) (禁用GPS（位置）)
+     Disable Auto Brightness (禁用自动亮度)
+     GMS disabled (大陆goole被墙，需要关掉google相关服务，不然google相关应用会不停的尝试联网,对测试结果有很大干扰)
+     Disable Feedback

@@ -1,4 +1,6 @@
 * 简介
+  MMC全称MultiMedia Card，由西门子公司和SanDisk公司1997年推出的多媒体记忆卡标准。
+  SD卡全称Secure DigitalMemory Card，由松下、东芝和SanDisk公司于1999年8月共同开发的新一代记忆卡标准，已完全兼容MMC标准
 * 总结
   + *Code*:\\
     kernel/drivers/mmc/host/sdhci-msm.c

@@ -1,0 +1,100 @@
+* TCL平台相关
+  | 命令         | 功能                             |
+  |--------------+----------------------------------|
+  | *#3228#      | 看版本号                         |
+  | *#*#0574#*#* | feedback                         |
+  | *#2886#      | MMITest                          |
+  | ###2324#     | 查看并开关diag端口保护           |
+  | ###666#      | All google apps enabled(包括gms) |
+* 电源测量设置
+  Enable airplane mode (启用飞行模式)
+  Disable WIFI & BT & NFC(禁用WIFI和BT)
+  Disable GPS (Location) (禁用GPS（位置）)
+  Disable Auto Brightness (禁用自动亮度)
+  GMS disabled (大陆goole被墙，需要关掉google相关服务，不然google相关应用会不停的尝试联网,对测试结果有很大干扰)
+  Disable Feedback
+* 电源测试
+** Powertop
+   #+begin_src bash
+     # 1.链接USB
+     # 2.执行powertop命令
+     adb push powertop > /system/bin
+     adb shell chmod 777 system/bin/powertop
+     adb shell
+     sleep 10 && powertop -r -d -t 15 > /data/powertop.log &
+     # 3.执行上述命令的10秒内断开usb，因为它将在10后开始捕获powertop数据。大约35秒后连接USB并把powertop数据导出手机
+     adb pull /data/powertop.txt .
+   #+end_src
+** Top
+   #+begin_src bash
+     k# 1.链接USB
+     # 2.
+     adb shell
+     sleep 10 && top -d 15 > /data/top.txt &
+     # 3.执行上述命令的10秒内断开usb，因为它将在10后开始捕获top数据。大约50秒后连接USB并把powertop数据导出手机
+     adb pull /data/top.txt .
+   #+end_src
+** Clocks
+   #+begin_src bash
+     # 1.链接USB
+     # 2.
+     sleep 10 &&
+         while true;
+         do
+             echo \=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=;
+             cat /proc/uptime;
+             cd /sys/kernel/debug/clk;
+             for i in *;
+             do if [ -d $i ];
+                then if [ "$(cat $i/enable)" == "1" ];
+                     then if [ -e $i/measure ]; then
+                              echo $i \=\> enable:`cat $i/enable` measure:`cat $i/measure`;
+                          else echo $i \=\> enable:`cat $i/enable` rate:`cat $i/rate`;
+                          fi;
+                     fi;
+                fi;
+             done;
+             echo \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-;
+             cd /sys/class/regulator;
+             for i in *;
+             do
+                 if [ -d $i ];
+                 then if [ -e $i/state ];
+                      then if [ "$(cat $i/state)" == "enabled" ];
+                           then if [ -e $i/microvolts ];
+                                then echo $i \=\> name:`cat $i/name` state:`cat $i/state` microvolt:`cat $i/microvolts`;
+                                else echo $i \=\> name:`cat $i/name` state:`cat $i/state` microvolt: N\/A;
+                                fi;
+                           fi;
+                      fi;
+                 fi;
+             done;
+             sleep 3;
+         done > /data/dumpclk.txt &
+         # 3.执行上述命令的10秒内断开usb，因为它将在10后开始捕获clocks数据。大约50秒后连接USB并把clock数据导出手机
+     adb pull /data/dumpclk.txt
+   #+end_src
+** Ftrace Logs
+   #+begin_src bash
+     # 1.链接USB
+     # 2.
+     adb root
+     adb remount
+     mount -t debugfs nodev /d/
+     sleep 10 &&
+         echo 51200 > /d/tracing/buffer_size_kb &&
+         echo "" > /d/tracing/set_event &&
+         echo "" > /d/tracing/trace &&
+         echo "irq:* sched:* power:* workqueue:* msm_low_power:* kgsl:*" > /d/tracing/set_event &&
+         echo 1 > /d/tracing/tracing_on  &&
+         sleep 15 &&
+         echo 0 > /d/tracing/tracing_on &&
+         cat /d/tracing/trace > /data/local/ftrace.txt &
+     # 3.执行上述命令的10秒内断开usb，大约1分钟后链接USB，把Ftrace日志拉出来
+     adb pull /data/local/ftrace.txt .
+   #+end_src
+** Systrace Logs
+   #+begin_src bash
+   #+end_src
+** Surfacefinger
+   不晓得他作用
