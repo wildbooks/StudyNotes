@@ -1,0 +1,20 @@
+* 项目
+** idol4
+   lcd
+   led
+   wled
+   touch
+   keyboard
+   msm8952
+** gflip2
+   该项目采用高通msm8909平台
+   lcd
+   led
+   wled
+   keyboard
+** Appassionato  
+   时间：2017.06.1 -- 至今
+   android7.1.2
+   msm8996
+   power debug
+   

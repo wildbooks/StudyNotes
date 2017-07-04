@@ -1,18 +1,32 @@
 * 简介
+  + 向内核其他driver提供了wakelock的创建和注销接口，允许driver创建wakelock以阻止睡眠、注销wakelock以允许睡眠
+  + wakeup event
+  + wakelock
+    wakeup event framework core框架提供
+  + 
 * 帮助文档
   + *Doc*\\
-    kernel/Documentation/leds/leds-class.txt
   + *Code*\\
+    #API Layer(API/sysfs)
+    kernel/power/ #核心(PM逻辑 Core)
+    #(PM Driver):分为两部分,一是体系结构无关的Driver,提供Driver框架(Framework)。另一部分是具体体系结构相关的Driver,
   + *sysfs*\\
     /sys/power
 * sysfs 
-  autosleep
-  pm_freeze_timeout
-  pm_test
-  wake_lock
-  wakeup_count 
-  pm_async
-  pm_print_times
-  state
-  wake_unlock 
+  + /sys/power/autosleep
+    当系统中所有的wakelock都注销后，系统可以自动进入低功耗状态：由autosleep实现
+  + /sys/power/wake_lock 
+    用户程序向文件写入一个字符串，即可创建一个wakelock，该字符串就是wakelock的名字。该wakelock可以阻止系统进入低功耗模式。
+    读：获取系统中所有的处于active状态的wakelock列表（也即wakeup source列表）
+    写：相当于以wakeup source为参数调用__pm_stay_awake（或者__pm_wakeup_event），即activate wakeup event；
+  + /sys/power/wake_unlock
+    用户程序向文件写入相同的字符串，即可注销一个wakelock.当系统中所有的wakelock都注销后，系统可以自动进入低功耗状态
+    读：相当于以wakeup source为参数，调用__pm_relax
+    写：返回系统中所有的处于非active状态的wakelock信息（也即wakeup source列表）
+  + /sys/power/pm_freeze_timeout
+  + /sys/power/pm_test
+  + /sys/power/wakeup_count 
+  + /sys/power/pm_async
+  + /sys/power/pm_print_times
+  + /sys/power/state
 

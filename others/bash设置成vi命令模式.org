@@ -1,0 +1,26 @@
+* 简介
+  对于我这种浏览网页、使用emacs、写代码都喜欢用vi这种风格，然而bash默认的模式是emacs风格，这让我很不爽，以前通过插件的形式解决这个问题，不过现在发现可以通过bash直接设置来完成
+  http://www.catonmat.net/download/bash-vi-editing-mode-cheat-sheet.txt
+* 配置
+  #+begin_src bash
+  # 1.打开~/.bashrc文件
+  vim ~/.bashrc
+  
+  # 2.添加以下内容
+  set -o vi
+  
+  # 3.使修改内容生效
+  source ~/.bashrc
+  #+end_src
+* 快捷键
+  | 快捷键  | 功能                 |
+  |---------+----------------------|
+  | Esc     | 进入NOrmal mode模式  |
+  | i/a/I/A | 进入插入模式         |
+  | r       | 替换当前光标下的字符 |
+  | cc      | 从当前光标位置到行尾 |
+  | yy      | 复制                 |
+  | l/h     | 右移/左移            |
+  | 0       | 移到当前行的开始     |
+  | $       | 移到当前行的行尾     |
+  | $       |                      |
