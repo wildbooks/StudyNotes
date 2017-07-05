@@ -1,20 +1,41 @@
 * 项目
 ** idol4
-   lcd
-   led
-   wled
-   touch
-   keyboard
-   msm8952
+   + 项目内容：
+     TCL要求把idol4手机系统从Android 6升级到Android 7.1.1
+   + 手机硬件
+     CPU:msm8952
+     TOUCH:
+     Memory:
+     时间：2017.06.1 -- 至今
+   + 负责内容
+     TCL idol4手机项目采用高通msm8952平台。使用a
+     lcd
+     led
+     wled
+     touch
+     keyboard
+     msm8952
 ** gflip2
-   该项目采用高通msm8909平台
-   lcd
-   led
-   wled
-   keyboard
-** Appassionato  
-   时间：2017.06.1 -- 至今
-   android7.1.2
-   msm8996
-   power debug
-   
+   + 项目内容：
+     TCL要求把idol4手机系统从Android 6升级到Android 7.1.1
+   + 手机硬件
+     CPU:msm8952
+     TOUCH:
+     Memory:
+     时间：2017.06.1 -- 至今
+   + 负责内容
+     lcd
+     led
+     wled
+     keyboard
+** Appassionato
+   + 项目内容：
+     TCL手机项目系统Android 7.1.2
+     时间：2017.06.1 -- 至今
+   + 手机硬件
+     CPU:msm8996
+     TOUCH:ftm3bd54c
+     Memory:6G RAM + 128G ROM
+   + 负责内容
+     led,wled,touch,keyboard,bootloader驱动的编写移植。
+     power调试分析
