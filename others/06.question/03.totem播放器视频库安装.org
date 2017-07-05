@@ -1,1 +1,2 @@
-gstreamer1-libav
+gstreamer1-libav #这一个好像就足够了
+sudo dnf install gstreamer1-libav gstreamer1-plugins-ugly gstreamer1-plugins-bad-free gstreamer1-plugins-bad-freeworld gstreamer1-vaapi

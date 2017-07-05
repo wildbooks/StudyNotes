@@ -1,0 +1,12 @@
+* 远程登录linux方法
+  远程登录linux服务器的方法分为文字接口和图形接口两类；文字登入方法有Telnet和ssh两种方法.
+  图形接口包括xdmcp和vnc
+* 如何远程登录一个使用路由器联网的linux
+  1. 家里的路由器有正常的公网
+  2. 路由器做端口映射或者DMZ
+  https://zhidao.baidu.com/question/584691115354097365.html
+* ssh搭建
+** 安装openssh
+   sudo dnf install openssh-clients openssh-server
+* vnc搭建
+  sudo dnf install tigervnc-server

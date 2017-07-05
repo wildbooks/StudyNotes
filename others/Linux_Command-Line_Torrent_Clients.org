@@ -1,11 +1,28 @@
-# torrent
- rtorrent
- Deluge-console
- Transmission
-#
- wget
- curl
- git
- w3m
- Elinks
- aria2  下载百度云资源
+* torrent
+** rtorrent
+   配置成功,确实很棒
+** Deluge-console
+** Transmission
+** ctorrent
+   C-torrent是最简单的命令行torrent下载工具，可以迅速安装，也是micro-torrent或utorrent的优秀替代者。
+* wget
+* axal
+  这是wget的出色替代者，是一款轻量级下载实用工具。它实际上是个加速器，因为它打开了多路http连接，可下载独立文件片段，因而文件下载起来更快速。
+* curl
+  curl支持的协议DICT, FILE, FTP, FTPS, GOPHER, HTTP, HTTPS, IMAP, IMAPS,  LDAP,  LDAPS,  POP3,  POP3S, RTMP, RTSP, SCP, SFTP, SMB, SMBS, SMTP, SMTPS, TELNET and TFTP).
+* git
+* w3m
+  w3m是GPL协议下发布的基于文本的web浏览器
+* Elinks
+  Elinks是基于文本的免费浏览器
+* aria2 下载百度云资源
+  这是一种开源命令行下载加速器，支持多个端口，你可以使用最大带宽来下载文件，是一款易于安装、易于使用的工具。
+* Youtube-dl
+  这是一款专用工具，可以通过命令行从YouTube下载视频，这是个易于安装的程序包，可用来下载一大批文件。
+* Movgrab
+  这是用于下载视频的另一款高效工具，使用movgrab的优点在于，它不仅可以从YouTube下载视频，还可以从几乎所有的知名网站下载视频，比如metacafe、dailiymotion、 ehow和vobx等。这是一款很快速的工具，可以定义影片格式，还可以恢复下载。
+* Transmission-cli
+  Transmission的这个命令行版本是一款非常强大的工具，可用于下载torrent。易于安装，它需要screen这个依赖项。
+* 电驴
+  mldonkey
+* bitsync

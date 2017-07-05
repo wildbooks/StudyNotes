@@ -1,0 +1,10 @@
+ftp
+sftp
+nfs
+samba
+dns
+mail
+dhcp
+vnc远程登录
+ssh远程登录
+代理服务器

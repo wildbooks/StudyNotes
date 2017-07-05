@@ -1,0 +1,66 @@
+* 简介
+  FTP(File Transfer Protocol)
+  proftpd - 快速，稳定，高度可配置的FTP服务器。
+  vsftpd- 一个快速，安全的FTP守护进程，它是FTPFedora 的首选服务器。本节的其余部分重点介绍vsftpd。
+** ftp,ftps,sftp,tftp它们之间的区别
+* 文档
+  [[https://docs.fedoraproject.org/en-US/Fedora/25/html/System_Administrators_Guide/s2-ftp-servers.html][Fedora-25-System_Administators_Guide-en-US]]
+  man vsftpd
+  man vsftpd.conf
+* 安装配置
+** 安装
+   sudo  dnf install vsftpd-3.0.3-3.fc25.x86_64
+** 配置文件
+   + /etc/rc.d/init.d/vsftpd\\
+     #+begin_src bash
+       #允许自动启动
+       systemctl enable vsftpd.service
+       #禁止自动启动
+       systemctl disable vsftpd.service
+       #启动服务器
+       systemctl start vsftpd.service
+       #停止服务器
+       systemctl stop vsftpd.service
+       #该restart选项是一种停止然后启动的速记方式vsftpd。这是在编辑配置文件后使配置更改生效的最有效方式vsftpd。
+       #要重新启动服务器，请root输入：
+       systemctl restart vsftpd.service
+       #在condrestart（条件重新启动）选项只启动vsftpd，如果它当前正在运行。此选项对于脚本很有用，因为如果未运行该守护程序，则不会启动该守护程序。
+       #要有条件地重新启动服务器，请root输入：
+       systemctl condrestart vsftpd.service
+     #+end_src
+   + /etc/pam.d/vsftpd\\
+   + /etc/vsftpd/vsftpd.conf\\
+     配置文件
+   + /etc/vsftpd/ftpusers\\
+     不允许登录的用户列表vsftpd。默认情况下，这个名单包括root，bin和daemon用户，等等。
+   + /etc/vsftpd/user_list
+     该文件可以被配置为要么拒绝或允许访问列出的用户
+   + /var/ftp/\\
+     ftp服务器的根目录，里面包含一个匿名用户目录/var/ftp/pub/。这两个目录只能由root用户写入
+** vsftpd.conf配置分析
+   + 守护进程选项
+     listen- 启用时，vsftpd以独立模式运行。Fedora将此值设置为YES。该指令不能与listen_ipv6指令一起使用。默认值为NO。
+     listen_ipv6- 启用时，vsftpd以独立模式运行，但仅侦听IPv6套接字。该指令不能与listen指令一起使用。默认值为NO。
+     session_support- 启用时，vsftpd尝试通过可插拔认证模块（PAM）维护每个用户的登录会话。有关详细信息，请参阅“ 使用可插拔认证模块（PAM） ”红帽企业版Linux 6 管理单一登录和智能卡以及PAM手册页。。如果不需要会话日志记录，则禁用此选项允许vsftpd以较少的进程和较低的权限运行。默认值为YES。
+   + 登录选项和访问控制
+     anonymous_enable-当启用时，允许匿名用户登录的用户名，anonymous并且ftp被接受。默认值为YES。
+     banned_email_file- 如果deny_email_enable指令设置为YES，则该伪指令指定包含不允许访问服务器的匿名电子邮件密码列表的文件。默认值为/etc/vsftpd/banned_emails。
+     banner_file - 指定连接建立到服务器时显示的包含文本的文件。此选项将覆盖ftpd_banner指令中指定的任何文本。此伪指令没有默认值。
+     cmds_allowed- 指定FTP由服务器允许的逗号分隔的命令列表。所有其他命令都被拒绝。此伪指令没有默认值。
+     deny_email_enable- 启用时，任何使用电子邮件密码的匿名用户/etc/vsftpd/banned_emails都将被拒绝访问服务器。该指令引用的文件的名称可以使用该banned_email_file指令指定。默认值为NO。
+     ftpd_banner - 启用时，当连接建立到服务器时，会显示此指令中指定的字符串。该选项可以被banner_file指令覆盖。默认vsftpd显示其标准横幅。
+     local_enable - 启用时，允许本地用户登录系统。默认值为YES。
+     pam_service_name- 指定PAM服务名称vsftpd。默认值为ftp。注意，在Fedora中，值被设置为vsftpd。 默认值为NO。注意，在Fedora中，值被设置为YES。
+     userlist_deny- 当与userlist_enable指令一起使用并设置时NO，所有本地用户都被拒绝访问，除非用户名被列在userlist_file指令指定的文件中。因为在客户端被要求输入密码之前访问被拒绝，所以设置此指令NO可防止本地用户通过网络提交未加密的密码。默认值为YES。
+     userlist_enable- 启用时，由userlist_file指令指定的文件中列出的用户被拒绝访问。因为在客户端被要求输入密码之前访问被拒绝，因此用户被阻止通过网络提交未加密的密码。默认值是NO，但是在Fedora下，该值被设置为YES。
+     userlist_file- 指定启用指令vsftpd时引用的文件userlist_enable。 默认值是/etc/vsftpd/user_list在安装过程中创建的。
+   + 匿名用户选项
+     anon_mkdir_write_enable- 当与write_enable指令一起启用时，允许匿名用户在具有写入权限的父目录中创建新目录。默认值为NO。
+     anon_root- 指定vsftpd匿名用户登录后的目录更改。此伪指令没有默认值。
+     anon_upload_enable- 当与write_enable指令一起使用时，允许匿名用户上传具有写入权限的父目录中的文件。 默认值为NO。
+     anon_world_readable_only - 启用时，只允许匿名用户下载世界可读的文件。默认值为YES。
+     ftp_username- 指定/etc/passwd用于匿名FTP用户的本地用户帐户（列出）。/etc/passwd为用户指定的主目录是匿名FTP用户的根目录。默认值为ftp。
+     no_anon_password - 启用时，不要求匿名用户输入密码。默认值为NO。
+     secure_email_list_enable - 启用时，仅接受匿名登录的电子邮件密码的指定列表。这是一种方便的方式，可以在不需要虚拟用户的情况下，为公众内容提供有限的安全性。匿名登录将被阻止，除非提供的密码列出/etc/vsftpd/email_passwords。文件格式是每行一个密码，没有尾随的空格。默认值为NO。
+** 测试
+   在浏览器或者文件管理器中输入ftp://127.0.0.1

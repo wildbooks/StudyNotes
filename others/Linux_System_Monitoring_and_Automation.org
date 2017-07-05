@@ -1,0 +1,30 @@
+* 系统监控工具
+  + 查看进程
+    ps
+    top
+  + 查看内存使用情况
+    free
+    
+  + 查看CPU使用情况
+  + 查看块设备和文件系统
+    lsblk
+    blkid
+    partx
+    findmnt
+    df
+    du
+  + 查看硬盘信息
+    lspci
+    lsusb
+    lspcmcia
+    lscpu
+  + 使用Net-SNMP监控性能
+    net-snmp
+* 查看和管理日志文件 
+  rsyslogd
+* 自动化系统任务
+  Cron
+  Anacron
+  at
+  batch
+

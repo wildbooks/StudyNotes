@@ -1,0 +1,35 @@
+* Generl
+  | Prefix | 功能   | Description                |
+  |--------+--------+----------------------------|
+  | SPC    | SPC    | SpaceVim的默认映射前缀     |
+  | f      | Unite  | SpaceVim的Unite映射前缀    |
+  | F      | Denite | SpaceVim的Denite映射前缀   |
+  | \      | leader | vim/neovim的默认leader前缀 |
+  | s      | window | SpaceVim的窗口映射前缀     |
+* mapings
+  | Mappings	 | Description                                     |
+  |--------------+-------------------------------------------------|
+  | SPC h SPC    | 	发现SpaceVim文档，层和包使用团结            |
+  | SPC hi	   | 得到帮助的符号在点                              |
+  | SPC hk	   | 显示与该键的顶级绑定                            |
+  | SPC hm	   | 搜索可用的man手册                               |
+  | SPC hI       | 打开SpaceVim GitHub问题页面，其中包含预填充信息 |
+* Available layers
+
+  | Prefix | 功能        | Description |
+  |--------+-------------+-------------|
+  | SPC hl | :SPLayer -l | 所有的插件  |
+  |        |             |             |
+* 导航
+
+  | Prefix      | 功能                                             | Description |
+  |-------------+--------------------------------------------------+-------------|
+  | h	       | 向左移动光标（原始vim键，无映射）                |             |
+  | j	       | 向下移动光标（原始vim键，无映射）                |             |
+  | k	       | 向上移动光标（原始vim键，无映射）                |             |
+  | l	       | 向右移动光标（原始vim键，无映射）                |             |
+  | H	       | 将光标移动到屏幕顶部（原始vim键，无映射）        |             |
+  | L	       | 将光标移动到屏幕底部（原始vim键，无映射）        |             |
+  | SPC j 0	 | 转到行的开始（并在行中的上一个位置设置一个标记） |             |
+  | SPC j $	 | 转到行尾（并在行的上一个位置设置一个标记）       |             |
+  | SPC t -	 | 将光标锁定在屏幕中央                             |             |
