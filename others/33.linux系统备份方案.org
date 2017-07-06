@@ -1,0 +1,15 @@
+* 备份思想
+  + 完全备份
+  + 增量式备份
+    dump
+    restore
+* tar
+  + 备份
+    cd / && sudo tar cvpzf backup.tgz --exclude=/proc --exclude=/mnt --exclude=/sys --exclude=/backup.tgz
+    --exclude=/media --exclude=/home /
+  + 还原
+    tar xvpfz backup.tgz -C /
+    mkdir /proc /sys /mnt /media /home
+* rsync
+* dump
+* dd

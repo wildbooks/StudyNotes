@@ -1,0 +1,19 @@
+* boot.img
+  boot.img包含两部分kernel和ramdisk.img组成
+  #+begin_src
+   +-----------------+
+   | boot header     | 1 page
+   +-----------------+
+   | kernel          | n pages
+   +-----------------+
+   | ramdisk         | m pages
+   +-----------------+
+   | second stage    | o pages
+   +-----------------+
+  #+end_src
+
+* system.img
+* userdata.img
+* ramdisk.img
+  ramdisk.img由root目录打包组成
+* lk
