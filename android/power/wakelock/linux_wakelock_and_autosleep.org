@@ -29,4 +29,5 @@
   + /sys/power/pm_async
   + /sys/power/pm_print_times
   + /sys/power/state
-
+    /sys/kernel/debug/suspend_time 
+    /sys/kernel/debug/suspend_stats

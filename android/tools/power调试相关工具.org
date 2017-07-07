@@ -1,9 +1,0 @@
-* PowerTop
-  在android源代码中的external/powertop目录下
-* Perf
-  perf是Linux下的系统性能调试工具，它包含22种子工具，常用的有以下5种
-  perf-list
-  perf-stat
-  perf-top
-  perf-record
-  perf-report

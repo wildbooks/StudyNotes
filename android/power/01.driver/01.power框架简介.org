@@ -11,7 +11,10 @@
 #+LINK_UP:     the ``up'' link of an exported page
 #+LINK_HOME:   the ``home'' link of an exported page
 #+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
-* frameworks
+* 电源介绍
+  wakeup
+
+* framework
   + *Code*:
     kernel/drivers/power/power_supply_core.c\\
     kernel/drivers/power/power_supply_sysfs.c\\

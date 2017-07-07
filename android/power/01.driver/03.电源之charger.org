@@ -70,6 +70,7 @@
 4. dev_pm_ops
    功能：设备电源管理回调函数
   #+begin_src cpp
+  //prepare—>suspend—>suspend_late—>suspend_noirq-------wakeup--------->resume_noirq—>resume_early—>resume-->complete
   struct dev_pm_ops {
     int (*prepare)(struct device *dev);
     void (*complete)(struct device *dev);
@@ -96,6 +97,10 @@
     int (*runtime_idle)(struct device *dev);
   };
   #+end_src
+5. dev_pm_info
+   #+begin_src cpp
+
+   #+end_src
 * 充电驱动
   INIT_WORK(&bq->irq_work, bq2589x_charger_irq_workfunc);
 	INIT_WORK(&bq->adapter_in_work, bq2589x_adapter_in_workfunc);

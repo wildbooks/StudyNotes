@@ -1,0 +1,46 @@
+* top help
+  #+begin_src bash
+    Usage: top [ -m max_procs ] [ -n iterations ] [ -d delay ] [ -s sort_column ] [ -t ] [ -h ]
+        -m num  Maximum number of processes to display. #最多显示多少个进程
+        -n num  Updates to show before exiting.  #刷新次数
+        -d num  Seconds to wait between updates. #刷新间隔时间(默认5秒)
+        -s col  Column to sort by (cpu,vss,rss,thr). #按哪列排序
+        -t      Show threads instead of processes.   #显示线程信息而不是进程
+        -h      Display this help screen.   #显示帮助文档
+  #+end_src
+* top界面讲解
+  #+begin_src bash
+    User 0%, System 0%, IOW 1%, IRQ 0%     #CPU占用率
+    User 157 + Nice 0 + Sys 268 + Idle -124009 + IOW -713 + IRQ 0 + SIRQ 0 = -124297  #CPU使用情况
+
+      PID PR CPU% S  #THR     VSS     RSS PCY UID      Name    #进程属性
+      570  4   0% S    29 146060K  33784K  fg media    /system/bin/mediaserver
+    17601  0   0% R     1   3992K   1436K  fg root     top
+      289  4   0% S     1      0K      0K  fg root     cfinteractive
+  #+end_src
+** 参数讲解
+   + CPU占用率：
+     | User     | System   | IOW        | IRQ        |
+     |----------+----------+------------+------------|
+     | 用户进程 | 系统进程 | IO等待时间 | 硬中断时间 |
+   + CPU使用情况（指一个最小时间片内所占时间，单位jiffies。或者指所占进程数）
+      | User | 处于用户态的运行时间，不包含优先值为负进程 |
+      | Nice | 优先值为负的进程所占用的CPU时间            |
+      | Sys  | 处于核心态的运行时间                       |
+      | Idle | 除IO等待时间以外的其它等待时间             |
+      | IOW  | IO等待时间                                 |
+      | IRQ  | 硬中断时间                                 |
+      | SIRQ | 软中断时间                                 |
+   + 进程属性
+     | PID  | 进程在系统中的ID                                                                   |
+     | CPU% | 当前瞬时所以使用CPU占用率                                                          |
+     | S    | 进程的状态，其中S表示休眠，R表示正在运行，Z表示僵死状态，N表示该进程优先值是负数。 |
+     | #THR | 程序当前所用的线程数                                                               |
+     | VSS  | Virtual Set Size 虚拟耗用内存（包含共享库占用的内存）                              |
+     | RSS  | Resident Set Size 实际使用物理内存（包含共享库占用的内存）                         |
+     | PCY  | 不知道什么东东                                                                     |
+     | UID  | 运行当前进程的用户id                                                               |
+     | Name | 程序名称android.process.media                                                      |
+     + *Notes*:内存占用大小有如下规律：VSS >= RSS >= PSS >= USS
+       PSS  Proportional Set Size 实际使用的物理内存（比例分配共享库占用的内存）
+       USS  Unique Set Size 进程独自占用的物理内存（不包含共享库占用的内存）

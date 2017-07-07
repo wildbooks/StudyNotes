@@ -98,3 +98,70 @@
    #+end_src
 ** Surfacefinger
    不晓得他作用
+* 电量的测试方法(adb shell dumpsys batterystats)
+  historian.py脚本下载https://github.com/google/battery-historian
+* 电源调试的日志
+  + Clock dumps
+    提供每个时钟的状态
+  + GPIO dumps
+    提供每个GPIO的状态,检测以确定GPIO是否处于最低功耗状态。
+    可用于在系统睡眠期间调试焊垫电流泄漏
+  + PMIC dumps
+    提供LDO/SMPS状态
+    用于调试所有用例和场景,检测是否有未知的调节器在睡眠期间保持ON
+  + QXDM logs
+  + msm_pm_stats/lpm_stats
+  + Node Power Architecture (NPA) logs (RPM/modem)
+  + Universal Logs (Ulogs) (RPM/modem)
+  + Dmesg and Logcat logs
+  + Ftrace logs
+  + Wakelocks/wake-up sources
+    cat /d/wakeup_sources  #Check wake locks
+    cat /sys/kernel/debug/rpm_stats  #check xosd/vmin
+    cat /proc/interrupts# Check frequent interrupts activity
+    sleep 20 && cat /proc/interrupts > /data/interrupt1.txt && sleep 30 && cat /proc/interrupts > /data/interrupt2.txt &
+  + Check clocks preventing XO shutdown and VDD minimization
+    #+begin_src shell
+      + Enable the clock debug suspend using echo 1 > /d/clk/debug_suspend.
+      + After enabling this flag, the enabled clocks are displayed when the system goes into Suspend mode in the Dmesg logs.
+      + Some of the clocks are always expected to be shown as enabled in this log. However, if any clock other than the usual major system clocks are seen to be enabled, it can be the reason for preventing power collapse.
+          + Examples of clocks that must not be visible in this log
+          + Peripheral clocks
+          + Display-related clocks (MDSS)
+          + Multimedia subsystem related clock
+    #+end_src
+  + Msm_pm_stats/lpm_stats
+  + Hansei.py for RPM RAM dump parsing
+* 命令
+  + Disable kernel thermal
+    echo 0 > /sys/module/msm_thermal/core_control/enabled
+  + 通过wifi链接adb
+    #+begin_src bash
+      a. Connect a USB and verify that Wi-Fi is working on the device.
+          – adb tcpip 5555
+          – adb shell netcfg
+          – <output> wlan0 UP 10.42.118.17/22 0x00001043 f0:25:b7:f5:02:81
+          – adb connect 10.42.118.17
+              • In Wi-Fi settings. click the Wi-Fi network name to get the IP.
+      b. Remove the USB and try adb devices.
+      c. To end the session:
+          – adb disconnect
+    #+end_src
+* Check RPM 状态
+* 检查XO shutdown和 VDD Minimization 次数
+  cat /sys/kernel/debug/rpm_stats      #检查关闭时钟次数，低电流次数
+  cat /sys/kernel/debug/wakeup_sources #检查唤醒锁
+  Check frequent interrupts activity   #检查频繁中断活动
+* 功耗流程
+  先看低电流() 再看唤醒源
+
+* PowerTop
+  在android源代码中的external/powertop目录下
+* Perf
+  perf是Linux下的系统性能调试工具，它包含22种子工具，常用的有以下5种
+  perf-list
+  perf-stat
+  perf-top
+  perf-record
+  perf-report
+
