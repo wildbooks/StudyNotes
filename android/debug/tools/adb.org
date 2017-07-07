@@ -122,3 +122,9 @@
  3. adb bugreport  //为报告bug，在屏幕上输出dumpsys，dumpstate和logcat数据
  4. 可以使用forward jdwp：转换端口以连接到指定的JDWP进程.
  例如: adb forward tcp:8000  jdwp:572 job -attach  localhost:8000
+* 命令
+  screencap /sdcard/screen.png #屏幕截图
+  screenrecord /sdcard/demo.mp4 #录制视频
+  adb bugreport #将dumpsys、dumpstate和logcat数据传输到屏幕，以用于报告错误
+* batterystats
+  adb shell dumpsys batterystats  --reset

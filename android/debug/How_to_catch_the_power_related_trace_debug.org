@@ -15,6 +15,7 @@
   Disable Feedback
 * 电源测试
 ** Powertop
+   在android源代码中的external/powertop目录下
    #+begin_src bash
      # 1.链接USB
      # 2.执行powertop命令
@@ -27,7 +28,7 @@
    #+end_src
 ** Top
    #+begin_src bash
-     k# 1.链接USB
+     # 1.链接USB
      # 2.
      adb shell
      sleep 10 && top -d 15 > /data/top.txt &
@@ -74,6 +75,13 @@
          # 3.执行上述命令的10秒内断开usb，因为它将在10后开始捕获clocks数据。大约50秒后连接USB并把clock数据导出手机
      adb pull /data/dumpclk.txt
    #+end_src
+** Perf
+   perf是Linux下的系统性能调试工具，它包含22种子工具，常用的有以下5种
+   perf-list
+   perf-stat
+   perf-top
+   perf-record
+   perf-report
 ** Ftrace Logs
    #+begin_src bash
      # 1.链接USB
@@ -114,12 +122,22 @@
   + Node Power Architecture (NPA) logs (RPM/modem)
   + Universal Logs (Ulogs) (RPM/modem)
   + Dmesg and Logcat logs
+    adb logcat -v time > YearMounthDayHourMinute_logcat.txt   //main log
+    adb logcat -v time -b events > YearMounthDayHourMinute_logcat_event.txt   //event log
+    adb logcat -v time -b radio > YearMounthDayHourMinute_logcat_radio.txt    //radio log
+    adb shell dmesg > YearMounthDayHourMinute_dmesg.txt         //kernel log
   + Ftrace logs
   + Wakelocks/wake-up sources
-    cat /d/wakeup_sources  #Check wake locks
-    cat /sys/kernel/debug/rpm_stats  #check xosd/vmin
-    cat /proc/interrupts# Check frequent interrupts activity
+    cat /d/wakeup_sources  #Check wake locks  检查唤醒源
+    cat /sys/kernel/debug/rpm_stats  #check xosd/vmin  检查关闭时钟次数，低电流次数
+    cat /proc/interrupts # Check frequent interrupts activity  检查频繁中断活动
     sleep 20 && cat /proc/interrupts > /data/interrupt1.txt && sleep 30 && cat /proc/interrupts > /data/interrupt2.txt &
+    + wakeup debug mask
+      echo 1 > /sys/kernel/debug/clk/debug_suspend
+      echo 1 > /sys/module/msm_show_resume_irq/parameters/debug_mask
+      echo 4 > /sys/module/wakelock/parameters/debug_mask
+      echo 1 > /sys/module/lpm_levels/parameters/debug_mask
+      echo 0x16 > /sys/module/smd/parameters/debug_mask
   + Check clocks preventing XO shutdown and VDD minimization
     #+begin_src shell
       + Enable the clock debug suspend using echo 1 > /d/clk/debug_suspend.
@@ -147,21 +165,6 @@
       c. To end the session:
           – adb disconnect
     #+end_src
-* Check RPM 状态
-* 检查XO shutdown和 VDD Minimization 次数
-  cat /sys/kernel/debug/rpm_stats      #检查关闭时钟次数，低电流次数
-  cat /sys/kernel/debug/wakeup_sources #检查唤醒锁
-  Check frequent interrupts activity   #检查频繁中断活动
 * 功耗流程
   先看低电流() 再看唤醒源
-
-* PowerTop
-  在android源代码中的external/powertop目录下
-* Perf
-  perf是Linux下的系统性能调试工具，它包含22种子工具，常用的有以下5种
-  perf-list
-  perf-stat
-  perf-top
-  perf-record
-  perf-report
 
