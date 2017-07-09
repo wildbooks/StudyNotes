@@ -105,6 +105,7 @@
   date
   halt
 * 系统管理
+  nmon
   top
   vmstat
   mpstat
