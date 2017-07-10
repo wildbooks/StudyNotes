@@ -22,18 +22,18 @@
      adb push powertop > /system/bin
      adb shell chmod 777 system/bin/powertop
      adb shell
-     sleep 10 && powertop -r -d -t 15 > /data/powertop.log &
+     sleep 10 && powertop -r -d -t 15 > /sdcard/powertop.log &
      # 3.执行上述命令的10秒内断开usb，因为它将在10后开始捕获powertop数据。大约35秒后连接USB并把powertop数据导出手机
-     adb pull /data/powertop.txt .
+     adb pull /sdcard/powertop.txt .
    #+end_src
 ** Top
    #+begin_src bash
      # 1.链接USB
      # 2.
      adb shell
-     sleep 10 && top -d 15 > /data/top.txt &
+     sleep 10 && top -d 15 > /sdcard/top.txt &
      # 3.执行上述命令的10秒内断开usb，因为它将在10后开始捕获top数据。大约50秒后连接USB并把powertop数据导出手机
-     adb pull /data/top.txt .
+     adb pull /sdcard/top.txt .
    #+end_src
 ** Clocks
    #+begin_src bash
@@ -42,7 +42,8 @@
      sleep 10 &&
          while true;
          do
-             echo \=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=;
+
+             echo "===============================================================";
              cat /proc/uptime;
              cd /sys/kernel/debug/clk;
              for i in *;
@@ -50,12 +51,14 @@
                 then if [ "$(cat $i/enable)" == "1" ];
                      then if [ -e $i/measure ]; then
                               echo $i \=\> enable:`cat $i/enable` measure:`cat $i/measure`;
-                          else echo $i \=\> enable:`cat $i/enable` rate:`cat $i/rate`;
+                          else
+                              echo $i \=\> enable:`cat $i/enable` rate:`cat $i/rate`;
                           fi;
                      fi;
                 fi;
              done;
-             echo \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-;
+
+             echo "---------------------------------------------------------------";
              cd /sys/class/regulator;
              for i in *;
              do
@@ -63,17 +66,20 @@
                  then if [ -e $i/state ];
                       then if [ "$(cat $i/state)" == "enabled" ];
                            then if [ -e $i/microvolts ];
-                                then echo $i \=\> name:`cat $i/name` state:`cat $i/state` microvolt:`cat $i/microvolts`;
-                                else echo $i \=\> name:`cat $i/name` state:`cat $i/state` microvolt: N\/A;
+                                then
+                                    echo $i \=\> name:`cat $i/name` state:`cat $i/state` microvolt:`cat $i/microvolts`;
+                                else
+                                    echo $i \=\> name:`cat $i/name` state:`cat $i/state` microvolt: N\/A;
                                 fi;
                            fi;
                       fi;
                  fi;
              done;
+
              sleep 3;
-         done > /data/dumpclk.txt &
-         # 3.执行上述命令的10秒内断开usb，因为它将在10后开始捕获clocks数据。大约50秒后连接USB并把clock数据导出手机
-     adb pull /data/dumpclk.txt
+         done > /sdcard/dumpclk.txt &
+     # 3.执行上述命令的10秒内断开usb，因为它将在10后开始捕获clocks数据。大约50秒后连接USB并把clock数据导出手机
+     adb pull /sdcard/dumpclk.txt
    #+end_src
 ** Perf
    perf是Linux下的系统性能调试工具，它包含22种子工具，常用的有以下5种
@@ -129,6 +135,7 @@
   + Ftrace logs
   + Wakelocks/wake-up sources
     cat /d/wakeup_sources  #Check wake locks  检查唤醒源
+    cat ~/wakelocks.txt | awk '{print $1"\t\t\t\t\t\t"$6}' #过滤wakeup_sources
     cat /sys/kernel/debug/rpm_stats  #check xosd/vmin  检查关闭时钟次数，低电流次数
     cat /proc/interrupts # Check frequent interrupts activity  检查频繁中断活动
     sleep 20 && cat /proc/interrupts > /data/interrupt1.txt && sleep 30 && cat /proc/interrupts > /data/interrupt2.txt &
@@ -168,3 +175,34 @@
 * 功耗流程
   先看低电流() 再看唤醒源
 
+  #+begin_src bash
+    # 1.链接USB
+    # 2.输入以下命令
+    adb root
+    adb remount
+    adb shell
+    cd /sys/kernel/debug/tracing
+    echo 0 > tracing_on; #关闭
+    echo 100000 > buffer_size_kb;#设置缓存区大小
+
+    echo "" > set_event #清空
+    echo "" > trace #清空缓冲区
+    sync
+    echo "power:cpu_idle power:cpu_frequency power:cpu_frequency_switch_start" >> set_event
+    echo "msm_low_power:* sched:sched_cpu_hotplug sched:sched_switch" >> set_event
+    echo "sched:sched_wakeup sched:sched_wakeup_new sched:sched_enq_deq_task" >> set_event
+    echo "power:clock_set_rate power:clock_enable power:clock_disable msm_bus:bus_update_request" >> set_event
+    echo "irq:*" >> set_event
+    echo "mdss:mdp_mixer_update mdss:mdp_sspp_change mdss:mdp_commit" >> set_event
+    echo "kgsl:kgsl_pwrlevel kgsl:kgsl_buslevel kgsl:kgsl_pwr_set_state" >> set_event
+    sleep 10 &&
+        echo "0" > tracing_on && #关闭trace
+        echo "" > trace && #清空trace缓冲区
+        echo "1" > tracing_on && #开启trace
+        sleep 10 &&              #运行10s
+        echo "0" > tracing_on && #关闭trace
+        cat trace > /sdcard/trace.txt &
+
+    # 3.执行上述命令的10秒内断开usb，大约1分钟后链接USB，把Ftrace日志拉出来
+    adb pull /sdcard/trace.txt ~
+  #+end_src

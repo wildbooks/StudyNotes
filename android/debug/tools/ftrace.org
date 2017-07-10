@@ -1,4 +1,42 @@
-* Documents + *Docs*\\
+* Documents
+  + *Docs*\\
     kernel/Documentation/trace
-  + *codes*:
+  + *codes*:\\
     kernel/include/trace/
+    kernel/kernel/trace/
+  + sysfs
+    /sys/kernel/debug/tracing/
+* sysfs
+  | 节点名                          | 功能                                             |
+  |---------------------------------+--------------------------------------------------|
+  | README                          |                                                  |
+  | available_events                |                                                  |
+  | available_tracers               |                                                  |
+  | buffer_size_kb                  |                                                  |
+  | buffer_total_size_kb            |                                                  |
+  | cpu_freq_switch_profile_enabled |                                                  |
+  | current_tracer                  | 这用于设置或显示配置的当前跟踪器。               |
+  | events                          |                                                  |
+  | free_buffer                     |                                                  |
+  | instances                       |                                                  |
+  | options                         |                                                  |
+  | per_cpu                         |                                                  |
+  | printk_formats                  |                                                  |
+  | saved_cmdlines                  |                                                  |
+  | saved_cmdlines_size             |                                                  |
+  | saved_tgids                     |                                                  |
+  | set_event                       |echo ""> set_event                                       |
+  | snapshot                        |                                                  |
+  | trace                           | 此文件以可读取的格式（如下所述）保存跟踪的输出。 |
+  | trace_clock                     |                                                  |
+  | trace_marker                    |                                                  |
+  | trace_options                   |                                                  |
+  | trace_pipe                      |                                                  |
+  | tracing_cpumask                 |                                                  |
+  | tracing_max_latency             |                                                  |
+  | tracing_on                      |                                                  |
+  | tracing_thresh                  |                                                  |
+  #+TBLFM:
+
+
+* fa
