@@ -7,11 +7,26 @@
 * 帮助文档
   + *Doc*\\
   + *Code*\\
-    #API Layer(API/sysfs)
-    kernel/power/ #核心(PM逻辑 Core)
-    #(PM Driver):分为两部分,一是体系结构无关的Driver,提供Driver框架(Framework)。另一部分是具体体系结构相关的Driver,
+    + PM Core
+      kernel/power/ #核心(PM逻辑 Core)
+    + Device PM
+      kernel/drivers/base/power/
+      #API Layer(API/sysfs)
+      #(PM Driver):分为两部分,一是体系结构无关的Driver,提供Driver框架(Framework)。另一部分是具体体系结构相关的Driver,
+    + include
+      pm.h
+      pm_runtime.h
+      pm_clock.h
+      pm_opp.h
+      pmu.h
+      pm_domain.h
+      pm_qos.h
+      pm_wakeup.h
   + *sysfs*\\
-    /sys/power
+    /sys/power/
+    /sys/kernel/debug/suspend_stats
+    /sys/kernel/debug/wakeup_sources (drivers/base/power/wakeup.c)
+    /sys/devices/xxx/power (kernel/drivers/base/power/sysfs.c)
 * sysfs 
   + /sys/power/autosleep
     当系统中所有的wakelock都注销后，系统可以自动进入低功耗状态：由autosleep实现
@@ -25,9 +40,34 @@
     写：返回系统中所有的处于非active状态的wakelock信息（也即wakeup source列表）
   + /sys/power/pm_freeze_timeout
   + /sys/power/pm_test
-  + /sys/power/wakeup_count 
+    用于对电源管理功能的测试，由“CONFIG_PM_DEBUG”宏定义（kernel/power/Kconfig）控制是否编译进内核。其核心思想是
+    + [none]
+    + core
+    + processors
+    + platform
+    + devices
+    + freezer
+  + /sys/power/wakeup_count
+    该接口只和sleep功能有关，因此由"CONFIG_PM_SLEEP"宏定义(kernel/power/Kconfig)控制。
   + /sys/power/pm_async
   + /sys/power/pm_print_times
   + /sys/power/state
-    /sys/kernel/debug/suspend_time 
-    /sys/kernel/debug/suspend_stats
+    控制系统睡眠状态
+    "mem"
+    "standby"
+    "freeze"
+    "disk"(hibernation)
+  + /sys/kernel/debug/suspend_time
+  + /sys/kernel/debug/suspend_stats
+  + /sys/power/pm_trace
+    用于提供电源管理过程的trace记录,由"CONFIG_PM_TRACE"宏定义(kernel/power/Kconfig)控制是否编入内核，并由"sys/power/pm_trace"文件在运行是控制是否使用该功能
+    该功能的具体实现是"平台相关的"
+  + /sys/power/pm_trace_dev_match
+  +
+
+
+ state - control system sleep states.
+
+ show() returns available sleep state labels, which may be "mem", "standby", "freeze" and "disk" (hibernation).  See Documentation/power/states.txt for a description of what they mean.
+
+ store() accepts one of those strings, translates it into the proper enumerated value, and initiates a suspend transition.

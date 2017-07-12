@@ -1,0 +1,24 @@
+* 菜单
+* 刷机方法
+  #+begin_src bash
+    # 1.进入fastboot模式
+    sudo adb reboot bootloader
+    # 2.烧写kernel
+    sudo fastboot flash boot boot.img
+    sudo fastboot flash cache cache.img
+    # 4.烧写lk
+    sudo fastboot flash aboot emmc_appsboot.mbn
+    sudo fastboot flash persist persist.img
+    sudo fastboot flash recovery recovery.img
+    sudo fastboot flash system system.img
+    sudo fastboot flash tctpersist tctpersist.img
+    sudo fastboot flash userdata userdata.img
+    sudo fastboot flash custpack custpack.img
+    sudo fastboot flash modem NON-HLOS.bin
+    sudo fastboot flash sbl1 sbl1.mbn
+    sudo fastboot flash sdi sdi.mbn
+    sudo fastboot flash rpm rpm.mbn
+    sudo fastboot flash tz tz.mbn
+    sudo fastboot flash fsg study.mbn
+    sudo fastboot reboot
+  #+end_src

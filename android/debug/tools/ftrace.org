@@ -25,7 +25,7 @@
   | saved_cmdlines                  |                                                  |
   | saved_cmdlines_size             |                                                  |
   | saved_tgids                     |                                                  |
-  | set_event                       |echo ""> set_event                                       |
+  | set_event                       | echo ""> set_event                               |
   | snapshot                        |                                                  |
   | trace                           | 此文件以可读取的格式（如下所述）保存跟踪的输出。 |
   | trace_clock                     |                                                  |

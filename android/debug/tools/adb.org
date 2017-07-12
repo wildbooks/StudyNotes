@@ -128,3 +128,7 @@
   adb bugreport #将dumpsys、dumpstate和logcat数据传输到屏幕，以用于报告错误
 * batterystats
   adb shell dumpsys batterystats  --reset
+* adb push失败解决方法
+  adb disable-verity 
+  adb reboot
+  adb remount

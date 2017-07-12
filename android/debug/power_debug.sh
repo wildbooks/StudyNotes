@@ -98,4 +98,4 @@ sleep 10 &&
 # 3.执行上述命令的10秒内断开usb，大约1分钟后链接USB，把Ftrace日志拉出来
 adb pull /sdcard/trace.txt ~
 
-#TODO
+#TODO systrace

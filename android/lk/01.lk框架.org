@@ -135,3 +135,29 @@
     boot_linux()；//在boot_linux 中entry(0,machtype,tags);从kernel加载在内核中的地址开始运行了。
     到这里LK的启动过程就结束了。
   #+end_src
+* 编译
+  make aboot
+  out/target/product/xxxx/obj/EMMC_BOOTLOADER_OBJ/
+  $(EMMC_BOOTLOADER_OUT)=out/target/product/appassionato/obj/EMMC_BOOTLOADER_OBJ
+  $(BOOTLOADER_OUT)=out/target/product/appassionato/obj/EMMC_BOOTLOADER_OBJ
+  #+begin_src cpp
+    # TOP  ELF binary for ABOOT
+    TARGET_ABOOT_ELF := $(PRODUCT_OUT)/aboot.elf
+        $(TARGET_ABOOT_ELF): ABOOT_CLEAN | $(ABOOT_OUT)
+        $(MAKE) -C bootable/bootloader/lk TOOLCHAIN_PREFIX=$(CROSS_COMPILE) BOOTLOADER_OUT=../../../$(ABOOT_OUT) $(BOOTLOADER_PLATFORM) $(EMMC_BOOT) $(SIGNED_KERNEL) $(VERIFIED_BOOT) $(DEVICE_STATUS) $(BUILD_VARIANT) $(BOARD_NAME) $(ENABLE_VB_ATTEST) $(OSVERSION_IN_BOOTIMAGE)
+
+    # Top level for NAND variant targets
+    $(TARGET_NAND_BOOTLOADER): appsbootldr_clean | $(NAND_BOOTLOADER_OUT)
+        $(MAKE) -C bootable/bootloader/lk TOOLCHAIN_PREFIX=$(CROSS_COMPILE) BOOTLOADER_OUT=../../../$(NAND_BOOTLOADER_OUT) $(BOOTLOADER_PLATFORM) $(SIGNED_KERNEL) $(BOARD_NAME)
+
+    # Top level for eMMC variant targets
+    $(TARGET_EMMC_BOOTLOADER): emmc_appsbootldr_clean | $(EMMC_BOOTLOADER_OUT) $(INSTALLED_KEYSTOREIMAGE_TARGET)
+        #               lk代码根目录             编译工具                             编译输出目录                              对应的平台
+        $(MAKE) -C bootable/bootloader/lk TOOLCHAIN_PREFIX=$(CROSS_COMPILE) BOOTLOADER_OUT=../../../$(EMMC_BOOTLOADER_OUT) $(BOOTLOADER_PLATFORM) EMMC_BOOT=1 $(SIGNED_KERNEL) $(VERIFIED_BOOT) $(DEVICE_STATUS) $(BUILD_VARIANT) $(BOARD_NAME) $(ENABLE_VB_ATTEST) $(OSVERSION_IN_BOOTIMAGE)
+        echo "make -C bootable/bootloader/lk TOOLCHAIN_PREFIX=../../../prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi- BOOTLOADER_OUT=../../../out/target/product/appassionato/obj/EMMC_BOOTLOADER_OBJ appassionato EMMC_BOOT=1 SIGNED_KERNEL=1 VERIFIED_BOOT=1 DEFAULT_UNLOCK=true  BOARD_NAME=QC_Reference_Phone ENABLE_VB_ATTEST=1 OSVERSION_IN_BOOTIMAGE=1"
+
+    # TOP
+    $(TARGET_NANDWRITE): nandwrite_clean | $(NANDWRITE_OUT)
+        @echo $(BOOTLOADER_PLATFORM)_nandwrite
+        $(MAKE) -C bootable/bootloader/lk TOOLCHAIN_PREFIX=$(CROSS_COMPILE) BOOTLOADER_OUT=../../../$(NANDWRITE_OUT) $(BOOTLOADER_PLATFORM)_nandwrite BUILD_NANDWRITE=1
+  #+end_src

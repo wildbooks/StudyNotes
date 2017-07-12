@@ -1,1 +1,9 @@
-* 安装
+* powertop
+  #+begin_src bash
+    Usage: powertop [OPTION...]
+      -d, --dump            read wakeups once and print list of top offenders
+      -t, --time=DOUBLE     default time to gather data in seconds
+      -r, --reset           Reset PM stats data
+      -h, --help            Show this help message
+      -v, --version         Show version information and exit
+  #+end_src

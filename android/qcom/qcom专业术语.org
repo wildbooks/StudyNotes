@@ -4,7 +4,7 @@
 | PBL        | Primary Boot Loader                                                 | 主启动加载程序                                 |
 | TZ         | TrustZone                                                           |                                                |
 | RPM        | Resource Power Manager                                              | 资源电源管理器                                 |
-| RPM        | Remote Power Manager                                                | 远程电源管理器                                  |
+| RPM        | Remote Power Manager                                                | 远程电源管理器                                 |
 | PMIC       | Power Management Integrated Circuit (with RTC)                      | 电源管理集成电路                               |
 | FLCB       | Fast Low Current Boot                                               | 快速低电流启动                                 |
 | APSD       | Automatic Power Source Detection                                    | 自动电源检测                                   |
@@ -125,7 +125,68 @@
 | UUC        | Unusable Capacity                                                   | 不可用电量                                     |
 | RUC        | Remaining Usable Capacity                                           | RUC=RC-CC-UUC，剩余可用电量                    |
 | ICO        | Input Current Optimizer                                             | 输入电量优化器                                 |
-|            |                                                                     |                                                |
+| ADSP       |                                                                     |                                                |
+| APSS       | Application Processor Subsystem Software                            | 应用处理器子系统软件                           |
+| DRI        | Data-Ready-Interrupt                                                | 数据读中断                                     |
+| LA         | Linux Android                                                       |                                                |
+| SAM        | Sensors Algorithm Manager                                           | 传感器算法管理                                 |
+| SLPI       | Sensor Low Power Island                                             | 传感器低功率岛                                 |
+| SMGR       | Sensors Manager                                                     | 传感器管理                                     |
+| SSC        | Snapdragon Sensors Core                                             | 骁龙传感器核                                   |
+| SSI        | Sensors Single Image                                                | 传感器单图像                                   |
+| UUID       | Universally Unique Identifier                                       | 通用唯一标识符                                 |
+| SCM        | Sensor calibration manager                                          | 传感器校准管理器                               |
+| AMD        | Absolute motion detect                                              | 绝对运动检测                                   |
+| RMD        | Relative motion detection                                           | 相对运动检测                                   |
+| DDF        | Device driver framework                                             | 设备驱动程序框架                               |
+| dps        | Degrees per second                                                  | 度每秒                                         |
+| JNI        | Java Native Interface                                               |                                                |
+| DSPS       | Dedicated Sensor Processing Subsystem                               | 专用传感器处理子系统                           |
+| BSP        | Board support package                                               | 板级支持包                                     |
+| PoR        | Plan of record                                                      | 记录计划                                       |
+| DT         | Delay tick                                                          | 延迟滴答                                       |
+| LPF        | Low-pass filter                                                     | 低通滤波器                                     |
+| ODR        | Output data rate                                                    | 输出数据速率                                   |
+| RR         | Resolution ratio                                                    | 分辨率                                         |
+| S4S        | ynchronization for Sensors                                          | 传感器的同步                                   |
+| ST         | Sync tick                                                           | 同步滴答                                       |
+| T_Ph       | Sync period, frequency, and phase                                   | 同步周期，频率和相位                           |
+| WM         | Watermark                                                           | 水印                                           |
+| RH         | Report handler                                                      |                                                |
+| SAE        | Society of Automotive Engineers                                     |                                                |
+| SAE        | Society of Automotive Engineers                                     |                                                |
+| SMD        | Shared memory driver                                                |                                                |
+| SMD        | Significant motion detection                                        |                                                |
+| SMR        | Sensors message router                                              |                                                |
+| SNS        | PM Sensors power manager                                            |                                                |
+| SSI        | Sensors single image                                                |                                                |
+| SVA        | Snapdragon voice activation                                         |                                                |
+| ACM        | Application client manager                                          | 应用程序客户管理                               |
+| DPC        | Device position classifier                                          |                                                |
+| DRI        | Data ready interrupt                                                |                                                |
+| HAL        | Hardware abstraction layer                                          |                                                |
+| IOD        | Indoor outdoor detection                                            |                                                |
+| NV         | Nonvolatile                                                         |                                                |
+| OSA        | Operating system abstraction                                        | 操作系统抽象                                   |
+| PIL        | Peripheral image loader                                             | 外设图像加载器                                 |
+| PM         | Power manager                                                       | 电源管理                                       |
+| QCAT       | Qualcomm CDMA Analysis Toolkit                                      |                                                |
+| QCCI       | QMI Common Client interface                                         |                                                |
+| QCSI       | QMI Common Service interface                                        |                                                |
+| QGyroCal   | Qualcomm gyro calibration                                           |                                                |
+| QMagCal    | Qualcomm magnetometer calibration                                   |                                                |
+| QMI        | Qualcomm Message interface                                          | 高通消息接口                                   |
+| IDL        | interface description language                                      |                                                |
+| QDSS       | Qualcomm debug subsystem                                            |                                                |
+| SUID       | Sensor UID                                                          |                                                |
+| EIS        | Electronic image stabilization                                      |                                                |
+| GRV        | Game rotation vector                                                |                                                |
+| GeoRV      | Geomagnetic rotation vector                                         |                                                |
+| Mproc      | Multiprocessor communication                                        |                                                |
+| TAM        | Technical account manager                                           |                                                |
+| UID        | Unique identifier                                                   |                                                |
+| XDR        | External data representation                                        |                                                |
+| AMSS       | Advanced Mobile Subscriber Software                                 | 高级移动订阅软件                               |
 * 电量计算公式
   + SOC(电荷状态)计算
     SOC = RUC / (FCC-UUC)

@@ -1,0 +1,22 @@
+* sensosr类型
+  | Sensors type                | name       |
+  |-----------------------------+------------|
+  | Accelerometer               | 加速度计   |
+  | Magnetometer                | 磁力计     |
+  | Gyroscope                   | 陀螺仪     |
+  | Sensor Temperature          | 温度传感器 |
+  | Proximity                   | 距离传感器 |
+  | Light                       | 光传感器   |
+  | Pressure                    | 压力传感器 |
+  | Double-tap                  |            |
+  | Humidity                    | 湿度传感器 |
+  | RGB                         |            |
+  | Color Temperature and Clear |            |
+  | Gesture                     |            |
+  | Capacitive/SAR              |            |
+  | Hall Effect                 |            |
+  | Ambient Temperature         |            |
+  | UV                          |            |
+  | Object/Human Temperature    |            |
+  | Heart Rate                  | 心率传感器 |
+  |                             |            |
