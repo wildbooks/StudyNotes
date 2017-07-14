@@ -1,0 +1,8 @@
+# StudyNotes
+* android
+* Farsight
+* language
+* linux
+* MyINFO.org
+* README.org
+* RPI
