@@ -1,3 +1,13 @@
 * 系统升级到fedora25
-dnf install dnf-plugin-system-upgrade
-dnf system-upgrade download --releasever=25
+  + 更新Fedora系统包
+    dnf upgrade --refresh
+  + 安装系统升级DNF插件
+    dnf install dnf-plugin-system-upgrade
+  + 下载系统升级包
+    dnf system-upgrade download --releasever=25
+    + Couldn't read a file:// file for file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-x86_64解决方法
+      sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-26-x86_64
+  + 开始升级
+    dnf system-upgrade reboot
+  + 升级成功后删除软件包缓存
+    dnf clean packags
