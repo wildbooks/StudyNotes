@@ -6,11 +6,11 @@
     $XDG_CONFIG_HOME/aria2/aria2.conf 可以使用--conf-path指定
 * examples
   + Download from WEB
-    aria2c http://example.org/mylinux.iso
+    aria2c http://mirrors.163.com/fedora/releases/26/Everything/x86_64/iso/Fedora-Everything-netinst-x86_64-26-1.5.iso
   + Download from 2 sources
     aria2c http://a/f.iso ftp://b/f.iso
   + Download using 2 connections per host:
-    aria2c -x2 http://a/f.iso
+    aria2c -x2 http://mirrors.163.com/fedora/releases/26/Everything/x86_64/iso/Fedora-Everything-netinst-x86_64-26-1.5.iso
   + BitTorrent
     aria2c http://example.org/mylinux.torrent
   + BitTorrent Magnet URI(磁铁):
