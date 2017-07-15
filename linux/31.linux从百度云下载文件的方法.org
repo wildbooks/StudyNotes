@@ -1,6 +1,7 @@
 * 方案1：wget
-	http://blog.csdn.net/zhongdajiajiao/article/details/51917886
-	http://www.jianshu.com/p/15b3744136dd
-	wget -c --referer=http://pan.baidu.com/s/xxxx -O  filename "url"
+  http://blog.csdn.net/zhongdajiajiao/article/details/51917886
+  http://www.jianshu.com/p/15b3744136dd
+  wget -c --referer=http://pan.baidu.com/s/xxxx -O  filename "url"
 * 方案2：axel
+  axel -n 10 -o /tmp/ http://www.linuxde.net/lnmp.tar.gz #10线程
 

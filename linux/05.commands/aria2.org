@@ -1,0 +1,21 @@
+* aria2简介
+  [[https://medium.com/@Justin___Smith/aria2%E9%85%8D%E7%BD%AE%E6%95%99%E7%A8%8B-mac%E5%92%8Cwindows-b31d0f64bd4e][参考文档]]
+  aria2是一个轻量级的多协议和多源命令行 下载工具。它支持HTTP / HTTPS，FTP，SFTP， BitTorrent和Metalink。aria2可以通过内置的 JSON-RPC和XML-RPC接口进行操作。
+  + config
+    $HOME/.aria2/aria2.conf
+    $XDG_CONFIG_HOME/aria2/aria2.conf 可以使用--conf-path指定
+* examples
+  + Download from WEB
+    aria2c http://example.org/mylinux.iso
+  + Download from 2 sources
+    aria2c http://a/f.iso ftp://b/f.iso
+  + Download using 2 connections per host:
+    aria2c -x2 http://a/f.iso
+  + BitTorrent
+    aria2c http://example.org/mylinux.torrent
+  + BitTorrent Magnet URI(磁铁):
+    aria2c 'magnet:?xt=urn:btih:248D0A1CD08284299DE78D5C1ED359BB46717D8C'
+  + Metalink:
+    aria2c http://example.org/mylinux.metalink
+  + Download URIs found in text file:
+    aria2c -i uris.txt

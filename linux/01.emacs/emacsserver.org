@@ -1,0 +1,5 @@
+* emacsserver
+  1. emacs --daemon #开启emacs服务器守护进程
+  2. emacs开启emacsserver
+* emacsclient
+  emacsclient -n file #不等待打开文件

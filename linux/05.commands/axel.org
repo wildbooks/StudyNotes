@@ -1,0 +1,28 @@
+* 简介
+  Axel支持HTTP,HTTPS,ftp,ftps协议下载,axel工具很小，才十几k，下载速度超快
+* 安装
+  sudo dnf install axel
+** 配置文件
+   /etc/axelrc   System-wide configuration file.
+   ~/.axelrc     Personal configuration file
+* axel --help
+  #+begin_src bash
+    用法: axel [选项] 地址1 [地址2] [地址...]
+        --max-speed=x		-s x	指定最大速率（字节/秒）
+        --num-connections=x	-n x	指定最大连接数
+        --output=f		-o f	指定本地输出文件
+        --search[=x]		-S[x] 搜索镜像并从X服务器下载
+        --header=x      -H x 添加头文件字符串x（指定 HTTP header）
+        --user-agent=x  -U x 设置用户代理（指定 HTTP user agent）
+        --no-proxy		-N	不使用任何代理服务器
+        --quiet			-q	使用输出简单信息模式
+        --verbose		-v	更多状态信息
+        --alternate		-a	文本式进度指示器
+        --help			-h	帮助信息
+        --version		-V	版本信息
+  #+end_src
+* EXAMPLES
+  + 从网易镜像站中10线程下载Fedora-Everything-netinst.iso
+    axel -n 10  http://mirrors.163.com/fedora/releases/26/Everything/x86_64/iso/Fedora-Everything-netinst-x86_64-26-1.5.iso
+  +
+    axel -S4 linux-2.4.17.tar.bz2 #不太明白
