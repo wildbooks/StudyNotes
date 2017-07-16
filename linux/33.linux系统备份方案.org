@@ -5,8 +5,18 @@
     restore
 * tar
   + 备份
-    cd / && sudo tar cvpzf backup.tgz --exclude=/proc --exclude=/mnt --exclude=/sys --exclude=/backup.tgz
-    --exclude=/media --exclude=/home /
+    cd / && sudo tar cvpzf backup.tgz --exclude=/proc --exclude=/mnt --exclude=/sys --exclude=/backup.tgz --exclude=/media --exclude=/home /
+    "sudo tar cvpzf backup.tgz
+  --exclude=/proc/*
+  --exclude=/mnt/*
+  --exclude=/sys/*
+  --exclude=/var/*
+  --exclude=/tmp/*
+  --exclude=/root/*
+  --exclude=/lost+found/*
+  --exclude=/backup.tgz
+  --exclude=/media/*
+  --exclude=/home/* /"
   + 还原
     tar xvpfz backup.tgz -C /
     mkdir /proc /sys /mnt /media /home

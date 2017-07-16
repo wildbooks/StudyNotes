@@ -1,0 +1,2 @@
+* 挂载iso镜像
+  mount -o loop xxx.iso /mnt
