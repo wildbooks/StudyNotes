@@ -1,8 +1,13 @@
-# StudyNotes
+* 简介
+  本笔记创于2015.10.11自学嵌入式linux开始维护，
 * android
+  android源码研究
 * Farsight
 * language
+  编程语言
 * linux
+  linux系统相关，包含命令使用，服务器搭建，linux下载方法等等
 * MyINFO.org
 * README.org
 * RPI
+  树莓派
