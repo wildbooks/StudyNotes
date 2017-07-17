@@ -14,14 +14,14 @@
       #API Layer(API/sysfs)
       #(PM Driver):分为两部分,一是体系结构无关的Driver,提供Driver框架(Framework)。另一部分是具体体系结构相关的Driver,
     + include
-      pm.h
-      pm_runtime.h
-      pm_clock.h
-      pm_opp.h
-      pmu.h
-      pm_domain.h
-      pm_qos.h
-      pm_wakeup.h
+      kernel/include/linux/pm.h
+      kernel/include/linux/pm_runtime.h
+      kernel/include/linux/pm_clock.h
+      kernel/include/linux/pm_opp.h
+      kernel/include/linux/pmu.h
+      kernel/include/linux/pm_domain.h
+      kernel/include/linux/pm_qos.h
+      kernel/include/linux/pm_wakeup.h
   + *sysfs*\\
     /sys/power/
     /sys/kernel/debug/suspend_stats
