@@ -278,6 +278,7 @@ struct gpio_led_platform_data {
 					unsigned long *delay_off);
 };
 
+/*平台设备驱动注册*/
 struct platform_device *gpio_led_register_device(
 		int id, const struct gpio_led_platform_data *pdata);
 

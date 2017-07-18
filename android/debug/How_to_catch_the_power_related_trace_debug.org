@@ -134,11 +134,14 @@
     adb shell dmesg > YearMounthDayHourMinute_dmesg.txt         //kernel log
   + Ftrace logs
   + Wakelocks/wake-up sources
-    cat /d/wakeup_sources  #Check wake locks  检查唤醒源
-    cat ~/wakelocks.txt | awk '{print $1"\t\t\t\t\t\t"$6}' #过滤wakeup_sources
-    cat /sys/kernel/debug/rpm_stats  #check xosd/vmin  检查关闭时钟次数，低电流次数
-    cat /proc/interrupts # Check frequent interrupts activity  检查频繁中断活动
-    sleep 20 && cat /proc/interrupts > /data/interrupt1.txt && sleep 30 && cat /proc/interrupts > /data/interrupt2.txt &
+    + wakeup_sources
+      cat /d/wakeup_sources  #Check wake locks  检查唤醒源
+      cat ~/wakelocks.txt | awk '{print $1"\t\t\t\t\t\t"$6}' #过滤wakeup_sources
+    + check xosd/vim
+      cat /sys/kernel/debug/rpm_stats  #check xosd/vmin  检查关闭时钟次数，低电流次数
+    + interrupts
+      cat /proc/interrupts # Check frequent interrupts activity  检查频繁中断活动
+      sleep 20 && cat /proc/interrupts > /sdcard/interrupt1.txt && sleep 30 && cat /proc/interrupts > /sdcard/interrupt2.txt &
     + wakeup debug mask
       echo 1 > /sys/kernel/debug/clk/debug_suspend
       echo 1 > /sys/module/msm_show_resume_irq/parameters/debug_mask
@@ -174,7 +177,6 @@
     #+end_src
 * 功耗流程
   先看低电流() 再看唤醒源
-
   #+begin_src bash
     # 1.链接USB
     # 2.输入以下命令

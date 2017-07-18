@@ -1,0 +1,4 @@
+* ifas
+  触发器
+  研究这个 n8996/kernel/drivers/media/platform/msm/camera_v2/sensor/flash/msm_flash.c
+* 触发器使用方法

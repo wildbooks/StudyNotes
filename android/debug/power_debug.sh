@@ -1,6 +1,5 @@
 #TODO 收集时钟信息
-# 捕捉时钟和调节器转储
-adb shell
+# 捕捉时钟和调节器转储 adb shell
 #mount -t debugfs none /sys/kernel/debug
 sleep 10 && while true;
 do
@@ -39,8 +38,7 @@ do
     done;
     sleep 2;
 done > /sdcard/dumpclk.txt &
-adb pull /sdcard/dumpclk.txt .
-
+adb pull /sdcard/dumpclk.txt .  
 #TODO 采集唤醒锁信息
 adb shell cat /sys/kernel/debug/wakeup_sources # 或者adb shelldumpsys power
 sleep 60 && cat /d/wakeup_sources > /sdcard/wakelocks.txt&
@@ -99,3 +97,11 @@ sleep 10 &&
 adb pull /sdcard/trace.txt ~
 
 #TODO systrace
+
+#TODO suspend_stats
+cat /sys/kernel/debug/suspend_stats #查看睡眠是否成功
+cat /sys/power/wake_lock            #查看用户空间锁是否释
+
+#TODO 查看中断号和定时器
+rm -f /sdcard/interrupt* && sleep 20 && cat /proc/interrupts > /sdcard/interrupt1.txt && sleep 30 && cat /proc/interrupts > /sdcard/interrupt2.txt&
+adb pull /sdcard/interrupt* ~
