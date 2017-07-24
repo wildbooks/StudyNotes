@@ -1,2 +1,4 @@
 * 挂载iso镜像
   mount -o loop xxx.iso /mnt
+* nfs远程挂载
+  sudo mount -t nfs 172.26.14.159:/home/guojian/nfsboot /mnt/

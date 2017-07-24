@@ -1,73 +1,115 @@
+#+TITLE: 电源管理之autosleep
+#+AUTHOR:      野书
+#+DATE:        a date, fixed, of a format string for format-time-string
+#+EMAIL:       www762268@foxmail.com
+#+DESCRIPTION: 掌握用emacs写博客，高亮代码等技巧
+#+KEYWORDS:    emacs
+#+LANGUAGE:    language for HTML, e.g. ‘en’ (org-export-default-language)
+#+TEXT:        Some descriptive text to be inserted at the beginning.
+#+TEXT:        Several lines may be given.
+#+OPTIONS:     H:2 num:t toc:t \n:nil @:t ::t |:t ^:t f:t TeX:t ...
+#+LINK_UP:     the ``up'' link of an exported page
+#+LINK_HOME:   the ``home'' link of an exported page
+#+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
 * 简介
   + 向内核其他driver提供了wakelock的创建和注销接口，允许driver创建wakelock以阻止睡眠、注销wakelock以允许睡眠
-  + wakeup event
-  + wakelock
+  + *wakeup event*
+  + *wakelock*\\
     wakeup event framework core框架提供
-  + 
+* 专业术语
+  | 术语                      | 全称 | 含义                         |
+  |---------------------------+------+------------------------------|
+  | reboot                    |      | 重启                         |
+  | Restart                   |      | 重启                         |
+  | Power off                 |      | 关机                         |
+  | Shutdown                  |      | 关机                         |
+  | Hibernate                 |      | 冬眠(Suspend to disk , STD)  |
+  | Standby                   |      | 待机                         |
+  | sleep                     |      |                              |
+  | Auto Sleep                |      | 达到条件多久后，自动进入睡眠 |
+  | Auto put display to sleep |      | 显示器自动休眠               |
+  | Suspend                   |      | 睡眠(STR)                    |
+  |                           |      |                              |
 * 帮助文档
   + *Doc*\\
   + *Code*\\
-    + PM Core
-      kernel/power/ #核心(PM逻辑 Core)
-    + Device PM
-      kernel/drivers/base/power/
-      #API Layer(API/sysfs)
-      #(PM Driver):分为两部分,一是体系结构无关的Driver,提供Driver框架(Framework)。另一部分是具体体系结构相关的Driver,
-    + include
-      kernel/include/linux/pm.h
-      kernel/include/linux/pm_runtime.h
-      kernel/include/linux/pm_clock.h
-      kernel/include/linux/pm_opp.h
-      kernel/include/linux/pmu.h
-      kernel/include/linux/pm_domain.h
-      kernel/include/linux/pm_qos.h
-      kernel/include/linux/pm_wakeup.h
+    + PM Core\\
+      kernel/power/ #核心(PM逻辑 Core)\\
+    + Device PM\\
+      kernel/drivers/base/power/\\
+      #API Layer(API/sysfs)\\
+      #(PM Driver):分为两部分,一是体系结构无关的Driver,提供Driver框架(Framework)。另一部分是具体体系结构相关的Driver,\\
+    + include\\
+      kernel/include/linux/pm.h\\
+      kernel/include/linux/pm_runtime.h\\
+      kernel/include/linux/pm_clock.h\\
+      kernel/include/linux/pm_opp.h\\
+      kernel/include/linux/pmu.h\\
+      kernel/include/linux/pm_domain.h\\
+      kernel/include/linux/pm_qos.h\\
+      kernel/include/linux/pm_wakeup.h\\
   + *sysfs*\\
-    /sys/power/
-    /sys/kernel/debug/suspend_stats
-    /sys/kernel/debug/wakeup_sources (drivers/base/power/wakeup.c)
-    /sys/devices/xxx/power (kernel/drivers/base/power/sysfs.c)
-* sysfs 
-  + /sys/power/autosleep
+    /sys/power/\\
+    /sys/kernel/debug/suspend_stats\\
+    /sys/kernel/debug/wakeup_sources (drivers/base/power/wakeup.c)\\
+    /sys/devices/xxx/power (kernel/drivers/base/power/sysfs.c)\\
+* sysfs
+  机制
+  + */sys/power/autosleep*\\
     当系统中所有的wakelock都注销后，系统可以自动进入低功耗状态：由autosleep实现
-  + /sys/power/wake_lock 
-    用户程序向文件写入一个字符串，即可创建一个wakelock，该字符串就是wakelock的名字。该wakelock可以阻止系统进入低功耗模式。
-    读：获取系统中所有的处于active状态的wakelock列表（也即wakeup source列表）
-    写：相当于以wakeup source为参数调用__pm_stay_awake（或者__pm_wakeup_event），即activate wakeup event；
-  + /sys/power/wake_unlock
-    用户程序向文件写入相同的字符串，即可注销一个wakelock.当系统中所有的wakelock都注销后，系统可以自动进入低功耗状态
-    读：相当于以wakeup source为参数，调用__pm_relax
-    写：返回系统中所有的处于非active状态的wakelock信息（也即wakeup source列表）
-  + /sys/power/pm_freeze_timeout
-  + /sys/power/pm_test
-    用于对电源管理功能的测试，由“CONFIG_PM_DEBUG”宏定义（kernel/power/Kconfig）控制是否编译进内核。其核心思想是
-    + [none]
-    + core
-    + processors
-    + platform
-    + devices
-    + freezer
-  + /sys/power/wakeup_count
-    该接口只和sleep功能有关，因此由"CONFIG_PM_SLEEP"宏定义(kernel/power/Kconfig)控制。
-  + /sys/power/pm_async
-  + /sys/power/pm_print_times
-  + /sys/power/state
-    控制系统睡眠状态
-    "mem"
-    "standby"
-    "freeze"
-    "disk"(hibernation)
-  + /sys/kernel/debug/suspend_time
-  + /sys/kernel/debug/suspend_stats
-  + /sys/power/pm_trace
-    用于提供电源管理过程的trace记录,由"CONFIG_PM_TRACE"宏定义(kernel/power/Kconfig)控制是否编入内核，并由"sys/power/pm_trace"文件在运行是控制是否使用该功能
-    该功能的具体实现是"平台相关的"
-  + /sys/power/pm_trace_dev_match
-  +
-
-
- state - control system sleep states.
-
- show() returns available sleep state labels, which may be "mem", "standby", "freeze" and "disk" (hibernation).  See Documentation/power/states.txt for a description of what they mean.
-
- store() accepts one of those strings, translates it into the proper enumerated value, and initiates a suspend transition.
+    | autosleep值 | 全称                      | 含义                         |
+    |-------------+---------------------------+------------------------------|
+    | freeze      | auto freeze               | suspend to idle              |
+    | standby     | auto standby              | Power-On suspend             |
+    | mem         | auto STR(Suspend to RAM)  | Suspend to RAM               |
+    | disk        | auto STD(Suspend to disk) | Suspend to disk(hibernation) |
+    | off         | off                       | 关机                         |
+    | error       | error                     |                              |
+  + */sys/power/wake_lock*\\
+    用户程序向文件写入一个字符串，即可创建一个wakelock，该字符串就是wakelock的名字。该wakelock可以阻止系统进入低功耗模式。\\
+    读：获取系统中所有的处于active状态的wakelock列表（也即wakeup source列表）\\
+    写：相当于以wakeup source为参数调用__pm_stay_awake（或者__pm_wakeup_event），即activate wakeup event；\\
+  + */sys/power/wake_unlock*\\
+    用户程序向文件写入相同的字符串，即可注销一个wakelock.当系统中所有的wakelock都注销后，系统可以自动进入低功耗状态\\
+    读：相当于以wakeup source为参数，调用__pm_relax\\
+    写：返回系统中所有的处于非active状态的wakelock信息（也即wakeup source列表）\\
+  + */sys/power/pm_freeze_timeout*\\
+  + */sys/power/pm_test*\\
+    用于对电源管理功能的测试，由“CONFIG_PM_DEBUG”宏定义（kernel/power/Kconfig）控制是否编译进内核。其核心思想是\\
+    + [none]\\
+    + core\\
+    + processors\\
+    + platform\\
+    + devices\\
+    + freezer\\
+  + */sys/power/wakeup_count*\\
+    该接口只和sleep功能有关，因此由"CONFIG_PM_SLEEP"宏定义(kernel/power/Kconfig)控制。\\
+  + */sys/power/pm_async*\\
+  + */sys/power/pm_print_times*\\
+  + */sys/power/state*\\
+    控制系统睡眠状态,总共有以下4个状态
+    | state值 | 全称                      | 含义                         |
+    |---------+---------------------------+------------------------------|
+    | freeze  | auto freeze               | suspend to idle              |
+    | standby | auto standby              | Power-On suspend             |
+    | mem     | auto STR(Suspend to RAM)  | Suspend to RAM               |
+    | disk    | auto STD(Suspend to disk) | Suspend to disk(hibernation) |
+  + */sys/kernel/debug/suspend_time*\\
+  + */sys/kernel/debug/suspend_stats*\\
+  + */sys/power/pm_trace*\\
+    用于提供电源管理过程的trace记录,由"CONFIG_PM_TRACE"宏定义(kernel/power/Kconfig)控制是否编入内核，并由"sys/power/pm_trace"文件在运行是控制是否使用该功能\\
+    该功能的具体实现是"平台相关的"\\
+  + */sys/power/pm_trace_dev_match*\\
+  + stat\\
+    state - control system sleep states.\\
+    show() returns available sleep state labels, which may be "mem", "standby", "freeze" and "disk" (hibernation).  See Documentation/power/states.txt for a description of what they mean.\\
+    store() accepts one of those strings, translates it into the proper enumerated value, and initiates a suspend transition.\\
+* Runtime PM
+  + *Doc*\\
+  + *Code*\\
+  + *sysfs*\\
+    /sys/class/xxx/power/autosuspend_delay_ms
+    /sys/class/xxx/power/control
+    /sys/class/xxx/power/runtime_active_time
+    /sys/class/xxx/power/runtime_status
+    /sys/class/xxx/power/runtime_suspended_time

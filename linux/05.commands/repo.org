@@ -1,0 +1,3 @@
+* 切分支
+  repo forall -c "git checkout MSM8909_KAIOS_GFLIP2_DEV_ATT_TA"
+

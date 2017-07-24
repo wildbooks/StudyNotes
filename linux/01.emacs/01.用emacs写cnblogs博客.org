@@ -1,3 +1,4 @@
+#+TITLE: 用emacs管理博客园博客
 #+AUTHOR:      野书
 #+DATE:        a date, fixed, of a format string for format-time-string
 #+EMAIL:       www762268@foxmail.com
@@ -11,7 +12,6 @@
 #+LINK_HOME:   the ``home'' link of an exported page
 #+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
 * 前言
-[[My Target][wo]
 ** 个人写博客历史
    #+BEGIN_CENTER
    从2015-12-04号开始，记得那时我在学习linux，在那期间我学会了做笔记这个习惯，美其名曰做好\\
@@ -31,46 +31,43 @@
      emacs与vim的介绍参照：[[http://os.51cto.com/art/201101/242518.htm][《Emacs和：神的编译器和编译器之神》]]\\
      org-mode的教程：[[http://www.cnblogs.com/Open_Source/archive/2011/07/17/2108747.html][《Org-mode 简明教程》]] \\
    讲这么多废话，接下来进入正题部分
-# 分割线
-# 五条短线或以上显示为分隔线
-----------
-
-#+BEGIN_CENTER
-
-   \alpha \\
-   \beta\\
-   \gamma\\
-   M_sun = 1.989 x 10^30 kg \\
-   R_{sun} =6.96 x 10^8 m \\
-   $a^2=b$ \\
-   $b=2$ \\
-   $a=+\sqrt{2}$ \\
-   $a=-\sqrt{2}$
-#+END_CENTER
-\begin{equation}
-x=\sqrt{b}
-\end{equation}
-
-
-# 如输入一个<s 然后TAB后就变为
-# c为所添加的语言
-# -n 显示行号
-# #+begin_example ... #+end_example  : 单行的例子以冒号开头
-# #+begin_quote ... #+end_quote      通常用于引用，与默认格式相比左右都会留出缩进
-# #+begin_verse ... #+end_verse      默认内容不换行，需要留出空行才能换行
-# #+begin_center ... #+end_center
-# #+begin_latex ... #+end_latex
-# #+latex:
-# #+begin_html ... #+end_html
-# #+html:
-# #+begin_ascii ... #+end_ascii
-# #+ascii:
-# #+index: line
-# 加载一个文件并让它显示出来
-# #+include: "~/.emacs.d/init.el" src emacs-lisp
-
+   # 分割线
+   # 五条短线或以上显示为分隔线
+   ----------
+   #+BEGIN_CENTER
+     \alpha \\
+     \beta\\
+     \gamma\\
+     M_sun = 1.989 x 10^30 kg \\
+     R_{sun} =6.96 x 10^8 m \\
+     $a^2=b$ \\
+     $b=2$ \\
+     $a=+\sqrt{2}$ \\
+     $a=-\sqrt{2}$
+   #+END_CENTER
+   \begin{equation}
+   x=\sqrt{b}
+   `\end{equation}
+   # 如输入一个<s 然后TAB后就变为
+   # c为所添加的语言
+   # -n 显示行号
+   # #+begin_example ... #+end_example  : 单行的例子以冒号开头
+   # #+begin_quote ... #+end_quote      通常用于引用，与默认格式相比左右都会留出缩进
+   # #+begin_verse ... #+end_verse      默认内容不换行，需要留出空行才能换行
+   # #+begin_center ... #+end_center
+   # #+begin_latex ... #+end_latex
+   # #+latex:
+   # #+begin_html ... #+end_html
+   # #+html:
+   # #+begin_ascii ... #+end_ascii
+   # #+ascii:
+   # #+index: line
+   # 加载一个文件并让它显示出来
+   # #+include: "~/.emacs.d/init.el" src emacs-lisp
 * 标题
-#+TITLE: 用emacs管理博客园博客
+  #+begin_src
+  #+TITLE: 用emacs管理博客园博客
+  #+end_src
 * 段落
   段落一
   # ‘\\’是换行符号
@@ -82,7 +79,7 @@ x=\sqrt{b}
   +删除线+\\
   _下划线_\\
   # 注释 这里必须留一个空格要不然2和O都成为小标，目前还不知道怎么去掉空格)
-  下标： H_2\\
+  下标： H_2 O\\
   上标： E=mc^2\\
   等宽字：  =git=\\
 * 列表
@@ -92,24 +89,18 @@ x=\sqrt{b}
           + 无序二级列表
   2. 有序一级列表
      - 描述列表 :: 描述列表就是这德行
-
 * 嵌入元数据
 ** a #+BEGIN_ASCI ... #+END_ASCII
    | 快捷键 | 命令 | 功能 |
    |--------+------+------|
    | <a+TAB |      |      |
    #+BEGIN_ASCII
-
    #+END_ASCII
-
 ** A #+ASCII:
    | 快捷键 | 命令 | 功能 |
    |--------+------+------|
    | <A+TAB |      |      |
-
-
    #+ASCII:
-
 ** c #+BEGIN_CENTER ... #+END_CENTER
    | 快捷键 | 命令 | 功能 |
    |--------+------+------|
@@ -280,7 +271,6 @@ x=\sqrt{b}
 * 脚注
 * 标签
 * D
-
 #+ATTR_HTML: :textarea t :width 40
      #+BEGIN_EXAMPLE
        (defun org-xor (a b)
@@ -290,12 +280,12 @@ x=\sqrt{b}
 * 说明
   - 这是我边用边学总结的，有很多不足之处，希望大家能给些建议帮助我修改本篇文章//
   谢谢各位了！！！！持续更新状态....
-#+BEGIN_HTML
-h3{background: #390;
-border-bottom: 1px solid #060;
-border-radius: 3px;
-color: #FFF;
-padding: 5px;
-text-indent: 0.5em;
-text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);}
-#+END_HTML
+  #+BEGIN_HTML
+  h3{background: #390;
+  border-bottom: 1px solid #060;
+  border-radius: 3px;
+  color: #FFF;
+  padding: 5px;
+  text-indent: 0.5em;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);}
+  #+END_HTML

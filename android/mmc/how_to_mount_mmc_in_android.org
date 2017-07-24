@@ -1,0 +1,29 @@
+* 帮助文档
+  + *Doc*
+  + *sysfs*
+    /dev/block/mmcblkxxxx #内存卡分区
+  + *Code*
+    device/tct/appassionato/init.target.rc
+    device/tct/appassionato/fstab.qcom
+    device/tct/appassionato/vold.fstab
+    device/tct/appassionato/recovery.fstab
+    device/tct/appassionato/charger.fstab.qcom
+    device/tct/appassionato/mini.fstab.qcom
+* 示例
+** 改变分区(firmware)读写权限
+   + 方案一: 重新挂载
+     #+begin_src bash
+     #step 1(androi7需要这一步)
+     adb root
+     adb disable-verlty
+     adb reboot
+
+     #step 2
+     adb root
+     adb shell mount -o rw,remount /firmware
+     #+end_src
+   + 方案二: 修改代码
+     修改init.target.rc
+** 修改分区大小
+   高通分区表配置
+   amss_8996/vendor/tct/appassionato/build/partition_load_pt/
