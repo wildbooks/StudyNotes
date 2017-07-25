@@ -1,3 +1,16 @@
+#+TITLE: 在android系统中如何挂载分区
+#+AUTHOR:      野书
+#+DATE:        a date, fixed, of a format string for format-time-string
+#+EMAIL:       www762268@foxmail.com
+#+DESCRIPTION: 在android系统中如何挂载分区,以及改变分区的大小
+#+KEYWORDS:    emacs
+#+LANGUAGE:    language for HTML, e.g. ‘en’ (org-export-default-language)
+#+TEXT:        Some descriptive text to be inserted at the beginning.
+#+TEXT:        Several lines may be given.
+#+OPTIONS:     H:2 num:t toc:t \n:nil @:t ::t |:t ^:t f:t TeX:t ...
+#+LINK_UP:     the ``up'' link of an exported page
+#+LINK_HOME:   the ``home'' link of an exported page
+#+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
 * 帮助文档
   + *Doc*
   + *sysfs*
