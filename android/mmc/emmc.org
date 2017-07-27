@@ -1,0 +1,42 @@
+* 专业术语
+  | 简写    | 全称                                                  | 含义                                                                   |
+  |---------+-------------------------------------------------------+------------------------------------------------------------------------|
+  | Block   |                                                       | 块                                                                     |
+  | CLK     | Clock signal                                          |                                                                        |
+  | CMD     | Command line or e•MMC bus command (if extended CMDXX) |                                                                        |
+  | CRC     | Cyclic Redundancy Check                               | 循环冗余校验                                                           |
+  | DAT     | Date line                                             |                                                                        |
+  | CID     | Device IDentification register                        | 设备识别寄存器，主要是设备相关的信息                                   |
+  | CSD     | Device Specific Data register                         |                                                                        |
+  | EXT_CSD | Extended Device Specific Data                         | 包含有关设备功能和所选模式的信息。                                     |
+  | OCR     | Operation Conditions Register                         | 操作条件寄存器， 操作条件注册。 用特殊的广播命令来识别设备的电压类型。 |
+  | QSR     | Queue Status Register                                 |                                                                        |
+  | RCA     | Relative Device Address register                      | 相对设备地址寄存器,是设备系统地址，在初始化期间由主机动态分配          |
+  | DSR     |                                                       |                                                                        |
+* hw
+  | 简写      | 全称                           | 含义       |
+  |-----------+--------------------------------+------------|
+  | CLK       |                                | 时钟信号线 |
+  | DS        | Data Strobe                    | 时钟信号线 |
+  | CMD       | Command/Response               |            |
+  | DAT[0..7] |                                | 数据线     |
+  | RST_n     | Hardware reset                 | 硬件复位线 |
+  | V_cc      | Supply voltage for Core        | 电源线     |
+  | V_ccQ     | Supply voltage for I/O         |            |
+  | V_SS      | Supply voltage ground for Core |            |
+  | V_SSQ     | Supply voltage ground for I/O  |            |
+* 命令
+* 寄存器
+  | 简写    | 全称                             | 含义                                                                   |
+  |---------+----------------------------------+------------------------------------------------------------------------|
+  | OCR     | Operation Conditions Register    | 操作条件寄存器， 操作条件注册。 用特殊的广播命令来识别设备的电压类型。 |
+  | CID     | Device IDentification register   | 设备识别寄存器，主要是设备相关的信息                                   |
+  | CSD     | Device Specific Data register    |                                                                        |
+  | EXT_CSD | Extended Device Specific Data    | 包含有关设备功能和所选模式的信息。                                     |
+  | RCA     | Relative Device Address register | 相对设备地址寄存器,是设备系统地址，在初始化期间由主机动态分配          |
+  | DSR     | driver stage register            |                                                                        |
+  | QSR     | Queue Status Register            |                                                                        |
+* 协议
+** command
+** response
+**

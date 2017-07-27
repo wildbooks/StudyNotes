@@ -29,7 +29,6 @@
   | Auto Sleep                |      | 达到条件多久后，自动进入睡眠 |
   | Auto put display to sleep |      | 显示器自动休眠               |
   | Suspend                   |      | 睡眠(STR)                    |
-  |                           |      |                              |
 * 帮助文档
   + *Doc*\\
   + *Code*\\
@@ -76,12 +75,14 @@
   + */sys/power/pm_freeze_timeout*\\
   + */sys/power/pm_test*\\
     用于对电源管理功能的测试，由“CONFIG_PM_DEBUG”宏定义（kernel/power/Kconfig）控制是否编译进内核。其核心思想是\\
-    + [none]\\
-    + core\\
-    + processors\\
-    + platform\\
-    + devices\\
-    + freezer\\
+    | pm_test值  | 全称 | 含义 |
+    |------------+------+------|
+    | none       |      |      |
+    | core       |      |      |
+    | processors |      |      |
+    | platform   |      |      |
+    | devices    |      |      |
+    | freezer    |      |      |
   + */sys/power/wakeup_count*\\
     该接口只和sleep功能有关，因此由"CONFIG_PM_SLEEP"宏定义(kernel/power/Kconfig)控制。\\
   + */sys/power/pm_async*\\
@@ -100,10 +101,6 @@
     用于提供电源管理过程的trace记录,由"CONFIG_PM_TRACE"宏定义(kernel/power/Kconfig)控制是否编入内核，并由"sys/power/pm_trace"文件在运行是控制是否使用该功能\\
     该功能的具体实现是"平台相关的"\\
   + */sys/power/pm_trace_dev_match*\\
-  + stat\\
-    state - control system sleep states.\\
-    show() returns available sleep state labels, which may be "mem", "standby", "freeze" and "disk" (hibernation).  See Documentation/power/states.txt for a description of what they mean.\\
-    store() accepts one of those strings, translates it into the proper enumerated value, and initiates a suspend transition.\\
 * Runtime PM
   + *Doc*\\
   + *Code*\\
@@ -113,3 +110,23 @@
     /sys/class/xxx/power/runtime_active_time
     /sys/class/xxx/power/runtime_status
     /sys/class/xxx/power/runtime_suspended_time
+* src
+  kernel/kernel/power/power.h
+  kernel/kernel/power/main.c
+  kernel/kernel/power/autosleep.c
+  kernel/kernel/power/console.c
+  kernel/kernel/power/Kconfig
+  kernel/kernel/power/Makefile
+  kernel/kernel/power/poweroff.c
+  kernel/kernel/power/qos.c
+  kernel/kernel/power/suspend.c
+  kernel/kernel/power/suspend_time.c
+  kernel/kernel/power/user.c
+  kernel/kernel/power/wakeup_reason.c
+  kernel/kernel/power/block_io.c
+  kernel/kernel/power/hibernate.c
+  kernel/kernel/power/process.c
+  kernel/kernel/power/snapshot.c
+  kernel/kernel/power/suspend_test.c
+  kernel/kernel/power/swap.c
+  kernel/kernel/power/wakelock.c

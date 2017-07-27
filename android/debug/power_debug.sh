@@ -38,11 +38,33 @@ do
     done;
     sleep 2;
 done > /sdcard/dumpclk.txt &
-adb pull /sdcard/dumpclk.txt .  
+adb pull /sdcard/dumpclk.txt .
+
 #TODO 采集唤醒锁信息
-adb shell cat /sys/kernel/debug/wakeup_sources # 或者adb shelldumpsys power
-sleep 60 && cat /d/wakeup_sources > /sdcard/wakelocks.txt&
-cat ~/wakelocks.txt | awk '{print $1"\t\t\t\t\t\t"$6}'
+adb shell cat /sys/kernel/debug/wakeup_sources #Check wake locks  检查唤醒源 或者adb shelldumpsys power
+sleep 60 && cat /sys/kernel/debug/wakeup_sources > /sdcard/wakelocks.txt&
+adb pull /sdcard/wakelocks.txt ~
+cat ~/wakelocks.txt | awk '{print $1"\t\t\t\t\t\t"$6}' #过滤wakeup_sources
+
+#TODO suspend_stats
+cat /sys/kernel/debug/suspend_stats #查看睡眠是否成功
+cat /sys/power/wake_lock            #查看用户空间锁是否释
+G
+#TODO 查看中断号和定时器
+rm -f /sdcard/interrupt* && sleep 20 && cat /proc/interrupts > /sdcard/interrupt1.txt && sleep 30 && cat /proc/interrupts > /sdcard/interrupt2.txt& # Check frequent interrupts activity  检查频繁中断活动
+sleep 60 && echo "dump interrupt ok"&
+adb pull /sdcard/interrupt1.txt ~
+adb pull /sdcard/interrupt2.txt ~
+
+#TODO check xosd/vim
+cat /sys/kernel/debug/rpm_stats  #高通平台 check xosd/vmin  检查关闭时钟次数，低电流次数,主要看系统是否能睡下去
+
+#TODO wakeup debug mask
+echo 1 > /sys/kernel/debug/clk/debug_suspend
+echo 1 > /sys/module/msm_show_resume_irq/parameters/debug_mask
+echo 4 > /sys/module/wakelock/parameters/debug_mask
+echo 1 > /sys/module/lpm_levels/parameters/debug_mask
+echo 0x16 > /sys/module/smd/parameters/debug_mask
 
 #TODO 捕捉PowerTop和Top数据
 sleep 3 && while true;
@@ -98,10 +120,8 @@ adb pull /sdcard/trace.txt ~
 
 #TODO systrace
 
-#TODO suspend_stats
-cat /sys/kernel/debug/suspend_stats #查看睡眠是否成功
-cat /sys/power/wake_lock            #查看用户空间锁是否释
-
-#TODO 查看中断号和定时器
-rm -f /sdcard/interrupt* && sleep 20 && cat /proc/interrupts > /sdcard/interrupt1.txt && sleep 30 && cat /proc/interrupts > /sdcard/interrupt2.txt&
-adb pull /sdcard/interrupt* ~
+#TODO Dmesg and Logcat logs
+adb logcat -v time > YearMounthDayHourMinute_logcat.txt   #main log
+adb logcat -v time -b events > YearMounthDayHourMinute_logcat_event.txt   #event log
+adb logcat -v time -b radio > YearMounthDayHourMinute_logcat_radio.txt    #radio log
+adb shell dmesg > YearMounthDayHourMinute_dmesg.txt         #kernel log
