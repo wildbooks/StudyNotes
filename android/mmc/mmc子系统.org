@@ -12,10 +12,14 @@
 #+LINK_HOME:   the ``home'' link of an exported page
 #+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
 * 简介
-** MMC全称MultiMedia Card，由西门子公司和SanDisk公司1997年推出的多媒体记忆卡标准。
-** SD卡全称Secure DigitalMemory Card，由松下、东芝和SanDisk公司于1999年8月共同开发的新一代记忆卡标准，已完全兼容MMC标准
-** SDIO全称Secure DigitalInput and Output Card，SDIO是在SD标准上定义了一种外设接口
-** eMMC全称Embedded MultiMediaCard，是MMC协会所制定的内嵌式存储器标准规格，主要应用于智能手机和移动嵌入式产品等
+** SD(Secure Digital Memory Card)\\
+   SD(Secure Digital Memory Card , 安全数位卡)，由松下、东芝和SanDisk公司于1999年8月共同开发的新一代记忆卡标准，已完全兼容MMC标准
+** SDIO(Secure DigitalInput and Output Card)\\
+   SDIO是在SD标准上定义了一种外设接口
+** MMC(MultiMedia Card)\\
+   由西门子公司和SanDisk公司1997年推出的多媒体记忆卡标准。
+** eMMC(Embedded MultiMedia Card)\\
+   MMC协会所制定的内嵌式存储器标准规格，主要应用于智能手机和移动嵌入式产品等
 * 专业术语
   | 简写    | 全称                                                  | 含义                                                                   |
   |---------+-------------------------------------------------------+------------------------------------------------------------------------|
@@ -31,11 +35,13 @@
   | QSR     | Queue Status Register                                 |                                                                        |
   | RCA     | Relative Device Address register                      | 相对设备地址寄存器,是设备系统地址，在初始化期间由主机动态分配          |
   | DSR     |                                                       |                                                                        |
+  | SDC     | Secure Digital Controller                             |                                                                        |
 * 总结
   + *Code*:\\
     kernel/drivers/mmc/host/sdhci-msm.c
   + *dts*:\\
     kernel/arch/arm/boot/dts/appassionato/msm8996.dtsi => qcom,sdhci-msm
+    kernel/arch/arm/boot/dts/appassionato/msm8996-mtp.dtsi => sdhc
   + *docs*:
   + *sysfs*:\\
     *sysfs*:\\

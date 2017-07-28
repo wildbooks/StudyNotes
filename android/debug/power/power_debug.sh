@@ -41,8 +41,8 @@ done > /sdcard/dumpclk.txt &
 adb pull /sdcard/dumpclk.txt .
 
 #TODO 采集唤醒锁信息
-adb shell cat /sys/kernel/debug/wakeup_sources #Check wake locks  检查唤醒源 或者adb shelldumpsys power
-sleep 60 && cat /sys/kernel/debug/wakeup_sources > /sdcard/wakelocks.txt&
+sleep 60 && cat /sys/kernel/debug/wakeup_sources > /sdcard/wakelocks.txt&  #Check wake locks  检查唤醒源 或者adb shelldumpsys power
+sleep 60 && echo "dump wakeup_sources ok"& #等待时间
 adb pull /sdcard/wakelocks.txt ~
 cat ~/wakelocks.txt | awk '{print $1"\t\t\t\t\t\t"$6}' #过滤wakeup_sources
 
