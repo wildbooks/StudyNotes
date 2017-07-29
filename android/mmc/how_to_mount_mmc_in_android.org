@@ -40,3 +40,9 @@
 ** 修改分区大小
    高通分区表配置
    amss_8996/vendor/tct/appassionato/build/partition_load_pt/
+* vold
+  + *src*\\
+    system/vold  #解决分区问题
+* fs_mgr
+  + *src*\\
+    system/core/fs_mgr #解决分区问题
