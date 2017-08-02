@@ -11,7 +11,9 @@
 | DBC        | Dead Battery Charging                                               | 低电量电池充电                                 |
 | PBS        | Programmable Boot Sequence                                          | 可编程启动序列                                 |
 | RTC        |                                                                     | 实时时钟                                       |
+| WCNSS      | The Wireless Connectivity Subsystem                                 |                                                |
 | APSS       | Applications Processor Subsystem                                    | 应用程序处理子系统                             |
+| APSS       | Application Processor Subsystem Software                            | 应用处理器子系统软件                           |
 | MPSS       | Modem Processor Subsystem                                           | Modem处理器子系统                              |
 | ROGE       | Programmable Boot Sequence                                          | 自读全局可用                                   |
 | RWGE       | Programmable Boot Sequence                                          | 读/写全局可用                                  |
@@ -64,6 +66,7 @@
 | LPG        | Light Pulse Generator                                               | 光脉冲发生器                                   |
 | WLED       |                                                                     | 白光LED                                        |
 | AMSS       | Advanced Mobile Subscriber Station                                  |                                                |
+| AMSS       | Advanced Mobile Subscriber Software                                 | 高级移动订阅软件                               |
 | APPSBL     | Applications Boot Loader                                            |                                                |
 |            |                                                                     |                                                |
 | DDR        | Double Data Rate                                                    |                                                |
@@ -126,7 +129,6 @@
 | RUC        | Remaining Usable Capacity                                           | RUC=RC-CC-UUC，剩余可用电量                    |
 | ICO        | Input Current Optimizer                                             | 输入电量优化器                                 |
 | ADSP       |                                                                     |                                                |
-| APSS       | Application Processor Subsystem Software                            | 应用处理器子系统软件                           |
 | DRI        | Data-Ready-Interrupt                                                | 数据读中断                                     |
 | LA         | Linux Android                                                       |                                                |
 | SAM        | Sensors Algorithm Manager                                           | 传感器算法管理                                 |
@@ -186,7 +188,8 @@
 | TAM        | Technical account manager                                           |                                                |
 | UID        | Unique identifier                                                   |                                                |
 | XDR        | External data representation                                        |                                                |
-| AMSS       | Advanced Mobile Subscriber Software                                 | 高级移动订阅软件                               |
+| MMSS       | Multimedia Subsystem                                                |                                                |
+|            |                                                                     |                                                |
 * 电量计算公式
   + SOC(电荷状态)计算
     SOC = RUC / (FCC-UUC)

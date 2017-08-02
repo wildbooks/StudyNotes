@@ -1,0 +1,36 @@
+* help
+  #+begin_src bash
+  #+end_src
+* logcat
+  + 打印内核log
+    logcat -b kernel > /data/kernel.log &
+    'kernel'，'main','system', 'radio', 'events', 'crash', 'default' or 'all'.
+  + 打印systemlog
+  + Log优先级
+    V：明细verbose（最低优先级）
+    D：调试debug
+    I：信息 info
+    W：警告warm
+    E：错误error
+    F：严重错误fatal
+    S：无记载 silent
+  + 使用logcat查看日志输出
+    adb logcat -v<format>//设置日志输入格式控制输出字段，默认为brief格式
+    format：brief——显示优先级/标记和原始进程的PID
+    progress——仅显示原始进程的PID
+    tag——仅显示优先级/标记
+    thread——仅显示进程：线程和优先级/标记
+    raw——显示日志的原始信息没有其他的元数据字段
+    time ——显示日期，调用时间，优先级/标记，PID
+    long——显示所有元数据字段并且用空行分隔消息内容
+    //注：-v后只能跟一个<format>
+  + 过滤日志
+    adb logcat ActivityManger:I   PowerManger:E  *S
+    //仅输出标记为 ActivityManger且优先级大于I和标记为 PowerManger且优先级大于E的log
+    //注：*S用于设置所有标记的日志优先级为S可以保证仅输出符合条件的日志
+
+    adb  logcat -s PowerManger //显示PowerManger标记的log
+    adb logcat  *：W//显示所有优先级大于等于W的日志
+  + 其他Log相关
+    adb logcat >test.log   //将文件保存到test.log
+    adb  logcat  -f<filename> //将日志输出到文件，如： adb  logcat  -f  /sdcard/test.txt
