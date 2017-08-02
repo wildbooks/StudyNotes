@@ -11,6 +11,13 @@
     #+begin_src cpp
     printk(KERN_ALERT "DEBUG:Passed%s%d\n",__ FUNCTION __,__ LINE__);
     #+end_src
+    | 宏名称       | 含义   |
+    |--------------+--------|
+    | __FILE       | 文件名 |
+    | __LINE__     | 行号   |
+    | __DATE__     | 日期   |
+    | __TIME       | 时间   |
+    | __FUNCTION__ | 函数   |
   + printk从用户
     #+begin_src cpp
     # echo "Hello Kernel-world" > /dev/kmsg

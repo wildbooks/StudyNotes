@@ -37,3 +37,11 @@
    WARN Log.w()
    ERROR Log.e()
    *方法*:Log.d(TAG, "something to say."); 
+** 特定宏
+   | 宏名称       | 含义   |
+   |--------------+--------|
+   | __FILE       | 文件名 |
+   | __LINE__     | 行号   |
+   | __DATE__     | 日期   |
+   | __TIME       | 时间   |
+   | __FUNCTION__ | 函数   |

@@ -12,5 +12,7 @@
       net/l2tp/l2tp_ip6.c:171 [l2tp_ip6]l2tp_ip6_recv =_ "%s: ip recv\012"
    4. 过滤打印包含tcp关键字的log
       grep -i tcp <debugfs>/dynamic_debug/control
-** 
+** 配置
+    CONFIG_DEBUG_FS=y #开启debugfs文件系统
+    CONFIG_DYNAMIC_DEBUG=y #开启动态调试机制
 

@@ -24,136 +24,136 @@
 * 关键结构体
 1. epoll_event
    #+begin_src cpp
-   typedef union epoll_data {
-       void        *ptr;
-       int          fd;
-       uint32_t     u32;
-       uint64_t     u64;
-   } epoll_data_t;
+     typedef union epoll_data {
+         void        *ptr;
+         int          fd;
+         uint32_t     u32;
+         uint64_t     u64;
+     } epoll_data_t;
 
-   struct epoll_event {
-       uint32_t     events;      /* Epoll events */
-       epoll_data_t data;        /* User data variable */
-   };
+     struct epoll_event {
+         uint32_t     events;      /* Epoll events */
+         epoll_data_t data;        /* User data variable */
+     };
    #+end_src
 2. fd_info
    #+begin_src cpp
-   typedef int (*ev_callback)(int fd, uint32_t epevents, void* data);
-   struct fd_info {
-        int fd;//回调参数
-        ev_callback cb;//回调函数
-        void* data;//回调函数参数
-    };
+     typedef int (*ev_callback)(int fd, uint32_t epevents, void* data);
+     struct fd_info {
+         int fd;//回调参数
+         ev_callback cb;//回调函数
+         void* data;//回调函数参数
+     };
    #+end_src
 3. charger
    #+begin_src cpp
-    struct key_state {
-        bool pending; //按键弹起
-        bool down;  //按键按下
-        int64_t timestamp;//按键按下持续时间
-    };
+     struct key_state {
+         bool pending; //按键弹起
+         bool down;  //按键按下
+         int64_t timestamp;//按键按下持续时间
+     };
 
-    struct animation {
-        bool run;
+     struct animation {
+         bool run;
 
-        struct frame *frames;//帧buf
-        int cur_frame;  //当前帧
-        int num_frames; //帧数量
+         struct frame *frames;//帧buf
+         int cur_frame;  //当前帧
+         int num_frames; //帧数量
 
-        int cur_cycle;  //当前周期
-        int num_cycles; //总周期
+         int cur_cycle;  //当前周期
+         int num_cycles; //总周期
 
-        /* current capacity being animated */
-        int capacity; //当前容量是动画
-    };
+         /* current capacity being animated */
+         int capacity; //当前容量是动画
+     };
 
-   struct charger {
-        bool have_battery_state;  //是否有电池
-        bool charger_connected;   //充电器是否链接
-        int64_t next_screen_transition;//下一个屏幕过度
-        int64_t next_key_check; //下次按键检测超时时间设置
-        int64_t next_pwr_check; //下次检测pwr超时时间
+     struct charger {
+         bool have_battery_state;  //是否有电池
+         bool charger_connected;   //充电器是否链接
+         int64_t next_screen_transition;//下一个屏幕过度
+         int64_t next_key_check; //下次按键检测超时时间设置
+         int64_t next_pwr_check; //下次检测pwr超时时间
 
-        struct key_state keys[KEY_MAX + 1]; //按键状态
+         struct key_state keys[KEY_MAX + 1]; //按键状态
 
-        struct animation *batt_anim;  //电池显示动态动画
-        GRSurface* surf_unknown;//电池未知状态时显示,
-        int boot_min_cap;  //启动最小容量
-    };
+         struct animation *batt_anim;  //电池显示动态动画
+         GRSurface* surf_unknown;//电池未知状态时显示,
+         int boot_min_cap;  //启动最小容量
+     };
 
    #+end_src
 4. input_event
    #+begin_src cpp
-   struct input_event {
-      struct timeval time;
-      __u16 type;
-      __u16 code;
-      __s32 value;
-    };
+     struct input_event {
+         struct timeval time;
+         __u16 type;
+         __u16 code;
+         __s32 value;
+     };
    #+end_src
 5. healthd_config
    描述电池属性节点的路径
    #+begin_src cpp
-    struct healthd_config {
-        int periodic_chores_interval_fast;//更新电池状态周期控制,充电用这个
-        int periodic_chores_interval_slow;//更新电池状态周期控制,不充电用这个
+     struct healthd_config {
+         int periodic_chores_interval_fast;//更新电池状态周期控制,充电用这个
+         int periodic_chores_interval_slow;//更新电池状态周期控制,不充电用这个
 
-        //xxxx/status
-        android::String8 batteryStatusPath; //电池是否存在的状态路径
-        //health
-        android::String8 batteryHealthPath; //电池健康路径(温度)
-        //present
-        android::String8 batteryPresentPath; //电池当前路径
-        //capacity
-        android::String8 batteryCapacityPath; //电池剩余容量
-        //voltage_now
-        android::String8 batteryVoltagePath;  //电池电压
-        //temp
-        android::String8 batteryTemperaturePath; //电池温度
-        //technology
-        android::String8 batteryTechnologyPath; //电池所使用的技术
-        //current_now
-        android::String8 batteryCurrentNowPath; //电池当前电流
-        //没有current_avg
-        android::String8 batteryCurrentAvgPath;
-        //没有charge_counter
-        android::String8 batteryChargeCounterPath;
-        //没有charge_full
-        android::String8 batteryFullChargePath; //电池充满电路径
-        //没有cycle_count
-        android::String8 batteryCycleCountPath;
-        //xo_termal
-        android::String8 xothermalpath;//[feature] mod-by sun zhangyang for defect2167030,2016.05.18
+         //xxxx/status
+         android::String8 batteryStatusPath; //电池是否存在的状态路径
+         //health
+         android::String8 batteryHealthPath; //电池健康路径(温度)
+         //present
+         android::String8 batteryPresentPath; //电池当前路径
+         //capacity
+         android::String8 batteryCapacityPath; //电池剩余容量
+         //voltage_now
+         android::String8 batteryVoltagePath;  //电池电压
+         //temp
+         android::String8 batteryTemperaturePath; //电池温度
+         //technology
+         android::String8 batteryTechnologyPath; //电池所使用的技术
+         //current_now
+         android::String8 batteryCurrentNowPath; //电池当前电流
+         //没有current_avg
+         android::String8 batteryCurrentAvgPath;
+         //没有charge_counter
+         android::String8 batteryChargeCounterPath;
+         //没有charge_full
+         android::String8 batteryFullChargePath; //电池充满电路径
+         //没有cycle_count
+         android::String8 batteryCycleCountPath;
+         //xo_termal
+         android::String8 xothermalpath;//[feature] mod-by sun zhangyang for defect2167030,2016.05.18
 
-        int (*energyCounter)(int64_t *);
-        int boot_min_cap;
-        bool (*screen_on)(android::BatteryProperties *props);
-    };
+         int (*energyCounter)(int64_t *);
+         int boot_min_cap;
+         bool (*screen_on)(android::BatteryProperties *props);
+     };
    #+end_src
 7. BatteryProperties
    #+begin_src cpp
-   struct BatteryProperties {
-       bool chargerAcOnline;   //
-       bool chargerUsbOnline;  //usb充电链接 我们手机情况是true
-       bool chargerWirelessOnline;
-       int maxChargingCurrent;  //当前充电最大电流
-       int maxChargingVoltage;  //当前充电最大电压
-       int batteryStatus; //电池是否存在
-       int batteryHealth;
-       bool batteryPresent;
-       int batteryLevel;  //电池电量状态 (1到100)
-       int batteryVoltage; //电池电压
-       int batteryTemperature; //电池温度
-       int batteryCurrent;  //电池电流
-       int batteryCycleCount;
-       int batteryFullCharge;
-       int batteryChargeCounter;
-       String8 batteryTechnology;
-       int xothermalTemp;
+     struct BatteryProperties {
+         bool chargerAcOnline;   //
+         bool chargerUsbOnline;  //usb充电链接 我们手机情况是true
+         bool chargerWirelessOnline;
+         int maxChargingCurrent;  //当前充电最大电流
+         int maxChargingVoltage;  //当前充电最大电压
+         int batteryStatus; //电池是否存在
+         int batteryHealth;
+         bool batteryPresent;
+         int batteryLevel;  //电池电量状态 (1到100)
+         int batteryVoltage; //电池电压
+         int batteryTemperature; //电池温度
+         int batteryCurrent;  //电池电流
+         int batteryCycleCount;
+         int batteryFullCharge;
+         int batteryChargeCounter;
+         String8 batteryTechnology;
+         int xothermalTemp;
 
-       status_t writeToParcel(Parcel* parcel) const;
-       status_t readFromParcel(Parcel* parcel);
-   };
+         status_t writeToParcel(Parcel* parcel) const;
+         status_t readFromParcel(Parcel* parcel);
+     };
    #+end_src
 8. android_reboot对应的命令
    ANDROID_RB_RESTART   --- reboot 普通重启
@@ -174,56 +174,57 @@
   代码路径system/core/healthd/
   device/qcom/common/healthd
   #+begin_src cpp
-  int main(int argc, char **argv) {
-      int ch;
-      int ret;
+    int main(int argc, char **argv) {
+        int ch;
+        int ret;
 
-      klog_set_level(KLOG_LEVEL);  //设置log级别
-      healthd_mode_ops = &android_ops;
+        klog_set_level(KLOG_LEVEL);  //设置log级别
+        healthd_mode_ops = &android_ops;
 
-      if (!strcmp(basename(argv[0]), "charger")) {//解析输入参数如果是charger的使用charger_ops
-          healthd_mode_ops = &charger_ops;
-      } else {  //否者使用android_ops
-          while ((ch = getopt(argc, argv, "cr")) != -1) {//解析输入命令,各个命令对应不同的mode_ops
-              switch (ch) {
-              case 'c':
-                  healthd_mode_ops = &charger_ops;
-                  break;
-              case 'r':
-                  healthd_mode_ops = &recovery_ops;
-                  break;
-              case '?':
-              default:
-                  KLOG_ERROR(LOG_TAG, "Unrecognized healthd option: %c\n",
-                             optopt);
-                  exit(1);
-              }
-          }
-      }
+        if (!strcmp(basename(argv[0]), "charger")) {//解析输入参数如果是charger的使用charger_ops
+            healthd_mode_ops = &charger_ops;
+        } else {  //否者使用android_ops
+            while ((ch = getopt(argc, argv, "cr")) != -1) {//解析输入命令,各个命令对应不同的mode_ops
+                switch (ch) {
+                case 'c':
+                    healthd_mode_ops = &charger_ops;
+                    break;
+                case 'r':
+                    healthd_mode_ops = &recovery_ops;
+                    break;
+                case '?':
+                default:
+                    KLOG_ERROR(LOG_TAG, "Unrecognized healthd option: %c\n",
+                               optopt);
+                    exit(1);
+                }
+            }
+        }
 
-      //healthd初始化
-      ret = healthd_init();
-      if (ret) {
-          KLOG_ERROR("Initialization failed, exiting\n");
-          exit(2);
-      }
+        //healthd初始化
+        ret = healthd_init();
+        if (ret) {
+            KLOG_ERROR("Initialization failed, exiting\n");
+            exit(2);
+        }
 
-      periodic_chores();
-      healthd_mode_ops->heartbeat();
+        periodic_chores();
+        healthd_mode_ops->heartbeat();
 
-      //主函数
-      healthd_mainloop();
-      KLOG_ERROR("Main loop terminated, exiting\n");
-      return 3;
-  }
+        //主函数
+        healthd_mainloop();
+        KLOG_ERROR("Main loop terminated, exiting\n");
+        return 3;
+    }
   #+end_src
 + 总结 :: 由上可知,healthd有三种工作模式,即charger(关机充电),
      android(关机充电),recovery模式，我就分别对它们进行讲解
 * charger(关机充电)模式
-** 代码路径
-   system/core/healthd/
-   device/qcom/common/healthd/
- + android_ops
+** charger总结
+   + *Code*:\\
+     system/core/healthd/
+     device/qcom/common/healthd/
+** android_ops
    #+begin_src cpp
    static struct healthd_mode_ops charger_ops = {
      .init = healthd_mode_charger_init,
@@ -757,13 +758,30 @@ void healthd_battery_update(void) {
    #+begin_src cpp
    #+end_src
 * android(开机充电)模式
-+ android_ops
-  #+begin_src cpp
-  static struct healthd_mode_ops android_ops = {
-      .init = healthd_mode_android_init,
-      .preparetowait = healthd_mode_android_preparetowait,
-      .heartbeat = healthd_mode_nop_heartbeat,
-      .battery_update = healthd_mode_android_battery_update,
-  };
-  #+end_src
+** android总结
+   + *Code*:\\
+     system/core/healthd/
+     device/qcom/common/healthd/
+** android_ops
+   #+begin_src cpp
+   static struct healthd_mode_ops android_ops = {
+       .init = healthd_mode_android_init,  //初始化
+       .preparetowait = healthd_mode_android_preparetowait, //准备等待
+       .heartbeat = healthd_mode_nop_heartbeat,     //心跳
+       .battery_update = healthd_mode_android_battery_update,//电池状态更新
+   };
+   #+end_src
 * recovery(恢复设置充电)模式
+** recovery总结
+   + *Code*:\\
+     system/core/healthd/
+     device/qcom/common/healthd/
+** recovery_ops
+   #+begin_src cpp
+     static struct healthd_mode_ops recovery_ops = {
+         .init = healthd_mode_nop_init,
+         .preparetowait = healthd_mode_nop_preparetowait,
+         .heartbeat = healthd_mode_nop_heartbeat,
+         .battery_update = healthd_mode_nop_battery_update,
+     };
+   #+end_src

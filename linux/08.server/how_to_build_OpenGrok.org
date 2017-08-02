@@ -1,2 +1,8 @@
 * Tomcat
+  + *install*\\
+    sudo apt-get install tomcat7
+  + *start*\\
+    sudo service tomcat7 start
+  + *test*\\
+    http://localhost:8080 #出现一个网页说明tomcat服务器搭建成功,接下来就是配置OpenGrok
 * OpenGrok
