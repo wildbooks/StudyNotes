@@ -60,7 +60,7 @@
 |            | Trickle charge                                                      | 涓流充电                                       |
 |            | Nonstandard charger                                                 | 非标准充电                                     |
 | OCP        | Other charger port                                                  | 其他充电端口                                   |
-| OTP        |                                                                     |                                                |
+| OTP        | One-time programmable                                               |                                                |
 | CSIR       |                                                                     |                                                |
 | JEITA      | Japan Electronics and Information Technology Industries Association | 日本电子信息技术产业协会                       |
 | LPG        | Light Pulse Generator                                               | 光脉冲发生器                                   |
@@ -189,6 +189,8 @@
 | UID        | Unique identifier                                                   |                                                |
 | XDR        | External data representation                                        |                                                |
 | MMSS       | Multimedia Subsystem                                                |                                                |
+| AMOLED     | Active-Matrix Organic Light-Emitting Diode                          |                                                |
+| OTG        | On-the-Go                                                           |                                                |
 |            |                                                                     |                                                |
 * 电量计算公式
   + SOC(电荷状态)计算

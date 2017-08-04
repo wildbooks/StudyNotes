@@ -1,0 +1,67 @@
+* SPMI
+  + *Code*:\\
+    kernel/drivers/spmi/spmi.c
+  + *dts*:\\
+  + *Docs*:\\
+* regulator
+  + *Code*:\\
+    kernel/drivers/regulator/qpnp-regulator.c\\
+    kernel/drivers/regulator/rpm-smd-regulator.c\\
+  + *dts*:\\
+    kernel/Documentation/devicetree/bindings/regulator/qpnp-regulator.txt\\
+    kernel/Documentation/devicetree/bindings/regulator/rpm-smd-regulator.txt\\
+  + *Docs*:\\
+* Qpnp Pin
+  + *Code*:\\
+    kernel/drivers/gpio/qpnp-pin.c
+  + *dts*:\\
+    kernel/arch/arm/boot/dts/qcom/msm-pm8994.dtsi
+  + *Docs*:
+    kernel/Documentation/devicetree/bindings/gpio/qpnp-pin.txt
+* ADC
+  + *Code*:\\
+    kernel/drivers/hwmon/qpnp-adc-common.c\\
+    kernel/drivers/hwmon/qpnp-adc-voltage.c\\
+    kernel/drivers/hwmon/qpnp-adc-current.c\\
+  + *dts*:\\
+    kernel/arch/arm/boot/dts/qcom/msm-pm8994.dtsi\\
+  + *Docs*:\\
+    kernel/Documentation/devicetree/bindings/hwmon/qpnp-adc-voltage.txt\\
+    kernel/Documentation/devicetree/bindings/hwmon/qpnp-adc-current.txt\\
+* Charger
+  + *Code*:\\
+    kernel/drivers/power/qpnp-smbcharger.c\\
+  + *dts*:\\
+    kernel/arch/arm/boot/dts/qcom/msm-pmi8994.dtsi\\
+  + *Docs*:\\
+    kernel/Documentation/devicetree/bindings/power/qpnp-smbcharger.txt\\
+* Fuel Gauge
+  + *Code*:\\
+    kernel/drivers/power/qpnp-fg.c\\
+  + *dts*:\\
+    kernel/arch/arm/boot/dts/qcom/msm-pmi8994.dtsi
+  + *Docs*:\\
+    Documentation/devicetree/bindings/power/qpnp-fg.txt\\
+* LPG/PWM
+  + *Code*:\\
+    kernel/drivers/pwm/pwm-qpnp.c\\
+    kernel/drivers/pwm/core.c\\
+  + *dts*:\\
+    kernel/Documentation/pwm.txt\\
+  + *Docs*:\\
+    kernel/Documentation/devicetree/bindings/pwm/pwm-qpnp.txt\\
+* LED
+  WLED,RGB,flash,AMOLED,MPP led
+  + *Code*:\\
+    kernel/drivers/leds/leds-qpnp.c\\
+  + *dts*:\\
+  + *Docs*:\\
+    kernel/Documentation/devicetree/bindings/leds/leds-qpnp.txt\\
+* Qpnp Pin
+  + *Code*:\\
+  + *dts*:\\
+  + *Docs*:\\
+* Qpnp Pin
+  + *Code*:\\
+  + *dts*:\\
+  + *Docs*:\\

@@ -1,69 +1,121 @@
 * led简介
   + RGB:(红绿蓝)三色灯
-    通常用于充电,通常分为两种:PWM控制和LPG控制
+    通常用于充电,消息提示等的信号灯,通常分为两种:PWM控制和LPG控制
   + WLED:背光灯
-    
   + Flash LED:闪光灯
-    通常用于相机和视频闪光灯,也用于手电筒(flashlight)应用
+    通常用于相机和视频闪光灯,也用于手电筒(flashlight/torch)应用
   + MPP LED:IO复用LED等
+* backlight
+ + *codes*\\
+   kernel/drivers/video/msm/mdss/mdss_fb.c\\
+ + *dts*\\
+   kernel/arch/arm64/boot/dts/appassionato/msm8996-mdss.dtsi ==> qcom,mdss-fb\\
+ + *Docs*\\
+ + *sysfs*\\
+   /sys/class/leds/lcd-backlight\\
+ + *注意*:\\
+   仅仅一小部分是和背光相关\\
+* LED
+  CONFIG_LEDS_QPNP=y       #指示灯
+  CONFIG_LEDS_QPNP_FLASH=y #和摄像头相关的flash led
+  CONFIG_LEDS_QPNP_WLED=y  #这个好像没啥用
+  CONFIG_LEDS_TRIGGERS=y   #触发器相关
+  CONFIG_TCT_8996_IDOL4SCN_FRONT_LED=y #前置led
+* camera-flash(不懂)
+  + *codes*\\
+    n8996/kernel/drivers/media/platform/msm/camera_v2/sensor/flash/msm_flash.c\\
+  + *dts*\\
+    n8996/kernel/arch/arm64/boot/dts/appassionato/msm8996-camera-sensor-mtp.dtsi ==> qcom,camera-flash\\
+  + *Docs*\\
+  + *sysfs*\\
+    /sys/class/leds/torch-light0\\
+    /sys/class/leds/torch-light1\\
+  + *debug*:\\
+    echo -n "msm_flash.c +p" > /d/dynamic_debug/control  #打印log
+  + *注意*:
+    调用leds-qpnp-flash.c中的节点
 * RGB
-** sysfs使用方法
-** RGB资料
-   + RGB LED driver source
-     kernel/drivers/leds/leds-qpnp.c
-   + DTSI documentation
-     kernel/Documentation/devicetree/bindings/leds/leds-qpnp.txt
-   + DTSI files
-     kernel/arch/arm/boot/dts/qcom/msm-pmi89<xx>.dtsi
-     PMI8998 only – kernel/arch/arm/boot/dts/qcom/msm-pmicobalt.dtsi
-* MPP LED
-  + MPP LED driver source
+  主要用于充电，消息提示等的信号灯
+  + *codes*\\
     kernel/drivers/leds/leds-qpnp.c
-  + DTSI documentation
-    kernel/Documentation/devicetree/bindings/leds/leds-qpnp.txt
-  + DTSI files
-    kernel/arch/arm/boot/dts/qcom/msm-pmi<####>.dtsi
+  + *dts*\\
+    kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,leds-qpnp
+  + *Docs*\\
+    kernel/Documentation/devicetree/bindings/leds/leds-qpnp.txt\\
+  + *sysfs*\\
+    /sys/class/leds/green
+    /sys/class/leds/blue
+    /sys/class/leds/red
+  + *debug*:\\
+    echo -n "leds_qpnp.c +p" > /d/dynamic_debug/control
+* MPP LED
+  + *codes*\\
+    kernel/drivers/leds/leds-qpnp.c
+  + *dts*\\
+    kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,leds-qpnp
+  + *Docs*\\
+    kernel/Documentation/devicetree/bindings/leds/leds-qpnp.txt\\
+  + *sysfs*\\
+    /sys/class/leds/green\\
+    /sys/class/leds/blue\\
+    /sys/class/leds/red\\
+  + *debug*:\\
+    echo -n "leds_qpnp.c +p" > /d/dynamic_debug/control
 * Flash LED
-** sysfs使用方法
-   + enable one flash
-     adb shell "echo 255 > /sys/class/leds/led:flash_1/brightness"
-     adb shell "echo 1 > /sys/class/leds/led:switch/brightness"
-   + enable flash
-     adb shell "echo 255 > /sys/class/leds/led:flash_0/brightness"
-     adb shell "echo 255 > /sys/class/leds/led:flash_1/brightness"
-     adb shell "echo 1 > /sys/class/leds/led:switch/brightness"
-   + disable flash
-     adb shell "echo 0 > /sys/class/leds/led:flash_0/brightness"
-     adb shell "echo 0 > /sys/class/leds/led:flash_1/brightness"
-     adb shell "echo 0 > /sys/class/leds/led:switch/brightness"
-   + torch(手电筒)
-     adb shell "echo 255 > /sys/class/leds/led:torch_0/brightness"
-     adb shell "echo 255 > /sys/class/leds/led:torch_1/brightness"
-     adb shell "echo 1 > /sys/class/leds/led:switch/brightness"
-   + enable flash
-   + disable tourch
-     adb shell "echo 0 > /sys/class/leds/led:torch_0/brightness"
-     adb shell "echo 0 > /sys/class/leds/led:torch_1/brightness"
-     adb shell "echo 0 > /sys/class/leds/led:switch/brightness"
-   + 注意 ::
-        brightness必须都为0时，闪光灯才会有效
-** Flash LED参考资料
-   + Flash driver source
-     kernel/drivers/leds/leds-qpnp-flash.c
-     (PMI8998) kernel/drivers/leds/leds-qpnp-flash-v2.c
-   + DTSI documentation
-     kernel/Documentation/devicetree/bindings/leds/leds-qpnp-flash.txt
-     (PMI8998) kernel/Documentation/devicetree/bindings/leds/leds-qpnp-flash-v2.txt
-   + DTSI files
-     kernel/arch/arm/boot/dts/qcom/msm-pmi<####>.dtsi
-     (PMI8998) kernel/arch/arm/boot/dts/qcom/msm-pmicobalt.dtsi
+  + *codes*\\
+    kernel/drivers/leds/leds-qpnp-flash.c\\
+  + *dts*\\
+    n8996/kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,qpnp-flash-led\\
+  + *Docs*\\
+    kernel/Documentation/devicetree/bindings/leds/leds-qpnp-flash.txt
+  + *sysfs*\\
+    /sys/class/leds/led:torch_0   warm led
+    /sys/class/leds/led:torch_1   cold led
+    /sys/class/leds/led:flash_0   warm led
+    /sys/class/leds/led:flash_1   cold led
+    /sys/class/leds/led:switch
+  + *debug*:\\
+    echo -n "leds-qpnp-flash.c +p" > /d/dynamic_debug/control  #打印log
+    + off led
+      echo 0 > /sys/class/leds/led:flash_0/brightness
+      echo 0 > /sys/class/leds/led:flash_1/brightness
+      echo 0 > /sys/class/leds/led:torch_0/brightness
+      echo 0 > /sys/class/leds/led:torch_1/brightness
+      echo 0 > /sys/class/leds/led:switch/brightness
+    + warm flash led on
+      echo 80 > /sys/class/leds/led:flash_0/brightness
+      echo 0 > /sys/class/leds/led:flash_1/brightness
+      echo 0 > /sys/class/leds/led:torch_0/brightness
+      echo 0 > /sys/class/leds/led:torch_1/brightness
+      echo 1 > /sys/class/leds/led:switch/brightness
+    + cold flash led on
+      echo 0 > /sys/class/leds/led:flash_0/brightness
+      echo 80 > /sys/class/leds/led:flash_1/brightness
+      echo 0 > /sys/class/leds/led:torch_0/brightness
+      echo 0 > /sys/class/leds/led:torch_1/brightness
+      echo 1 > /sys/class/leds/led:switch/brightness
+    + warm torch led on
+      echo 0 > /sys/class/leds/led:flash_0/brightness
+      echo 0 > /sys/class/leds/led:flash_1/brightness
+      echo 80 > /sys/class/leds/led:torch_0/brightness
+      echo 0 > /sys/class/leds/led:torch_1/brightness
+      echo 1 > /sys/class/leds/led:switch/brightness
+    + warm torch led on
+      echo 0 > /sys/class/leds/led:flash_0/brightness
+      echo 0 > /sys/class/leds/led:flash_1/brightness
+      echo 0 > /sys/class/leds/led:torch_0/brightness
+      echo 80 > /sys/class/leds/led:torch_1/brightness
+      echo 1 > /sys/class/leds/led:switch/brightness
+    + *注意*:\\
+      节点测试准寻严格的先后顺序，先flash -> torch -> switch\\
 * WLED
-** sysfs使用方法
-** WLED参考资料
-   + WLED driver source
-     kernel/drivers/leds/leds-qpnp-wled.c
-   + DTSI documentation
-     kernel/Documentation/devicetree/bindings/leds/leds-qpnp-wled.txt
-   + DTSI files
-     kernel/arch/arm/boot/dts/qcom/msm-pmi<####>.dtsi
-     (PMI8998 only) kernel/arch/arm/boot/dts/qcom/msm-pmicobalt.dtsi
+  + *codes*\\
+    kernel/drivers/leds/leds-qpnp-wled.c\\
+  + *dts*\\
+    n8996/kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,qpnp-wled-led\\
+  + *Docs*\\
+    kernel/Documentation/devicetree/bindings/leds/leds-qpnp-wled.txt
+  + *sysfs*\\
+    /sys/class/leds/wled
+  + *debug*:\\
+    echo -n "leds-qpnp-wled.c +p" > /d/dynamic_debug/control  #打印log
