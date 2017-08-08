@@ -1,1 +1,53 @@
 * awk
+  #+begin_src bash
+    OPTIONS
+    -F value       指定输入文件拆分隔符,如-F:
+
+    -f file        从脚本文件中读取awk命令
+
+    -v var=value   为程序变量var赋值
+
+    --             表示选项的明确结尾。
+
+    The above options will be available with any Posix compatible implementation of AWK, and implementation specific options are prefaced with -W.  mawk provides six:
+
+    -W version     mawk writes its version and copyright to stdout and compiled limits to stderr and exits 0.
+
+    -W dump        writes an assembler like listing of the internal representation of the program to stdout and exits 0 (on successful compilation).
+
+    -W interactive sets unbuffered writes to stdout and line buffered reads from stdin.  Records from stdin are lines regardless of the value of RS.
+
+    -W exec file   Program text is read from file and this is the last option. Useful on systems that support the #!  "magic number" convention for executable scripts.
+
+    -W sprintf=num adjusts the size of mawk's internal sprintf buffer to num bytes.  More than rare use of this option indicates mawk should be recompiled.
+
+    -W posix_space forces mawk not to consider '\n' to be space.
+
+         The short forms -W[vdiesp] are recognized and on some systems -We is mandatory to avoid command line length limitations.
+
+  #+end_src
+* 参数
+  | 符号          | 含义                                                            |
+  |---------------+-----------------------------------------------------------------|
+  | $0            | 表示整个当前行                                                  |
+  | $1            | 每行第一个字段                                                  |
+  | NF            | 字段数量变量                                                    |
+  | NR            | 每行的记录号，多文件记录递增                                    |
+  | FNR           | 与NR类似，不过多文件记录不递增，每个文件都从1开始               |
+  | \t            | 制表符                                                          |
+  | \n            | 换行符                                                          |
+  | FS            | BEGIN时定义分隔符                                               |
+  | RS            | 输入的记录分隔符， 默认为换行符(即文本是按一行一行输入)         |
+  | ~             | 匹配，与==相比不是精确比较                                      |
+  | !~            | 不匹配，不精确比较                                              |
+  | ==            | 等于，必须全部相等，精确比较                                    |
+  | !=            | 不等于，精确比较                                                |
+  | &&　          | 逻辑与                                                          |
+  | "\\"          | 逻辑或                                                          |
+  | +             | 匹配时表示1个或1个以上                                          |
+  | /[0-9][0-9]+/ | 两个或两个以上数字                                              |
+  | /[0-9][0-9]*/ | 一个或一个以上数字                                              |
+  | FILENAME      | 文件名                                                          |
+  | OFS           | 输出字段分隔符， 默认也是空格，可以改为制表符等                 |
+  | ORS           | 输出的记录分隔符，默认为换行符,即处理结果也是一行一行输出到屏幕 |
+  |---------------+-----------------------------------------------------------------|
