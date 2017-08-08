@@ -1,7 +1,0 @@
-1.GPIO
-    /linux-3.14-wildbook-fs4412/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-    /linux-3.14-wildbook-fs4412/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-
-    头文件<include/linux/pinctrl/pinconfig-generic.h>
-    完全用设备树对硬件进行操作
-

@@ -50,4 +50,18 @@
   | FILENAME      | 文件名                                                          |
   | OFS           | 输出字段分隔符， 默认也是空格，可以改为制表符等                 |
   | ORS           | 输出的记录分隔符，默认为换行符,即处理结果也是一行一行输出到屏幕 |
-  |---------------+-----------------------------------------------------------------|
+* awk语言
+** 程序结构(Program structure)
+** 数据类型
+** 正则表达式(Regular expressions)
+** 记录和领域( Records and fields)
+** 表达式和运算符(Expressions and operators)
+** 数组(Arrays)
+** 内联变量(Builtin-variables)
+** 内联函数(Builtin-in functions)
+** 输入和输出(Input and output)
+** 用户定义的函数(User defined functions)
+** Splitting strings, records and files
+** Multi-line records
+** Program execution
+* EXAMPLES
