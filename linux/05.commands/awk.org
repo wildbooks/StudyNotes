@@ -52,7 +52,28 @@
   | ORS           | 输出的记录分隔符，默认为换行符,即处理结果也是一行一行输出到屏幕 |
 * awk语言
 ** 程序结构(Program structure)
+   #+begin_src awk
+     if ( expr ) statement
+     if ( expr ) statement else statement
+     while ( expr ) statement
+     do statement while ( expr )
+            for ( opt_expr ; opt_expr ; opt_expr ) statement
+     for ( var in array ) statement
+     continue
+     break
+   #+end_src
 ** 数据类型
+   \\        \
+   \"        "
+   \a        alert, ascii 7
+   \b        backspace, ascii 8
+   \t        tab, ascii 9
+   \n        newline, ascii 10
+   \v        vertical tab, ascii 11
+   \f        formfeed, ascii 12
+   \r        carriage return, ascii 13
+   \ddd      1, 2 or 3 octal digits for ascii ddd
+   \xhh      1 or 2 hex digits for ascii  hh
 ** 正则表达式(Regular expressions)
 ** 记录和领域( Records and fields)
 ** 表达式和运算符(Expressions and operators)
@@ -61,7 +82,7 @@
 ** 内联函数(Builtin-in functions)
 ** 输入和输出(Input and output)
 ** 用户定义的函数(User defined functions)
-** Splitting strings, records and files
-** Multi-line records
-** Program execution
+** 拆分字符串,记录和文件(Splitting strings, records and files)
+** 多行记录(Multi-line records)
+** 程序执行(Program execution)
 * EXAMPLES

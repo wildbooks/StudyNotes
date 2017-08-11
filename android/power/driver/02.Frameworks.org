@@ -11,7 +11,8 @@
 #+LINK_UP:     the ``up'' link of an exported page
 #+LINK_HOME:   the ``home'' link of an exported page
 #+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
-* 参考文档
+* power
+** core
   + *Code*:
     kernel/drivers/power/power_supply_core.c\\
     kernel/drivers/power/power_supply_sysfs.c\\
@@ -21,6 +22,65 @@
   + *dts*:
   + *docs*
   + *sysfs*:
+  + *debug*:
+** charger
+   + *codes*\\
+     kernel/drivers/power/qpnp-smbcharger.c\\
+     kernel/drivers/power/smb1351-charger.c\\
+   + *dts*\\
+     kernel/arch/arm/boot/dts/appassionato/msm-pmi8994.dtsi ==> qcom,qpnp-smbcharger\\
+     kernel/arch/arm64/boot/dts/appassionato/msm8996-mtp.dtsi ==> qcom,smb1351-charger\\
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/power/qpnp-smbcharger.txt\\
+     kernel/Documentation/devicetree/bindings/power/smb1351-charger.txt\\
+   + *sysfs*\\
+     /sys/class/power_supply/battery     =>qpnp-smbcharger
+   + *debug*:\\
+     echo 8> /proc/sys/kernel/printk #打印log
+     + Disable/enable USB the charger
+       adb root
+       adb wait-for-devices
+       adb shell setprop persist.usb.chgdisabled 1
+       adb root
+     + Disable/enable WI-FI the charger
+       adb wait-for-devices
+       adb shell setprop persist.adb.tcp.port 5555 && adb tcpip
+       adb connect <the target ip>
+       adb shell setprop persist.usb.chgdisabled 1
+** Fuel Gauge
+   + *codes*\\
+     kernel/drivers/power/qpnp-fg.c\\
+   + *dts*\\
+     kernel/arch/arm64/boot/dts/appassionato/msm-pmi8994.dtsi ==> qcom,qpnp-fg\\
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/power/qpnp-fg.txt\\
+   + *sysfs*\\
+   + *debug*:\\
+     echo 8> /proc/sys/kernel/printk #打印log
+     echo 0xff > /sys/module/qpnp_fg/parameters/debug_mask #开启debug掩码
+     + read FG MEM_INTF
+       adb shell "echo 0xXXX > /sys/kernel/debug/fg_memif/address"
+       adb shell "echo 0xXX > /sys/kernel/debug/fg_memif/count"
+       adb shell "cat /sys/kernel/debug/fg_memif/data"
+     + write FG MEM_INTF
+       adb shell "echo 0xXXX > /sys/kernel/debug/fg_memif/address"
+       adb shell "echo 0xXX > /sys/kernel/debug/fg_memif/count"
+       adb shell "echo 0xXX > /sys/kernel/debug/fg_memif/data"
+** battery
+   + *codes*\\
+   + *dts*\\
+   + *Docs*\\
+   + *sysfs*\\
+   + *debug*:\\
+     echo 8> /proc/sys/kernel/printk #打印log
+     echo -n "func power_supply_changed_work +p" >/d/dynamic_debug/control
+     echo -n "file qpnp-smbcharger.c +p" >/d/dynamic_debug/control
+     echo -n "file power_supply_leds.c +p" >/d/dynamic_debug/control
+     echo -n "file qpnp_fg.c +p" >/d/dynamic_debug/control
+     echo -n "file smb1351-charger.c +p" >/d/dynamic_debug/control
+     smb1351-charger.c
+     power_supply_leds.c
+     power_supply_changed
 * 提供的API
 **  power_supply.h:全部
 *** extern struct power_supply *power_supply_get_by_name(char *name);
@@ -331,6 +391,19 @@
         int energy_empty_design;//
         int use_for_apm;//
       };
+     #+end_src
+  5. struct spmi_device
+     #+begin_src c
+       struct spmi_device{
+           struct device dev;
+           const char *name;
+           struct spmi_controller *ctrl;
+           struct spmi_resource res;
+           struct spmi_resource *dev_node;
+           u32 num_dev_node;
+           u8 sid;
+           int id;
+       }
      #+end_src
 * Code
 **  power_supply_core.c

@@ -12,7 +12,6 @@
 #+LINK_HOME:   the ``home'' link of an exported page
 #+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
 * 电源介绍
-
 * framework
   + *Code*:
     kernel/drivers/power/power_supply_core.c\\

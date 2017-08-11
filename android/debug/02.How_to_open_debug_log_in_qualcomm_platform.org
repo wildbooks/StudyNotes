@@ -26,8 +26,9 @@
 
   b:
   #undef pr_debug
-  #define pr_debug(fmt, ...) \
-  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+  #define pr_debug(fmt, ...)  printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+  #undef  pr_info
+  #define pr_info(fmt, ...)  printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
 
   c:
   device/tct/idol347/BoardConfig.mk

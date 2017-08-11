@@ -7,284 +7,283 @@
 * 电源常识
   PMIC
   SPMI (System Power Management Interface)
-1. 电池管理的部分包括Linux电池驱动、Android电池服务、电池属性和参数、电池
-   曲线优化四个部分
+  1. 电池管理的部分包括Linux电池驱动、Android电池服务、电池属性和参数、电池曲线优化四个部分
 * 关键结构体
-1. spmi_driver
-   功能：管理SPMI通用/从设备驱动
-  #+begin_src cpp
-  struct spmi_driver {
-    int				(*probe)(struct spmi_device *dev);//绑定本驱动到SPMI设备
-    int				(*remove)(struct spmi_device *dev);//从SPMI设备取消绑定驱动
-    void				(*shutdown)(struct spmi_device *dev); //在关机掉电期间使用的标准关闭回调
-    //在系统挂起期间使用的标准挂起回调函数
-    int				(*suspend)(struct spmi_device *dev, pm_message_t pmesg);
-    int				(*resume)(struct spmi_device *dev);//系统恢复期间使用的标准恢复回调
+  1. spmi_driver
+     功能：管理SPMI通用/从设备驱动
+     #+begin_src cpp
+       struct spmi_driver {
+           int				(*probe)(struct spmi_device *dev);//绑定本驱动到SPMI设备
+           int				(*remove)(struct spmi_device *dev);//从SPMI设备取消绑定驱动
+           void				(*shutdown)(struct spmi_device *dev); //在关机掉电期间使用的标准关闭回调
+           //在系统挂起期间使用的标准挂起回调函数
+           int				(*suspend)(struct spmi_device *dev, pm_message_t pmesg);
+           int				(*resume)(struct spmi_device *dev);//系统恢复期间使用的标准恢复回调
 
-    struct device_driver		driver; //SPMI设备驱动程序应初始化此结构的名称和所有者字段
-    const struct spmi_device_id	*id_table;//此驱动程序支持的SPMI设备列表
-  };
-  #+end_src
-2. spmi_device  设备
-  #+begin_src cpp
-  struct spmi_device {
-    struct device		dev;  //设备
-    const char		*name;   //使用此设备的驱动名称
-    struct spmi_controller	*ctrl;//SPMI设备控制管理托管此总线的设备
-    struct spmi_resource	res;  //资源
-    struct spmi_resource	*dev_node;
-    u32			num_dev_node;  //设备号
-    u8			sid;   //从设备ID
-    int			id;  //唯一标识符，避免于其他SPMI设备重名
-  };
-  #+end_src
-3. device_driver
-   功能：基本设备驱动结构体,主要用于设备驱动匹配用
-  #+begin_src cpp
-  struct device_driver {
-   const char * name;     //设备驱动名
-   struct bus_type * bus; //此驱动所属于的总线
+           struct device_driver		driver; //SPMI设备驱动程序应初始化此结构的名称和所有者字段
+           const struct spmi_device_id	*id_table;//此驱动程序支持的SPMI设备列表
+       };
+     #+end_src
+  2. spmi_device  设备
+     #+begin_src cpp
+       struct spmi_device {
+           struct device		dev;  //设备
+           const char		*name;   //使用此设备的驱动名称
+           struct spmi_controller	*ctrl;//SPMI设备控制管理托管此总线的设备
+           struct spmi_resource	res;  //资源
+           struct spmi_resource	*dev_node;
+           u32			num_dev_node;  //设备号
+           u8			sid;   //从设备ID
+           int			id;  //唯一标识符，避免于其他SPMI设备重名
+       };
+     #+end_src
+  3. device_driver
+     功能：基本设备驱动结构体,主要用于设备驱动匹配用
+     #+begin_src cpp
+       struct device_driver {
+           const char * name;     //设备驱动名
+           struct bus_type * bus; //此驱动所属于的总线
 
-   struct module * owner;  //模块所有者
-   const char		*mod_name; //内联模块使用
-   bool suppress_bind_attrs; //禁止绑定/取消绑定 via sysfs
+           struct module * owner;  //模块所有者
+           const char		*mod_name; //内联模块使用
+           bool suppress_bind_attrs; //禁止绑定/取消绑定 via sysfs
 
-   const struct of_device_id	*of_match_table; //打开的固件表
-   const struct acpi_device_id	*acpi_match_table;//ACPI匹配表
+           const struct of_device_id	*of_match_table; //打开的固件表
+           const struct acpi_device_id	*acpi_match_table;//ACPI匹配表
 
-   int (*probe) (struct device * dev);//驱动绑定到特定设备上
-   int (*remove) (struct device * dev);//取消驱动绑定
-   void (*shutdown) (struct device * dev);//关机
-   //用于睡眠模式，通常用于低功耗
-   int (*suspend) (struct device * dev, pm_message_t state);
-   int (*resume) (struct device * dev);//从睡眠模式中唤醒
-   //由驱动程序核心自动创建的没入属性
-   const struct attribute_group **groups;
+           int (*probe) (struct device * dev);//驱动绑定到特定设备上
+           int (*remove) (struct device * dev);//取消驱动绑定
+           void (*shutdown) (struct device * dev);//关机
+           //用于睡眠模式，通常用于低功耗
+           int (*suspend) (struct device * dev, pm_message_t state);
+           int (*resume) (struct device * dev);//从睡眠模式中唤醒
+           //由驱动程序核心自动创建的没入属性
+           const struct attribute_group **groups;
 
-   const struct dev_pm_ops *pm; //于此驱动匹配的硬件电源管理操作
+           const struct dev_pm_ops *pm; //于此驱动匹配的硬件电源管理操作
 
-   //驱动核心的私有数据，除了驱动核心之外没有人可以触及这个。
-   struct driver_private *p;
-  };
-  #+end_src
-4. dev_pm_ops
-   功能：设备电源管理回调函数
-  #+begin_src cpp
-  //prepare—>suspend—>suspend_late—>suspend_noirq-------wakeup--------->resume_noirq—>resume_early—>resume-->complete
-  struct dev_pm_ops {
-    int (*prepare)(struct device *dev);
-    void (*complete)(struct device *dev);
-    int (*suspend)(struct device *dev);
-    int (*resume)(struct device *dev);
-    int (*freeze)(struct device *dev);
-    int (*thaw)(struct device *dev);
-    int (*poweroff)(struct device *dev);
-    int (*restore)(struct device *dev);
-    int (*suspend_late)(struct device *dev);
-    int (*resume_early)(struct device *dev);
-    int (*freeze_late)(struct device *dev);
-    int (*thaw_early)(struct device *dev);
-    int (*poweroff_late)(struct device *dev);
-    int (*restore_early)(struct device *dev);
-    int (*suspend_noirq)(struct device *dev);
-    int (*resume_noirq)(struct device *dev);
-    int (*freeze_noirq)(struct device *dev);
-    int (*thaw_noirq)(struct device *dev);
-    int (*poweroff_noirq)(struct device *dev);
-    int (*restore_noirq)(struct device *dev);
-    int (*runtime_suspend)(struct device *dev);
-    int (*runtime_resume)(struct device *dev);
-    int (*runtime_idle)(struct device *dev);
-  };
-  #+end_src
-5. dev_pm_info
-   #+begin_src cpp
-     struct dev_pm_info {
-         pm_message_t            power_state;
-         unsigned int            can_wakeup:1;
-         unsigned int            async_suspend:1;
-         bool                    is_prepared:1;  /* Owned by the PM core */
-         bool                    is_suspended:1; /* Ditto */
-         bool                    is_noirq_suspended:1;
-         bool                    is_late_suspended:1;
-         bool                    ignore_children:1;
-         bool                    early_init:1;   /* Owned by the PM core */
-         bool                    direct_complete:1;      /* Owned by the PM core */
-         spinlock_t              lock;
-     #ifdef CONFIG_PM_SLEEP
-         struct list_head        entry;
-         struct completion       completion;
-         struct wakeup_source    *wakeup;
-         bool                    wakeup_path:1;
-         bool                    syscore:1;
-     #else
-         unsigned int            should_wakeup:1;
-     #endif
-     #ifdef CONFIG_PM_RUNTIME
-         struct timer_list       suspend_timer;
-         unsigned long           timer_expires;
-         struct work_struct      work;
-         wait_queue_head_t       wait_queue;
-         atomic_t                usage_count;
-         atomic_t                child_count;
-         unsigned int            disable_depth:3;
-         unsigned int            idle_notification:1;
-         unsigned int            request_pending:1;
-         unsigned int            deferred_resume:1;
-         unsigned int            run_wake:1;
-         unsigned int            runtime_auto:1;
-         unsigned int            no_callbacks:1;
-         unsigned int            irq_safe:1;
-         unsigned int            use_autosuspend:1;
-         unsigned int            timer_autosuspends:1;
-         unsigned int            memalloc_noio:1;
-         enum rpm_request        request;
-         enum rpm_status         runtime_status;
-         int                     runtime_error;
-         int                     autosuspend_delay;
-         unsigned long           last_busy;
-         unsigned long           active_jiffies;
-         unsigned long           suspended_jiffies;
-         unsigned long           accounting_timestamp;
-     #endif
-         struct pm_subsys_data   *subsys_data;  /* Owned by the subsystem. */
-         void (*set_latency_tolerance)(struct device *, s32);
-         struct dev_pm_qos       *qos;
-     };
-   #+end_src
+           //驱动核心的私有数据，除了驱动核心之外没有人可以触及这个。
+           struct driver_private *p;
+       };
+     #+end_src
+  4. dev_pm_ops
+     功能：设备电源管理回调函数
+     #+begin_src cpp
+       //prepare—>suspend—>suspend_late—>suspend_noirq-------wakeup--------->resume_noirq—>resume_early—>resume-->complete
+       struct dev_pm_ops {
+           int (*prepare)(struct device *dev);
+           void (*complete)(struct device *dev);
+           int (*suspend)(struct device *dev);
+           int (*resume)(struct device *dev);
+           int (*freeze)(struct device *dev);
+           int (*thaw)(struct device *dev);
+           int (*poweroff)(struct device *dev);
+           int (*restore)(struct device *dev);
+           int (*suspend_late)(struct device *dev);
+           int (*resume_early)(struct device *dev);
+           int (*freeze_late)(struct device *dev);
+           int (*thaw_early)(struct device *dev);
+           int (*poweroff_late)(struct device *dev);
+           int (*restore_early)(struct device *dev);
+           int (*suspend_noirq)(struct device *dev);
+           int (*resume_noirq)(struct device *dev);
+           int (*freeze_noirq)(struct device *dev);
+           int (*thaw_noirq)(struct device *dev);
+           int (*poweroff_noirq)(struct device *dev);
+           int (*restore_noirq)(struct device *dev);
+           int (*runtime_suspend)(struct device *dev);
+           int (*runtime_resume)(struct device *dev);
+           int (*runtime_idle)(struct device *dev);
+       };
+     #+end_src
+  5. dev_pm_info
+     #+begin_src cpp
+       struct dev_pm_info {
+           pm_message_t            power_state;
+           unsigned int            can_wakeup:1;
+           unsigned int            async_suspend:1;
+           bool                    is_prepared:1;  /* Owned by the PM core */
+           bool                    is_suspended:1; /* Ditto */
+           bool                    is_noirq_suspended:1;
+           bool                    is_late_suspended:1;
+           bool                    ignore_children:1;
+           bool                    early_init:1;   /* Owned by the PM core */
+           bool                    direct_complete:1;      /* Owned by the PM core */
+           spinlock_t              lock;
+       #ifdef CONFIG_PM_SLEEP
+           struct list_head        entry;
+           struct completion       completion;
+           struct wakeup_source    *wakeup;
+           bool                    wakeup_path:1;
+           bool                    syscore:1;
+       #else
+           unsigned int            should_wakeup:1;
+       #endif
+       #ifdef CONFIG_PM_RUNTIME
+           struct timer_list       suspend_timer;
+           unsigned long           timer_expires;
+           struct work_struct      work;
+           wait_queue_head_t       wait_queue;
+           atomic_t                usage_count;
+           atomic_t                child_count;
+           unsigned int            disable_depth:3;
+           unsigned int            idle_notification:1;
+           unsigned int            request_pending:1;
+           unsigned int            deferred_resume:1;
+           unsigned int            run_wake:1;
+           unsigned int            runtime_auto:1;
+           unsigned int            no_callbacks:1;
+           unsigned int            irq_safe:1;
+           unsigned int            use_autosuspend:1;
+           unsigned int            timer_autosuspends:1;
+           unsigned int            memalloc_noio:1;
+           enum rpm_request        request;
+           enum rpm_status         runtime_status;
+           int                     runtime_error;
+           int                     autosuspend_delay;
+           unsigned long           last_busy;
+           unsigned long           active_jiffies;
+           unsigned long           suspended_jiffies;
+           unsigned long           accounting_timestamp;
+       #endif
+           struct pm_subsys_data   *subsys_data;  /* Owned by the subsystem. */
+           void (*set_latency_tolerance)(struct device *, s32);
+           struct dev_pm_qos       *qos;
+       };
+     #+end_src
 * 充电驱动
   INIT_WORK(&bq->irq_work, bq2589x_charger_irq_workfunc);
-	INIT_WORK(&bq->adapter_in_work, bq2589x_adapter_in_workfunc);
-	INIT_WORK(&bq->adapter_out_work, bq2589x_adapter_out_workfunc);
+  INIT_WORK(&bq->adapter_in_work, bq2589x_adapter_in_workfunc);
+  INIT_WORK(&bq->adapter_out_work, bq2589x_adapter_out_workfunc);
   /*监听电池电压,充电电流,*/
-	INIT_DELAYED_WORK(&bq->monitor_work, bq2589x_monitor_workfunc);
-	INIT_DELAYED_WORK(&bq->ico_work, bq2589x_ico_workfunc);
-	INIT_DELAYED_WORK(&bq->pe_volt_tune_work, bq2589x_tune_volt_workfunc);
-	INIT_DELAYED_WORK(&bq->check_pe_tuneup_work, bq2589x_check_pe_tuneup_workfunc);
+  INIT_DELAYED_WORK(&bq->monitor_work, bq2589x_monitor_workfunc);
+  INIT_DELAYED_WORK(&bq->ico_work, bq2589x_ico_workfunc);
+  INIT_DELAYED_WORK(&bq->pe_volt_tune_work, bq2589x_tune_volt_workfunc);
+  INIT_DELAYED_WORK(&bq->check_pe_tuneup_work, bq2589x_check_pe_tuneup_workfunc);
 ** 设备树
-+ pm8950设备的设备树
-  设备树路径 msm-pm8950.dtsi
-   #+begin_src cpp
-   pmi8950_charger: qcom,qpnp-smbcharger {
-      spmi-dev-container;
-      compatible = "qcom,qpnp-smbcharger";
-      #address-cells = <1>;
-      #size-cells = <1>;
+   + pm8950设备的设备树
+     设备树路径 msm-pm8950.dtsi
+     #+begin_src cpp
+       pmi8950_charger: qcom,qpnp-smbcharger {
+          spmi-dev-container;
+          compatible = "qcom,qpnp-smbcharger";
+          #address-cells = <1>;
+          #size-cells = <1>;
 
-      qcom,iterm-ma = <100>;
-      qcom,float-voltage-mv = <4400>;
-      qcom,resume-delta-mv = <200>;
-      qcom,chg-inhibit-fg;
-      qcom,rparasitic-uohm = <100000>;
-      qcom,bms-psy-name = "bms";
-      qcom,thermal-mitigation = <2000 1500 1000 0>;
-      qcom,fastchg-current-ma = <2000>;
-      qcom,autoadjust-vfloat;
-      qcom,pmic-revid = <&pmi8950_revid>;
-      qcom,charging-timeout-mins = <0>;
-      qcom,jeita-temp-hard-limit = <1>;
+          qcom,iterm-ma = <100>;
+          qcom,float-voltage-mv = <4400>;
+          qcom,resume-delta-mv = <200>;
+          qcom,chg-inhibit-fg;
+          qcom,rparasitic-uohm = <100000>;
+          qcom,bms-psy-name = "bms";
+          qcom,thermal-mitigation = <2000 1500 1000 0>;
+          qcom,fastchg-current-ma = <2000>;
+          qcom,autoadjust-vfloat;
+          qcom,pmic-revid = <&pmi8950_revid>;
+          qcom,charging-timeout-mins = <0>;
+          qcom,jeita-temp-hard-limit = <1>;
 
-      qcom,fastchg-current-comp = <700>;
-      qcom,float-voltage-comp = <16>;
-      qcom,xo-vadc = <&pm8950_vadc>;
+          qcom,fastchg-current-comp = <700>;
+          qcom,float-voltage-comp = <16>;
+          qcom,xo-vadc = <&pm8950_vadc>;
 
-      qcom,chgr@1000 {
-        reg = <0x1000 0x100>;
-        interrupts =	<0x2 0x10 0x0>,
-            <0x2 0x10 0x1>,
-            <0x2 0x10 0x2>,
-            <0x2 0x10 0x3>,
-            <0x2 0x10 0x4>,
-            <0x2 0x10 0x5>,
-            <0x2 0x10 0x6>,
-            <0x2 0x10 0x7>;
+          qcom,chgr@1000 {
+              reg = <0x1000 0x100>;
+              interrupts =	<0x2 0x10 0x0>,
+                  <0x2 0x10 0x1>,
+                  <0x2 0x10 0x2>,
+                  <0x2 0x10 0x3>,
+                  <0x2 0x10 0x4>,
+                  <0x2 0x10 0x5>,
+                  <0x2 0x10 0x6>,
+                  <0x2 0x10 0x7>;
 
-      interrupt-names =	"chg-error",
-            "chg-inhibit",
-            "chg-prechg-sft",
-            "chg-complete-chg-sft",
-            "chg-p2f-thr",
-            "chg-rechg-thr",
-            "chg-taper-thr",
-            "chg-tcc-thr";
-      };
+              interrupt-names =	"chg-error",
+                  "chg-inhibit",
+                  "chg-prechg-sft",
+                  "chg-complete-chg-sft",
+                  "chg-p2f-thr",
+                  "chg-rechg-thr",
+                  "chg-taper-thr",
+                  "chg-tcc-thr";
+          };
 
-      qcom,otg@1100 {
-        reg = <0x1100 0x100>;
-        interrupts =	<0x2 0x11 0x0>,
-            <0x2 0x11 0x1>,
-            <0x2 0x11 0x3>;
-        interrupt-names =	"otg-fail",
-              "otg-oc",
-            "usbid-change";
-      };
+          qcom,otg@1100 {
+              reg = <0x1100 0x100>;
+              interrupts =	<0x2 0x11 0x0>,
+                  <0x2 0x11 0x1>,
+                  <0x2 0x11 0x3>;
+              interrupt-names =	"otg-fail",
+                  "otg-oc",
+                  "usbid-change";
+          };
 
-      qcom,bat-if@1200 {
-        reg = <0x1200 0x100>;
-        interrupts =	<0x2 0x12 0x0>,
-            <0x2 0x12 0x1>,
-            <0x2 0x12 0x2>,
-            <0x2 0x12 0x3>,
-            <0x2 0x12 0x4>,
-            <0x2 0x12 0x5>,
-            <0x2 0x12 0x6>,
-            <0x2 0x12 0x7>;
+          qcom,bat-if@1200 {
+                  reg = <0x1200 0x100>;
+                  interrupts =	<0x2 0x12 0x0>,
+                      <0x2 0x12 0x1>,
+                      <0x2 0x12 0x2>,
+                      <0x2 0x12 0x3>,
+                      <0x2 0x12 0x4>,
+                      <0x2 0x12 0x5>,
+                      <0x2 0x12 0x6>,
+                      <0x2 0x12 0x7>;
 
-        interrupt-names =	"batt-hot",
-              "batt-warm",
-              "batt-cold",
-              "batt-cool",
-              "batt-ov",
-              "batt-low",
-              "batt-missing",
-              "batt-term-missing";
-      };
+                  interrupt-names =	"batt-hot",
+                      "batt-warm",
+                      "batt-cold",
+                      "batt-cool",
+                      "batt-ov",
+                      "batt-low",
+                      "batt-missing",
+                      "batt-term-missing";
+              };
 
-      qcom,usb-chgpth@1300 {
-        reg = <0x1300 0x100>;
-        interrupts =	<0x2 0x13 0x0>,
-            <0x2 0x13 0x1>,
-          <0x2 0x13 0x2>,
-            <0x2 0x13 0x5>;
+          qcom,usb-chgpth@1300 {
+              reg = <0x1300 0x100>;
+              interrupts =	<0x2 0x13 0x0>,
+                  <0x2 0x13 0x1>,
+                  <0x2 0x13 0x2>,
+                  <0x2 0x13 0x5>;
 
-        interrupt-names =	"usbin-uv",
-              "usbin-ov",
-              "usbin-src-det",
-              "aicl-done";
-      };
+              interrupt-names =	"usbin-uv",
+                  "usbin-ov",
+                  "usbin-src-det",
+                  "aicl-done";
+          };
 
-      qcom,dc-chgpth@1400 {
-        reg = <0x1400 0x100>;
-        interrupts =	<0x2 0x14 0x0>,
-            <0x2 0x14 0x1>;
-        interrupt-names =	"dcin-uv",
-              "dcin-ov";
-      };
+          qcom,dc-chgpth@1400 {
+              reg = <0x1400 0x100>;
+              interrupts =	<0x2 0x14 0x0>,
+                  <0x2 0x14 0x1>;
+              interrupt-names =	"dcin-uv",
+                  "dcin-ov";
+          };
 
-      qcom,chgr-misc@1600 {
-        reg = <0x1600 0x100>;
-        interrupts =	<0x2 0x16 0x0>,
-            <0x2 0x16 0x1>,
-            <0x2 0x16 0x2>,
-            <0x2 0x16 0x3>,
-            <0x2 0x16 0x4>,
-            <0x2 0x16 0x5>;
+          qcom,chgr-misc@1600 {
+              reg = <0x1600 0x100>;
+              interrupts =	<0x2 0x16 0x0>,
+                  <0x2 0x16 0x1>,
+                  <0x2 0x16 0x2>,
+                  <0x2 0x16 0x3>,
+                  <0x2 0x16 0x4>,
+                  <0x2 0x16 0x5>;
 
-        interrupt-names =	"power-ok",
-              "temp-shutdown",
-              "wdog-timeout",
-              "flash-fail",
-              "otst2",
-              "otst3";
-      };
-    };
-   #+end_src
-   #+begin_src cpp
-   pm8950_vadc: vadc@3100 {
+              interrupt-names =	"power-ok",
+                  "temp-shutdown",
+                  "wdog-timeout",
+                  "flash-fail",
+                  "otst2",
+                  "otst3";
+          };
+       };
+     #+end_src
+     #+begin_src cpp
+       pm8950_vadc: vadc@3100 {
            compatible = "qcom,qpnp-vadc";
            reg = <0x3100 0x100>;
-           #address-cells = <1>;
-           #size-cells = <0>;
+       #address-cells = <1>;
+       #size-cells = <0>;
            interrupts = <0x0 0x31 0x0>;
            interrupt-names = "eoc-int-en-set";
            qcom,adc-bit-resolution = <15>;
@@ -293,139 +292,139 @@
            qcom,pmic-revid = <&pm8950_revid>;
 
            chan@5 {
-                   label = "vcoin";
-                   reg = <5>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <1>;
-                   qcom,calibration-type = "absolute";
-                   qcom,scale-function = <0>;
-                   qcom,hw-settle-time = <0>;
-                   qcom,fast-avg-setup = <0>;
+               label = "vcoin";
+               reg = <5>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <1>;
+               qcom,calibration-type = "absolute";
+               qcom,scale-function = <0>;
+               qcom,hw-settle-time = <0>;
+               qcom,fast-avg-setup = <0>;
            };
 
            chan@7 {
-                   label = "vph_pwr";
-                   reg = <7>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <1>;
-                   qcom,calibration-type = "absolute";
-                   qcom,scale-function = <0>;
-                   qcom,hw-settle-time = <0>;
-                   qcom,fast-avg-setup = <0>;
+               label = "vph_pwr";
+               reg = <7>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <1>;
+               qcom,calibration-type = "absolute";
+               qcom,scale-function = <0>;
+               qcom,hw-settle-time = <0>;
+               qcom,fast-avg-setup = <0>;
            };
 
            chan@8 {
-                   label = "die_temp";
-                   reg = <8>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <0>;
-                   qcom,calibration-type = "absolute";
-                   qcom,scale-function = <3>;
-                   qcom,hw-settle-time = <0>;
-                   qcom,fast-avg-setup = <0>;
+               label = "die_temp";
+               reg = <8>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <0>;
+               qcom,calibration-type = "absolute";
+               qcom,scale-function = <3>;
+               qcom,hw-settle-time = <0>;
+               qcom,fast-avg-setup = <0>;
            };
 
            chan@9 {
-                   label = "ref_625mv";
-                   reg = <9>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <0>;
-                   qcom,calibration-type = "absolute";
-                   qcom,scale-function = <0>;
-                   qcom,hw-settle-time = <0>;
-                   qcom,fast-avg-setup = <0>;
+               label = "ref_625mv";
+               reg = <9>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <0>;
+               qcom,calibration-type = "absolute";
+               qcom,scale-function = <0>;
+               qcom,hw-settle-time = <0>;
+               qcom,fast-avg-setup = <0>;
            };
 
            chan@a {
-                   label = "ref_1250v";
-                   reg = <0xa>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <0>;
-                   qcom,calibration-type = "absolute";
-                   qcom,scale-function = <0>;
-                   qcom,hw-settle-time = <0>;
-                   qcom,fast-avg-setup = <0>;
+               label = "ref_1250v";
+               reg = <0xa>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <0>;
+               qcom,calibration-type = "absolute";
+               qcom,scale-function = <0>;
+               qcom,hw-settle-time = <0>;
+               qcom,fast-avg-setup = <0>;
            };
 
            chan@c {
-                   label = "ref_buf_625mv";
-                   reg = <0xc>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <0>;
-                   qcom,calibration-type = "absolute";
-                   qcom,scale-function = <0>;
-                   qcom,hw-settle-time = <0>;
-                   qcom,fast-avg-setup = <0>;
+               label = "ref_buf_625mv";
+               reg = <0xc>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <0>;
+               qcom,calibration-type = "absolute";
+               qcom,scale-function = <0>;
+               qcom,hw-settle-time = <0>;
+               qcom,fast-avg-setup = <0>;
            };
 
            chan@36 {
-                   label = "pa_therm0";
-                   reg = <0x36>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <0>;
-                   qcom,calibration-type = "ratiometric";
-                   qcom,scale-function = <2>;
-                   qcom,hw-settle-time = <2>;
-                   qcom,fast-avg-setup = <0>;
+               label = "pa_therm0";
+               reg = <0x36>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <0>;
+               qcom,calibration-type = "ratiometric";
+               qcom,scale-function = <2>;
+               qcom,hw-settle-time = <2>;
+               qcom,fast-avg-setup = <0>;
            };
 
            chan@11 {
-                   label = "pa_therm1";
-                   reg = <0x11>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <0>;
-                   qcom,calibration-type = "ratiometric";
-                   qcom,scale-function = <2>;
-                   qcom,hw-settle-time = <2>;
-                   qcom,fast-avg-setup = <0>;
-                   qcom,vadc-thermal-node;
+               label = "pa_therm1";
+               reg = <0x11>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <0>;
+               qcom,calibration-type = "ratiometric";
+               qcom,scale-function = <2>;
+               qcom,hw-settle-time = <2>;
+               qcom,fast-avg-setup = <0>;
+               qcom,vadc-thermal-node;
            };
 
            chan@32 {
-                   label = "xo_therm";
-                   reg = <0x32>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <0>;
-                   qcom,calibration-type = "ratiometric";
-                   qcom,scale-function = <4>;
-                   qcom,hw-settle-time = <2>;
-                   qcom,fast-avg-setup = <0>;
-                   qcom,vadc-thermal-node;
+               label = "xo_therm";
+               reg = <0x32>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <0>;
+               qcom,calibration-type = "ratiometric";
+               qcom,scale-function = <4>;
+               qcom,hw-settle-time = <2>;
+               qcom,fast-avg-setup = <0>;
+               qcom,vadc-thermal-node;
            };
 
            chan@3c {
-                   label = "xo_therm_buf";
-                   reg = <0x3c>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <0>;
-                   qcom,calibration-type = "ratiometric";
-                   qcom,scale-function = <4>;
-                   qcom,hw-settle-time = <2>;
-                   qcom,fast-avg-setup = <0>;
-                   qcom,vadc-thermal-node;
+               label = "xo_therm_buf";
+               reg = <0x3c>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <0>;
+               qcom,calibration-type = "ratiometric";
+               qcom,scale-function = <4>;
+               qcom,hw-settle-time = <2>;
+               qcom,fast-avg-setup = <0>;
+               qcom,vadc-thermal-node;
            };
 
            chan@13 {
-                   label = "case_therm";
-                   reg = <0x13>;
-                   qcom,decimation = <0>;
-                   qcom,pre-div-channel-scaling = <0>;
-                   qcom,calibration-type = "ratiometric";
-                   qcom,scale-function = <2>;
-                   qcom,hw-settle-time = <2>;
-                   qcom,fast-avg-setup = <0>;
-                   qcom,vadc-thermal-node;
+               label = "case_therm";
+               reg = <0x13>;
+               qcom,decimation = <0>;
+               qcom,pre-div-channel-scaling = <0>;
+               qcom,calibration-type = "ratiometric";
+               qcom,scale-function = <2>;
+               qcom,hw-settle-time = <2>;
+               qcom,fast-avg-setup = <0>;
+               qcom,vadc-thermal-node;
            };
-   };
-   #+end_src
-+ pm8950设备的设备树
-  设备树路径 msm-pm8950.dtsi
-+ msm-pmi8950.dtsi
-+ 适配器设备树
-  设备树路径 msm8952-regulator.dtsi(好像是这个)
+       };
+     #+end_src
+   + pm8950设备的设备树
+     设备树路径 msm-pm8950.dtsi
+   + msm-pmi8950.dtsi
+   + 适配器设备树
+     设备树路径 msm8952-regulator.dtsi(好像是这个)
 ** qpnp-smbcharger.c
    1. 注册设备
-     #+begin_src cpp
+      #+begin_src cpp
      static int __init smbchg_init(void)
      {
         return spmi_driver_register(&smbchg_driver);//注册驱动
@@ -435,7 +434,7 @@
       {
         return spmi_driver_unregister(&smbchg_driver);//注销驱动
       }
-     #+end_src
+      #+end_src
    2. 填充smbchg_driver结构体
       #+begin_src cpp
       static struct spmi_driver smbchg_driver = {
@@ -591,7 +590,7 @@
         return ERR_PTR(-EPROBE_DEFER);
       }
       #+end_src
-   6. smbchg_parse_peripherals()
+   5. smbchg_parse_peripherals()
       #+begin_src cpp
       static int smbchg_parse_peripherals(struct smbchg_chip *chip)
       {
@@ -666,7 +665,7 @@
         return rc;
       }
       #+end_src
-   7. smbchg_check_chg_version()
+   6. smbchg_check_chg_version()
       #+begin_src cpp
       static int smbchg_check_chg_version(struct smbchg_chip *chip)
       {
@@ -714,7 +713,7 @@
         return 0;
       }
       #+end_src
-   8. smb_parse_dt()  设备树解析
+   7. smb_parse_dt()  设备树解析
       #+begin_src cpp
       static int smb_parse_dt(struct smbchg_chip *chip)
       {
@@ -913,7 +912,7 @@
           chip->cfg_override_usb_current = of_property_read_bool(node, "qcom,override-usb-current");
       }
       #+end_src
-   9. OF_PROP_READ(chip, ocp_thresh, "ibat-ocp-threshold-ua", rc, 1);
+   8. OF_PROP_READ(chip, ocp_thresh, "ibat-ocp-threshold-ua", rc, 1);
       #+begin_src cpp
       #define OF_PROP_READ(chip, prop, dt_property, retval, optional)		\
       do {									\
@@ -948,21 +947,19 @@
         else if (retval)
           dev_err(chip->dev, "Error reading " #dt_property " property rc = %d\n", rc);
       #+end_src
-   10. smbchg_regulator_init()  调节器初始化
-       #+begin_src cpp
-       static int smbchg_regulator_init(struct smbchg_chip *chip)
-       {
-       regulator_node = of_get_child_by_name(chip->dev->of_node, "qcom,smbcharger-boost-otg");
-       }
-       #+end_src
-   11.
-             #+begin_src cpp
-             #+end_src
-   12.
+   9. smbchg_regulator_init()  调节器初始化
+      #+begin_src cpp
+      static int smbchg_regulator_init(struct smbchg_chip *chip)
+      {
+      regulator_node = of_get_child_by_name(chip->dev->of_node, "qcom,smbcharger-boost-otg");
+      }
+      #+end_src
+   10.
         #+begin_src cpp
         #+end_src
-   13. smbchg_remove
-   14.
-计算电量
-温度
-** qpnp-adc-voltage.c
+   11.
+        #+begin_src cpp
+        #+end_src
+   12. smbchg_remove
+   计算电量
+   温度

@@ -1,0 +1,131 @@
+* LED
+  CONFIG_LEDS_QPNP=y       #指示灯
+  CONFIG_LEDS_QPNP_FLASH=y #和摄像头相关的flash led
+  CONFIG_LEDS_QPNP_WLED=y  #这个好像没啥用
+  CONFIG_LEDS_TRIGGERS=y   #触发器相关
+  CONFIG_TCT_8996_IDOL4SCN_FRONT_LED=y #前置led
+** front led
+   + *codes*\\
+     n8996/kernel/drivers/leds/front_flash_idol4scn.c
+   + *dts*\\
+     n8996/kernel/arch/arm64/boot/dts/appassionato/msm8996-camera-sensor-mtp.dtsi ==> tcl,front_flash_led\\
+     msm-pmi8996.dtsi
+     msm8996-mtp.dtsi
+   + *Docs*\\
+   + *sysfs*\\
+     /sys/class/leds/led_torch   指的都是前置灯,同一个
+     /sys/class/leds/led_flash
+   + *debug*:\\
+     echo 8> /proc/sys/kernel/printk #打印log
+** charger
+   + *codes*\\
+     kernel/drivers/leds/leds-qpnp.c
+   + *dts*\\
+     kernel/arch/arm64/boot/dts/appassionato/msm-pmi8994.dtsi ==> qcom,leds-qpnp
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/leds/leds-qpnp.txt\\
+   + *sysfs*\\
+     /sys/class/leds/green
+     /sys/class/leds/blue
+     /sys/class/leds/red  *没用*
+   + *debug*:\\
+     echo -n "file leds_qpnp.c +p" > /d/dynamic_debug/control
+     echo -n "func qpnp_dump_regs +p" > /d/dynamic_debug/control #查看寄存器值
+     echo 100 >/sys/class/leds/green/brightness
+     echo 0 >/sys/class/leds/green/brightness
+     echo 100 > /sys/class/leds/blue/brightness
+     /sys/class/leds/blue
+
+     [none]
+     switch_trigger
+     flash0_trigger
+     flash1_trigger
+     torch0_trigger
+     torch1_trigger
+     flash_trigger
+     torch_trigger
+     rfkill0
+     mmc0
+     rfkill1
+     fg_adc-online
+     usb-online
+     usb-parallel-online
+     bms-online
+     bcl-online
+     battery-charging-or-full               psy->charging_full_trig
+     battery-charging                       psy->charging_trig
+     battery-full                           psy->full_trig
+     battery-charging-blink-full-solid      psy->charging_blink_full_solid_trig
+** camera-flash(不懂)
+   + *codes*\\
+     n8996/kernel/drivers/media/platform/msm/camera_v2/sensor/flash/msm_flash.c\\
+   + *dts*\\
+     n8996/kernel/arch/arm64/boot/dts/appassionato/msm8996-camera-sensor-mtp.dtsi ==> qcom,camera-flash\\
+   + *Docs*\\
+     Documentation/devicetree/bindings/media/video/msm-camera-flash.txt
+   + *sysfs*\\
+     /sys/class/leds/torch-light0\\
+     /sys/class/leds/torch-light1\\
+   + *debug*:\\
+     echo -n "file msm_flash.c +p" > /d/dynamic_debug/control  #打印log
+   + *注意*:
+     调用leds-qpnp-flash.c中的节点
+** qpnp flash
+   + *codes*\\
+     kernel/drivers/leds/leds-qpnp-flash.c\\
+   + *dts*\\
+     kernel/arch/arm64/boot/dts/appassionato/msm-pmi8994.dtsi ==> qcom,qpnp-flash-led\\
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/leds/leds-qpnp-flash.txt
+   + *sysfs*\\
+     /sys/class/leds/led:torch_0   warm led
+     /sys/class/leds/led:torch_1   cold led
+     /sys/class/leds/led:flash_0   warm led
+     /sys/class/leds/led:flash_1   cold led
+     /sys/class/leds/led:switch
+   + *debug*:\\
+     echo -n "file leds-qpnp-flash.c +p" > /d/dynamic_debug/control  #打印log
+     + off led
+       echo 0 > /sys/class/leds/led:flash_0/brightness
+       echo 0 > /sys/class/leds/led:flash_1/brightness
+       echo 0 > /sys/class/leds/led:torch_0/brightness
+       echo 0 > /sys/class/leds/led:torch_1/brightness
+       echo 0 > /sys/class/leds/led:switch/brightness
+     + warm flash led on
+       echo 80 > /sys/class/leds/led:flash_0/brightness
+       echo 0 > /sys/class/leds/led:flash_1/brightness
+       echo 0 > /sys/class/leds/led:torch_0/brightness
+       echo 0 > /sys/class/leds/led:torch_1/brightness
+       echo 1 > /sys/class/leds/led:switch/brightness
+     + cold flash led on
+       echo 0 > /sys/class/leds/led:flash_0/brightness
+       echo 80 > /sys/class/leds/led:flash_1/brightness
+       echo 0 > /sys/class/leds/led:torch_0/brightness
+       echo 0 > /sys/class/leds/led:torch_1/brightness
+       echo 1 > /sys/class/leds/led:switch/brightness
+     + warm torch led on
+       echo 0 > /sys/class/leds/led:flash_0/brightness
+       echo 0 > /sys/class/leds/led:flash_1/brightness
+       echo 80 > /sys/class/leds/led:torch_0/brightness
+       echo 0 > /sys/class/leds/led:torch_1/brightness
+       echo 1 > /sys/class/leds/led:switch/brightness
+     + warm torch led on
+       echo 0 > /sys/class/leds/led:flash_0/brightness
+       echo 0 > /sys/class/leds/led:flash_1/brightness
+       echo 0 > /sys/class/leds/led:torch_0/brightness
+       echo 80 > /sys/class/leds/led:torch_1/brightness
+       echo 1 > /sys/class/leds/led:switch/brightness
+     + *注意*:\\
+       节点测试准寻严格的先后顺序，先flash -> torch -> switch\\
+** wled
+   + *codes*\\
+     kernel/drivers/leds/leds-qpnp-wled.c\\
+   + *dts*\\
+     n8996/kernel/arch/arm64/boot/dts/appassionato/msm-pmi8994.dtsi ==> qcom,qpnp-wled-led\\
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/leds/leds-qpnp-wled.txt
+   + *sysfs*\\
+     /sys/class/leds/wled
+   + *debug*:\\
+     echo -n "file leds-qpnp-flash.c +p" > /d/dynamic_debug/control  #打印log
+* dtsi
