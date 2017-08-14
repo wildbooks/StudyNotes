@@ -35,7 +35,6 @@
      echo 0 >/sys/class/leds/green/brightness
      echo 100 > /sys/class/leds/blue/brightness
      /sys/class/leds/blue
-
      [none]
      switch_trigger
      flash0_trigger

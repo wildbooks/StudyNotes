@@ -1,33 +1,182 @@
-* 简介
-  idol4项目中用到了3个驱动,
-  摄像头双flash(leds-qpnp-flash.c)
-  前置led(front_flash_idol4.c),
-  背光灯(leds-qpnp-wled.c)
-* sysfs使用方法
-  /sys/class/leds/wled
-* 参考文档
-  + WLED driver source
-    kernel/drivers/leds/leds-qpnp-wled.c
-  + DTSI documentation
-    kernel/Documentation/devicetree/bindings/leds/leds-qpnp-wled.txt
-  + DTSI files
-    kernel/arch/arm/boot/dts/qcom/msm-pmi<####>.dtsi
-    (PMI8998 only) kernel/arch/arm/boot/dts/qcom/msm-pmicobalt.dtsi
+* led简介
+  + RGB:(红绿蓝)三色灯
+    通常用于充电,消息提示等的信号灯,通常分为两种:PWM控制和LPG控制
+  + WLED:背光灯
+  + Flash LED:闪光灯
+    通常用于相机和视频闪光灯,也用于手电筒(flashlight/torch)应用
+  + MPP LED:IO复用LED等
+** backlight
+  + *codes*\\
+    kernel/drivers/video/msm/mdss/mdss_fb.c\\
+  + *dts*\\
+    kernel/arch/arm64/boot/dts/appassionato/msm8996-mdss.dtsi ==> qcom,mdss-fb\\
+  + *Docs*\\
+  + *sysfs*\\
+    /sys/class/leds/lcd-backlight\\
+  + *注意*:\\
+    仅仅一小部分是和背光相关\\
+** LED
+   CONFIG_LEDS_QPNP=y       #指示灯
+   CONFIG_LEDS_QPNP_FLASH=y #和摄像头相关的flash led
+   CONFIG_LEDS_QPNP_WLED=y  #这个好像没啥用
+   CONFIG_LEDS_TRIGGERS=y   #触发器相关
+   CONFIG_TCT_8996_IDOL4SCN_FRONT_LED=y #前置led
+** camera-flash(不懂)
+   + *codes*\\
+     kernel/drivers/media/platform/msm/camera_v2/sensor/flash/msm_flash.c\\
+   + *dts*\\
+     kernel/arch/arm64/boot/dts/appassionato/msm8996-camera-sensor-mtp.dtsi ==> qcom,camera-flash\\
+   + *Docs*\\
+   + *sysfs*\\
+     /sys/class/leds/torch-light0\\
+     /sys/class/leds/torch-light1\\
+   + *debug*:\\
+     echo -n "msm_flash.c +p" > /d/dynamic_debug/control  #打印log
+   + *注意*:
+     调用leds-qpnp-flash.c中的节点
+** RGB
+   主要用于充电，消息提示等的信号灯
+   + *codes*\\
+     kernel/drivers/leds/leds-qpnp.c
+   + *dts*\\
+     kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,leds-qpnp
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/leds/leds-qpnp.txt\\
+   + *sysfs*\\
+     /sys/class/leds/green
+     /sys/class/leds/blue
+     /sys/class/leds/red
+   + *debug*:\\
+     echo -n "leds_qpnp.c +p" > /d/dynamic_debug/control
+** MPP LED
+   + *codes*\\
+     kernel/drivers/leds/leds-qpnp.c
+   + *dts*\\
+     kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,leds-qpnp
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/leds/leds-qpnp.txt\\
+   + *sysfs*\\
+     /sys/class/leds/green\\
+     /sys/class/leds/blue\\
+     /sys/class/leds/red\\
+   + *debug*:\\
+     echo -n "leds_qpnp.c +p" > /d/dynamic_debug/control
+** Flash LED
+   + *codes*\\
+     kernel/drivers/leds/leds-qpnp-flash.c\\
+   + *dts*\\
+     n8996/kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,qpnp-flash-led\\
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/leds/leds-qpnp-flash.txt
+   + *sysfs*\\
+     /sys/class/leds/led:torch_0   warm led
+     /sys/class/leds/led:torch_1   cold led
+     /sys/class/leds/led:flash_0   warm led
+     /sys/class/leds/led:flash_1   cold led
+     /sys/class/leds/led:switch
+   + *debug*:\\
+     echo -n "leds-qpnp-flash.c +p" > /d/dynamic_debug/control  #打印log
+     + off led
+       echo 0 > /sys/class/leds/led:flash_0/brightness
+       echo 0 > /sys/class/leds/led:flash_1/brightness
+       echo 0 > /sys/class/leds/led:torch_0/brightness
+       echo 0 > /sys/class/leds/led:torch_1/brightness
+       echo 0 > /sys/class/leds/led:switch/brightness
+     + warm flash led on
+       echo 80 > /sys/class/leds/led:flash_0/brightness
+       echo 0 > /sys/class/leds/led:flash_1/brightness
+       echo 0 > /sys/class/leds/led:torch_0/brightness
+       echo 0 > /sys/class/leds/led:torch_1/brightness
+       echo 1 > /sys/class/leds/led:switch/brightness
+     + cold flash led on
+       echo 0 > /sys/class/leds/led:flash_0/brightness
+       echo 80 > /sys/class/leds/led:flash_1/brightness
+       echo 0 > /sys/class/leds/led:torch_0/brightness
+       echo 0 > /sys/class/leds/led:torch_1/brightness
+       echo 1 > /sys/class/leds/led:switch/brightness
+     + warm torch led on
+       echo 0 > /sys/class/leds/led:flash_0/brightness
+       echo 0 > /sys/class/leds/led:flash_1/brightness
+       echo 80 > /sys/class/leds/led:torch_0/brightness
+       echo 0 > /sys/class/leds/led:torch_1/brightness
+       echo 1 > /sys/class/leds/led:switch/brightness
+     + warm torch led on
+       echo 0 > /sys/class/leds/led:flash_0/brightness
+       echo 0 > /sys/class/leds/led:flash_1/brightness
+       echo 0 > /sys/class/leds/led:torch_0/brightness
+       echo 80 > /sys/class/leds/led:torch_1/brightness
+       echo 1 > /sys/class/leds/led:switch/brightness
+     + *注意*:\\
+       节点测试准寻严格的先后顺序，先flash -> torch -> switch\\
+** WLED
+   + *codes*\\
+     kernel/drivers/leds/leds-qpnp-wled.c\\
+   + *dts*\\
+     kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,qpnp-wled-led\\
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/leds/leds-qpnp-wled.txt
+   + *sysfs*\\
+     /sys/class/leds/wled
+   + *debug*:\\
+     echo -n "leds-qpnp-wled.c +p" > /d/dynamic_debug/control  #打印log
+* 关键结构体
+  1. qpnp_wled
+     wled设备数据
+     #+begin_src cpp
+       struct qpnp_wled {
+           struct led_classdev	cdev;  //led类设备
+           struct spmi_device *spmi;  //spmi设备
+           struct work_struct work;   //led的工作队列
+           struct mutex lock;        //互斥锁
+           enum qpnp_wled_fdbk_op fdbk_op;//输出反馈(feedback)模式
+           enum qpnp_wled_dim_mode dim_mode;  //调光模式
+           int ovp_irq;  //过压保护中断 OVP(over voltage protection)
+           int sc_irq;  //短路中断(short circuit)
+           u32 sc_cnt;  //短路中断次数
+           u32 avdd_trim_steps_from_center;//从中心值修剪的步数
+           u16 ctrl_base;    //ctrl基地址
+           u16 sink_base;    //sink基地址
+           u16 mod_freq_khz; //调制器频率
+           u16 hyb_thres;    //混合调光的阈值
+           u16 sync_dly_us;  //sync 延时
+           u16 vref_mv;    //参考电压
+           u16 vref_psm_mv;//参考psm电压
+           u16 loop_comp_res_kohm; //控制选择补偿电阻
+           u16 loop_ea_gm;
+           u16 sc_deb_cycles;
+           u16 switch_freq_khz; //开关频率
+           u16 ovp_mv;        //过压保护电压
+           u16 ilim_ma;       //最大限制电流
+           u16 boost_duty_ns; //升压占空比
+           u16 fs_curr_ua; //最大满量程电流
+           u16 ramp_ms;
+           u16 ramp_step;
+           u16 cons_sync_write_delay_us;
+           u8 strings[QPNP_WLED_MAX_STRINGS];//支持wled的字符串
+           u8 num_strings;  //字符串个数(即wled个数)
+           bool en_9b_dim_res;
+           bool en_phase_stag;
+           bool en_cabc;
+           bool disp_type_amoled;  //false为amoled,true为amoled显示屏
+           bool en_ext_pfet_sc_pro;
+           bool prev_state;
+       };
+     #+end_src
 * 设备树
-#+begin_src cpp
-qcom,leds@d800 {
+  #+begin_src cpp
+    qcom,leds@d800 {
         compatible = "qcom,qpnp-wled";
         reg =   <0xd800 0x100>,
-                <0xd900 0x100>,
-                <0xdc00 0x100>,
-                <0xde00 0x100>;
+            <0xd900 0x100>,
+            <0xdc00 0x100>,
+            <0xde00 0x100>;
         reg-names =  "qpnp-wled-ctrl-base",
-                     "qpnp-wled-sink-base",
-                     "qpnp-wled-ibb-base",
-                     "qpnp-wled-lab-base";
+            "qpnp-wled-sink-base",
+            "qpnp-wled-ibb-base",
+            "qpnp-wled-lab-base";
         interrupts = <0x3 0xd8 0x2>;
         interrupt-names = "sc-irq";//短路
-                                   //过压保护ovp
+        //过压保护ovp
         status = "okay";
         linux,name = "wled";
         linux,default-trigger = "bkl-trigger";//触发backlight
@@ -41,10 +190,10 @@ qcom,leds@d800 {
         qcom,dim-mode = "hybrid";  //调光模式:analog(模拟),digital(数字),hybrid(混合)
         qcom,dim-method = "linear";
         /*用于混合模式时的阈值。 它表示调光模式从“数字”切换到“模拟”的亮度百
-        分比。 默认值为6.25％。 因为浮点不能直接表示，所以值乘以100.因此默认
-        值为625。*/
+          分比。 默认值为6.25％。 因为浮点不能直接表示，所以值乘以100.因此默认
+          值为625。*/
         qcom,hyb-thres = <625>;
-        
+
         qcom,sync-dly-us = <800>;//延迟电流同步
         qcom,fs-curr-ua = <20000>;//最大满量程电流
         qcom,en-phase-stag; //布尔值，指定是否需要相位交错。
@@ -52,170 +201,126 @@ qcom,leds@d800 {
         qcom,led-strings-list = [00 01];//有n个灯，并对它们编号
         qcom,en-ext-pfet-sc-pro;//指定是否需要外部pfet短路保护
         qcom,cons-sync-write-delay-us = <1000>;//指定连续写入sync寄存器之间的延迟持续时间
-};
-#+end_src
-* 关键结构体
-1. qpnp_wled
-   wled设备数据
-   #+begin_src cpp
-   struct qpnp_wled {
-        struct led_classdev	cdev;  //led类设备
-        struct spmi_device *spmi;  //spmi设备
-        struct work_struct work;   //led的工作队列
-        struct mutex lock;        //互斥锁
-        enum qpnp_wled_fdbk_op fdbk_op;//输出反馈(feedback)模式
-        enum qpnp_wled_dim_mode dim_mode;  //调光模式
-        int ovp_irq;  //过压保护中断 OVP(over voltage protection)
-        int sc_irq;  //短路中断(short circuit)
-        u32 sc_cnt;  //短路中断次数
-        u32 avdd_trim_steps_from_center;//从中心值修剪的步数
-        u16 ctrl_base;    //ctrl基地址
-        u16 sink_base;    //sink基地址
-        u16 mod_freq_khz; //调制器频率
-        u16 hyb_thres;    //混合调光的阈值
-        u16 sync_dly_us;  //sync 延时
-        u16 vref_mv;    //参考电压
-        u16 vref_psm_mv;//参考psm电压
-        u16 loop_comp_res_kohm; //控制选择补偿电阻
-        u16 loop_ea_gm;
-        u16 sc_deb_cycles;
-        u16 switch_freq_khz; //开关频率
-        u16 ovp_mv;        //过压保护电压
-        u16 ilim_ma;       //最大限制电流
-        u16 boost_duty_ns; //升压占空比
-        u16 fs_curr_ua; //最大满量程电流
-        u16 ramp_ms;
-        u16 ramp_step;
-        u16 cons_sync_write_delay_us;
-        u8 strings[QPNP_WLED_MAX_STRINGS];//支持wled的字符串
-        u8 num_strings;  //字符串个数(即wled个数)
-        bool en_9b_dim_res;
-        bool en_phase_stag;
-        bool en_cabc;
-        bool disp_type_amoled;  //false为amoled,true为amoled显示屏
-        bool en_ext_pfet_sc_pro;
-        bool prev_state;
     };
-   #+end_src
+  #+end_src
 * leds-qpnp-wled.c
 ** qpnp_wled_probe()
-#+begin_src cpp
-static int qpnp_wled_probe(struct spmi_device *spmi)
-{
-     //为wled分配空间
-     wled = devm_kzalloc(&spmi->dev, sizeof(*wled), GFP_KERNEL);
+   #+begin_src cpp
+     static int qpnp_wled_probe(struct spmi_device *spmi)
+     {
+         //为wled分配空间
+         wled = devm_kzalloc(&spmi->dev, sizeof(*wled), GFP_KERNEL);
 
-     //关联spmi(系统电源管理接口)
-     wled->spmi = spmi;
-
+         //关联spmi(系统电源管理接口)
+         wled->spmi = spmi;
      //根据资源名获取内存资源首地址
-     wled_resource = spmi_get_resource_byname(spmi, NULL, IORESOURCE_MEM, QPNP_WLED_SINK_BASE);
-     wled->sink_base = wled_resource->start;
+         wled_resource = spmi_get_resource_byname(spmi, NULL, IORESOURCE_MEM, QPNP_WLED_SINK_BASE);
+         wled->sink_base = wled_resource->start;
 
-     wled_resource = spmi_get_resource_byname(spmi, NULL, IORESOURCE_MEM, QPNP_WLED_SINK_BASE);
-     wled->ctrl_base = wled_resource->start;
+         wled_resource = spmi_get_resource_byname(spmi, NULL, IORESOURCE_MEM, QPNP_WLED_SINK_BASE);
+         wled->ctrl_base = wled_resource->start;
 
-     //将wled数据写入到内核私有数据中
-     dev_set_drvdata(&spmi->dev, wled);
+         //将wled数据写入到内核私有数据中
+         dev_set_drvdata(&spmi->dev, wled);
 
-     //解析设备树节点,省略
-     rc = qpnp_wled_parse_dt(wled);
+         //解析设备树节点,省略
+         rc = qpnp_wled_parse_dt(wled);
 
-     //配置wled寄存器
-     rc = qpnp_wled_config(wled);
+         //配置wled寄存器
+         rc = qpnp_wled_config(wled);
 
-     //初始化互斥锁
-     mutex_init(&wled->lock);
+         //初始化互斥锁
+         mutex_init(&wled->lock);
 
-     //添加工作队列
-     INIT_WORK(&wled->work, qpnp_wled_work);
+         //添加工作队列
+         INIT_WORK(&wled->work, qpnp_wled_work);
 
-     //节点控制的函数，这是重点
-     wled->cdev.brightness_set = qpnp_wled_set;
-     wled->cdev.brightness_get = qpnp_wled_get;
+         //节点控制的函数，这是重点
+         wled->cdev.brightness_set = qpnp_wled_set;
+         wled->cdev.brightness_get = qpnp_wled_get;
 
-     //注册设备,并创建设备节点
-     rc = led_classdev_register(&spmi->dev, &wled->cdev);
-     
-     /*创建sysfs文件*/
-     /*
-         dump_regs:
-             显示寄存器值
-         dim_mode
-             显示调光模式
-             改变调光模式(analog(模拟), digital(数字), hybrid(混合))
-         fs_curr_ua
-             显示最大满量程电流
-             设置最大满量程电流
-         start_ramp
-             设置斜坡开始
-         ramp_ms
-             显示每步斜坡延时
-             设置每步斜坡延时
-         ramp_step
-             显示斜坡步数
-             设置斜坡步数
-     */
-     for (i = 0; i < ARRAY_SIZE(qpnp_wled_attrs); i++) {
-		     rc = sysfs_create_file(&wled->cdev.dev->kobj, &qpnp_wled_attrs[i].attr);
-		     if (rc < 0) {
-             dev_err(&spmi->dev, "sysfs creation failed\n");
-             goto sysfs_fail;
-		     }
-	   }
-}
-#+end_src
+         //注册设备,并创建设备节点
+         rc = led_classdev_register(&spmi->dev, &wled->cdev);
+
+         /*创建sysfs文件*/
+         /*
+           dump_regs:
+           显示寄存器值
+           dim_mode
+           显示调光模式
+           改变调光模式(analog(模拟), digital(数字), hybrid(混合))
+           fs_curr_ua
+           显示最大满量程电流
+           设置最大满量程电流
+           start_ramp
+           设置斜坡开始
+           ramp_ms
+           显示每步斜坡延时
+           设置每步斜坡延时
+           ramp_step
+           显示斜坡步数
+           设置斜坡步数
+         ,*/
+         for (i = 0; i < ARRAY_SIZE(qpnp_wled_attrs); i++) {
+             rc = sysfs_create_file(&wled->cdev.dev->kobj, &qpnp_wled_attrs[i].attr);
+             if (rc < 0) {
+                 dev_err(&spmi->dev, "sysfs creation failed\n");
+                 goto sysfs_fail;
+             }
+         }
+     }
+   #+end_src
 ** qpnp_wled_config()
-#+begin_src cpp
-static int qpnp_wled_config(struct qpnp_wled *wled)
-{
-    //配置显示类型,为lcd还是amoled
-    rc = qpnp_wled_set_disp(wled, wled->ctrl_base);
+   #+begin_src cpp
+     static int qpnp_wled_config(struct qpnp_wled *wled)
+     {
+         //配置显示类型,为lcd还是amoled
+         rc = qpnp_wled_set_disp(wled, wled->ctrl_base);
 
-    //配置反馈输出寄存器
-    
-    
-    //配置参考(VREF)电压寄存器
-    //配置最大限制电流(ILIM)寄存器
-    //配置软启动斜坡延迟
-    //配置最大上升占空比
-    //配置SWITCHING FREQ(PWM频率)寄存器
-    //配置过压保护寄存器
-    //配置调制寄存器
-    ....
-    /*过压中断*/
-    if (wled->ovp_irq >= 0) {
-		    rc = devm_request_threaded_irq(&wled->spmi->dev, wled->ovp_irq, NULL, qpnp_wled_ovp_irq, QPNP_IRQ_FLAGS, "qpnp_wled_ovp_irq", wled);
-    }
-    /*短路中断*/
-    if (wled->sc_irq >= 0) {
-		    wled->sc_cnt = 0;
-		    rc = devm_request_threaded_irq(&wled->spmi->dev, wled->sc_irq, NULL, qpnp_wled_sc_irq, QPNP_IRQ_FLAGS, "qpnp_wled_sc_irq", wled);
-    }
-    .....
-}
-#+end_src
+         //配置反馈输出寄存器
+
+
+         //配置参考(VREF)电压寄存器
+         //配置最大限制电流(ILIM)寄存器
+         //配置软启动斜坡延迟
+         //配置最大上升占空比
+         //配置SWITCHING FREQ(PWM频率)寄存器
+         //配置过压保护寄存器
+         //配置调制寄存器
+         ....
+         /*过压中断*/
+         if (wled->ovp_irq >= 0) {
+             rc = devm_request_threaded_irq(&wled->spmi->dev, wled->ovp_irq, NULL, qpnp_wled_ovp_irq, QPNP_IRQ_FLAGS, "qpnp_wled_ovp_irq", wled);
+         }
+         /*短路中断*/
+         if (wled->sc_irq >= 0) {
+             wled->sc_cnt = 0;
+             rc = devm_request_threaded_irq(&wled->spmi->dev, wled->sc_irq, NULL, qpnp_wled_sc_irq, QPNP_IRQ_FLAGS, "qpnp_wled_sc_irq", wled);
+         }
+         .....
+     }
+   #+end_src
 ** qpnp_wled_attrs
    #+begin_src cpp
-   /* sysfs attributes exported by wled */
-    static struct device_attribute qpnp_wled_attrs[] = {
-      __ATTR(dump_regs, (S_IRUGO | S_IWUSR | S_IWGRP),
-          qpnp_wled_dump_regs_show,
-          NULL),
-      __ATTR(dim_mode, (S_IRUGO | S_IWUSR | S_IWGRP),
-          qpnp_wled_dim_mode_show,
-          qpnp_wled_dim_mode_store),
-      __ATTR(fs_curr_ua, (S_IRUGO | S_IWUSR | S_IWGRP),
-          qpnp_wled_fs_curr_ua_show,
-          qpnp_wled_fs_curr_ua_store),
-      __ATTR(start_ramp, (S_IRUGO | S_IWUSR | S_IWGRP),
-          NULL,
-          qpnp_wled_ramp_store),
-      __ATTR(ramp_ms, (S_IRUGO | S_IWUSR | S_IWGRP),
-          qpnp_wled_ramp_ms_show,
-          qpnp_wled_ramp_ms_store),
-      __ATTR(ramp_step, (S_IRUGO | S_IWUSR | S_IWGRP),
-          qpnp_wled_ramp_step_show,
-          qpnp_wled_ramp_step_store),
-    };
+     /* sysfs attributes exported by wled */
+     static struct device_attribute qpnp_wled_attrs[] = {
+         __ATTR(dump_regs, (S_IRUGO | S_IWUSR | S_IWGRP),
+                qpnp_wled_dump_regs_show,
+                NULL),
+         __ATTR(dim_mode, (S_IRUGO | S_IWUSR | S_IWGRP),
+                qpnp_wled_dim_mode_show,
+                qpnp_wled_dim_mode_store),
+         __ATTR(fs_curr_ua, (S_IRUGO | S_IWUSR | S_IWGRP),
+                qpnp_wled_fs_curr_ua_show,
+                qpnp_wled_fs_curr_ua_store),
+         __ATTR(start_ramp, (S_IRUGO | S_IWUSR | S_IWGRP),
+                NULL,
+                qpnp_wled_ramp_store),
+         __ATTR(ramp_ms, (S_IRUGO | S_IWUSR | S_IWGRP),
+                qpnp_wled_ramp_ms_show,
+                qpnp_wled_ramp_ms_store),
+         __ATTR(ramp_step, (S_IRUGO | S_IWUSR | S_IWGRP),
+                qpnp_wled_ramp_step_show,
+                qpnp_wled_ramp_step_store),
+     };
    #+end_src

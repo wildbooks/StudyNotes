@@ -1,3 +1,0 @@
-* 内核配置文件config位置
-  在编译内核时，会把kernel/arch/arm/configs/xx_defconfig拷贝到out/target/product/gflip2/obj/KERNEL_OBJ/.config
-* 设备树位置确定

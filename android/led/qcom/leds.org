@@ -23,9 +23,9 @@
   CONFIG_TCT_8996_IDOL4SCN_FRONT_LED=y #前置led
 * camera-flash(不懂)
   + *codes*\\
-    n8996/kernel/drivers/media/platform/msm/camera_v2/sensor/flash/msm_flash.c\\
+    kernel/drivers/media/platform/msm/camera_v2/sensor/flash/msm_flash.c\\
   + *dts*\\
-    n8996/kernel/arch/arm64/boot/dts/appassionato/msm8996-camera-sensor-mtp.dtsi ==> qcom,camera-flash\\
+    kernel/arch/arm64/boot/dts/appassionato/msm8996-camera-sensor-mtp.dtsi ==> qcom,camera-flash\\
   + *Docs*\\
   + *sysfs*\\
     /sys/class/leds/torch-light0\\
@@ -65,7 +65,7 @@
   + *codes*\\
     kernel/drivers/leds/leds-qpnp-flash.c\\
   + *dts*\\
-    n8996/kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,qpnp-flash-led\\
+    kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,qpnp-flash-led\\
   + *Docs*\\
     kernel/Documentation/devicetree/bindings/leds/leds-qpnp-flash.txt
   + *sysfs*\\
@@ -112,7 +112,7 @@
   + *codes*\\
     kernel/drivers/leds/leds-qpnp-wled.c\\
   + *dts*\\
-    n8996/kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,qpnp-wled-led\\
+    kernel/arch/arm64/boot/dts/xxxx/msm-pmi8994.dtsi ==> qcom,qpnp-wled-led\\
   + *Docs*\\
     kernel/Documentation/devicetree/bindings/leds/leds-qpnp-wled.txt
   + *sysfs*\\

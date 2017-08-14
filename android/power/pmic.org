@@ -8,9 +8,9 @@
     kernel/drivers/regulator/qpnp-regulator.c\\
     kernel/drivers/regulator/rpm-smd-regulator.c\\
   + *dts*:\\
+  + *Docs*:\\
     kernel/Documentation/devicetree/bindings/regulator/qpnp-regulator.txt\\
     kernel/Documentation/devicetree/bindings/regulator/rpm-smd-regulator.txt\\
-  + *Docs*:\\
 * Qpnp Pin
   + *Code*:\\
     kernel/drivers/gpio/qpnp-pin.c

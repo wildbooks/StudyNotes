@@ -1,9 +1,9 @@
 * How to open debug log in Qualcomm platform
-1 lk uart log
-2 kernel uart log
-3 如何打开某个文件的pr_debug
-4 memdump的使用
-5 minicom的使用
+  1 lk uart log
+  2 kernel uart log
+  3 如何打开某个文件的pr_debug
+  4 memdump的使用
+  5 minicom的使用
 * lk uart log
   bootable/bootloader/lk/project/pixi355.mk    DEFINES += WITH_DEBUG_UART=1
   //CFG_USB_UART_SWITCH
@@ -15,26 +15,36 @@
   b. adb shell cat /proc/kmsg
   c. *#*#0574#*#*
 * 如何打开某个文件的pr_debug
-  a:
-  adb root
-  adb remount
-  adb shell
-  mount -t debugfs none /d
-  echo -n "file mdss_dsi.c +tp" > d/dynamic_debug/control
-  echo -n "file mdss_dsi_host.c +tp" > d/dynamic_debug/control
-  echo -n "file mdss_fb.c +tp" > d/dynamic_debug/control
-
-  b:
-  #undef pr_debug
-  #define pr_debug(fmt, ...)  printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
-  #undef  pr_info
-  #define pr_info(fmt, ...)  printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
-
-  c:
-  device/tct/idol347/BoardConfig.mk
-  BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom user_debug=30
-  msm_rtb.filter=0x3F ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1
-  ignore_loglevel dynamic_debug.verbose=1 dyndbg=\"file mdss_dsi.c +p;file mdss_dsi_cmd.c +p;file mdss_fb.c +p;file mdss_dsi_panel.c +p;file mdss_mdp_intf_video.c\"
+  + dynamic_debug
+    #+begin_src shell
+      adb root
+      adb remount
+      adb shell
+      mount -t debugfs none /d
+      echo -n "file mdss_dsi.c +tp" > d/dynamic_debug/control
+      echo -n "file mdss_dsi_host.c +tp" > d/dynamic_debug/control
+      echo -n "file mdss_fb.c +tp" > d/dynamic_debug/control
+    #+end_src
+  + printk
+    #+begin_src c
+      #undef pr_debug
+      #define pr_debug(fmt, ...)  printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+      #undef  pr_info
+      #define pr_info(fmt, ...)  printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+    #+end_src
+  + configs
+    #+begin_src c
+      device/tct/idol347/BoardConfig.mk
+      BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom user_debug=30
+      msm_rtb.filter=0x3F ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1
+      ignore_loglevel dynamic_debug.verbose=1 dyndbg=\"file mdss_dsi.c +p;file mdss_dsi_cmd.c +p;file mdss_fb.c +p;file mdss_dsi_panel.c +p;file mdss_mdp_intf_video.c\"
+    #+end_src
+  + DEBUG
+    #+begin_src c
+      #ifndef DEBUG
+      #define DEBUG
+      #endif
+    #+end_src
 * memdump的使用
   python ramparse.py --nm-path=/data/workspace/l8936_idol347/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-nm
   --gdb-path=/data/workspace/l8936_idol347/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-gdb -o /home/sdduser/Desktop/outdir/
