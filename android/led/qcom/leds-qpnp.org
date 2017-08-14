@@ -109,10 +109,10 @@
        echo 0 > /sys/class/leds/led:torch_1/brightness
        echo 1 > /sys/class/leds/led:switch/brightness
      + warm torch led on
-       echo 0 > /sys/class/leds/led:flash_0/brightness
        echo 0 > /sys/class/leds/led:flash_1/brightness
-       echo 0 > /sys/class/leds/led:torch_0/brightness
-       echo 80 > /sys/class/leds/led:torch_1/brightness
+       echo 0 > /sys/class/leds/led:flash_0/brightness
+       echo 255 > /sys/class/leds/led:torch_0/brightness
+       echo 255 > /sys/class/leds/led:torch_1/brightness
        echo 1 > /sys/class/leds/led:switch/brightness
      + *注意*:\\
        节点测试准寻严格的先后顺序，先flash -> torch -> switch\\
