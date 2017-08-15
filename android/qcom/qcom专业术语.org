@@ -24,7 +24,7 @@
 | Charger    |                                                                     | 充电                                           |
 | AICL       | Automatic Input Current Limiting                                    | 自动输入电流限制                               |
 | ICL        | Input Current Limitation                                            | 输入电流限制                                   |
-| BMD        | Battery Missing Detection                                           |                                                |
+| BMD        | Battery Missing Detection                                           | 电池缺失检测                                   |
 | DCP        | Dedicated Charging Port                                             | 专用充电端口                                   |
 | DTS        | Device Tree Source                                                  |                                                |
 | DTSI       | Device Tree Source Include                                          |                                                |
@@ -95,6 +95,7 @@
 | BOM        | Bill of Materials                                                   |                                                |
 | DR         | Decimation Ratio                                                    | 取样率                                         |
 | EOC        | End of Conversion                                                   | 转换结果                                       |
+| EOC        | End of charge                                                       | 充电结束                                       |
 | GSM        | Global System for Mobile Communications                             | 全球移动通信系统                               |
 | LDO        | Low Dropout (Voltage Regulator)                                     | 低压差（稳压器）                               |
 | MUX        | Multiplexer                                                         | 多路复用器                                     |
@@ -114,14 +115,16 @@
 | TCXO       | Temperature-compensated crystal oscillator                          |                                                |
 | VREG       | Voltage regulator                                                   |                                                |
 | VS         | Voltage switches                                                    |                                                |
-| FG         | Fuel Gauge                                                          |                                                |
+| FG         | Fuel Gauge                                                          | 电量计                                         |
 | MPG        | Master band gap                                                     |                                                |
+| BCL        | Battery current limit                                               | 电池电流限制                                   |
 | FCC        | Full Charge Capacity(mAmpHour)                                      | 满电荷电量                                     |
 | CC         | constant charge                                                     | 恒定电荷                                       |
-| CV         | constant voltage                                                    | 很定电压                                       |
+| CV         | constant voltage                                                    | 恒定电压                                       |
 | OVP        | over voltage protection                                             | 过压保护                                       |
 | SC         | short circuit                                                       | 短路                                           |
 | OCV        | Open Circuit Voltage                                                | 开路电压，电池在开路状态下的端电压称为开路电压 |
+| ESR        | Equivalent series resistance                                        | 等效串联电阻                                   |
 | BMS        | battery management system                                           | 电池管理系统                                   |
 | CC         | Coulumb Counter                                                     | 电量计                                         |
 | UC         | Remaining Capacity                                                  |                                                |

@@ -11,6 +11,12 @@
 #+LINK_HOME:   the ``home'' link of an exported page
 #+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
 * 简介
+  + *codes*\\
+    system/core/healthd/\\
+    device/qcom/common/healthd\\
+  + *Docs*\\
+  + *sysfs*\\
+  + *debug*:\\
 * 总结
 ** g_epoll_fd
    1. epoll()监听input事件,详情见ev_init(),获取key状态

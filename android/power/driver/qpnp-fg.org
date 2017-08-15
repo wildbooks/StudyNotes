@@ -12,16 +12,34 @@
 #+LINK_HOME:   the ``home'' link of an exported page
 #+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
 * 简介
-  充电状态在硬件(Fuel Gauge)中计算并由软件通过检索寄存器读数。QPNP PMIC FG\\
-  为客户端提供了读取与电池相关的属性的接口。其主要功能是检索充电状态（SOC）\\
-  ，0-100百分比表示电池中剩余的电量。\\
+  电池充电状态是由硬件电量计(Fuel Gauge)实现的,
+  + *Code*:\\
+    kernel/drivers/power/qpnp-fg.c\\
+  + *dts*:\\
+    kernel/arch/arm/boot/dts/qcom/msm-pmi8994.dtsi
+  + *Docs*:\\
+    kernel/Documentation/devicetree/bindings/power/qpnp-fg.txt\\
+  + *sysfs*\\
+  + *debug*:\\
+    + /sys/kernel/debug/fg_memif\\
+      | name    | 范围                    |
+      | address | 0x400~0x600(一共1k空间) |
+      | count   | 0~0x200                 |
+    /sys/class/power_supply/bms/\\
+    + /sys/module/qpnp_fg/\\
+    +
+** 特性功能
+   电流检测
+   电压检测
+   电池电阻测量
+   温度检测和补偿
+   电池识别
+   电池缺失检测
+   USB ID检测
+   充电器互动(热检测)
 * Fuel Gauge参考资料
   + SoC is calculated in the hardware and retrieved by the software through
     register reading.
-  + Source code driver tree structure
-    + Driver – kernel/drivers/power/qpnp-fg.c
-    + DTS – kernel/arch/arm/boot/dts/qcom/msm-pmi8950.dtsi
-    + Documentation – Documentation/devicetree/bindings/power/qpnp-fg.txt.
   + Supplies the properties for the user space power supply framework
     POWER_SUPPLY_PROP_CAPACITY – Current SoC
     POWER_SUPPLY_PROP_CURRENT_NOW – Instantaneous battery current
@@ -46,13 +64,6 @@
       is performed in the fuel gauge hardware
     + sw-fallbk-ocv
     + sw-fallbk-new-battrt-sts.
-* sysfs使用
-  + debug
-    /sys/kernel/debug/fg_memif
-  + udevfs
-    /sys/class/power_supply/bms/
-  + 模块符号表路径
-    /sys/module/
 * 关键结构体
   + fg_chip
     #+begin_src cpp
@@ -1518,6 +1529,33 @@
    #+end_src
 * IRQ
 ** FG_SOC(State of Charge)
+   | interrupt          | 含义         | 触发条件                    |
+   |--------------------+--------------+-----------------------------|
+   | high-soc           |              | SoC > High SoC(IRQ_soc_max) |
+   | low-soc            |              | SoC < Low SoC(IRQ_soc_min)  |
+   | full-soc           | 满电充电状态 | SoC=100%                    |
+   | empty-soc          | 没电充电状态 | SoC=0%(IRQ_volt_empty)      |
+   | delta-soc          |              | >IRQ_DeltaSoC_Threshold     |
+   | first-est-done     | 不懂         |                             |
+   | sw-fallbk-ocv      |              |                             |
+   | sw-fallbk-new-batt |              |                             |
+   |                    |              |                             |
+** FG_batt
+   | interrupt    | 含义                   | 触发条件                              |
+   |--------------+------------------------+---------------------------------------|
+   | soft-cold    |                        | battery temperature < JEITA_soft_cold |
+   | soft-hot     |                        | battery temperature > JEITA_soft_hot  |
+   | vbatt-low    |                        | battery voltage <IRQ_volt_min         |
+   | batt-ided    | 电池识别               | 电池识别完成触发                      |
+   | batt-id-req  | 电池识别               | 如果检测到智能电池，中断触发          |
+   | batt-unknown | 电池无法识别，但有电池 | 电池无法识别触发                      |
+   | batt-missing | 电池缺失               | 没有电池时触发                        |
+   | batt-match   | 重新连接相同电池时触发 |                                       |
+** FG-memif
+   | interrupt      | 含义           |
+   |----------------+----------------|
+   | mem-avail      | 允许访问fg内存 |
+   | data-rcvry-sug |                |
 *** fg_soc_irq_handler()
     #+begin_src cpp
     static irqreturn_t fg_soc_irq_handler(int irq, void *_chip)
@@ -1579,7 +1617,4 @@
 *** fg_vbatt_low_handler()
     #+begin_src cpp
     #+end_src
-* DONE 总结
-  电池温度，电池属性，电池电量状态
-** 学习到的一些额外的东西
-   1. 通过debugfs文件系统,查看及修改寄存器的值，这点很巧妙
+* df

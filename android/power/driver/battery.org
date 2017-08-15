@@ -1,0 +1,132 @@
+* 简介
+** charger
+   + *codes*\\
+     kernel/drivers/power/qpnp-smbcharger.c\\
+     kernel/drivers/power/smb1351-charger.c\\
+   + *dts*\\
+     kernel/arch/arm/boot/dts/appassionato/msm-pmi8994.dtsi ==> qcom,qpnp-smbcharger\\
+     kernel/arch/arm64/boot/dts/appassionato/msm8996-mtp.dtsi ==> qcom,smb1351-charger\\
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/power/qpnp-smbcharger.txt\\
+     kernel/Documentation/devicetree/bindings/power/smb1351-charger.txt\\
+   + *sysfs*\\
+     /sys/class/power_supply/battery/ =>  qpnp-smbcharger.c\\
+     /sys/class/power_supplyusb-parallel => smb1351-charger.c\\
+   + *debug*:\\
+     echo 8> /proc/sys/kernel/printk #打印log
+     + Disable/enable USB the charger
+       adb root
+       adb wait-for-devices
+       adb shell setprop persist.usb.chgdisabled 1
+       adb root
+     + Disable/enable WI-FI the charger
+       adb wait-for-devices
+       adb shell setprop persist.adb.tcp.port 5555 && adb tcpip
+       adb connect <the target ip>
+       adb shell setprop persist.usb.chgdisabled 1
+** Fuel Gauge
+   + *codes*\\
+     kernel/drivers/power/qpnp-fg.c\\
+   + *dts*\\
+     kernel/arch/arm64/boot/dts/appassionato/msm-pmi8994.dtsi ==> qcom,qpnp-fg\\
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/power/qpnp-fg.txt\\
+   + *sysfs*\\
+   + *debug*:\\
+     echo 8> /proc/sys/kernel/printk #打印log
+     echo 0xff > /sys/module/qpnp_fg/parameters/debug_mask #开启debug掩码
+     + read FG MEM_INTF
+       adb shell "echo 0xXXX > /sys/kernel/debug/fg_memif/address"
+       adb shell "echo 0xXX > /sys/kernel/debug/fg_memif/count"
+       adb shell "cat /sys/kernel/debug/fg_memif/data"
+     + write FG MEM_INTF
+       adb shell "echo 0xXXX > /sys/kernel/debug/fg_memif/address"
+       adb shell "echo 0xXX > /sys/kernel/debug/fg_memif/count"
+       adb shell "echo 0xXX > /sys/kernel/debug/fg_memif/data"
+** battery
+   + *codes*\\
+     kernel/drivers/power/qpnp-fg.c  => fg_batt_profile_init()\\
+     kernel/drivers/power/qpnp-smbcharger.c => smbchg_config_chg_battery_type()\\
+   + *dts*\\
+     kernel/arch/arm64/boot/dts/appassionato/msm8996-mtp.dtsi => qcom,battery-data
+     kernel/arch/arm64/boot/dts/appassionato/batterydata-byd-3000mah-4400mv.dtsi
+     kernel/arch/arm64/boot/dts/appassionato/batterydata-scud-3000mah-4400mv.dtsi
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/batterydata/batterydata.txt
+   + *sysfs*\\
+   + *debug*:\\
+     echo 8> /proc/sys/kernel/printk #打印log
+     echo -n "func power_supply_changed_work +p" >/d/dynamic_debug/control
+     echo -n "file qpnp-smbcharger.c +p" >/d/dynamic_debug/control
+** bcl
+   + *codes*\\
+     kernel/drivers/power/battery_current_limit.c
+   + *dts*\\
+     kernel/arch/arm64/boot/dts/appassionato/msm8996.dtsi => qcom,bcl
+   + *Docs*\\
+     kernel/Documentation/devicetree/bindings/arm/msm/bcl.txt
+   + *sysfs*\\
+     /sys/class/power_supply/bcl/ =>不知干吗的
+   + *debug*:\\
+     echo 8> /proc/sys/kernel/printk #打印log
+     echo -n "func power_supply_changed_work +p" >/d/dynamic_debug/control
+     echo -n "file battery_current_limit.c +p" >/d/dynamic_debug/control
+* dts
+  kernel/arch/arm64/boot/dts/appassionato/batterydata-byd-3000mah-4400mv.dtsi\\
+  #+begin_src c
+    qcom,byd-3000mah-4400mv {
+        qcom,max-voltage-uv = <4400000>; //电池的最大额定电压
+        qcom,nom-batt-capacity-mah = <3000>;//容量
+        qcom,batt-id-kohm = <33 30>;
+        qcom,battery-beta = <3380>;
+        qcom,default-battery-type;   /* added to support NON-standard battery */
+        qcom,battery-type = "byd";  //电池类型
+        qcom,thermal-coefficients = [da 86 f0 50 08 3c];//电池热敏电阻的热系数数组
+
+        qcom,v-cutoff-uv = <3400000>; //设备正常关机的截止电压
+        qcom,chg-term-ua = <100000>;  //电池的终止充电电流
+        qcom,fastchg-current-ma = <3000>;//指示最大充电电流
+        qcom,fg-cc-cv-threshold-mv = <4390>;//从恒定电荷(CC)转换到恒定电压(CV)的电压阈值
+
+        qcom,chg-rslow-comp-c1 = <3922126>; //电量计缓慢补偿常数。由配置工具提供
+        qcom,chg-rslow-comp-c2 = <6220910>; //电量计缓慢补偿常数。由配置工具提供
+        qcom,chg-rs-to-rslow = <953732>; //电量计缓慢补偿常数。由配置工具提供
+        qcom,chg-rslow-comp-thr = <0xAF>; //电量计缓慢补偿常数。由配置工具提供
+        qcom,checksum = <0x1B1C>;
+        qcom,gui-version = "PMI8950GUI - 2.0.0.14";
+        qcom,fg-profile-data = [
+            F1 83 7B 7D
+            94 81 10 7C
+            61 83 44 6E
+            55 88 DD 8E
+            22 82 EC 98
+            8C B6 D6 C1
+            58 15 EE 83
+            D9 7C F7 80
+            CE 76 68 83
+            CC 6E 7E 89
+            FA 94 4C 82
+            FD 99 62 BD
+            83 CA 52 0D
+            02 0C AC 5B
+            14 70 71 FD
+            F4 3C 7B 46
+            7B 40 00 00
+            5D 4C 9F 30
+            A6 3B 00 00
+            00 00 00 00
+            00 00 00 00
+            06 6B 59 69
+            82 78 BF 8B
+            04 77 EA 6A
+            6B 3B EA 82
+            DE 75 57 69
+            98 6F 09 AB
+            1B 17 62 FA
+            64 A0 71 0C
+            28 00 FF 36
+            F0 11 30 03
+            00 00 00 0C
+        ];
+    };
+  #+end_src
