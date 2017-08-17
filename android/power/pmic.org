@@ -1,3 +1,6 @@
+* pmic简介
+  pm8994 是pmi8994主设备
+  pmi8994 是pm8994从设备
 * SPMI
   + *Code*:\\
     kernel/drivers/spmi/spmi.c

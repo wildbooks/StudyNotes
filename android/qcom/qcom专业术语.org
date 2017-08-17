@@ -39,6 +39,7 @@
 | SDP        | Standard Downstream Port                                            |                                                |
 | SoC        | State of Charge                                                     | 充电状态(电量百分比)                           |
 | SPMI       | System Power Management Interface                                   | 系统电源管理接口                               |
+| SPMI       | serial power management interface                                   |                                                |
 | UVLO       | Under Voltage Lock Out                                              | 欠压锁定                                       |
 | VADC       | Voltage analog-to-digital conversion                                |                                                |
 | fuel gauge |                                                                     |                                                |
@@ -64,7 +65,7 @@
 | CSIR       |                                                                     |                                                |
 | JEITA      | Japan Electronics and Information Technology Industries Association | 日本电子信息技术产业协会                       |
 | LPG        | Light Pulse Generator                                               | 光脉冲发生器                                   |
-| WLED       |                                                                     | 白光LED                                        |
+| WLED       | white LED                                                           | 背光灯                                         |
 | AMSS       | Advanced Mobile Subscriber Station                                  |                                                |
 | AMSS       | Advanced Mobile Subscriber Software                                 | 高级移动订阅软件                               |
 | APPSBL     | Applications Boot Loader                                            |                                                |
@@ -194,6 +195,14 @@
 | MMSS       | Multimedia Subsystem                                                |                                                |
 | AMOLED     | Active-Matrix Organic Light-Emitting Diode                          |                                                |
 | OTG        | On-the-Go                                                           |                                                |
+| SDP        | Standard downstream port                                            |                                                |
+| CDP        | Charging downstream port                                            |                                                |
+| DCP        | Dedicated charging port                                             |                                                |
+| HVDCP      | High-voltage dedicated charging port                                |                                                |
+| MUIC       | multiplexed USB interface circuit                                   |                                                |
+| TFT        | thin film transistor (display)                                      |                                                |
+| FT-SMPS    | fast transient SMPS                                                 |                                                |
+| HF-SMPS    | high frequency SMPS                                                 |                                                |
 |            |                                                                     |                                                |
 * 电量计算公式
   + SOC(电荷状态)计算
