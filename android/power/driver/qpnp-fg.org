@@ -25,9 +25,8 @@
       | name    | 范围                    |
       | address | 0x400~0x600(一共1k空间) |
       | count   | 0~0x200                 |
-    /sys/class/power_supply/bms/\\
+    + /sys/class/power_supply/bms/\\
     + /sys/module/qpnp_fg/\\
-    +
 ** 特性功能
    电流检测
    电压检测
@@ -1617,4 +1616,3 @@
 *** fg_vbatt_low_handler()
     #+begin_src cpp
     #+end_src
-* df

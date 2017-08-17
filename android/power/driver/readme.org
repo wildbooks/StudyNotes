@@ -26,45 +26,46 @@
     *debugfs*:
     *proc*:
 * battery
-  + *Code*:
-    bq28400_battery.c
-    battery_current_limit.c
-  + *dts*:
-    msm8974-liquid.dtsi  =>搜索"ti,bq28400-battery"
-  + *docs*
+  + *codes*\\
+    kernel/drivers/power/qpnp-fg.c  => fg_batt_profile_init()\\
+    kernel/drivers/power/qpnp-smbcharger.c => smbchg_config_chg_battery_type()\\
+  + *dts*\\
+    kernel/arch/arm64/boot/dts/appassionato/msm8996-mtp.dtsi => qcom,battery-data
+    kernel/arch/arm64/boot/dts/appassionato/batterydata-byd-3000mah-4400mv.dtsi
+    kernel/arch/arm64/boot/dts/appassionato/batterydata-scud-3000mah-4400mv.dtsi
+  + *Docs*\\
     kernel/Documentation/devicetree/bindings/batterydata/batterydata.txt
-    kernel/Documentation/devicetree/bindings/power/bq28400-battery.txt
-  + *sysfs*:
-    *sysfs*:/sys/class/power/battery
-    *debugfs*:
-    *proc*:
+  + *sysfs*\\
+  + *debug*:\\
+    echo 8> /proc/sys/kernel/printk #打印log
+    echo -n "func power_supply_changed_work +p" >/d/dynamic_debug/control
+    echo -n "file qpnp-smbcharger.c +p" >/d/dynamic_debug/control
 * charger
-  + *Code*:
-    qpnp-charger.c     qpnp-dc
-    smb350_charger.c     这个驱动
-    bq2589x_charger.c    bq2589x-Wall  bq2589x-usb battery
-  + *dts*:
-    msm8974-mtp.dtsi  =>搜索 "ti,bq2589x-1"
-  + *docs*
-  + *sysfs*:
-    *sysfs*:
-    *debugfs*:
-    *proc*:
-  + *sysfs*:
-    /sys/class/power_supply/bq2589x-Wall
-    /sys/class/power_supply/bq2589x-usb
-    /sys/class/power_supply/qpnp-dc
-    /sys/class/power_supply/battery
-    /sys/class/power_supply/bms
-    /sys/class/power_supply/usb  ==>>这个没找到
-  kernel/drivers/power/power_supply.ko
-  kernel/drivers/power/smb350_charger.ko
-  kernel/drivers/power/bq28400_battery.ko
-  kernel/drivers/power/qpnp-bms.ko
-  kernel/drivers/power/qpnp-charger.ko
-  kernel/drivers/power/battery_current_limit.ko
-  kernel/drivers/power/bq2589x_charger.ko
-* bms
+  + *codes*\\
+    kernel/drivers/power/qpnp-smbcharger.c\\
+    kernel/drivers/power/smb1351-charger.c *快充时使用，并行充电*\\
+  + *dts*\\
+    kernel/arch/arm/boot/dts/appassionato/msm-pmi8994.dtsi ==> qcom,qpnp-smbcharger\\
+    kernel/arch/arm64/boot/dts/appassionato/msm8996-mtp.dtsi ==> qcom,smb1351-charger\\
+  + *Docs*\\
+    kernel/Documentation/devicetree/bindings/power/qpnp-smbcharger.txt\\
+    kernel/Documentation/devicetree/bindings/power/smb1351-charger.txt\\
+  + *sysfs*\\
+    /sys/class/power_supply/battery/ =>  qpnp-smbcharger.c\\
+    /sys/class/power_supplyusb-parallel => smb1351-charger.c\\
+  + *debug*:\\
+    echo 8> /proc/sys/kernel/printk #打印log
+    + Disable/enable USB the charger
+      adb root
+      adb wait-for-devices
+      adb shell setprop persist.usb.chgdisabled 1
+      adb root
+    + Disable/enable WI-FI the charger
+      adb wait-for-devices
+      adb shell setprop persist.adb.tcp.port 5555 && adb tcpip
+      adb connect <the target ip>
+      adb shell setprop persist.usb.chgdisabled 1
+* bms(未知啥用)
   + *Code*:\\
     kernel/drivers/power/qpnp-bms.c   ==> bms\\
   + *dts*:\\
@@ -78,3 +79,35 @@
     *proc*:\\
   + *debug*
     
+* Fuel Gauge
+  + *codes*\\
+    kernel/drivers/power/qpnp-fg.c\\
+  + *dts*\\
+    kernel/arch/arm64/boot/dts/appassionato/msm-pmi8994.dtsi ==> qcom,qpnp-fg\\
+  + *Docs*\\
+    kernel/Documentation/devicetree/bindings/power/qpnp-fg.txt\\
+  + *sysfs*\\
+  + *debug*:\\
+    echo 8> /proc/sys/kernel/printk #打印log
+    echo 0xff > /sys/module/qpnp_fg/parameters/debug_mask #开启debug掩码
+    + read FG MEM_INTF
+      adb shell "echo 0xXXX > /sys/kernel/debug/fg_memif/address"
+      adb shell "echo 0xXX > /sys/kernel/debug/fg_memif/count"
+      adb shell "cat /sys/kernel/debug/fg_memif/data"
+    + write FG MEM_INTF
+      adb shell "echo 0xXXX > /sys/kernel/debug/fg_memif/address"
+      adb shell "echo 0xXX > /sys/kernel/debug/fg_memif/count"
+      adb shell "echo 0xXX > /sys/kernel/debug/fg_memif/data"
+* bcl
+  + *codes*\\
+    kernel/drivers/power/battery_current_limit.c
+  + *dts*\\
+    kernel/arch/arm64/boot/dts/appassionato/msm8996.dtsi => qcom,bcl
+  + *Docs*\\
+    kernel/Documentation/devicetree/bindings/arm/msm/bcl.txt
+  + *sysfs*\\
+    /sys/class/power_supply/bcl/ =>不知干吗的
+  + *debug*:\\
+    echo 8> /proc/sys/kernel/printk #打印log
+    echo -n "func power_supply_changed_work +p" >/d/dynamic_debug/control
+    echo -n "file battery_current_limit.c +p" >/d/dynamic_debug/control

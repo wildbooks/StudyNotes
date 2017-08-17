@@ -11,7 +11,7 @@
      kernel/Documentation/devicetree/bindings/power/smb1351-charger.txt\\
    + *sysfs*\\
      /sys/class/power_supply/battery/ =>  qpnp-smbcharger.c\\
-     /sys/class/power_supplyusb-parallel => smb1351-charger.c\\
+     /sys/class/power_supply/usb-parallel => smb1351-charger.c\\
    + *debug*:\\
      echo 8> /proc/sys/kernel/printk #打印log
      + Disable/enable USB the charger

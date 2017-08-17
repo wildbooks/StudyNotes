@@ -57,7 +57,7 @@
    + *debug*:\\
      echo 8> /proc/sys/kernel/printk #打印log
      echo -n "func power_supply_changed_work +p" >/d/dynamic_debug/control
-     echo -n "file qpnp-smbcharger.c +p" >/d/dynamic_debug/control
+     echo -n "file qpnp-smbcharger.c +p" >/d/ynamic_debug/control
 ** bcl
    + *codes*\\
      kernel/drivers/power/battery_current_limit.c
