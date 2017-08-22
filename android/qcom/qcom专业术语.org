@@ -207,6 +207,7 @@
 | GUID       | Globally Unique Identifier                                          |                                                |
 | LBA        | Logical Block Addressing                                            |                                                |
 | SDMA       | Single Operation DMA                                                |                                                |
+| ADMA       | Advanced DMA                                                        |                                                |
 |            |                                                                     |                                                |
 * 电量计算公式
   + SOC(电荷状态)计算

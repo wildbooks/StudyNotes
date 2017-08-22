@@ -1,0 +1,9 @@
+* examples
+  + git diff
+    git diff #仓库和工作空间进行对比
+    git diff --cached #仓库和缓存区进行对比
+    git diff HEAD     #工作空间和分支对比进行对比
+  + diff
+    git diff test
+    git dif  HEAD -- ./test
+    git diff HEAD^ HEAD #上上次提交和上次提交对比

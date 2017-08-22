@@ -1,0 +1,12 @@
+* patch
+* 补丁方法
+** git apply
+   + 制作patch
+     git diff  > patch
+   + 打patch
+     git apply patch
+** git format-patch
+   + 制作patch
+     git diff  > patch
+   + 打patch
+     git apply patch

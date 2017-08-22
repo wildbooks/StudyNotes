@@ -1,3 +1,16 @@
+#+TITLE: emmc协议
+#+AUTHOR:      野书
+#+DATE:        a date, fixed, of a format string for format-time-string
+#+EMAIL:       www762268@foxmail.com
+#+DESCRIPTION: emmc协议及驱动
+#+KEYWORDS:    driver,mmc
+#+LANGUAGE:    language for HTML, e.g. ‘en’ (org-export-default-language)
+#+TEXT:        Some descriptive text to be inserted at the beginning.
+#+TEXT:        Several lines may be given.
+#+OPTIONS:     H:2 num:t toc:t \n:nil @:t ::t |:t ^:t f:t TeX:t ...
+#+LINK_UP:     the ``up'' link of an exported page
+#+LINK_HOME:   the ``home'' link of an exported page
+#+LATEX_HEADER: extra line(s) for the LaTeX header, like \usepackage{xyz}
 * 专业术语
   | 简写    | 全称                                                  | 含义                                                                   |
   |---------+-------------------------------------------------------+------------------------------------------------------------------------|
@@ -38,5 +51,34 @@
   | QSR     | Queue Status Register            |                                                                        |
 * 协议
 ** command
+   命令分类
+   + Suspend Command
+   + Resume Command
+   + Abort Command
+   + Normal Command
 ** response
+   应答分类
 ** l
+* debug
+** lk
+   #+begin_src c
+     # 在bootable/bootloader/lk/project/appassionato.mk文件中添加
+     DEFINES += DEBUG_SDHCI
+   #+end_src
+** kernel
+   我们可以获得完整的传统命令和响应
+   #+begin_src c
+     # 在kernel/arch/arm64/configs/appassionato_defconfig添加
+     CONFIG_MMC_DEBUG=y
+     CONFIG_MMC_SDHCI_RING_BUFFER=y
+   #+end_src
+** MMC Trace Logs
+   #+begin_src shell
+     echo 1 > /sys/kernel/debug/tracing/events/mmc/enable
+     echo 1 > /sys/kernel/debug/tracing/events/mmc/mmc_suspend_host/enable
+     echo 1 > /sys/kernel/debug/tracing/events/mmc/mmc_resume_host/enable
+     echo 1 > /sys/kernel/debug/tracing/events/mmc/mmc_host_runtime_suspend/enable
+     echo 1 > /sys/kernel/debug/tracing/events/mmc/mmc_host_runtime_resume/enable
+     echo 1 > /sys/kernel/debug/tracing/events/mmc/mmc_clk/enable
+     cat /sys/kernel/debug/tracing/trace_pipe
+   #+end_src

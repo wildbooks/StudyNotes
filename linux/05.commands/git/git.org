@@ -5,7 +5,6 @@
     git add file.txt  #添加文件
     git commit -m "Initial commit"  #记录本提交的更改说明
     git status    #显示工作树状态,是否有文件被修改
-    git diff      #可以查看修改内容
 + 注意：如果有文件被修改就需要更新下
     git log  查看提交日志
     git reset --hard commit_id 恢复到某版本
