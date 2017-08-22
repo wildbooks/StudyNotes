@@ -1,0 +1,29 @@
+* 简介
+  本文主要研究sdio,主要从主控制器(host)和从设备(card)进行研究
+* 总结
+** host
+   + *docs*:
+     PartA2_SD Host_Controller_Simplified_Specification_Ver4.20.pdf
+   + *sysfs*:\\
+     *sysfs*:\\
+     *debugfs*:
+     *proc*:\\
+** card
+   + *docs*:
+     PartA2_SD Host_Controller_Simplified_Specification_Ver4.20.pdf
+   + *sysfs*:\\
+     *sysfs*:\\
+     *debugfs*:
+     *proc*:\\
+* SD
+** register
+   | name | width  | des                            |
+   |------+--------+--------------------------------|
+   | CID  | 128bit | Card Identification Register   |
+   | RCA  | 16bit  | Relative Card Address Register |
+   | DSR  | 16bit  | Driver Stage Register          |
+   | CSD  | 128bit | Card Specific Data Register    |
+   | SCR  | 64bit  | SD Card Configuration Register |
+   | CSR  | 32bit  | Card Status Register           |
+   | SSR  | 512bit | SD Status Register             |
+   | OCR  | 32bit  | Operation Conditions Register  |

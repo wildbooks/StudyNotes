@@ -207,3 +207,21 @@
     /*应用实例*/
     qpnp_dump_regs(led, rgb_pwm_debug_regs, ARRAY_SIZE(rgb_pwm_debug_regs));
   #+end_src
+** 呼吸灯
+   echo "00 01 02 03 04 05 06 07 08 0A 0A 08 07 06 05 04 03 02 01 00 00 00 00">duty_pcts
+   echo "00,01,02,03,04,05,06,07,08,0A,0A,08,07,06,05,04,03,02,01,00,00,00,00">duty_pcts
+   echo 200 >ramp_step_ms
+   echo 1 >blink #1后面要有空格
+   echo 0 >blink #0后面要有空格
+** rgb register debug
+   echo 0x3d000 >address
+   echo 0x100 >count
+   cat data
+** lpg1 address -> blue
+   echo 0x3B100 > address
+   echo 0x100 >count
+   cat data
+** lpg2 address  -> green
+   echo 0x3B200 > address
+   echo 0x100 >count
+   cat data
