@@ -7,6 +7,6 @@
      git apply patch
 ** git format-patch
    + 制作patch
-     git diff  > patch
+     git format-patch
    + 打patch
      git apply patch

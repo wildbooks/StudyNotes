@@ -1,3 +1,38 @@
+* 帮助
+  #+begin_src shell
+    usage: repo COMMAND [ARGS]
+    The complete list of recognized repo commands are:
+      abandon        Permanently abandon a development branch
+      branch         View current topic branches
+      branches       View current topic branches
+      checkout       Checkout a branch for development
+      cherry-pick    Cherry-pick a change.
+      diff           Show changes between commit and working tree
+      diffmanifests  Manifest diff utility
+      download       Download and checkout a change
+      forall         Run a shell command in each project
+      grep           Print lines matching a pattern
+      help           Display detailed help on a command
+      info           Get info on the manifest branch, current branch or unmerged branches
+      init           Initialize repo in the current directory
+      list           List projects and their associated directories
+      manifest       Manifest inspection utility
+      overview       Display overview of unmerged project branches
+      prune          Prune (delete) already merged topics
+      rebase         Rebase local branches on upstream branch
+      selfupdate     Update repo to the latest version
+      smartsync      Update working tree to the latest known good revision
+      stage          Stage file(s) for commit
+      start          Start a new branch for development(创建一个新的开发分支)
+      status         Show the working tree status
+      sync           Update working tree to the latest revision
+      upload         Upload changes for code review
+      version        Display the version of repo
+    See 'repo help <command>' for more information on a specific command.
+  #+end_src
 * 切分支
   repo forall -c "git checkout MSM8909_KAIOS_GFLIP2_DEV_ATT_TA"
-
+* 创建分支
+  repo branches wildbook
+* 查看分支
+  repo branches

@@ -4,6 +4,6 @@
     git diff --cached #仓库和缓存区进行对比
     git diff HEAD     #工作空间和分支对比进行对比
   + diff
-    git diff test
+    git diff test     #工作空间和test分支对比
     git dif  HEAD -- ./test
     git diff HEAD^ HEAD #上上次提交和上次提交对比
