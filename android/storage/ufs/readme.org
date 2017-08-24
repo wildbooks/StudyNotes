@@ -1,0 +1,104 @@
+* 专业术语
+  | 专业术语 | 含义                   | 全称                                                                                                                                      |
+  |----------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------|
+  | CDB      | 命令描述符块           | Command Descriptor Block                                                                                                                  |
+  | CPORT    |                        | CPort is a Service Access Point on the UniPro Transport Layer (L4) within a Device that is used for Connection-oriented data transmission |
+  | CRB      | 命令请求块             | Command Request Block                                                                                                                     |
+  | CSR      | 配置和状态寄存器接口   | Configuration and Status Register Interface                                                                                               |
+  | DME      | 设备管理实体           | Device Management Entity                                                                                                                  |
+  | EOP      | 包结束                 | End of Packet                                                                                                                             |
+  | FIFO     | 先进先出(队列)         | First-in-first-out                                                                                                                        |
+  | GCC      | 全局时钟控制器         | Global Clock Controller                                                                                                                   |
+  | HBA      | 主机总线适配器         | Host Bus Adaptor                                                                                                                          |
+  | HCS      | 主机控制器状态         | Host Controller Status                                                                                                                    |
+  | HPQ      | 高优先级队列           | High Priority Queue                                                                                                                       |
+  | IAG      | 中断聚合和生成         | Interrupt Aggregation and Generation                                                                                                      |
+  | IU       | 信息单元               | Information Unit                                                                                                                          |
+  | LBA      | 列表基地址             | List Base Address                                                                                                                         |
+  | LRB      | 本地参考块             | Local Reference Block                                                                                                                     |
+  | LUN      | 逻辑单元号             | Logical Unit Number                                                                                                                       |
+  | MIPI     | 移动产业处理处理器接口 | Mobile Industry Processor Interface                                                                                                       |
+  | PLL      | 锁相环                 | Phase-Locked Loop                                                                                                                         |
+  | PRDT     | 物理区域描述符表       | Physical Region Descriptor Table                                                                                                          |
+  | RPMB     | 重放保护内存块         | Replay Protected Memory Block                                                                                                             |
+  | SAP      | 服务接入点             | Service Access Point                                                                                                                      |
+  | SBC      | SCSI块命令             | SCSI Block Commands                                                                                                                       |
+  | SOF      | 数据包开始             | Start of Packet                                                                                                                           |
+  | SPC      | SCSI主要命令           | SCSI Primary Commands                                                                                                                     |
+  | TMR      | 任务管理请求           | Task Management Request                                                                                                                   |
+  | TR       | 传输请求               | Transfer Request                                                                                                                          |
+  | UCS      | UFS命令集              | UFS Command Set                                                                                                                           |
+  | UFS      | 通用闪存               | Universal Flash Storage                                                                                                                   |
+  | UIC      | UFS互连                | UFS Interconnected                                                                                                                        |
+  | UPIU     | UFS协议信息单元        | UFS Protocol Information Unit                                                                                                             |
+  | UTP      | UFS传输协议            | UFS Transfer Protocol                                                                                                                     |
+  | UTRD     | UFS传输请求描述符      | UFS Transfer Request Descriptors                                                                                                          |
+  | UTMRD    | UFS任务管理请求描述符  | UFS Task Management Request Descriptors                                                                                                   |
+  | UniPro   | 统一协议               | Unified Protocol.                                                                                                                         |
+* storage
+** mmc/sd
+   + *Code*:\\
+     kernel/drivers/mmc/host/sdhci-msm.c
+   + *dts*:\\
+     kernel/arch/arm/boot/dts/appassionato/msm8996.dtsi => qcom,sdhci-msm
+     kernel/arch/arm/boot/dts/appassionato/msm8996-mtp.dtsi => sdhc
+   + *docs*:
+     kernel/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+   + *sysfs*:\\
+     *sysfs*:\\
+     *debugfs*:
+     *proc*:\\
+** ufs
+*** ufs
+    + *Code*:\\
+      drivers/phy/phy-qcom-ufs-qmp-14nm.c
+    + *dts*:\\
+      kernel/arch/arm/boot/dts/appassionato/msm8996.dtsi => qcom,ufs-phy-qmp-14nm
+    + *docs*:
+      kernel/Documentation/devicetree/bindings/ufs/ufs-qcom.txt
+    + *sysfs*:\\
+      *sysfs*:\\
+      *debugfs*:
+      *proc*:\\
+*** ufs host
+    + *Code*:\\
+      drivers/scsi/ufs/ufshcd-pltfrm.c
+    + *dts*:\\
+      kernel/arch/arm/boot/dts/appassionato/msm8996.dtsi => jedec,ufs-1.1
+    + *docs*:
+      kernel/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+    + *sysfs*:\\
+      *sysfs*:\\
+      *debugfs*:
+      *proc*:\\
+* ufs(Universal Flash Storage)
+* 引脚
+  | name         | type   | Description                              |
+  |--------------+--------+------------------------------------------|
+  | REF_CLK      | input  | 参考时钟,用作每个设备中PLL(锁相环)的参考 |
+  | DIN_t/DIN_c  | input  | Downstream lane input,差分线             |
+  | DOUT_T/DIN_c | output | Upstream lane input,差分线               |
+  | RST_n        | input  | 复位,UFS设备硬件复位信号                 |
+* UFS Architecture Overview
+  + 应用层(Application layer)
+    应用层由任务管理(task manager)和UFS命令集层(UFS Command Set Layer, UCS)组成
+    + 任务管理(task manager)
+      任务管理器处理命令队列控制任务，例如中止。
+    + UCS
+      UCS处理诸如读取和写入的命令。它将SCSI命令集实现为基线协议，并可以将UFS本地命令集添加到任何扩展的UFS功能。
+      UCS handles commands such as read and write. It implements the SCSI command set as baseline protocol and can add the UFS native command set to any extended UFS functionalities.
+  + 设备管理层(Device manager)
+    设备管理器处理设备操作和配置任务。设备操作是处理诸如睡眠，挂起，关机和其他电源特定操作的命令。设备配置是维护和存储用于查询，读取和修改设备配置的描述符的过程。
+  + UFS传输协议层(UTP)
+    UTP层生成UFS协议信息单元（UPIU）以从设备管理器或应用层传输消息。 UPIU从主机端UTP传输到设备端UTP。
+  + UFS互连层
+    UIC层是UFS架构中最低层。它处理传输任务，由MIPI UniPro和MIPI M-PHY子层组成。
+    + MIPI UniPro
+    + MIPI M-PHY
+      MIPI物理层
+* UTP Layer
+  1. 典型的命令序列由
+     Command UPIU
+     Data out UPIU (optional)
+     Data in UPIU (optional)
+     Response UPIU
