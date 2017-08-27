@@ -16,8 +16,8 @@ int main()
     float ru;
     float shouyilv;
     int n;
-    printf("请输入对应数字\n\t1.计算费率\n\t2.计算收益率\n");
-            scanf("%d", &n);
+    printf("请输入对应数字\n\t1.计算费率\n\t2.计算收益率\n\t3.计算涨迭后价格\n");
+    scanf("%d", &n);
     switch(n){
         case 1:
             /**
@@ -41,6 +41,17 @@ int main()
             scanf("%f%f", &ru, &chu);
             shouyilv = (chu * (1 - chulv)) / (ru * (1 + rulv)) -1;
             printf("卖出单价为%f,收益率为%f\%\n", chu, shouyilv*100);
+            break;
+        case 3:
+            /**
+             *  下次单价=(1+涨跌率)*当前单价
+             *   chu         shouyilv  ru
+             *   chu = (1+ shouyilv) * ru
+             */
+            printf("请输入当前单价,期待涨跌率\n");
+            scanf("%f%f", &ru, &shouyilv);
+            chu = (1+ shouyilv) * ru;
+            printf("涨跌率为%f\%,下次单价为%f\n", shouyilv*100, chu);
             break;
         default:
             printf("输入有误\n");
