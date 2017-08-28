@@ -1,5 +1,6 @@
 #include <stdio.h>
 /**
+ * 本程序创建于2017.8.27号，用于协助我炒比特币
  * 默认买入和卖出的费率为0.05%
  * 卖出单价=买入单价*(实际收益率+1)*(1+买入费率)/(1-卖出费率)
  *  chu       ru        shouyilv         rulv         chulv
@@ -8,6 +9,7 @@
  *  实际收益率=(卖出单价*(1-卖出费率))/(买入单价*(1+买入费率)) -1
  *  shouyilv     chu          chulv      ru           rulv
  */
+
 int main()
 {
     float rulv=0.0005;
@@ -16,43 +18,91 @@ int main()
     float ru;
     float shouyilv;
     int n;
-    printf("请输入对应数字\n\t1.计算费率\n\t2.计算收益率\n\t3.计算涨迭后价格\n");
+    int i;
+    float sum, num;
+    float b, d, xi;
+    printf("请输入对应数字\n\t1.计算卖出价格和个数\n\t2.计算买入价格和数量\n\t3.计算收益率\n");
     scanf("%d", &n);
     switch(n){
         case 1:
+
             /**
              * 卖出单价=买入单价*(实际收益率+1)*(1+买入费率)/(1-卖出费率)
              *  chu       ru        shouyilv         rulv         chulv
              *  chu = ru * (shouyilv + 1) * (1 + rulv) / (1 - chulv)
+             *
+             *  买入数量n=买入数量基数*(b+d*(n-1))^(n-1) (b为系数基数,d为系数基数的基数)  (系数会变)
+             *    sum       num
              */
-            printf("请输入买入单价,期待收益率\n");
-            scanf("%f%f", &ru, &shouyilv);
-            chu = ru * (shouyilv + 1) * (1 + rulv) / (1 - chulv);
-            printf("想达到%f\%的收益率，卖出单价为%f\n", shouyilv, chu);
+
+            printf("请输入买入单价,计算卖出单价和个数\n");
+            scanf("%f%f", &ru, &num);
+            b = 1.2;
+            d = 0.1;
+            for(i=0; i<21; i++)
+            {
+                xi=b+d*(i-1); //系数
+                if(i)
+                    sum *= xi;
+                else
+                    sum = num;
+
+                shouyilv=0.05 + i * 0.01;
+                chu = ru * (shouyilv + 1) * (1 + rulv) / (1 - chulv);
+                printf("想达到%.0f%的收益率，卖出单价为%f\n", shouyilv*100, chu);
+                printf("在涨%3.0f%时,以单价%3.6f%卖出%4.0f个货币xi=%f\n", shouyilv*100, chu, sum, xi);
+            }
             break;
 
         case 2:
+
             /**
+             *
+             *  买入数量n=第一次买入数量*b^(n-1) (注意:b为系数基数,为1.2)  (系数不变)
+             *    sum       num             次数为i
+             *
+             *  买入数量n=买入数量基数*(b+d*(n-1))^(n-1) (b为系数基数,d为系数基数的基数)  (系数会变)
+             *    sum       num
+             *
+             *
+             *  下次单价=(1-跌率)*当前单价
+             *   chu         shouyilv  ru
+             *   chu = (1- shouyilv) * ru
+             */
+
+            printf("请输入买入参考单价和参考买入个数,计算买入价格阶梯\n");
+            scanf("%f%f", &ru, &num);
+            b = 1.2;
+            d = 0.1;
+            for(i=0; i<21; i++)
+            {
+                xi=b+d*(i-1); //系数
+                if(i)
+                    sum *= xi;
+                else
+                    sum = num;
+
+                shouyilv=0.05 + i * 0.01;
+                chu = (1- shouyilv) * ru;
+                printf("在跌%3.0f%时,以单价%3.6f%买入%4.0f个货币xi=%f\n", shouyilv*100, chu, sum, xi);
+            }
+            break;
+
+        case 3:
+
+            /**
+             *
              *  实际收益率=(卖出单价*(1-卖出费率))/(买入单价*(1+买入费率)) -1
              *  shouyilv     chu          chulv      ru           rulv
              *  shouyilv = (chu * (1 - chulv)) / (ru * (1 + rulv)) -1
              */
+
             printf("请输入买入单价,卖出单价\n");
             scanf("%f%f", &ru, &chu);
             shouyilv = (chu * (1 - chulv)) / (ru * (1 + rulv)) -1;
-            printf("卖出单价为%f,收益率为%f\%\n", chu, shouyilv*100);
+            printf("卖出单价为%.0f,收益率为%0.3f%\n", chu, shouyilv*100);
             break;
-        case 3:
-            /**
-             *  下次单价=(1+涨跌率)*当前单价
-             *   chu         shouyilv  ru
-             *   chu = (1+ shouyilv) * ru
-             */
-            printf("请输入当前单价,期待涨跌率\n");
-            scanf("%f%f", &ru, &shouyilv);
-            chu = (1+ shouyilv) * ru;
-            printf("涨跌率为%f\%,下次单价为%f\n", shouyilv*100, chu);
-            break;
+
         default:
             printf("输入有误\n");
 
