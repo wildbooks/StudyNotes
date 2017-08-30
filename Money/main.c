@@ -47,7 +47,7 @@ int main()
                 else
                     sum = num;
 
-                shouyilv=0.03 + i * 0.01;
+                shouyilv=0.03 + i * 0.02;
                 chu = ru * (shouyilv + 1) * (1 + rulv) / (1 - chulv);
                 printf("在涨%3.0f%时,以单价%3.6f卖出%4.02f个货币xi=%f\n", shouyilv*100, chu, sum, xi);
             }
@@ -81,7 +81,7 @@ int main()
                 else
                     sum = num;
 
-                shouyilv=0.03 + i * 0.01;
+                shouyilv=0.03 + i * 0.02;
                 chu = (1- shouyilv) * ru;
                 printf("在跌%3.0f%时,以单价%3.6f买入%4.2f个货币xi=%f\n", shouyilv*100, chu, sum, xi);
             }
