@@ -70,7 +70,7 @@
     + *sysfs*:\\
       + *sysfs*:\\
       + *debugfs*:
-        /sys/kernel/debug/ufshcd0
+        /sys/kernel/debug/ufshcd0  => ufs-debugfs.c ufs-qcom-debugfs.c
       + *proc*:\\
     + config
       CONFIG_SCSI=y

@@ -12,8 +12,8 @@
 
 int main()
 {
-    float rulv=0.0005;
-    float chulv=0.0005;
+    float rulv=0.001;
+    float chulv=0.001;
     float chu;
     float ru;
     float shouyilv;
@@ -35,7 +35,7 @@ int main()
              *    sum       num
              */
 
-            printf("请输入买入单价,计算卖出单价和个数\n");
+            printf("请输入买入单价和个数,计算卖出和个数\n");
             scanf("%f%f", &ru, &num);
             b = 1.2;
             d = 0.1;
@@ -47,10 +47,9 @@ int main()
                 else
                     sum = num;
 
-                shouyilv=0.05 + i * 0.01;
+                shouyilv=0.03 + i * 0.01;
                 chu = ru * (shouyilv + 1) * (1 + rulv) / (1 - chulv);
-                printf("想达到%.0f%的收益率，卖出单价为%f\n", shouyilv*100, chu);
-                printf("在涨%3.0f%时,以单价%3.6f%卖出%4.0f个货币xi=%f\n", shouyilv*100, chu, sum, xi);
+                printf("在涨%3.0f%时,以单价%3.6f卖出%4.02f个货币xi=%f\n", shouyilv*100, chu, sum, xi);
             }
             break;
 
@@ -82,9 +81,9 @@ int main()
                 else
                     sum = num;
 
-                shouyilv=0.05 + i * 0.01;
+                shouyilv=0.03 + i * 0.01;
                 chu = (1- shouyilv) * ru;
-                printf("在跌%3.0f%时,以单价%3.6f%买入%4.0f个货币xi=%f\n", shouyilv*100, chu, sum, xi);
+                printf("在跌%3.0f%时,以单价%3.6f买入%4.2f个货币xi=%f\n", shouyilv*100, chu, sum, xi);
             }
             break;
 
@@ -95,12 +94,16 @@ int main()
              *  实际收益率=(卖出单价*(1-卖出费率))/(买入单价*(1+买入费率)) -1
              *  shouyilv     chu          chulv      ru           rulv
              *  shouyilv = (chu * (1 - chulv)) / (ru * (1 + rulv)) -1
+             *
+             *  收益 = 买入单价*实际收益率*个数
+             *
+             *  卖出手续费 = 卖出单价*卖出费率*个数
              */
 
-            printf("请输入买入单价,卖出单价\n");
-            scanf("%f%f", &ru, &chu);
+            printf("请输入买入单价,卖出单价,卖出个数\n");
+            scanf("%f%f%f", &ru, &chu, &b);
             shouyilv = (chu * (1 - chulv)) / (ru * (1 + rulv)) -1;
-            printf("卖出单价为%.0f,收益率为%0.3f%\n", chu, shouyilv*100);
+            printf("卖出单价为%f,收益率为%0.3f%,每股收益%f,总收益%f,卖出手续费%f\n", chu, shouyilv*100, ru*shouyilv, ru*shouyilv*b, chu*0.0005*b);
             break;
 
         default:
