@@ -37,8 +37,8 @@ int main()
 
             printf("请输入买入单价和个数,计算卖出和个数\n");
             scanf("%f%f", &ru, &num);
-            b = 1.2;
-            d = 0.1;
+            b = 2;
+            d = 0.2;
             for(i=0; i<21; i++)
             {
                 xi=b+d*(i-1); //系数
@@ -47,7 +47,7 @@ int main()
                 else
                     sum = num;
 
-                shouyilv=0.03 + i * 0.02;
+                shouyilv=0.05 + i * 0.03;
                 chu = ru * (shouyilv + 1) * (1 + rulv) / (1 - chulv);
                 printf("在涨%3.0f%时,以单价%3.6f卖出%4.02f个货币xi=%f\n", shouyilv*100, chu, sum, xi);
             }
@@ -71,8 +71,8 @@ int main()
 
             printf("请输入买入参考单价和参考买入个数,计算买入价格阶梯\n");
             scanf("%f%f", &ru, &num);
-            b = 1.2;
-            d = 0.1;
+            b = 2;
+            d = 0.2;
             for(i=0; i<21; i++)
             {
                 xi=b+d*(i-1); //系数
@@ -81,7 +81,7 @@ int main()
                 else
                     sum = num;
 
-                shouyilv=0.03 + i * 0.02;
+                shouyilv=0.05 + i * 0.03;
                 chu = (1- shouyilv) * ru;
                 printf("在跌%3.0f%时,以单价%3.6f买入%4.2f个货币xi=%f\n", shouyilv*100, chu, sum, xi);
             }
