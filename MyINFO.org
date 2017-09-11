@@ -1,5 +1,5 @@
 * 个人信息
-  姓名：xxx                             性别：男
+  姓名：xxx                              性别：男
   出生日期：19xx-xx-xx                   籍贯：河南信阳
   学校：xx大学                           专业：电子信息工程(本科)
   联系电话：xxxxxxxx                     现居：江苏南京
@@ -12,6 +12,8 @@
   5. 掌握led,input,sensors,i2c,spi,debugfs,procfs,sysfs,设备树等子系统的使用
   6. 熟悉android源码及编译及常用工具。
   7. 掌握power功耗调试能力。
+  8. 掌握sqlite数据库、数据结构。
+  9. 掌握power功耗分析及调试。
 * 项目
 ** 第十届飞思卡尔智能车大赛
    + 项目内容:
