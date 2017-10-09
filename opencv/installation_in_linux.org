@@ -1,0 +1,33 @@
+* 环境配置
+** 依赖包
+   GCC 4.4.x or later
+   CMake 2.8.7 or higher
+   Git
+   GTK+2.x or higher, including headers (libgtk2.0-dev)
+   pkg-config
+   Python 2.6 or later and Numpy 1.5 or later with developer packages (python-dev, python-numpy)
+   ffmpeg or libav development packages: libavcodec-dev, libavformat-dev, libswscale-dev
+   [optional] libtbb2 libtbb-dev
+   [optional] libdc1394 2.x
+   [optional] libjpeg-dev, libpng-dev, libtiff-dev, libjasper-dev, libdc1394-22-dev
+   [optional] CUDA Toolkit 6.5 or higher
+** 安装opencv准备工作
+   [compiler] sudo apt-get install build-essential
+   [required] sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+   [optional] sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+** 安装opencv开发环境
+   mkdir build
+   cd build
+   cmake ..
+   make install
+* OpenCV程序编译
+** cmake
+   #+begin_src cpp
+   主要是CMakeLists.txt编写
+   #+end_src
+** command
+   #+begin_src cpp
+     g++ `pkg-config --cflags opencv` -o hello demo.cpp `pkg-config --libs opencv`
+     # `pkg-config --cflags opencv` #制定opencv所有头文件路径
+     # `pkg-config --libs opencv`  #OpenCV编译所需要的所有库
+   #+end_src
