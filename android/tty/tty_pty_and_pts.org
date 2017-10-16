@@ -1,0 +1,6 @@
+* tty
+  当前控制台,输出到/dev/tty的内容只会显示在当前工作终端上（无论是登录在ttyn中还是pty中）
+  echo “tekkaman” > /dev/tty
+
+* pty
+* pts

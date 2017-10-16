@@ -1,0 +1,41 @@
+* RGB
+* RGB555
+  RGB555是另一种16位的RGB格式，RGB分量都用5位表示（剩下的1位不用）。使用一个字读出一个像素后，这个字的各个位意义如下：
+  高字节 低字节
+  X R R R R R G G G G G B B B B B （X表示不用，可以忽略）
+  可以组合使用屏蔽字和移位操作来得到RGB各分量的值：
+  #define RGB555_MASK_RED 0x7C00
+  #define RGB555_MASK_GREEN 0x03E0
+  #define RGB555_MASK_BLUE 0x001F
+  R = (wPixel & RGB555_MASK_RED) >> 10; // 取值范围0-31
+  G = (wPixel & RGB555_MASK_GREEN) >> 5; // 取值范围0-31
+  B = wPixel & RGB555_MASK_BLUE; // 取值范围0-31
+* RGB565
+  RGB565使用16位表示一个像素，这16位中的5位用于R，6位用于G，5位用于B。程序中通常使用一个字（WORD，一个字等于两个字节）来操作一个像素。当读出一个像素后，这个字的各个位意义如下：
+  高字节 低字节
+  R R R R R G G G G G G B B B B B
+  可以组合使用屏蔽字和移位操作来得到RGB各分量的值：
+  #define RGB565_MASK_RED 0xF800
+  #define RGB565_MASK_GREEN 0x07E0
+  #define RGB565_MASK_BLUE 0x001F
+  R = (wPixel & RGB565_MASK_RED) >> 11; // 取值范围0-31
+  G = (wPixel & RGB565_MASK_GREEN) >> 5; // 取值范围0-63
+  B = wPixel & RGB565_MASK_BLUE; // 取值范围0-31
+  #define RGB(r,g,b) (unsigned int)( (r|0x08 << 11) | (g|0x08 << 6) | b|0x08 )//不懂
+  #define RGB(r,g,b) (unsigned int)( (r|0x08 << 10) | (g|0x08 << 5) | b|0x08 )//不懂
+  该代码可以解决24位与16位相互转换的问题
+* RGB24
+  RGB24使用24位来表示一个像素，RGB分量都用8位表示，取值范围为0-255。注意在内存中RGB各分量的排列顺序为：BGR BGR BGR…。通常可以使用RGBTRIPLE数据结构来操作一个像素，它的定义为：
+  typedef struct tagRGBTRIPLE {
+    BYTE rgbtBlue; // 蓝色分量
+    BYTE rgbtGreen; // 绿色分量
+    BYTE rgbtRed; // 红色分量
+  } RGBTRIPLE;
+* RGB32
+  RGB32使用32位来表示一个像素，RGB分量各用去8位，剩下的8位用作Alpha通道或者不用。（ARGB32就是带Alpha通道的RGB24。）注意在内存中RGB各分量的排列顺序为：BGRA BGRA BGRA…。通常可以使用RGBQUAD数据结构来操作一个像素，它的定义为：
+  typedef struct tagRGBQUAD {
+      BYTE rgbBlue; // 蓝色分量
+      BYTE rgbGreen; // 绿色分量
+      BYTE rgbRed; // 红色分量
+      BYTE rgbReserved; // 保留字节（用作Alpha通道或忽略）
+  } RGBQUAD。

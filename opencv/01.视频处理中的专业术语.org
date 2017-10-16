@@ -1,0 +1,5 @@
+* 视频技术
+  封装格式:avi,rmvb,mp4,flv,mkv等
+  视音频编码标准
+  h264(avc)
+  h265(hevc)

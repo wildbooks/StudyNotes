@@ -1,0 +1,12 @@
+* YUV（YCbCr）采样格式
+  YUV中的Y表示亮度（Luminance或Luma）,也就是灰阶值，我们所说的灰度值就是这个,而'U'和'V'表示的则是色度（Chrominance或Chroma）作用是描述影像色彩及饱和度，用于指定像素的颜色,分别用Cr和Cb表示,其中，Cr反映了RGB输入信号红色部分与RGB信号亮度值之间的差异。而Cb反映的是RGB输入信号蓝色部分与RGB信号亮度值之间的差异。
+  主要的采样格式有YCbCr 4:2:0、YCbCr 4:2:2、YCbCr 4:1:1和 YCbCr 4:4:4
+  http://blog.sina.com.cn/s/blog_a85e142101010h8n.html
+** yuv420
+   每个像素点占12bits
+** yuv422
+   每个像素点占16bits
+** yuv411
+   每个像素点由8bit的亮度值(也就是Y值),每个2*2个点保存一个Cr和Cb值,共12bits
+** yuv444
+   每个像素点由8bit的亮度值(也就是Y值),每个8*8个点保存一个Cr和Cb值,共32bits

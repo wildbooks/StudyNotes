@@ -1,0 +1,6 @@
+*
+* bmp
+* jpg
+* jpeg
+* png
+* jpeg

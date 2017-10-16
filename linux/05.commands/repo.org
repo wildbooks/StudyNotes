@@ -31,8 +31,52 @@
     See 'repo help <command>' for more information on a specific command.
   #+end_src
 * 切分支
-  repo forall -c "git checkout MSM8909_KAIOS_GFLIP2_DEV_ATT_TA"
+  + 方法一
+    repo forall -c "git checkout MSM8909_KAIOS_GFLIP2_DEV_ATT_TA"
+  + 方法二
+    #+begin_src bash
+      当本地已经有个Tron的工程，如何切换代码为IDOL4 PRO CN的工程？ 只要每个工程下没有特殊改动，直接重新repo init新的分支下载即可。
+          repo init -m <new branch manfiest.xml>
+          repo sync
+      如果担心原有代码影响，可以先删除代码。
+          rm -rf *  #只删除可见文件，.repo依然保留
+          repo init -m <new branch manfiest.xml>
+          repo sync
+    #+end_src
 * 创建分支
   repo branches wildbook
 * 查看分支
   repo branches
+* 下载单个仓库
+  例如：.repo/manifest.xml文件中的<project name="blackberry/vendor/bbry/porting" path="vendor/bbry"/>
+  仓库名："blackberry/vendor/bbry/porting"
+  工程路径："vendor/bbry"
+  repo sync -c --no-tags vendor/bbry
+* sync
+  #+begin_src bash
+      -h, --help            帮助
+      -f, --force-broken    continue sync even if a project fails to sync
+      -l, --local-only      only update working tree, don't fetch
+      -n, --network-only    fetch only, don't update working tree
+      -d, --detach          detach projects back to manifest revision
+      -c, --current-branch  只下载指定分支代码
+      -q, --quiet           be more quiet
+      -j JOBS, --jobs=JOBS  projects to fetch simultaneously (default 1)
+      -m NAME.xml, --manifest-name=NAME.xml
+                            temporary manifest to use for this sync
+      --no-clone-bundle     disable use of /clone.bundle on HTTP/HTTPS
+      -u MANIFEST_SERVER_USERNAME, --manifest-server-username=MANIFEST_SERVER_USERNAME
+                            username to authenticate with the manifest server
+      -p MANIFEST_SERVER_PASSWORD, --manifest-server-password=MANIFEST_SERVER_PASSWORD
+                            password to authenticate with the manifest server
+      --fetch-submodules    fetch submodules from server
+      --no-tags             不下载tag
+      -s, --smart-sync      smart sync using manifest from a known good build
+      -t SMART_TAG, --smart-tag=SMART_TAG
+                            smart sync using manifest from a known tag
+
+      repo Version options:
+        --no-repo-verify    do not verify repo source code
+
+  #+end_src
+* init
