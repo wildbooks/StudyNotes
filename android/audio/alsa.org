@@ -1,0 +1,12 @@
+* alsa
+* tinyalsa
+  android中使用的是tinyalsa,android中集成的tinyalsa小工具位置为external/tinyalsa/
+  + 编译生成的小工具
+    + tinymix: 查看配置混音器
+      1. 不加任何参数-显示当前配置情况
+      2. tinymix [ctrl id] [var]不加[var]可以查看该[ctrl id]可选选项
+    + tinyplay: 播放音频
+    + tinycap: 录音
+    + tinypcminfo: 用于查看pcm通道的相关信息
+      tinypcminfo -D /proc/asound/cards
+      cat /proc/asound/cards

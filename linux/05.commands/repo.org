@@ -5,9 +5,7 @@
       abandon        Permanently abandon a development branch
       branch         View current topic branches
       branches       View current topic branches
-      checkout       Checkout a branch for development
-      cherry-pick    Cherry-pick a change.
-      diff           Show changes between commit and working tree
+      checkout       Checkout a branch for development cherry-pick    Cherry-pick a change.  diff           Show changes between commit and working tree
       diffmanifests  Manifest diff utility
       download       Download and checkout a change
       forall         Run a shell command in each project

@@ -1,3 +1,9 @@
+/** 
+ * 分离YUV420P像素数据中的Y、U、V分量
+ *      本程序中的函数可以将YUV420P数据中的Y、U、V三个分量分离开来并保存成三个文件
+ * 
+ */  
+
 #include<stdio.h>
 #include <stdlib.h>
 
