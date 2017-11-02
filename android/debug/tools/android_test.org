@@ -1,0 +1,5 @@
+* android自动测试工具集合
+  CTS
+  Monkey
+  Monkeyrunner
+  benchmark、

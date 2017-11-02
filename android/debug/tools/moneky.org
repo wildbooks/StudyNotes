@@ -1,0 +1,93 @@
+* monkey压力测试
+  #+begin_src shell
+    usage: monkey [-p ALLOWED_PACKAGE [-p ALLOWED_PACKAGE] ...] #允许包名列表
+                [-c MAIN_CATEGORY [-c MAIN_CATEGORY] ...]  #主要的类别
+                [--ignore-crashes] [--ignore-timeouts]   #忽略奔溃，忽略超时
+                [--ignore-security-exceptions]  #忽略安全异常
+                [--monitor-native-crashes] [--ignore-native-crashes] #忽略native崩溃/跟踪native方法的崩溃问题
+                [--kill-process-after-error] [--hprof] #发生错误后直接杀掉进程
+                [--pct-touch PERCENT] [--pct-motion PERCENT] #指定事件的百分比
+                [--pct-trackball PERCENT] [--pct-syskeys PERCENT] #指定事件的百分比
+                [--pct-nav PERCENT] [--pct-majornav PERCENT] #指定事件的百分比
+                [--pct-appswitch PERCENT] [--pct-flip PERCENT] #指定事件的百分比
+                [--pct-anyevent PERCENT] [--pct-pinchzoom PERCENT] #指定事件的百分比
+                [--pct-permission PERCENT] #指定事件的百分比
+                [--pkg-blacklist-file PACKAGE_BLACKLIST_FILE]
+                [--pkg-whitelist-file PACKAGE_WHITELIST_FILE]
+                [--wait-dbg] [--dbg-no-events]
+                [--setup scriptfile] [-f scriptfile [-f scriptfile] ...] #指定脚本文件
+                [--port port]
+                [-s SEED] [-v [-v] ...]      #复现随机点击的事件
+                [--throttle MILLISEC] [--randomize-throttle] #设置时间间隔
+                [--profile-wait MILLISEC]
+                [--device-sleep-time MILLISEC]
+                [--randomize-script]
+                [--script-log]
+                [--bugreport]
+                [--periodic-bugreport]
+                [--permission-target-system]
+                COUNT   #次数
+  #+end_src
+** 参数讲解
+   + -p <允许的包名列表>  (查看包名的方法simba6x:/ # pm list package)
+     指定一个包：adb shell monkey -p com.tct.camera -v 10000\\
+     指定多个包：adb shell monkey -p com.tct.camera  –p com.jrdcom.filemanager 100\\
+      monkey -p com.tct.camera  –p -v 10000  com.jrdcom.filemanager -v  1000\\
+      monkey -p com.tct.camera -v 10000\\
+      monkey -p com.jrdcom.filemanager -v  1000\\
+   + -v用亍指定反馈信息级别（信息级别就是日志的详细程度），总共分3个级别，分别对应的参数如下 表所示
+      monkey -p com.tct.camera -v 10000  #一级
+      monkey -p com.tct.camera -v -v 10000 #二级
+      monkey -p com.tct.camera -v -v -v 10000 #三级
+   + -s 随机种子,用于复现点击的事件
+      monkey -p com.tct.camera -v 1000 -s 100
+      monkey -p com.tct.camera -v 10000 -s  1509736692699
+   + —ignore-crashes 忽略奔溃
+   + 指定Monkey事件的百分比
+     --pct-touch <percent>:指定触摸事件的百分比。
+     --pct-motion <percent>:指定滑动事件的百分比。
+     --pct-trackball <percent>:指定轨迹球事件的百分比。
+     --pct-nav <percent>:指定导航事件中，up、down、left、right等事件的百分比。
+     --pct-majornav <percent>:指定导航事件中，back、menu等事件的百分比。
+     --pct-syskeys <percent>:指定系统按键的百分比，包括HOME、Back、音量等。
+     --pct-appswitch <percent>:指定Activity之间切换的比例。
+     --pct-anyevent <percent>:指定任意事件的百分比
+   + --hprof参数与报告
+　　　　adb shell -p xxx --hrof -v -v -v 100
+　　    monkey会在发送事件的前后生成内存快照，并保存在/data/misc/下的hprof文件中（需要root权限才可以）也可以收集安装能进入系统文件夹的app去查看文件
+* 案例
+  + 如何控制Monkey运行时间？比如app跑10个小时
+    方法一：可以忽略每条命令的执行时间，命令之间设置间隔，然后用10小时/命令之间的时间间隔 = 算出要执行的次数。 之后，在命令中，设置执行的次数就ok了
+    方法二：跑起monkey,然后定时强制杀死
+
+* 参考文档
+  [[http://www.cnblogs.com/TankXiao/p/4815134.html][Android Monkey 压力测试 介绍]]
+  http://www.cnblogs.com/yajing-zh/p/4340795.html
+  http://www.cnblogs.com/plokmju/p/6445975.html
+  echo "The Monkey begin $(date)" > /sdcard/monkey.log
+  monkey -p  com.tcl.ota
+  -p com.tct.calculator
+  -p com.jrdcom.filemanager
+  -p com.tct.gallery3d
+  -p com.blackberry.retaildemo
+  -p com.tct.fmradio
+  -p com.tct.weather --ignore-crashes--ignore-timeouts --ignore-security-exceptions  --monitor-native-crashes --ignore-native-crashes >>/sdcard/monkey.log&
+
+  echo "The Monkey end time is $(date)" >> /sdcard/monkey.log
+  #+begin_src bash
+    #! /system/bin/sh
+
+    echo -e "The Monkey begin $(date)\n\n" > /sdcard/monkey.log
+
+    monkey -p com.tct.camera -v -v 10000 >> /sdcard/monkey.log &
+
+    sleep 1 #延时等待脚本成功运行
+
+    monkeypid=$(pgrep monkey)  #获取PID
+
+    sleep 10 #24小时=24*60*60=86400
+
+    kill ${monkeypid}
+
+    echo -e "The Monkey begin $(date)\n\n" >> /sdcard/monkey.log
+  #+end_src

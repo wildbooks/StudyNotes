@@ -34,6 +34,7 @@
   + 方法二
     #+begin_src bash
       当本地已经有个Tron的工程，如何切换代码为IDOL4 PRO CN的工程？ 只要每个工程下没有特殊改动，直接重新repo init新的分支下载即可。
+          repo init -b bb/develop/tcl/jdm/aospo/app-hoperun #切换本地分支
           repo init -m <new branch manfiest.xml>
           repo sync
       如果担心原有代码影响，可以先删除代码。
@@ -44,7 +45,11 @@
 * 创建分支
   repo branches wildbook
 * 查看分支
-  repo branches
+  + 方法一
+    到某个仓库里，然后执行命令
+    git branch -a #可以看到git的分支，同时也是repo的分支
+  + 方法二
+    repo branches
 * 下载单个仓库
   例如：.repo/manifest.xml文件中的<project name="blackberry/vendor/bbry/porting" path="vendor/bbry"/>
   仓库名："blackberry/vendor/bbry/porting"
