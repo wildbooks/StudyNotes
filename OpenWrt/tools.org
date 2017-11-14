@@ -1,0 +1,7 @@
+* 工具集
+  ttyd 网页终端模拟器 https://github.com/tsl0922/ttyd
+* K3刷机
+  http://www.right.com.cn/forum/forum.php?mod=viewthread&tid=254947&highlight=k3%2B%CB%A2%BB%FA
+  http://www.right.com.cn/forum/forum.php?mod=viewthread&tid=245034&highlight=k3%2B%CB%A2%BB%FA
+  http://www.right.com.cn/forum/thread-214087-1-1.html
+  http://www.right.com.cn/forum/thread-212725-1-1.html

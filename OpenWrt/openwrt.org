@@ -1,0 +1,58 @@
+* 路由器能干嘛
+** 无线审计
+   airodump-ng
+   reaver
+   tcpdump
+   port-mirroring
+   (需要USB无线网卡)
+** 脱机下载
+   thunder-xware（迅雷下载）
+   transmission
+   Aria2
+   rtorrent
+** 无线音响
+   kmod-usb-audio
+   install alsa-utils
+   shairport
+   MPDroid
+   (需要USB声卡)
+** 影印共享
+   xmlrpc
+   dlna
+   Airplay
+   samba36-server
+** 部署服务器(博客社区等)
+   vsftpd
+   lighttpd
+   php5-mod-apc
+   mysql-server
+** 特殊拨号
+   MentoHUST
+   H3C 802.1x Client
+   sxplugin
+   nwan
+** 无线监控
+   webcam
+   kmod-uѕb2
+   kmod-video-uvc
+   kmod-nlѕ-base
+   kmod-usb-core
+   kmod-i2c-core
+   kmod-video-core
+   kmod-input-core
+   kmod-usb-ohci
+   kmod-usb-video
+   libjpeg
+   librt
+   libpthread
+** 翻墙
+   GoAgent [需要先安装python]
+   openvpn
+   shadowsocks
+   dnsmasq
+** 无线打印共享
+   kmod-usb-printer
+   install luci-app-p910nd
+** nas服务
+
+** 广告过滤
