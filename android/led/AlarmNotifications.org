@@ -1,0 +1,9 @@
+* 目的
+  通过研究alarms应用程序研究app如何使用Notifications触发led灯
+
+* 定时器逻辑
+  TimerModel.java                         -> resetTimer() -> updateNotification() ->
+  AlarmNotifications.java                 -> updateNotification() -> showMissedNotification()   ->  showHighPriorityNotification() ->  NotificationCompat.Builder()
+  support/v4/app/NotificationCompat.java  ->
+
+  default_background

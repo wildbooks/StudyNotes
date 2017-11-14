@@ -208,6 +208,7 @@
     qpnp_dump_regs(led, rgb_pwm_debug_regs, ARRAY_SIZE(rgb_pwm_debug_regs));
   #+end_src
 ** 呼吸灯
+   echo 100>brightness
    echo "00 01 02 03 04 05 06 07 08 0A 0A 08 07 06 05 04 03 02 01 00 00 00 00">duty_pcts
    echo "00,01,02,03,04,05,06,07,08,0A,0A,08,07,06,05,04,03,02,01,00,00,00,00">duty_pcts
    echo 200 >ramp_step_ms

@@ -1,5 +1,7 @@
 * 参考文档
 [[http://blog.csdn.net/gaugamela/article/details/52920222][Android7.0 Battery Service]]
+** 代码路径
+   frameworks/base/services/core/java/com/android/server/BatteryService.java
 * 一些常识
   + ServiceManager
     整个Android(native或者framework)的Service都需要加入ServiceManager中进行统一

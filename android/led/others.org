@@ -1,2 +1,19 @@
+* led功能
+  led主要用于信号灯和充电，按键灯，闪光灯，背光灯，手电筒
+* 信号灯
+  frameworks/base/services/core/java/com/android/server/notification/NotificationManagerService.java
+
+  NotificationManager.java
+  NotificationManagerService   NotificationManagerService.java -> updateLightsLocked() ->
+  LightsService                com/android/server/LightsService.java -> setFlashing()-> setLightLocked() -> setLight_native()
+  JNI                          jni/com_android_server_LightsService.cpp -> setLight_native() -> (Return<Status> ret = hal->setLight(type, state))
+
+  HAL                          hardware/interfaces/light/2.0/default/Light.cpp -> (Return<Status> ret = hal->setLight(type, state)) -> (Light::setLight) -> (hwLight->set_light)
+                               hardware/qcom/display/liblight/lights.c  ->  open_lights() ->  (dev->set_light = set_light)
+** led灯颜色控制
+   NotificationRecord.java-> calculateLights()
+   device/bbry/common/overlay/frameworks/base/core/res/res/values/
+* 充电灯
 * others
   hardware/qcom/display/liblight/lights.c\\
+  hardware/qcom/display/liblight/lights.c

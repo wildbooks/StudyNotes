@@ -1,0 +1,378 @@
+[ 5224.131356] [1970-01-02 09:09:02 GMT+8]audit: audit_lost=426612142 audit_rate_limit=5 audit_backlog_limit=64
+[ 5224.131393] [1970-01-02 09:09:02 GMT+8]audit: rate limit exceeded
+[ 5225.141324] [1970-01-02 09:09:03 GMT+8]audit: audit_lost=426696512 audit_rate_limit=5 audit_backlog_limit=64
+[ 5225.141360] [1970-01-02 09:09:03 GMT+8]audit: rate limit exceeded
+[ 5226.151405] [1970-01-02 09:09:04 GMT+8]audit: audit_lost=426780442 audit_rate_limit=5 audit_backlog_limit=64
+[ 5226.151440] [1970-01-02 09:09:04 GMT+8]audit: rate limit exceeded
+[ 5227.161388] [1970-01-02 09:09:05 GMT+8]audit: audit_lost=426864677 audit_rate_limit=5 audit_backlog_limit=64
+[ 5227.161430] [1970-01-02 09:09:05 GMT+8]audit: rate limit exceeded
+[ 5228.171371] [1970-01-02 09:09:06 GMT+8]audit: audit_lost=426948186 audit_rate_limit=5 audit_backlog_limit=64
+[ 5228.171414] [1970-01-02 09:09:06 GMT+8]audit: rate limit exceeded
+[ 5228.925626] [1970-01-02 09:09:07 GMT+8]init: starting service 'vtnvfsd_blog'...
+[ 5228.929992] [1970-01-02 09:09:07 GMT+8]init: property_set("ro.boottime.vtnvfsd_blog", "5703919595994") failed: property already set
+[ 5228.930162] [1970-01-02 09:09:07 GMT+8]init: starting service 'vtnvfsd'...
+[ 5228.933767] [1970-01-02 09:09:07 GMT+8]init: property_set("ro.boottime.vtnvfsd", "5703924421775") failed: property already set
+[ 5229.153628] [1970-01-02 09:09:07 GMT+8]init: Untracked pid 20104 exited with status 0
+[ 5229.154516] [1970-01-02 09:09:07 GMT+8]Core dump to |/system/bin/coregzip -z /data/core/vtnvfsd.20098.core.gz pipe failed
+[ 5229.156267] [1970-01-02 09:09:07 GMT+8]init: Service 'vtnvfsd_blog' (pid 20098) killed by signal 6
+[ 5229.156305] [1970-01-02 09:09:07 GMT+8]init: Sending signal 9 to service 'vtnvfsd_blog' (pid 20098) process group...
+[ 5229.156790] [1970-01-02 09:09:07 GMT+8]init: kill(20098, 9) failed: No such process
+[ 5229.157903] [1970-01-02 09:09:07 GMT+8]init: Delaying service vtnvfsd_blog start for 52 secs
+[ 5229.157920] [1970-01-02 09:09:07 GMT+8]init: 
+[ 5229.181351] [1970-01-02 09:09:07 GMT+8]audit: audit_lost=427031789 audit_rate_limit=5 audit_backlog_limit=64
+[ 5229.181388] [1970-01-02 09:09:07 GMT+8]audit: rate limit exceeded
+[ 5229.315137] [1970-01-02 09:09:08 GMT+8]init: Untracked pid 20105 exited with status 0
+[ 5229.315790] [1970-01-02 09:09:08 GMT+8]Core dump to |/system/bin/coregzip -z /data/core/vtnvfsd.20099.core.gz pipe failed
+[ 5229.317264] [1970-01-02 09:09:08 GMT+8]init: Service 'vtnvfsd' (pid 20099) killed by signal 6
+[ 5229.317294] [1970-01-02 09:09:08 GMT+8]init: Sending signal 9 to service 'vtnvfsd' (pid 20099) process group...
+[ 5229.317672] [1970-01-02 09:09:08 GMT+8]init: kill(20099, 9) failed: No such process
+[ 5229.318697] [1970-01-02 09:09:08 GMT+8]init: Delaying service vtnvfsd start for 52 secs
+[ 5229.318714] [1970-01-02 09:09:08 GMT+8]init: 
+[ 5230.191381] [1970-01-02 09:09:08 GMT+8]audit: audit_lost=427115271 audit_rate_limit=5 audit_backlog_limit=64
+[ 5230.191426] [1970-01-02 09:09:08 GMT+8]audit: rate limit exceeded
+[ 5231.201336] [1970-01-02 09:09:10 GMT+8]audit: audit_lost=427198951 audit_rate_limit=5 audit_backlog_limit=64
+[ 5231.201377] [1970-01-02 09:09:10 GMT+8]audit: rate limit exceeded
+[ 5232.211384] [1970-01-02 09:09:11 GMT+8]audit: audit_lost=427282594 audit_rate_limit=5 audit_backlog_limit=64
+[ 5232.211423] [1970-01-02 09:09:11 GMT+8]audit: rate limit exceeded
+[ 5232.222042] [1970-01-02 09:09:11 GMT+8]type=1400 audit(90551.018:427337995): avc: denied { read } for pid=2093 comm="UEventObserver" scontext=u:r:platform_app:s0:c512,c768 tcontext=u:r:platform_app:s0:c512,c768 tclass=netlink_kobject_uevent_socket permissive=0 duplicate messages suppressed
+[ 5232.229593] [1970-01-02 09:09:11 GMT+8]type=2 
+[ 5233.221516] [1970-01-02 09:09:12 GMT+8]audit: audit_lost=427366201 audit_rate_limit=20 audit_backlog_limit=64
+[ 5233.221554] [1970-01-02 09:09:12 GMT+8]audit: rate limit exceeded
+[ 5233.225242] [1970-01-02 09:09:12 GMT+8]type=2 
+[ 5233.225293] [1970-01-02 09:09:12 GMT+8]type=1400 audit(90552.028:427421603): avc: denied { read } for pid=2093 comm="UEventObserver" scontext=u:r:platform_app:s0:c512,c768 tcontext=u:r:platform_app:s0:c512,c768 tclass=netlink_kobject_uevent_socket permissive=0
+[ 5234.231614] [1970-01-02 09:09:13 GMT+8]audit: audit_lost=427448425 audit_rate_limit=20 audit_backlog_limit=64
+[ 5234.231656] [1970-01-02 09:09:13 GMT+8]audit: rate limit exceeded
+[ 5235.241513] [1970-01-02 09:09:14 GMT+8]audit: audit_lost=427531782 audit_rate_limit=20 audit_backlog_limit=64
+[ 5235.241553] [1970-01-02 09:09:14 GMT+8]audit: rate limit exceeded
+[ 5235.397515] [1970-01-02 09:09:14 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5235.397604] [1970-01-02 09:09:14 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5235.434529] [1970-01-02 09:09:14 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.network.type
+[ 5235.434603] [1970-01-02 09:09:14 GMT+8]init: sys_prop: has_access,1 name:gsm.network.type
+[ 5235.456750] [1970-01-02 09:09:14 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.alpha
+[ 5235.456827] [1970-01-02 09:09:14 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.alpha
+[ 5235.469615] [1970-01-02 09:09:14 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.numeric
+[ 5235.476752] [1970-01-02 09:09:14 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.numeric
+[ 5235.494526] [1970-01-02 09:09:14 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.iso-country
+[ 5235.498334] [1970-01-02 09:09:14 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.iso-country
+[ 5235.515281] [1970-01-02 09:09:14 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.isroaming
+[ 5235.520488] [1970-01-02 09:09:14 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.isroaming
+[ 5235.568144] [1970-01-02 09:09:14 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.network.type
+[ 5235.568220] [1970-01-02 09:09:14 GMT+8]init: sys_prop: has_access,1 name:gsm.network.type
+[ 5235.589098] [1970-01-02 09:09:14 GMT+8]init: sys_prop: check_access, sctx:u:r:system_server:s0, tctx:u:object_r:system_prop:s0, name:sys.sysctl.tcp_def_init_rwnd
+[ 5235.589188] [1970-01-02 09:09:14 GMT+8]init: sys_prop: has_access,1 name:sys.sysctl.tcp_def_init_rwnd
+[ 5235.608617] [1970-01-02 09:09:14 GMT+8]init: processing action (sys.sysctl.tcp_def_init_rwnd=*)
+[ 5235.678611] [1970-01-02 09:09:14 GMT+8]htb: prio qdisc 10: is non-work-conserving?
+[ 5235.978388] [1970-01-02 09:09:14 GMT+8]adm_callback: cmd = 0x10322 returned error = 0x1
+[ 5235.978434] [1970-01-02 09:09:14 GMT+8]adm_callback: ADM map error, resuming
+[ 5235.985255] [1970-01-02 09:09:14 GMT+8]adm_memory_map_regions: DSP returned error[ADSP_EFAILED]
+[ 5235.992565] [1970-01-02 09:09:14 GMT+8]adm_map_cal_data: map did not work! cal_type 1 ret -131
+[ 5236.000963] [1970-01-02 09:09:14 GMT+8]map_memory: map_cal failed, cal type 11, ret = -19!
+[ 5236.009676] [1970-01-02 09:09:14 GMT+8]adm_set_cal: cal_utils_set_cal failed, ret = -19, cal type = 11!
+[ 5236.017927] [1970-01-02 09:09:14 GMT+8]call_set_cals: set_cal failed!
+[ 5236.030090] [1970-01-02 09:09:14 GMT+8]adm_callback: cmd = 0x10322 returned error = 0x1
+[ 5236.033732] [1970-01-02 09:09:14 GMT+8]adm_callback: ADM map error, resuming
+[ 5236.041591] [1970-01-02 09:09:14 GMT+8]adm_memory_map_regions: DSP returned error[ADSP_EFAILED]
+[ 5236.048878] [1970-01-02 09:09:14 GMT+8]adm_map_cal_data: map did not work! cal_type 2 ret -131
+[ 5236.057351] [1970-01-02 09:09:14 GMT+8]map_memory: map_cal failed, cal type 12, ret = -19!
+[ 5236.066003] [1970-01-02 09:09:14 GMT+8]adm_set_cal: cal_utils_set_cal failed, ret = -19, cal type = 12!
+[ 5236.074262] [1970-01-02 09:09:14 GMT+8]call_set_cals: set_cal failed!
+[ 5236.086744] [1970-01-02 09:09:14 GMT+8]afe_callback: cmd = 0x100ea returned error = 0x1
+[ 5236.090113] [1970-01-02 09:09:14 GMT+8]afe_cmd_memory_map: config cmd failed [ADSP_EFAILED]
+[ 5236.097958] [1970-01-02 09:09:14 GMT+8]afe_cmd_memory_map: fail_cmd
+[ 5236.106290] [1970-01-02 09:09:14 GMT+8]afe_map_cal_data: mmap did not work! size = 4096 ret -131
+[ 5236.112507] [1970-01-02 09:09:14 GMT+8]map_memory: map_cal failed, cal type 16, ret = -131!
+[ 5236.121533] [1970-01-02 09:09:14 GMT+8]afe_set_cal: cal_utils_set_cal failed, ret = -131, cal type = 16!
+[ 5236.129571] [1970-01-02 09:09:14 GMT+8]call_set_cals: set_cal failed!
+[ 5236.147462] [1970-01-02 09:09:14 GMT+8]tfa98xx_hw_params(): Requested rate: 48000, sample size: 16, physical size: 16
+[ 5236.147482] [1970-01-02 09:09:14 GMT+8]tfa98xx_hw_params(): mixer profile:container profile = [0:0]
+[ 5236.149836] [1970-01-02 09:09:14 GMT+8]AK4376: ak4376_set_bias_level level=2
+[ 5236.150596] [1970-01-02 09:09:14 GMT+8]AK4376: ak4376_set_bias_level level=3
+[ 5236.152267] [1970-01-02 09:09:14 GMT+8]afe_find_cal: no matching cal_block found
+[ 5236.152311] [1970-01-02 09:09:14 GMT+8]send_afe_cal_type cal_block not found!!
+[ 5236.169955] [1970-01-02 09:09:14 GMT+8]tfa98xx 6-0034: state: 0
+[ 5236.177579] [1970-01-02 09:09:14 GMT+8]tfa98xx 6-0034: Polling for tap-detection: disabled (0; 0x0, 0)
+[ 5236.177595] [1970-01-02 09:09:14 GMT+8]tfa98xx 6-0034: tfa_start success (0)
+[ 5236.240367] [1970-01-02 09:09:15 GMT+8]init: Untracked pid 20138 killed by signal 9
+[ 5236.251575] [1970-01-02 09:09:15 GMT+8]audit: audit_lost=427614407 audit_rate_limit=20 audit_backlog_limit=64
+[ 5236.251612] [1970-01-02 09:09:15 GMT+8]audit: rate limit exceeded
+[ 5236.492895] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5236.492966] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5236.516668] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5236.516742] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5236.535537] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.plmn.china
+[ 5236.537232] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:ril.plmn.china
+[ 5236.551359] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5236.557540] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5236.582927] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5236.583004] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5236.603701] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5236.603777] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5236.693707] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.ecclist
+[ 5236.693780] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:ril.ecclist
+[ 5236.705825] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.ecclist
+[ 5236.712643] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:ril.ecclist
+[ 5236.726647] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5236.732439] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5236.759764] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5236.759852] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5236.778994] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5236.780330] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5236.833025] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5236.833099] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5236.852362] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5236.853590] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5236.873415] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.alpha
+[ 5236.875290] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.alpha
+[ 5236.889532] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.numeric
+[ 5236.896403] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.numeric
+[ 5236.910448] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:system_server:s0, tctx:u:object_r:system_prop:s0, name:persist.sys.gps.lpp
+[ 5236.918037] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.sys.gps.lpp
+[ 5236.937829] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.iso-country
+[ 5236.940135] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.iso-country
+[ 5236.957915] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.isroaming
+[ 5236.962223] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.isroaming
+[ 5237.021918] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5237.021991] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5237.034552] [1970-01-02 09:09:15 GMT+8]IRQ5 no longer affine to CPU5
+[ 5237.051594] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5237.051672] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5237.142382] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5237.142457] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5237.166452] [1970-01-02 09:09:15 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5237.166576] [1970-01-02 09:09:15 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5237.219696] [1970-01-02 09:09:16 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.network.type
+[ 5237.219903] [1970-01-02 09:09:16 GMT+8]init: sys_prop: has_access,1 name:gsm.network.type
+[ 5237.243506] [1970-01-02 09:09:16 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.alpha
+[ 5237.243601] [1970-01-02 09:09:16 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.alpha
+[ 5237.258375] [1970-01-02 09:09:16 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.numeric
+[ 5237.261523] [1970-01-02 09:09:16 GMT+8]audit: audit_lost=427696786 audit_rate_limit=20 audit_backlog_limit=64
+[ 5237.261528] [1970-01-02 09:09:16 GMT+8]audit: rate limit exceeded
+[ 5237.265474] [1970-01-02 09:09:16 GMT+8]type=1400 audit(90556.068:427752286): avc: denied { read } for pid=2093 comm="UEventObserver" scontext=u:r:platform_app:s0:c512,c768 tcontext=u:r:platform_app:s0:c512,c768 tclass=netlink_kobject_uevent_socket permissive=0 duplicate messages suppressed
+[ 5237.265491] [1970-01-02 09:09:16 GMT+8]type=2 
+[ 5237.318471] [1970-01-02 09:09:16 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.numeric
+[ 5237.325726] [1970-01-02 09:09:16 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.iso-country
+[ 5237.331080] [1970-01-02 09:09:16 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.iso-country
+[ 5237.349117] [1970-01-02 09:09:16 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.isroaming
+[ 5237.353247] [1970-01-02 09:09:16 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.isroaming
+[ 5237.396862] [1970-01-02 09:09:16 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.network.type
+[ 5237.396923] [1970-01-02 09:09:16 GMT+8]init: sys_prop: has_access,1 name:gsm.network.type
+[ 5237.416570] [1970-01-02 09:09:16 GMT+8]init: sys_prop: check_access, sctx:u:r:system_server:s0, tctx:u:object_r:system_prop:s0, name:sys.sysctl.tcp_def_init_rwnd
+[ 5237.416649] [1970-01-02 09:09:16 GMT+8]init: sys_prop: has_access,1 name:sys.sysctl.tcp_def_init_rwnd
+[ 5237.433555] [1970-01-02 09:09:16 GMT+8]init: processing action (sys.sysctl.tcp_def_init_rwnd=*)
+[ 5237.521277] [1970-01-02 09:09:16 GMT+8]CPU4: update max cpu_capacity 1024
+[ 5237.684387] [1970-01-02 09:09:16 GMT+8]binder: 1579:1579 transaction failed 29189/0, size 120-0 line 2879
+[ 5238.271414] [1970-01-02 09:09:17 GMT+8]audit: audit_lost=427778740 audit_rate_limit=5 audit_backlog_limit=64
+[ 5238.271457] [1970-01-02 09:09:17 GMT+8]audit: rate limit exceeded
+[ 5238.280995] [1970-01-02 09:09:17 GMT+8]type=2 
+[ 5238.287512] [1970-01-02 09:09:17 GMT+8]type=1400 audit(90557.068:427834242): avc: denied { read } for pid=2093 comm="UEventObserver" scontext=u:r:platform_app:s0:c512,c768 tcontext=u:r:platform_app:s0:c512,c768 tclass=netlink_kobject_uevent_socket permissive=0
+[ 5238.351293] [1970-01-02 09:09:17 GMT+8]healthd: current=445800 esr=102050 usb=1 usb_t=USB_PD usb_max=500000 chg_e=1 temp_lvl=0 bchg_max=3300000 
+[ 5238.351434] [1970-01-02 09:09:17 GMT+8]healthd: battery l=53 v=3841 t=34.0 h=2 st=2 c=445 chg=u limit=-1
+[ 5238.451545] [1970-01-02 09:09:17 GMT+8]IRQ5 no longer affine to CPU5
+[ 5238.529224] [1970-01-02 09:09:17 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5238.529305] [1970-01-02 09:09:17 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5238.557590] [1970-01-02 09:09:17 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5238.557689] [1970-01-02 09:09:17 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5238.577614] [1970-01-02 09:09:17 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.plmn.china
+[ 5238.578213] [1970-01-02 09:09:17 GMT+8]init: sys_prop: has_access,1 name:ril.plmn.china
+[ 5238.591984] [1970-01-02 09:09:17 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5238.598502] [1970-01-02 09:09:17 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5238.640499] [1970-01-02 09:09:17 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5238.640576] [1970-01-02 09:09:17 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5238.660215] [1970-01-02 09:09:17 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5238.661067] [1970-01-02 09:09:17 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5239.141655] [1970-01-02 09:09:17 GMT+8]IRQ5 no longer affine to CPU4
+[ 5239.281384] [1970-01-02 09:09:18 GMT+8]audit: audit_lost=427859486 audit_rate_limit=5 audit_backlog_limit=64
+[ 5239.281426] [1970-01-02 09:09:18 GMT+8]audit: rate limit exceeded
+[ 5239.693453] [1970-01-02 09:09:18 GMT+8]IRQ5 no longer affine to CPU4
+[ 5240.191449] [1970-01-02 09:09:18 GMT+8]IRQ5 no longer affine to CPU5
+[ 5240.220799] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5240.220876] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5240.245232] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5240.245310] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5240.266312] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.plmn.china
+[ 5240.266387] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:ril.plmn.china
+[ 5240.279636] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5240.286187] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5240.291443] [1970-01-02 09:09:19 GMT+8]audit: audit_lost=427940666 audit_rate_limit=5 audit_backlog_limit=64
+[ 5240.291447] [1970-01-02 09:09:19 GMT+8]audit: rate limit exceeded
+[ 5240.340109] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5240.340190] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5240.359083] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5240.360694] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5240.410211] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5240.410288] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5240.429816] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5240.430854] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5240.464453] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.network.type
+[ 5240.464530] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:gsm.network.type
+[ 5240.481495] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.alpha
+[ 5240.484238] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.alpha
+[ 5240.498769] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.numeric
+[ 5240.505281] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.numeric
+[ 5240.521546] [1970-01-02 09:09:19 GMT+8]CPU3: update cpu_capacity 1024
+[ 5240.521864] [1970-01-02 09:09:19 GMT+8]CPU3: Booted secondary processor [51af8014]
+[ 5240.524505] [1970-01-02 09:09:19 GMT+8]ueventd: fixup /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1000 1000 664
+[ 5240.524730] [1970-01-02 09:09:19 GMT+8]ueventd: fixup /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 1000 1000 664
+[ 5240.527833] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.iso-country
+[ 5240.527921] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.iso-country
+[ 5240.538778] [1970-01-02 09:09:19 GMT+8]CPU3: update max cpu_capacity 1024
+[ 5240.544492] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.isroaming
+[ 5240.549007] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.isroaming
+[ 5240.600407] [1970-01-02 09:09:19 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.network.type
+[ 5240.600485] [1970-01-02 09:09:19 GMT+8]init: sys_prop: has_access,1 name:gsm.network.type
+[ 5241.301365] [1970-01-02 09:09:20 GMT+8]audit: audit_lost=428023958 audit_rate_limit=5 audit_backlog_limit=64
+[ 5241.301407] [1970-01-02 09:09:20 GMT+8]audit: rate limit exceeded
+[ 5242.311392] [1970-01-02 09:09:21 GMT+8]audit: audit_lost=428107657 audit_rate_limit=5 audit_backlog_limit=64
+[ 5242.311434] [1970-01-02 09:09:21 GMT+8]audit: rate limit exceeded
+[ 5242.781406] [1970-01-02 09:09:21 GMT+8]IRQ5 no longer affine to CPU7
+[ 5243.321358] [1970-01-02 09:09:22 GMT+8]audit: audit_lost=428191852 audit_rate_limit=5 audit_backlog_limit=64
+[ 5243.321399] [1970-01-02 09:09:22 GMT+8]audit: rate limit exceeded
+[ 5243.401952] [1970-01-02 09:09:22 GMT+8]IRQ5 no longer affine to CPU6
+[ 5244.063831] [1970-01-02 09:09:22 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5244.063912] [1970-01-02 09:09:22 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5244.105482] [1970-01-02 09:09:22 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5244.105579] [1970-01-02 09:09:22 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5244.127254] [1970-01-02 09:09:22 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5244.127329] [1970-01-02 09:09:22 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5244.159759] [1970-01-02 09:09:22 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5244.159837] [1970-01-02 09:09:22 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5244.183069] [1970-01-02 09:09:22 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.plmn.china
+[ 5244.183143] [1970-01-02 09:09:22 GMT+8]init: sys_prop: has_access,1 name:ril.plmn.china
+[ 5244.195634] [1970-01-02 09:09:22 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5244.202304] [1970-01-02 09:09:23 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5244.215415] [1970-01-02 09:09:23 GMT+8]binder: 1579:14028 transaction failed 29189/0, size 120-0 line 2879
+[ 5244.231684] [1970-01-02 09:09:23 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5244.231775] [1970-01-02 09:09:23 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5244.259777] [1970-01-02 09:09:23 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5244.259857] [1970-01-02 09:09:23 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5244.331428] [1970-01-02 09:09:23 GMT+8]audit: audit_lost=428275518 audit_rate_limit=5 audit_backlog_limit=64
+[ 5244.331473] [1970-01-02 09:09:23 GMT+8]audit: rate limit exceeded
+[ 5244.533371] [1970-01-02 09:09:23 GMT+8]binder: undelivered transaction 1265031
+[ 5245.341369] [1970-01-02 09:09:24 GMT+8]audit: audit_lost=428358655 audit_rate_limit=5 audit_backlog_limit=64
+[ 5245.341412] [1970-01-02 09:09:24 GMT+8]audit: rate limit exceeded
+[ 5245.341632] [1970-01-02 09:09:24 GMT+8]IRQ5 no longer affine to CPU7
+[ 5245.379710] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.379786] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.406196] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.406272] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.427642] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.plmn.china
+[ 5245.427713] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:ril.plmn.china
+[ 5245.440533] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.447105] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.468904] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.468982] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.492016] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.492104] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.512397] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.plmn.china
+[ 5245.512582] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:ril.plmn.china
+[ 5245.526333] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.532925] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.558822] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.558899] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.580302] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.580378] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.627995] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.628069] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.649482] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.649574] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.725704] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.725809] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.763141] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5245.763282] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5245.941651] [1970-01-02 09:09:24 GMT+8]IRQ5 no longer affine to CPU5
+[ 5246.152083] [1970-01-02 09:09:24 GMT+8]HTB: quantum of class 10010 is big. Consider r2q change.
+[ 5246.179628] [1970-01-02 09:09:24 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.179726] [1970-01-02 09:09:24 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.209699] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.209798] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.240708] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.plmn.china
+[ 5246.240784] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:ril.plmn.china
+[ 5246.251644] [1970-01-02 09:09:25 GMT+8]IRQ5 no longer affine to CPU6
+[ 5246.261121] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.266559] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.298594] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.298669] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.338984] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.ecclist
+[ 5246.339076] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:ril.ecclist
+[ 5246.351460] [1970-01-02 09:09:25 GMT+8]audit: audit_lost=428440961 audit_rate_limit=5 audit_backlog_limit=64
+[ 5246.352640] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:ril.ecclist
+[ 5246.352686] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:ril.ecclist
+[ 5246.356276] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.356322] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.367560] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.367610] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.380938] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.380990] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.424392] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.424440] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.444251] [1970-01-02 09:09:25 GMT+8]IRQ5 no longer affine to CPU4
+[ 5246.455444] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.455491] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.493663] [1970-01-02 09:09:25 GMT+8]audit: rate limit exceeded
+[ 5246.495367] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.495415] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.528297] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:rild:s0, tctx:u:object_r:radio_prop:s0, name:persist.radio.serv_mcc
+[ 5246.529961] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.radio.serv_mcc
+[ 5246.563505] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.network.type
+[ 5246.563600] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:gsm.network.type
+[ 5246.618670] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.alpha
+[ 5246.618745] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.alpha
+[ 5246.621648] [1970-01-02 09:09:25 GMT+8]IRQ5 no longer affine to CPU6
+[ 5246.640978] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.numeric
+[ 5246.646701] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.numeric
+[ 5246.659030] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:system_server:s0, tctx:u:object_r:system_prop:s0, name:persist.sys.gps.lpp
+[ 5246.666707] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:persist.sys.gps.lpp
+[ 5246.684779] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.iso-country
+[ 5246.688716] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.iso-country
+[ 5246.705989] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.operator.isroaming
+[ 5246.710832] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:gsm.operator.isroaming
+[ 5246.743305] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:radio:s0, tctx:u:object_r:radio_prop:s0, name:gsm.network.type
+[ 5246.743380] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:gsm.network.type
+[ 5246.761855] [1970-01-02 09:09:25 GMT+8]init: sys_prop: check_access, sctx:u:r:system_server:s0, tctx:u:object_r:system_prop:s0, name:sys.sysctl.tcp_def_init_rwnd
+[ 5246.763151] [1970-01-02 09:09:25 GMT+8]init: sys_prop: has_access,1 name:sys.sysctl.tcp_def_init_rwnd
+[ 5246.780179] [1970-01-02 09:09:25 GMT+8]init: processing action (sys.sysctl.tcp_def_init_rwnd=*)
+[ 5246.931655] [1970-01-02 09:09:25 GMT+8]IRQ5 no longer affine to CPU7
+[ 5247.148842] [1970-01-02 09:09:25 GMT+8]tfa98xx 6-0034: state: 1
+[ 5247.202554] [1970-01-02 09:09:26 GMT+8]AK4376: ak4376_set_bias_level level=2
+[ 5247.203013] [1970-01-02 09:09:26 GMT+8]AK4376: ak4376_set_bias_level level=1
+[ 5247.361358] [1970-01-02 09:09:26 GMT+8]audit: audit_lost=428510998 audit_rate_limit=5 audit_backlog_limit=64
+[ 5247.361402] [1970-01-02 09:09:26 GMT+8]audit: rate limit exceeded
+[ 5247.362387] [1970-01-02 09:09:26 GMT+8]type=1400 audit(90566.168:428566549): avc: denied { read } for pid=2093 comm="UEventObserver" scontext=u:r:platform_app:s0:c512,c768 tcontext=u:r:platform_app:s0:c512,c768 tclass=netlink_kobject_uevent_socket permissive=0 duplicate messages suppressed
+[ 5247.362405] [1970-01-02 09:09:26 GMT+8]type=2 
+[ 5247.402408] [1970-01-02 09:09:26 GMT+8]type=2 
+[ 5247.406404] [1970-01-02 09:09:26 GMT+8]type=1400 audit(90566.208:428566551): avc: denied { read } for pid=2093 comm="UEventObserver" scontext=u:r:platform_app:s0:c512,c768 tcontext=u:r:platform_app:s0:c512,c768 tclass=netlink_kobject_uevent_socket permissive=0
+[ 5248.371561] [1970-01-02 09:09:27 GMT+8]audit: audit_lost=428592494 audit_rate_limit=20 audit_backlog_limit=64
+[ 5248.371603] [1970-01-02 09:09:27 GMT+8]audit: rate limit exceeded
+[ 5249.381519] [1970-01-02 09:09:28 GMT+8]audit: audit_lost=428676708 audit_rate_limit=20 audit_backlog_limit=64
+[ 5249.381561] [1970-01-02 09:09:28 GMT+8]audit: rate limit exceeded
+[ 5249.761959] [1970-01-02 09:09:28 GMT+8]IRQ5 no longer affine to CPU7
+[ 5250.041664] [1970-01-02 09:09:28 GMT+8]IRQ5 no longer affine to CPU4
+[ 5250.391574] [1970-01-02 09:09:29 GMT+8]audit: audit_lost=428760910 audit_rate_limit=20 audit_backlog_limit=64
+[ 5250.391613] [1970-01-02 09:09:29 GMT+8]audit: rate limit exceeded
+[ 5251.401536] [1970-01-02 09:09:30 GMT+8]audit: audit_lost=428845220 audit_rate_limit=20 audit_backlog_limit=64
+[ 5251.401572] [1970-01-02 09:09:30 GMT+8]audit: rate limit exceeded
+[ 5252.411547] [1970-01-02 09:09:31 GMT+8]audit: audit_lost=428929630 audit_rate_limit=20 audit_backlog_limit=64
+[ 5252.411588] [1970-01-02 09:09:31 GMT+8]audit: rate limit exceeded
+[ 5252.413306] [1970-01-02 09:09:31 GMT+8]type=1400 audit(90571.218:428985295): avc: denied { read } for pid=2093 comm="UEventObserver" scontext=u:r:platform_app:s0:c512,c768 tcontext=u:r:platform_app:s0:c512,c768 tclass=netlink_kobject_uevent_socket permissive=0 duplicate messages suppressed
+[ 5252.413323] [1970-01-02 09:09:31 GMT+8]type=2 
+[ 5253.421336] [1970-01-02 09:09:32 GMT+8]audit: audit_lost=429011390 audit_rate_limit=5 audit_backlog_limit=64
+[ 5253.421371] [1970-01-02 09:09:32 GMT+8]audit: rate limit exceeded
+[ 5253.421559] [1970-01-02 09:09:32 GMT+8]type=2 
+[ 5253.421575] [1970-01-02 09:09:32 GMT+8]type=1400 audit(90572.218:429067056): avc: denied { read } for pid=2093 comm="UEventObserver" scontext=u:r:platform_app:s0:c512,c768 tcontext=u:r:platform_app:s0:c512,c768 tclass=netlink_kobject_uevent_socket permissive=0
+[ 5254.431389] [1970-01-02 09:09:33 GMT+8]audit: audit_lost=429094613 audit_rate_limit=5 audit_backlog_limit=64
+[ 5254.431423] [1970-01-02 09:09:33 GMT+8]audit: rate limit exceeded
+[ 5255.441339] [1970-01-02 09:09:34 GMT+8]audit: audit_lost=429179009 audit_rate_limit=5 audit_backlog_limit=64
+[ 5255.441373] [1970-01-02 09:09:34 GMT+8]audit: rate limit exceeded
+[ 5256.451386] [1970-01-02 09:09:35 GMT+8]audit: audit_lost=429263320 audit_rate_limit=5 audit_backlog_limit=64
+[ 5256.451422] [1970-01-02 09:09:35 GMT+8]audit: rate limit exceeded
+[ 5257.461352] [1970-01-02 09:09:36 GMT+8]audit: audit_lost=429347591 audit_rate_limit=5 audit_backlog_limit=64
+[ 5257.461393] [1970-01-02 09:09:36 GMT+8]audit: rate limit exceeded
+[ 5257.841986] [1970-01-02 09:09:36 GMT+8]IRQ5 no longer affine to CPU6
+[ 5258.471368] [1970-01-02 09:09:37 GMT+8]audit: audit_lost=429431854 audit_rate_limit=5 audit_backlog_limit=64
+[ 5258.471407] [1970-01-02 09:09:37 GMT+8]audit: rate limit exceeded
+[ 5259.481339] [1970-01-02 09:09:38 GMT+8]audit: audit_lost=429516315 audit_rate_limit=5 audit_backlog_limit=64
+[ 5259.481376] [1970-01-02 09:09:38 GMT+8]audit: rate limit exceeded
+[ 5260.491364] [1970-01-02 09:09:39 GMT+8]audit: audit_lost=429600704 audit_rate_limit=5 audit_backlog_limit=64
+[ 5260.491399] [1970-01-02 09:09:39 GMT+8]audit: rate limit exceeded
+[ 5261.501315] [1970-01-02 09:09:40 GMT+8]audit: audit_lost=429685196 audit_rate_limit=5 audit_backlog_limit=64
+[ 5261.501350] [1970-01-02 09:09:40 GMT+8]audit: rate limit exceeded
