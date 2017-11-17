@@ -28,7 +28,7 @@
      #+begin_src bash
      #step 1(androi7需要这一步)
      adb root
-     adb disable-verlty
+     adb disable-verity
      adb reboot
 
      #step 2

@@ -1,11 +1,10 @@
 * 参考文档
-[[http://blog.csdn.net/gaugamela/article/details/52920222][Android7.0 Battery Service]]
+  [[http://blog.csdn.net/gaugamela/article/details/52920222][Android7.0 Battery Service]]
 ** 代码路径
    frameworks/base/services/core/java/com/android/server/BatteryService.java
 * 一些常识
   + ServiceManager
-    整个Android(native或者framework)的Service都需要加入ServiceManager中进行统一
-    管理
+    整个Android(native或者framework)的Service都需要加入ServiceManager中进行统一管理
   + Binder(进程间通信)
     这些Service进程间就是通过Binder进行通信
   + 智能指针sp

@@ -1,10 +1,13 @@
 * led功能
-  led主要用于信号灯和充电，按键灯，闪光灯，背光灯，手电筒
+  led主要用于信号灯和充电，按键灯，闪光灯，背光灯，手电筒,蓝牙灯
 * 信号灯
   frameworks/base/services/core/java/com/android/server/notification/NotificationManagerService.java
+  frameworks/base/services/core/java/com/android/server/lights/LightsService.java
+  frameworks/base/services/core/java/com/android/server/notification/NotificationRecord.java
+  hardware/qcom/display/liblight/lights.c
 
-  NotificationManager.java
   NotificationManagerService   NotificationManagerService.java -> updateLightsLocked() ->
+
   LightsService                com/android/server/LightsService.java -> setFlashing()-> setLightLocked() -> setLight_native()
   JNI                          jni/com_android_server_LightsService.cpp -> setLight_native() -> (Return<Status> ret = hal->setLight(type, state))
 
@@ -14,6 +17,60 @@
    NotificationRecord.java-> calculateLights()
    device/bbry/common/overlay/frameworks/base/core/res/res/values/
 * 充电灯
+  frameworks/base/services/core/java/com/android/server/BatteryService.java
+  =>>updateLightsLocked()
+* lights
+  frameworks/base/services/core/java/com/android/server/lights/
 * others
   hardware/qcom/display/liblight/lights.c\\
   hardware/qcom/display/liblight/lights.c
+* 调试技巧
+  打印出 lights.c 和 NotificationManagerService.java => updateLightsLocked 和 LightsService.java => setLightLocked中的bug，对比led传递的参数
+
+
+NotificationService wildbook: updateLightsLocked()
+NotificationService wildbook: ledNotification:NotificationRecord(0x0714932f: pkg=com.google.android.dialer user=UserHandle{0} id=1 tag=STATUS_BAR_NOTIFIER importance=5 key=0|com.google.android.dialer|1|STATUS_BAR_NOTIFIER|10019 channel=phone_incoming_call: Notification(channel=phone_incoming_call pri=2 contentView=null vibrate=null sound=null defaults=0x0 flags=0x8a color=0xff2a56c6 category=call actions=2 vis=PRIVATE publicVersion=Notification(channel=null pri=0 contentView=null vibrate=null sound=null defaults=0x0 flags=0x0 color=0xff2a56c6 vis=PRIVATE)))mInCall=falsemScreenOn=truemmi=falsemPulseWhenScreenOn=truemZenModeHelper.getZenMode()=0Settings.Global.ZEN_MODE_OFF=0
+NotificationService wildbook: set flash ok color=0xffff0000Light.LIGHT_FLASH_TIMED=1light.onMs=150light.offMs=2850
+LightsService wildbook: setLight #4: color=0xffff0000: brightnessMode=0mOnMs:0mOffMS:0
+qdlights: wildbook set_speaker_light_locked mode=1, colorRGB=FFFF0000, onMS=150, offMS=2850
+
+NotificationService wildbook: updateLightsLocked()
+NotificationService wildbook: ledNotification:nullmInCall=falsemScreenOn=truemmi=falsemPulseWhenScreenOn=truemZenModeHelper.getZenMode()=0Settings.Global.ZEN_MODE_OFF=0
+NotificationService wildbook: set flash fault
+LightsService wildbook: setLight #4: color=0x0: brightnessMode=0mOnMs:150mOffMS:2850
+qdlights: wildbook set_speaker_light_locked mode=0, colorRGB=00000000, onMS=0, offMS=0
+
+
+NotificationService wildbook: updateLightsLocked()
+NotificationService wildbook: ledNotification:nullmInCall=falsemScreenOn=truemmi=falsemPulseWhenScreenOn=truemZenModeHelper.getZenMode()=0Settings.Global.ZEN_MODE_OFF=0
+NotificationService wildbook: set flash fault
+
+NotificationService wildbook: updateLightsLocked()
+NotificationService wildbook: ledNotification:nullmInCall=falsemScreenOn=truemmi=falsemPulseWhenScreenOn=truemZenModeHelper.getZenMode()=0Settings.Global.ZEN_MODE_OFF=0
+NotificationService wildbook: set flash fault
+
+NotificationService wildbook: updateLightsLocked()
+NotificationService wildbook: ledNotification:NotificationRecord(0x0fb548f5: pkg=com.google.android.dialer user=UserHandle{0} id=1 tag=MissedCall_GroupSummary importance=3 key=0|com.google.android.dialer|1|MissedCall_GroupSummary|10019 channel=phone_missed_call: Notification(channel=phone_missed_call pri=0 contentView=null vibrate=default sound=null defaults=0x6 flags=0x219 color=0xff2a56c6 groupKey=MissedCall vis=PRIVATE publicVersion=Notification(channel=null pri=0 contentView=null vibrate=default sound=null defaults=0x2 flags=0x18 color=0xff2a56c6 groupKey=MissedCall vis=PRIVATE)))mInCall=falsemScreenOn=truemmi=falsemPulseWhenScreenOn=truemZenModeHelper.getZenMode()=0Settings.Global.ZEN_MODE_OFF=0
+NotificationService wildbook: set flash ok color=0xffff0000Light.LIGHT_FLASH_TIMED=1light.onMs=150light.offMs=2850
+LightsService wildbook: setLight #4: color=0xffff0000: brightnessMode=0mOnMs:0mOffMS:0
+qdlights: wildbook set_speaker_light_locked mode=1, colorRGB=FFFF0000, onMS=150, offMS=2850
+NotificationService wildbook: updateLightsLocked()
+NotificationService wildbook: ledNotification:NotificationRecord(0x0c5e7f71: pkg=com.google.android.dialer user=UserHandle{0} id=1 tag=MissedCall_content://call_log/calls/1?allow_voicemails=true importance=3 key=0|com.google.android.dialer|1|MissedCall_content://call_log/calls/1?allow_voicemails=true|10019 channel=phone_missed_call: Notification(channel=phone_missed_call pri=0 contentView=null vibrate=default sound=null defaults=0x6 flags=0x19 color=0xff2a56c6 groupKey=MissedCall vis=PRIVATE publicVersion=Notification(channel=phone_missed_call pri=0 contentView=null vibrate=default sound=null defaults=0x2 flags=0x18 color=0xff2a56c6 groupKey=MissedCall vis=PRIVATE)))mInCall=falsemScreenOn=truemmi=falsemPulseWhenScreenOn=truemZenModeHelper.getZenMode()=0Settings.Global.ZEN_MODE_OFF=0
+NotificationService wildbook: set flash ok color=0xffff0000Light.LIGHT_FLASH_TIMED=1light.onMs=150light.offMs=2850
+LightsService wildbook: setLight #0: color=0xff000000: brightnessMode=0mOnMs:0mOffMS:0
+NotificationService wildbook: updateLightsLocked()
+NotificationService wildbook: ledNotification:NotificationRecord(0x0c5e7f71: pkg=com.google.android.dialer user=UserHandle{0} id=1 tag=MissedCall_content://call_log/calls/1?allow_voicemails=true importance=3 key=0|com.google.android.dialer|1|MissedCall_content://call_log/calls/1?allow_voicemails=true|10019 channel=phone_missed_call: Notification(channel=phone_missed_call pri=0 contentView=null vibrate=default sound=null defaults=0x6 flags=0x19 color=0xff2a56c6 groupKey=MissedCall vis=PRIVATE publicVersion=Notification(channel=phone_missed_call pri=0 contentView=null vibrate=default sound=null defaults=0x2 flags=0x18 color=0xff2a56c6 groupKey=MissedCall vis=PRIVATE)))mInCall=falsemScreenOn=falsemmi=falsemPulseWhenScreenOn=truemZenModeHelper.getZenMode()=0Settings.Global.ZEN_MODE_OFF=0
+NotificationService wildbook: set flash ok color=0xffff0000Light.LIGHT_FLASH_TIMED=1light.onMs=150light.offMs=2850
+LightsService wildbook: setLight #0: color=0xff070707: brightnessMode=0mOnMs:0mOffMS:0
+
+
+
+
+NotificationService wildbook:
+ledNotification:NotificationRecord(0x0714932f: pkg=com.google.android.dialer user=UserHandle{0} id=1 tag=STATUS_BAR_NOTIFIER importance=5 key=0|com.google.android.dialer|1|STATUS_BAR_NOTIFIER|10019 channel=phone_incoming_call: Notification(channel=phone_incoming_call pri=2 contentView=null vibrate=null sound=null defaults=0x0 flags=0x8a color=0xff2a56c6 category=call actions=2 vis=PRIVATE publicVersion=Notification(channel=null pri=0 contentView=null vibrate=null sound=null defaults=0x0 flags=0x0 color=0xff2a56c6 vis=PRIVATE)))
+mInCall=false
+mScreenOn=true
+mmi=false
+mPulseWhenScreenOn=true
+mZenModeHelper.getZenMode()=0
+Settings.Global.ZEN_MODE_OFF=0

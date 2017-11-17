@@ -21,6 +21,7 @@
    dlna
    Airplay
    samba36-server
+   nfs
 ** 部署服务器(博客社区等)
    vsftpd
    lighttpd
@@ -54,5 +55,14 @@
    kmod-usb-printer
    install luci-app-p910nd
 ** nas服务
-
 ** 广告过滤
+** 挖矿
+   比特快车
+** 网站
+** 智能家具控制
+** 认证服务器搭建
+   wifidog + authpuppy
+* 工具
+  upnp
+  ushare
+  luci web管理界面
