@@ -1,0 +1,7 @@
+nitializing IPFS node at /home/wildbook/.ipfs
+generating 2048-bit RSA keypair...done
+peer identity: QmQyx2TwS18jec938F7WgpUgYhzsAybSimRs3tJqKXcpXp
+to get started, enter:
+
+	ipfs cat /ipfs/QmS4ustL54uo8FzR9455qaxZwuMiUhyvMcX9Ba8nUH4uVv/readme
+
