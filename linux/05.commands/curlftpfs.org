@@ -1,0 +1,3 @@
+sudo apt-get install curlftpfs
+sudo curlftpfs -o codepage=gbk ftp://username:password@192.168.0.2 /mnt
+mount -t nfs -o rw 192.168.55.88:/var/ftp /mnt/nfs/ #挂载ftp
