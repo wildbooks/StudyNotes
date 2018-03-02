@@ -1,0 +1,22 @@
+* install
+
+* 创建git用户，用来运行git服务
+	sudo adduser git
+* 创建证书登录
+	收集所有需要登录的用户的公钥，就是他们自己的id_rsa.pub文件，把所有公钥导入到
+	/home/git/.ssh/authorized_keys文件里，一行一个。
+* 初始化git仓库
+	sudo git init --bare sample.git
+	sudo chown -R git:git sample.git	#修改文件所有者
+* 禁用shell登录
+	git:x:1001:1001:,,,:/home/git:/bin/bash
+	改为：
+	git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell
+* 克隆远程仓库
+	git clone git@server:/srv/sample.git
+
+
+* 管理公钥
+	如果团队很小，直接把收集的公钥放到服务器的/home/git/.ssh/authorized_keys文件里就是可行。如果团队有几百号人可以使用Gitosis管理
+
+* Gitosis
