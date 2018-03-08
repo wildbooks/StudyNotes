@@ -1,0 +1,2 @@
+* 抓取网站
+	wget -c -r -np -k -L -p https://www.beenl.com
