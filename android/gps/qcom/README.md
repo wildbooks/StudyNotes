@@ -2,11 +2,28 @@
 	frameworks/base/location/java/android/location/LocationManager.java
 * frameworks
 	frameworks/base/services/core/java/com/android/server/LocationManagerService.java
+* jni
+	meworks/base/core/java/android/hardware/location
+
 * hal
-	hardware/libhardware_legacy/include/hardware_legacy/gps.h
 	hardware/qcom/gps/
 	vendor/qcom/proprietary/gps
+	vendor/qcom/opensource/location
 
+	device/common/gps/
+	hardware/libhardware/include/hardware/gps.h
+	hardware/libhardware/include/hardware/gps_internal.h
+	hardware/libhardware/
+
+# 仓库
+	modem
+	hardware/qcom/gps/
+	vendor/qcom/proprietary/gps/
+	vendor/qcom/opensource/location/
+	device/common/
+	hardware/libhardware/
+	hardware/libhardware_legacy/
+	
 * kernel
 # config
 	vendor/qcom/proprietary/gps/etc/sap.conf
