@@ -1,0 +1,23 @@
+* msm8940基线中的msm8937平台
+	NONE-HOLS->MSM8937.LA.1.0
+* device/qcom/msm8937_64/msm8937_64.mk
+	TARGET_USES_NQ_NFC := true 　　　　//这个变量的意思是qcom新认证的NFC(NQ210) NFC开关
+* device/qcom/common/Android.mk
+* vendor/qcom/proprietary/SmartCardService/Android.mk	#智能汽车相关
+* vendor/nxp/opensource/packages/apps/Nfc/Android.mk
+* vendor/nxp/opensource/frameworks/Android.mk
+* vendor/qcom/proprietary/nqnfc-firmware/Android.mk
+* vendor/nxp/opensource/external/libnfc-nci/Android.mk
+* vendor/qcom/proprietary/common/config/device-vendor.mk
+
+* bsp
+* kernel/msm-3.18/drivers/nfc/nq-nci.c
+	msm8937-mtp.dtsi -> qcom,nq-nci
+
+* 个人猜测
+	NFC工作需要开启NFC驱动+
+	TARGET_USES_NQ_NFC := true	#device/qcom/msm8937_64
+	CONFIG_NFC_NQ=y				#
+* 参考
+	http://www.mamicode.com/info-detail-1748073.html	#NFC时钟BBCLK2改为常供
+	https://www.cnblogs.com/steadfast/articles/5855235.html	#NFC问题分析

@@ -12,6 +12,12 @@
     f 		在所有窗口中查找关键词，便于窗口多了切换kk
 # 窗格(Pane)
 # 会话(Session)
+
+
+
+
+
+
 TMUX(1)                                                         BSD General Commands Manual                                                         TMUX(1)
 
 NAME

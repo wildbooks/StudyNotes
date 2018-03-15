@@ -41,7 +41,7 @@
   + *Code*:\\
     kernel/drivers/mmc/host/sdhci-msm.c
   + *dts*:\\
-    kernel/arch/arm/boot/dts/appassionato/msm8996.dtsi => qcom,sdhci-msm
+    kernel/arch/arm/boot/dts/appassionato/msm8996.dtsi => qcom,sdhci-msm (sdhc_1为mmc,sdhc_2为sd)
     kernel/arch/arm/boot/dts/appassionato/msm8996-mtp.dtsi => sdhc
   + *docs*:
   + *sysfs*:\\

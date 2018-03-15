@@ -49,4 +49,3 @@
 ** daemon
    vendor/qcom/proprietary/sensors/dsps/sensordaemon
    守护进程:sensors.qcom
-   
