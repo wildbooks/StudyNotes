@@ -1,19 +1,31 @@
+	Location -> LocationManager -> LocationManagerService
 * apps
-	frameworks/base/location/java/android/location/LocationManager.java
+	#属于package: android.location
+	frameworks/base/location/java/android/location/LocationManager.java	#位置服务管理类
+	frameworks/base/location/java/android/location/LocationProvider.java #位置源提供者
+	frameworks/base/location/java/android/location/Location.java #位置对象
+	frameworks/base/location/java/android/location/LocationListener.java #位置监听接口
+	# 获取GPS定位步骤
+		1. 获取LocationMangager对象
+		2. 新建Location对象
+		...
 * frameworks
 	frameworks/base/services/core/java/com/android/server/LocationManagerService.java
 * jni
-	meworks/base/core/java/android/hardware/location
-
+	frameworks/base/core/java/android/hardware/location
+	frameworks/base/services/core/jni/com_android_server_location_FlpHardwareProvider.cpp
+	frameworks/base/services/core/jni/com_android_server_location_GnssLocationProvider.cpp
 * hal
-	hardware/qcom/gps/
+	hardware/qcom/gps
 	vendor/qcom/proprietary/gps
 	vendor/qcom/opensource/location
-
 	device/common/gps/
-	hardware/libhardware/include/hardware/gps.h
-	hardware/libhardware/include/hardware/gps_internal.h
 	hardware/libhardware/
+
+	hardware/libhardware/include/hardware/gps.h			#gps_device_t
+	hardware/libhardware/include/hardware/gps_internal.h
+	hardware/qcom/gps/loc_api/libloc_api_50001/gps.c	#gps_device_t
+	gps_device_t -> hardware/qcom/gps/loc_api/libloc_api_50001/loc.cpp
 
 # 仓库
 	modem

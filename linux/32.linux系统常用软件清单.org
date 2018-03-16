@@ -9,7 +9,8 @@
   rtorrent 种子下载工具
   thunderbird 邮箱
   okular  文档阅读工具，支持PDF、TIFF、CHM、ODF、EPUB、MOBI等文档格式
-  Remmina 远程左面软件
+  Remmina 远程桌面软件
+  MultiBootUSB	创建具有多个linux发行版的启动U盘
 * 系统工具
 * 开发工具
 * 终端工具

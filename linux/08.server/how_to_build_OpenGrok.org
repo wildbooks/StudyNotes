@@ -6,3 +6,9 @@
   + *test*\\
     http://localhost:8080 #出现一个网页说明tomcat服务器搭建成功,接下来就是配置OpenGrok
 * OpenGrok
+	unzip sku5.war -d  xx_dir
+	zip -r sku5.war sku5
+	* 主要修改
+		configuration.xml
+		WEB-INF/web.xml
+* 用git版本控制OpenGrok命令的修改
