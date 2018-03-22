@@ -1,0 +1,2 @@
+hardware/qcom/bt
+vendor/qcom/proprietary/bt

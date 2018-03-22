@@ -1,1 +1,0 @@
-cmd_/home/wildbook/Downloads/debugfs/my_debugfs.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/wildbook/Downloads/debugfs/my_debugfs.ko /home/wildbook/Downloads/debugfs/my_debugfs.o /home/wildbook/Downloads/debugfs/my_debugfs.mod.o

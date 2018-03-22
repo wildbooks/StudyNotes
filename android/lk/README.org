@@ -1,0 +1,103 @@
+* android几种启动模式
+    普通模式
+    下载模式
+    闹钟启动模式    ALARM_BOOT
+
+
+	/* hard reset reason */
+	REBOOT_MODE_UNKNOWN	= 0x00,
+	RECOVERY_MODE		= 0x01,
+	FASTBOOT_MODE		= 0x02,
+	ALARM_BOOT		= 0x03,
+#if ENABLE_VB_ATTEST
+	DM_VERITY_EIO		= 0x04,
+#else
+	DM_VERITY_LOGGING	= 0x04,
+#endif
+	DM_VERITY_ENFORCING	= 0x05,
+	DM_VERITY_KEYSCLEAR	= 0x06,
+// add by liunianliang for asus unlock mode, 20170524 begin
+#ifdef SUPPORT_APK_UNLOCK_FUNCTION
+	ASUS_UNLOCK_BOOT_MODE      = 0x08,
+#endif
+
+* 手机模式
+** 普通启动模式
+    方法：长按电源键
+    用途：正常使用
+** fastboot模式
+    方法一：长按 电源键+音量下键 
+    方法二：抠掉电池，然后长按音量下键，再插入USB线
+    方法三：进入adb模式，在adb里输入 adb reboot bootloader（PS：必须可以正常开机）
+    用途：刷整个系统或者刷某个分区
+** 紧急下载模式(EMERGENCY_DLOAD)
+    方法一：抠掉电池，长按 音量下键 + 音量上键，再插入USB线
+    方法二：将主板上的紧急下载测试点与地相连，再插入USB线
+    方法三：在进入fastboot模式后，利用fastboot erase sbl1，此后插入USB线
+    方法四：在手机正常开机情况下，利用QFIL下载软件时，会有从正常模式转换到紧急下载模式的过程
+    方法五：工厂空的PCBA的板子，在插入USB后，也会进入紧急下载模式
+    用途：在fastboot模式进入不了时，是唯一的刷机方法
+** Recovery模式
+    方法一：长按 电源键 + 音量上键
+    方法二：手机正常开机情况下，利用adb reboot recovery
+    用途：可以备份或者恢复系统
+** FFBM模式
+    方法一：利用QFIL软件
+    刷机后，第一次开机会进入该模式，在点击该模式中finish后，此后再次开机不会进入该模式，同样通过fastboot erase misc也可以达到不用进入该模式的作用。
+    用途：该模式不是Android本身的模式，而是高通的，它的主要作用是用于快速测试手机的一些基本功能。
+
+* 手机分区
+    1. tz tzbak  
+    2. sbl1 sbl1bak
+        它是second bootloader1的缩写，该分区中放置着引导程序，它是在little kernel（lk）前启动，起到引导lk的作用，如果将该分区擦除，则手机表现为进入紧急下载模式，即，擦除该分区后，插入USB显示QDload端口。
+    3. rpm rpmbak
+    4. cmnlib cmnlibbak
+    5. cmnlib64 cmnlib64bak
+    6. aboot abootbak
+        该分区放置设lk相关系统文件。lk主要是初始化相关底层硬件，起到引导boot的作用。在编译时，可以利用指令 make aboot单独编译lk。
+    7. devcfg devcfgbak
+    8. keymaster keymasterbak
+    9. boot
+        正如名字所代表的意思（注：boot的意思是启动），这个分区使手机可以启动。它包括了内核（kernel）和ramdisk两部分。如果没有这个分区，手机通常无法启动到安卓系统。只有必要的时候，才去通过Recovery软件擦除（format）这个分区，一旦擦除，设备只有再从新安装一个新的boot分区，可以通过安装一个包含boot分区的ROM来实现，否则无法启动安卓系统。
+    10. system
+        这个分区基本包含了整个安卓操作系统，除了内核（kernel）和ramdisk。包括安卓用户界面、和所有预装的系统应用程序。擦除这个分区，会删除真个安卓系统，但不会导致不能启动。你可以通过进入Recovery程序或者bootloader程序中，安装一个新ROM，也就是新安卓系统。这里有 /system/bin 和 /system/sbin 保存很多系统命令。它是由编译出来的system.img来烧入。 
+    11. recovery
+        这个分区可以认为是一个boot分区的替代品，可以是你的手机进入Recovery程序，进行高级恢复或安卓系统维护工作。
+    12. userdata 
+        这个分区也叫用户数据区，包含了用户的数据：联系人、短信、设置、用户安装的程序。擦除这个分区，本质上等同于手机恢复出厂设置，也就是手机系统第一次启动时的状态，或者是最后一次安装官方或第三方ROM后的状态。该分区挂在/data目录下。在Recovery程序中进行的“data/factory reset ”操作就是在擦除这个分区。
+    13. cache
+        这个分区是安卓系统缓存区，保存系统最常访问的数据和应用程序。擦除这个分区，不会影响个人数据，只是删除了这个分区中已经保存的缓存内容，缓存内容会在后续手机使用过程中重新自动生成。
+    14. splash
+        该分区主要存放开机的第一帧画面
+    15. modem
+        主要管理手机的基带部分。与电信网络交互就是靠它了，一般往往用专用开发环境来开发。手机无线信号、蓝牙、wifi等无线管理也在这里。
+    16. fsg modemst1 modemst2
+        这三个分区主要用于存放高通的QCN，QCN简单的理解为和modem关系很大的一些参数。
+    config
+    devinfo
+    ADF
+    asdf
+    dpo
+    fsc
+    logdump
+    misc     
+    oem
+    APD
+    dsp
+    keystore
+    mcfg
+    mota
+    persist
+    ssd
+    version  
+    DDR
+    apdp
+    dip
+    factory
+    limits
+    mdtp
+    msadp
+    priv
+    sec
+    syscfg
+
