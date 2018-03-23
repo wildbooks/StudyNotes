@@ -9,3 +9,42 @@
 snd-soc-msm8x16-objs := msm8952.o msm-audio-pinctrl.o
 snd-soc-msm8x16-objs += msm8952-slimbus.o msm8952-dai-links.o
 obj-$(CONFIG_SND_SOC_MSM8X16) += snd-soc-msm8x16.o
+
+# 手机audio
+    Microphone(MIC)     麦克风
+    Speaker             扬声器
+     --Sub
+    MIC -- Main
+    RECEIVER    
+    SPK     喇叭
+    headset 耳机
+    handset 听筒
+    jack耳机的意思
+    qcom,msm-mbhc-hphl-swh = <1>
+
+# 多按钮耳机控制
+# jack 类型
+    normally-closed type    nc
+    normally-open type      no
+    对于NC型插座，当没有插入插头时，HPH-L和HS-DET引脚通过插孔上的机械开关连接。
+    对于NO型插座，当插头没有插入时，HPH-L和HS-DET引脚断开
+# MBHC检测来自耳机和耳机的事件，包括插入，移除和耳机按钮按下并释放
+    多按钮耳机控制(MBHC)是硬件编解码器的一项功能。MBHC检测来自耳机和耳机的事件，包括插入，移除和耳机按钮按下并释放;配置插入耳机类型
+
+    机械插入/移除检测，无需额外的GPIO分配
+    插头类型检测 （3极耳机/4极耳机）(美国/欧盟耳机)
+    复杂按钮检测
+    耳机阻抗检测
+
+# 设置jack类型
+    qcom,msm-mbhc-hphl-swh = <0>;   #(0 for NC, 1 for NO)
+# 外部电容设置
+# MBHC 按键配置
+
+# 专业术语
+    Multibutton Headset Control (MBHC)  多按钮耳机控制
+    normally-closed type        nc      常闭类型
+    normally-open type          no      常关类型
+
+    headset 耳机
+    handset 听筒

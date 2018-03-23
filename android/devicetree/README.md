@@ -5,6 +5,7 @@
     $ cat /sys/firmware/devicetree/base/model
     Qualcomm Technologies, Inc. MSM8937-PMI8940 MTP #返回结果
     #然后把返回的结果再设置数目录下搜索，确认设备树为msm8937-pmi8940-mtp.dts
+Qualcomm Technologies, Inc. MSM8937-PMI8937 QRD SKU2
     ```
 * 根据设备树文件确认使用的设备树清单
     ```bash
