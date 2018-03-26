@@ -1,0 +1,36 @@
+# 配置NON-HLOS编译环境（license注册方法）
+
+    1. 访问ARM的在线许可证登记入口https://silver.arm.com/licensing/。如果您已经有ARM账号，直接登录即可。如果没有，需要重新注册一个账户，注册是免费的，注册完成后登录。
+
+    2. 确定登录后，再次访问许可证登记入口https://silver.arm.com/browse/browse_eval.tm，点击“Development Studio 5 (DS-5)”后的“Get Evaluation”按钮，输入电话，粘贴第4步的主机ID（ifconfig -a命令 HWaddr后面即为MAC地址）， Host Platform选择Linux-64-bit。确定后在下一页下载license文件。
+
+    3. 下载的license.dat文件可在对应的MAC地址计算机上使用。
+
+# 第二步：应用license.dat
+
+    修改huaqin/build/shell/envsetup.sh文件
+
+    ```bash
+    export LM_LICENSE_FILE=8224@192.168.132.222
+    export ARMLMD_LICENSE_FILE=8224@192.168.132.222
+    ```
+ 
+    修改为
+
+    ```bash
+    export LM_LICENSE_FILE=$T/huaqin/build/shell/license.dat
+    export ARMLMD_LICENSE_FILE=$T/huaqin/build/shell/license.dat
+    ```
+
+    (将license.dat文件放到/huaqin/build/shell/目录下)
+    修改None-HLOS/BOOT.BF.3.3/boot_images/build/ms/setenv.sh文件
+    注释掉
+
+    ```bash
+    export ARMLMD_LICENSE_FILE=8224@192.168.132.222 （81行）
+    export ARMLMD_LICENSE_FILE=8224@192.168.132.222
+    export LM_LICENSE_FILE=8224@192.168.132.222
+    ```
+
+    第三步：编译NON-HLOS
+    ./mk none-hlos
