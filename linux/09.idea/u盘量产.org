@@ -1,0 +1,11 @@
+* u盘量产(扩容U盘)步骤
+    1. 用ChipGenius(或checkudisk)检测USB设备芯片型号
+    2. 根据USB设备芯片型号选择量产工具
+    3. U盘序列号修改(没啥实际作用)
+* 基础知识
+    VID:供应商ID
+    PID:产品ID
+        注意：有部分设备生产商为了方便直接使用主控生产商的VID和PID
+    设备序列号:
+* 参考文档
+    http://www.upan.cc/technology/mass/7450.html

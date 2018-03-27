@@ -1,0 +1,14 @@
+# 多合一系统制作
+/Boot   boot分区        8G
+swap    swap分区        8G
+window  window          50G
+/       fedora根分区    40G
+/Work   文档分区        剩下的
+
+http://www.jinbuguo.com/linux/grub.cfg.html
+
+# linux共系统方法
+    根文件系统不共用，其他的/boot,swap,/work分区都共有
+
+# 需要解决问题
+    window，linux可以完全在lvm2文件系统中安装；但我想完全安装在btrfs

@@ -1,0 +1,10 @@
+# linux发行版讲解
+    linux发行版通常基于isolinux
+ 将Fedora-Workstation-Live-x86_64-27-1.6.iso解压后，
+    LiveOS      我们真正的系统
+    images      linux系统
+    isolinux    装系统辅助工具
+# LiveOS/squashfs.img
+    squashfs.img文件系统里有个rootfs.img文件系统,可以通过mount进行挂载，取出里面的文件
+# initramfs-4.15.8-300.fc27.x86_64.img
+    文件是cpio格式,解压cpio -i -F initrd.img
