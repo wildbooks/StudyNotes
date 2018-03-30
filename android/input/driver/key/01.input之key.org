@@ -1,6 +1,7 @@
 * 参考文档
   + code
-    kernel/drivers/input/keyboard/gpio_keys.c
+    kernel/drivers/input/keyboard/gpio_keys.c 
+    kernel/drivers/platform/msm/qpnp-power-on.c #电源按键代码
   + sysfs
     /proc/bus/input/
     /sys/class/input/

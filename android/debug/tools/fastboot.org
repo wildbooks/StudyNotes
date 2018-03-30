@@ -2,10 +2,10 @@
 * 刷机方法
   #+begin_src bash
     # 1.进入fastboot模式
-    sudo adb reboot bootloader
+    adb reboot bootloader
     # 2.烧写kernel
-    sudo fastboot flash boot boot.img
-    sudo fastboot flash cache cache.img
+    fastboot flash boot boot.img
+    fastboot flash cache cache.img
     # 4.烧写lk
     sudo fastboot flash aboot emmc_appsboot.mbn
     sudo fastboot flash persist persist.img
@@ -21,4 +21,13 @@
     sudo fastboot flash tz tz.mbn
     sudo fastboot flash fsg study.mbn
     sudo fastboot reboot
+
+    # unlock device
+    sudo fastboot flash frp-unlock secret_key.bin
+    sudo fastboot flashing unlock
+    sudo fastboot flashing unlock_critical
+
+    # lock the device
+    fastboot flashing lock
+    fastboot flashing lock_critical
   #+end_src

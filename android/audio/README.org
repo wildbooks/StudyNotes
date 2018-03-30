@@ -12,15 +12,13 @@ obj-$(CONFIG_SND_SOC_MSM8X16) += snd-soc-msm8x16.o
 
 # 手机audio
     Microphone(MIC)     麦克风
-    Speaker             扬声器
+    Speaker(SPK)        扬声器
      --Sub
     MIC -- Main
     RECEIVER    
-    SPK     喇叭
     headset 耳机
     handset 听筒
     jack耳机的意思
-    qcom,msm-mbhc-hphl-swh = <1>
 
 # 多按钮耳机控制
 # jack 类型
@@ -46,8 +44,9 @@ obj-$(CONFIG_SND_SOC_MSM8X16) += snd-soc-msm8x16.o
     normally-closed type        nc      常闭类型
     normally-open type          no      常关类型
 
-    headset 耳机
-    handset 听筒
+    headset         耳机
+    handset         听筒
+    headphones      头戴耳机
 
 #参考文档
 80_NL239_27_D_APPLICATION_NOTE__MULTIBUTTON_HEADSE.pdf      (Multibutton Headset Control)

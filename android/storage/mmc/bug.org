@@ -1,2 +1,4 @@
 # 不支持64G SD卡
     可能是sd_Data电流不足
+# SD卡不识别
+    cd-gpios SD卡检测引脚配置不对,或者pmic配置不对

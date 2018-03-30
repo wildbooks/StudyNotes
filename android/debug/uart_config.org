@@ -1,0 +1,3 @@
+* bringup阶段打开lk串口log
+    CONFIG_SERIAL_MSM_HSL=y
+    CONFIG_SERIAL_MSM_HSL_CONSOLE=y
