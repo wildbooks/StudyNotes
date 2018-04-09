@@ -1,0 +1,15 @@
+* CTS简介
+* ubuntu CTS环境搭建
+    sudo apt-get install aapt
+    cts-tradefed    #测试
+
+* 运行CTS	
+常用命令	
+命令	说明/work/Projects/SKU6/
+run cts	执行整个CTS测试计划
+run cts -m <模块名>	"测试指定模块，例：
+run cts -m Gesture"
+run cts -m <模块名> -t <测试项>	"测试指定测试项，例：
+run cts -m Gesture -t android.gesture.cts.GestureTest#testGetStrokes "
+--skip-preconditions	"CTS测试前会检测手机的准备环境，测试命令后面添加该命令可以绕过对设备配置的验证和设置，比如推送媒体文件或检查 WLAN 连接，例：
+run cts -m Gesture -t android.gesture.cts.GestureTest#testGetStrokes --skip-preconditions"

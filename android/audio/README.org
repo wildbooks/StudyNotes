@@ -1,8 +1,8 @@
 # kernel
     msm8x16_wcd_registers.h
     kernel/sound/soc/msm/msm8952.c  => qcom,msm8952-audio-codec
-    kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec
-    kernel/msm-3.18/sound/soc/codecs/wsa881x-analog.c => qcom,wsa881x-i2c-codec
+    kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec    #解码器
+    kernel/msm-3.18/sound/soc/codecs/wsa881x-analog.c => qcom,wsa881x-i2c-codec #放大器
     kernel/msm-3.18/sound/soc/msm/qdsp6v2/msm-pcm-routing-v2.c => qcom,msm-pcm-routing
     CONFIG_SND_SOC_MSM8X16
 
@@ -35,8 +35,7 @@ obj-$(CONFIG_SND_SOC_MSM8X16) += snd-soc-msm8x16.o
     耳机阻抗检测
 
 # 设置jack类型
-    qcom,msm-mbhc-hphl-swh = <0>;   #(0 for NC, 1 for NO)
-# 外部电容设置
+    qcom,msm-mbhc-hphl-swh = <0>;   #(0 for NC, 1 for NO) 外部电容设置
 # MBHC 按键配置
 
 # 专业术语

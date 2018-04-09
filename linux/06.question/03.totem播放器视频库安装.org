@@ -1,2 +1,4 @@
 gstreamer1-libav #这一个好像就足够了
 sudo dnf install gstreamer1-libav gstreamer1-plugins-ugly gstreamer1-plugins-bad-free gstreamer1-plugins-bad-freeworld gstreamer1-vaapi
+gstreamer1.0-plugins-bad-faad ##主要是x264等解码库
+gstreamer1.0-plugins-bad-videoparsers

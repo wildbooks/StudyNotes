@@ -14,8 +14,27 @@
 
 # 设置jack类型
     qcom,msm-mbhc-hphl-swh = <0>;   #(0 for NC, 1 for NO)
+# 
+    ```c
+    enum snd_jack_types {
+        SND_JACK_HEADPHONE	= 0x0000001,    //耳机
+        SND_JACK_MICROPHONE	= 0x0000002,    //耳麦
+        SND_JACK_HEADSET	= SND_JACK_HEADPHONE | SND_JACK_MICROPHONE,//耳机和耳麦
+        SND_JACK_LINEOUT	= 0x0000004,
+        SND_JACK_MECHANICAL	= 0x0000008, /* If detected separately */
+        SND_JACK_VIDEOOUT	= 0x0000010,
+        SND_JACK_AVOUT		= SND_JACK_LINEOUT | SND_JACK_VIDEOOUT,
+        SND_JACK_LINEIN		= 0x0000020,
+        SND_JACK_OC_HPHL	= 0x0000040,
+        SND_JACK_OC_HPHR	= 0x0000080,
+        SND_JACK_UNSUPPORTED	= 0x0000100,
+        SND_JACK_MICROPHONE2    = 0x0000200,
+        SND_JACK_ANC_HEADPHONE = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE | SND_JACK_MICROPHONE2,
+    }
+    ```
 # 外部电容设置
 # MBHC 按键配置
+    static struct wcd_mbhc_config mbhc_cfg //主要配置按键值(KEY_MEDIA、 KEY_VOLUMEUP、KEY_VOLUMEDOWN)
 
 # 专业术语
     Multibutton Headset Control (MBHC)  多按钮耳机控制
