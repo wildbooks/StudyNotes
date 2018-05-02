@@ -1,0 +1,26 @@
+* kernel
+    echo -n "file msm-pcm-routing-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
+    echo -n "file msm-pcm-voice-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
+    echo -n "file msm-dai-q6-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
+    echo -n "file q6voice.c +p" > /sys/kernel/debug/dynamic_debug/control
+    echo -n "file q6adm.c +p" > /sys/kernel/debug/dynamic_debug/control
+    echo -n "file q6afe.c +p" > /sys/kernel/debug/dynamic_debug/control
+    echo -n "file q6asm.c +p" > /sys/kernel/debug/dynamic_debug/control
+    echo -n "file soc-core.c +p" > /sys/kernel/debug/dynamic_debug/control
+    echo -n "file soc-dapm.c +p" > /sys/kernel/debug/dynamic_debug/control
+    echo -n "file soc-pcm.c +p" > /sys/kernel/debug/dynamic_debug/control
+    echo -n "file msm8x16-wcd.c +p" > /sys/kernel/debug/dynamic_debug/control
+* logcat
+    Enable below logs and capture a logcat log
+
+    /msm8916/platform.c
+    -/*#define LOG_NDEBUG 0*/
+    +#define LOG_NDEBUG 0
+
+    audio_hw.c
+    -/*#define LOG_NDEBUG 0*/
+    -/*#define VERY_VERY_VERBOSE_LOGGING*/
+    +#define LOG_NDEBUG 0
+    +#define VERY_VERY_VERBOSE_LOGGING
+* qxdm
+    default_V2.6_auddsp_btfmwlan_ril.dmc

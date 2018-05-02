@@ -10,7 +10,7 @@
     3. 将混音器控制(mixer control)定义和路径定义添加到具有所需序列的混音器路径XML文件中。
     4. 在platform.h和platform.c中添加一个条目到device_table。
     5. 将硬件中的设备ACDB设备ID包含在platform.c文件中的acdb_device_table
-    6. 将device_table中提到的设备名称映射到Android设备。这需要更改hardware / qcom / audio / hal / msm8916 / platform.c文件中的platform_get_output_snd_device（）函数。
+    6. 将device_table中提到的设备名称映射到Android设备。这需要更改hardware/qcom/audio/hal/msm8916/platform.c文件中的platform_get_output_snd_device()函数。
 ## Device table
     hardware/qcom/audio/hal/msm8916/platform.h  #SND_DEVICE_OUT_BEGIN附近
     hardware/qcom/audio/hal/msm8916/platform.c  #device_table
