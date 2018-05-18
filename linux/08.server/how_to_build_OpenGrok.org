@@ -8,6 +8,7 @@
 * OpenGrok
 	unzip sku5.war -d  xx_dir
 	zip -r sku5.war sku5
+	zip -r ../sku5.war WEB-INF/web.xml
 	* 主要修改
 		configuration.xml
 		WEB-INF/web.xml

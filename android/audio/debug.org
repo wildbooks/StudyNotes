@@ -10,6 +10,7 @@
     echo -n "file soc-dapm.c +p" > /sys/kernel/debug/dynamic_debug/control
     echo -n "file soc-pcm.c +p" > /sys/kernel/debug/dynamic_debug/control
     echo -n "file msm8x16-wcd.c +p" > /sys/kernel/debug/dynamic_debug/control
+    或者在文件开始地方定义#define DEBUG,机子开机时就吐log
 * logcat
     Enable below logs and capture a logcat log
 
@@ -24,3 +25,22 @@
     +#define VERY_VERY_VERBOSE_LOGGING
 * qxdm
     default_V2.6_auddsp_btfmwlan_ril.dmc
+* 特定应用场景，开启相应Log
+    * For debugging codec-related issues during audio bringup:
+        wcd9xxx-core.c
+        wcd9xxx-irq.c
+        wcd9xxx-mbhc.c
+        wcd9xxx-resmgr.c
+    * For debugging HDMI-related issues during audio bringup:
+        msm-dai-q6-hdmi-v2.c
+        q6afe.c
+    * For debugging AUX PCM-related issues during audio bringup:
+        msm-dai-q6-v2.c
+    * For debugging USB audio and WFD-related issues during audio bringup:
+        msm-pcm-afe-v2.c
+* Debugging checkpoints
+    在初始bringup音频期间，以下内容已得到验证：
+    检查DSP是否启动
+    检查SLIMbus是否启动
+    检查声卡是否已注册
+    使用tinymix，tinycap和tinyplay命令验证播放和录制

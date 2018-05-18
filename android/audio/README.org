@@ -1,9 +1,11 @@
 # kernel
     msm8x16_wcd_registers.h
     kernel/msm-3.18/sound/soc/msm/msm8952.c  => qcom,msm8952-audio-codec
-    kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec    #解码器
+    kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec    #内部解码器
+    kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec    #外部解码器
     kernel/msm-3.18/sound/soc/codecs/wsa881x-analog.c => qcom,wsa881x-i2c-codec #放大器
     kernel/msm-3.18/sound/soc/msm/qdsp6v2/msm-pcm-routing-v2.c => qcom,msm-pcm-routing #通道
+    kernel/msm-3.18/sound/soc/codecs/wcd-mbhc-v2.c       #Multibutton Headset Control
     CONFIG_SND_SOC_MSM8X16
 
 snd-soc-msm8x16-objs := msm8952.o msm-audio-pinctrl.o

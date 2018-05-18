@@ -1,0 +1,11 @@
+* Kconfig
+    arch/lib/Kconfig.debug
+    arch/lib/Kconfig.kgdb
+    arch/arm64/Kconfig.debug
+* Menuconfig
+    1. 先装ncurses库
+        apt-get install libncurses5-dev
+    2. 使用Menuconfig
+    ```cpp
+    make -C kernel O=../out/target/product/msm8996/obj/KERNEL_OBJ ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- KCFLAGS=-mnoandroid menuconfig
+    ```
