@@ -35,7 +35,7 @@
      # 3.执行上述命令的10秒内断开usb，因为它将在10后开始捕获top数据。大约50秒后连接USB并把powertop数据导出手机
      adb pull /sdcard/top.txt .
    #+end_src
-** Clocks
+** Clocks 收集时钟转储日志
    #+begin_src bash
      # 1.链接USB
      # 2.
@@ -50,9 +50,9 @@
              do if [ -d $i ];
                 then if [ "$(cat $i/enable)" == "1" ];
                      then if [ -e $i/measure ]; then
-                              echo $i \=\> enable:`cat $i/enable` measure:`cat $i/measure`;
+                              echo $i \=\> enable=`cat $i/enable` measure=`cat $i/measure`;
                           else
-                              echo $i \=\> enable:`cat $i/enable` rate:`cat $i/rate`;
+                              echo $i \=\> enable=`cat $i/enable` rate=`cat $i/rate`;
                           fi;
                      fi;
                 fi;
@@ -67,9 +67,9 @@
                       then if [ "$(cat $i/state)" == "enabled" ];
                            then if [ -e $i/microvolts ];
                                 then
-                                    echo $i \=\> name:`cat $i/name` state:`cat $i/state` microvolt:`cat $i/microvolts`;
+                                    echo $i \=\> name=`cat $i/name` state=`cat $i/state` microvolt=`cat $i/microvolts`;
                                 else
-                                    echo $i \=\> name:`cat $i/name` state:`cat $i/state` microvolt: N\/A;
+                                    echo $i \=\> name=`cat $i/name` state=`cat $i/state` microvolt= N\/A;
                                 fi;
                            fi;
                       fi;
@@ -120,11 +120,18 @@
   + GPIO dumps
     提供每个GPIO的状态,检测以确定GPIO是否处于最低功耗状态。
     可用于在系统睡眠期间调试焊垫电流泄漏
+    for num in `seq 1 300`
+    do
+        echo $num >export
+        echo "gpio$num =>"`cat gpio$num/direction`
+        echo $num >unexport
+    done
   + PMIC dumps
     提供LDO/SMPS状态
     用于调试所有用例和场景,检测是否有未知的调节器在睡眠期间保持ON
   + QXDM logs
   + msm_pm_stats/lpm_stats
+    cat /d/lpm_stats/stats
   + Node Power Architecture (NPA) logs (RPM/modem)
   + Universal Logs (Ulogs) (RPM/modem)
   + Dmesg and Logcat logs
@@ -137,7 +144,7 @@
     + wakeup_sources
       cat /d/wakeup_sources  #Check wake locks  检查唤醒源
       cat ~/wakelocks.txt | awk '{print $1"\t\t\t\t\t\t"$6}' #过滤wakeup_sources
-    + check xosd/vim
+    + check xosd/vmin
       cat /sys/kernel/debug/rpm_stats  #check xosd/vmin  检查关闭时钟次数，低电流次数,主要看系统睡下去没
     + interrupts
       cat /proc/interrupts # Check frequent interrupts activity  #检查频繁中断活动
@@ -158,7 +165,6 @@
           + Display-related clocks (MDSS)
           + Multimedia subsystem related clock
     #+end_src
-  + Msm_pm_stats/lpm_stats
   + Hansei.py for RPM RAM dump parsing
 * 命令
   + Disable kernel thermal
@@ -208,4 +214,12 @@
     # 3.执行上述命令的10秒内断开usb，大约1分钟后链接USB，把Ftrace日志拉出来
     adb pull /sdcard/trace.txt ~
   #+end_src
- 测试条件如下
+* PowerTop和Top
+    sleep 3 && while true;
+    do
+        echo "==============================================";
+        date +%Y-%m-%d\ %T
+        top -m 25 -d 1 -n 1 -t;
+        echo "----------------------------------------------";
+        /data/powertop -r -d -t 5
+    done > data/dumptop.txt &
