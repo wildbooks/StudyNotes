@@ -1,5 +1,4 @@
 #!/system/bin/sh
-
 #
 #   logs path
 #
@@ -44,17 +43,17 @@ echo 8 > /sys/module/mpm_of/parameters/debug_mask
 
 
 #/data/powertop -d > $DATALOGHOME/powertop.log &
-cat /proc/kmsg > $DATALOGHOME/kernel.log &
-#cat /d/rpm_log > $DATALOGHOME/rpm.log &
+dmesg -Tw> $DATALOGHOME/dmesg.log &
+cat /d/rpm_log > $DATALOGHOME/rpm.log &
 cat /proc/sys/kernel/boot_reason > $DATALOGHOME/boot_reason.log &
 cat /proc/sys/kernel/cold_boot> $DATALOGHOME/cold_boot.log &
-echo "TIME(s)\tSOC(%)\tCURRENT_NOW(uA)\tVOLTAGE_NOW(uV)\tTEMP(Ddeg)\tSTATUS\tHEALTH\tCHARGETYPE" >> $DATALOGHOME/SOCdata.txt
+echo "TIME(s)\t\tSOC(%)\tCURRENT_NOW(uA)\tVOLTAGE_NOW(uV)\tTEMP(Ddeg)\tSTATUS\tHEALTH\tCHARGETYPE" >$DATALOGHOME/SOCdata.txt
 logcat -v time > $DATALOGHOME/logcat.log &
 logcat -v time -b events > $DATALOGHOME/event.log &
 logcat -v time -b radio > $DATALOGHOME/radio.log &
 tcpdump -i any -p -vv -s 0 -w $DATALOGHOME/tcpdump.log &
 top -t -m 10 >> $DATALOGHOME/top.log &
-service list >> $DATALOGHOME/serviceList.log
+service list >> $DATALOGHOME/serviceList.log &
 
 intialHour=$(date +%h)
 intialMin=$(date +%m)
@@ -83,7 +82,7 @@ intialSec=$(date +%s)
     #all=$(cat /sys/class/power_supply/battery/uevent)
     #lbc_config=$(cat /d/qpnp_lbc/lbc_config)
 
-    echo "$(date +%H-%M-%S)\t$SOC\t$cnow\t$vnow\t$batteryTemp\t$batteryStatus\t$batteryHealth\t$batterychrgType" >> $DATALOGHOME/SOCdata.txt
+    echo "$(date +%H-%M-%S)\t$SOC\t\t$cnow\t$vnow\t\t$batteryTemp\t\t$batteryStatus\t$batteryHealth\t$batterychrgType" >>$DATALOGHOME/SOCdata.txt
     echo "$(date +%H-%M-%S),$(cat /d/rpm_stats)" >> $DATALOGHOME/rpm_stats.log
     echo "$(date +%H-%M-%S),$(cat /d/bam_dmux/stats)" >> $DATALOGHOME/bam_stats.log
     echo "$(date +%H-%M-%S),,---,,$(cat /d/ipc_logging/bam_dmux/log)" >> $DATALOGHOME/bam_ipc.log
@@ -125,3 +124,4 @@ intialSec=$(date +%s)
 # done
 bugreport >$DATALOGHOME/bugreport.log
 # adb bugreport bugreport.zip
+echo "get log end"
