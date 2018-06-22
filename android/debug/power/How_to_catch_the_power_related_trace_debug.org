@@ -116,7 +116,8 @@
   historian.py脚本下载https://github.com/google/battery-historian
 * 电源调试的日志
   + Clock dumps
-    提供每个时钟的状态
+    提供每个时钟的状态(dmesg查看)
+    echo 1 > /sys/kernel/debug/clk/debug_suspend
   + GPIO dumps
     提供每个GPIO的状态,检测以确定GPIO是否处于最低功耗状态。
     可用于在系统睡眠期间调试焊垫电流泄漏
@@ -203,11 +204,9 @@
     echo "irq:*" >> set_event
     echo "mdss:mdp_mixer_update mdss:mdp_sspp_change mdss:mdp_commit" >> set_event
     echo "kgsl:kgsl_pwrlevel kgsl:kgsl_buslevel kgsl:kgsl_pwr_set_state" >> set_event
-    sleep 10 &&
-        echo "0" > tracing_on && #关闭trace
-        echo "" > trace && #清空trace缓冲区
-        echo "1" > tracing_on && #开启trace
-        sleep 10 &&              #运行10s
+
+    echo "1" > tracing_on && #开启trace
+    sleep 10 &&              #运行10s
         echo "0" > tracing_on && #关闭trace
         cat trace > /sdcard/trace.txt &
 

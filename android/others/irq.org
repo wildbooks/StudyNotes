@@ -1,0 +1,10 @@
+* gic
+    0-15:  STI/SGI (software triggered/generated interrupts)
+    16-31: PPI (private peripheral interrupts)
+    32+:   SPI (shared peripheral interrupts)
+
+    hwirq = GIC_PPI_START/GIC_SPI_START + interrupt number
+* 异常中断处理方法
+    第一种，禁用不必要的IRQ
+    第二种方法，将IRQ添加到DTSI中的旁路列表中(qcom,gic-map)
+
