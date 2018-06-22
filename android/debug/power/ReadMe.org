@@ -1,0 +1,5 @@
+* 上层唤醒
+    framework层唤醒通常通过PowerManagerService.WakeLocks(for others)和PowerManagerService.Display(for LCD display)唤醒,调试这一块时，我们需要修改文件PowerManagerService.java中的DEBUG变量，修改为
+    private static final boolean DEBUG = SystemProperties.getInt("persist.sys.power", 0) == 1;//很巧妙
+    然后我们就可以看到我们想看到的log
+*
