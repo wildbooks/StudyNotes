@@ -44,10 +44,11 @@ obj-$(CONFIG_SND_SOC_MSM8X16) += snd-soc-msm8x16.o
     Multibutton Headset Control (MBHC)  多按钮耳机控制
     normally-closed type        nc      常闭类型
     normally-open type          no      常关类型
-
     headset         耳机
     handset         听筒
     headphones      头戴耳机
+    Echo Cancellation (EC)      回声消除
+    Noise Suppression (NS)      噪声抑制
 
 #参考文档
 80_NL239_27_D_APPLICATION_NOTE__MULTIBUTTON_HEADSE.pdf      (Multibutton Headset Control)
