@@ -14,15 +14,54 @@
 * logcat
     Enable below logs and capture a logcat log
 
-    /msm8916/platform.c
-    -/*#define LOG_NDEBUG 0*/
-    +#define LOG_NDEBUG 0
 
-    audio_hw.c
-    -/*#define LOG_NDEBUG 0*/
-    -/*#define VERY_VERY_VERBOSE_LOGGING*/
-    +#define LOG_NDEBUG 0
-    +#define VERY_VERY_VERBOSE_LOGGING
+    #define LOG_NDEBUG 0
+    #define VERY_VERY_VERBOSE_LOGGING ===> add these two definitions in these files.
+        frameworks/av/media/libmedia/AudioTrack.cpp or
+        frameworks/av/media/libaudioclient/AudioTrack.cpp (Android O)
+        frameworks/av/media/libmedia/AudioRecord.cpp or
+        frameworks/av/media/libaudioclient/AudioRecord.cpp (Android O)
+    +#include <utils/CallStack.h>
+    status_t AudioTrack::set(
+    {
+        "frameworks/av/media/libaudioclient/AudioTrack.cpp"
+            ......
+        +android::CallStack stack;
+        +stack.update( );
+        +stack.log("XXX");
+        .........
+    }
+
+    APM
+    #define LOG_NDEBUG 0
+    #define VERY_VERBOSE_LOGGING
+        frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
+        frameworks/av/services/audiopolicy/service/AudioPolicyInterfaceImpl.cpp
+        frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp
+        frameworks/av/services/audiopolicy/enginedefault/src/Engine.cpp or
+        frameworks/av/services/audiopolicy/engineconfigurable/src/Engine.cpp
+        frameworks/av/services/audiopolicy/common/managerdefinitions/src/Gains.cpp
+        hardware/qcom/audio/policy_hal/AudioPolicyManager.cpp
+
+    HAL
+    #define LOG_NDEBUG 0
+    #define VERY_VERY_VERBOSE_LOGGING
+        hardware/qcom/audio/hal/audio_hw.c
+        hardware/qcom/audio/hal/msm8916/platform.c
+        hardware/qcom/audio/hal/platform_info.c
+        hardware/qcom/audio/hal/audio_extn/usb.c
+        hardware/qcom/audio/hal/audio_extn/audio_extn.c
+        hardware/qcom/audio/hal/audio_extn/spkr_protection.c
+        hardware/qcom/audio/hal/audio_extn/a2dp.c
+        system/media/audio_route/audio_route.c
+        @@ -579,6 +579,7 @@ int audio_route_apply_path(struct audio_route *ar, const char *name)
+        }
+        path_apply(ar, path);
+        + path_print(ar, path);
+
+        return 0;
+        }
+
 * qxdm
     default_V2.6_auddsp_btfmwlan_ril.dmc
 * 特定应用场景，开启相应Log
@@ -44,3 +83,12 @@
     检查SLIMbus是否启动
     检查声卡是否已注册
     使用tinymix，tinycap和tinyplay命令验证播放和录制
+# 使用adb命令读写codec寄存器
+    adb root
+    adb remount
+    adb shell mount -t debugfs debugfs /sys/kernel/debug
+    adb shell
+        cd /d/asoc/msm8952-sku2-snd-card/codec:msm8x16_wcd_codec-2
+        cat codec_reg   #读取
+        echo "0x121 0xA0" > codec_reg  #写入
+# 使用adb命令读写codec寄存器

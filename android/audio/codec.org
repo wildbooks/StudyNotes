@@ -1,9 +1,0 @@
-# 使用adb命令读写codec寄存器
-    adb root
-    adb remount
-    adb shell mount -t debugfs debugfs /sys/kernel/debug
-    adb shell
-        cd /d/asoc/msm8952-sku2-snd-card/codec:msm8x16_wcd_codec-2
-        cat codec_reg   #读取
-        echo "0x121 0xA0" > codec_reg  #写入
-# 使用adb命令读写codec寄存器
