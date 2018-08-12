@@ -21,6 +21,15 @@
 # 数据检测与分析
     百度统计
     谷歌分析
+# H5制作
+    MAKA（www.maka.im）
+    初页（www.vxplo.cn）
+    易企秀（eqxiu.com）
+    兔展 http://www.rabbitpre.com
+# 公众号管家
+    新媒体管家http://www.wxptgj.com
+    爱微帮 http://www.aiweibang.com
+    西瓜助手 http://www.xiguaji.com
 # 自媒体
     （1）微信公众平台：https://mp.weixin.qq.com
     （2）今日头条号：http://mp.toutiao.com/login/?redirect_url=%2F
