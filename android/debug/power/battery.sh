@@ -30,7 +30,6 @@ fi
 mkdir -p $DATALOGHOME
 
 
-#/data/powertop -d > $DATALOGHOME/powertop.log &
 dmesg > $DATALOGHOME/dmesg.log &
 cat /d/rpm_log > $DATALOGHOME/rpm.log &
 cat /proc/sys/kernel/boot_reason > $DATALOGHOME/boot_reason.log &
@@ -106,6 +105,8 @@ intialSec=$(date +%s)
     echo "$(date +%H-%M-%S),$(dumpsys SurfaceFlinger)" >> $DATALOGHOME/Surface.log&
     echo "$(date +%H-%M-%S)----,$(dumpsys batterystats)" >> $DATALOGHOME/batteryStatus.log&
     echo "0" >/sys/kernel/debug/tracing/tracing_on && cat /sys/kernel/debug/tracing/trace > $DATALOGHOME/trace.log & #stop trace and get log
+    /data/powertop -d > $DATALOGHOME/powertop.log &
+    echo "----------------------$(date +%H-%M-%S)---------------\n$(/data/powertop -d)" >> $DATALOGHOME/powertop.log
     #to collect FG regs
     #	echo "\n********START**********\nTIMEDELTA=$deltaTime\n$lbc_config\n$all\n*************END************\n" >> $DATALOGHOME/lbc_config.txt
     sleep $SLEEPTIME

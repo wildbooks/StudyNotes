@@ -92,3 +92,13 @@
         cat codec_reg   #读取
         echo "0x121 0xA0" > codec_reg  #写入
 # 使用adb命令读写codec寄存器
+* 使acdb生效方法
+    重启手机，或重启媒体服务器
+        adb shell
+        ps -elf |grep mediaserver
+        kill <mediaserver pid>
+# tools
+    Adboe Audition或者CoolEdit等音频处理工具获取问题发生的时间戳
+    QCAT解析QXDM日志
+    QXDM抓取Log
+    QACT调试acdb

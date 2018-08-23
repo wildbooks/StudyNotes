@@ -45,6 +45,26 @@
       #define DEBUG
       #endif
     #+end_src
+  + 汇总
+    #if 1
+    #ifndef DEBUG
+    #define DEBUG
+    #endif
+
+    #undef dev_dbg
+    #define dev_dbg dev_err
+    #undef dev_info
+    #define dev_info dev_err
+    #undef dev_warn
+    #define dev_warn dev_err
+
+    #undef pr_debug
+    #define pr_debug pr_err
+    #undef pr_info
+    #define pr_info pr_err
+    #undef pr_warn
+    #define pr_warn pr_err
+    #endif
 * memdump的使用
   python ramparse.py --nm-path=/data/workspace/l8936_idol347/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-nm
   --gdb-path=/data/workspace/l8936_idol347/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-gdb -o /home/sdduser/Desktop/outdir/

@@ -1,3 +1,13 @@
+android中的log级别如下
+    ANDROID_LOG_UNKNOWN,
+    ANDROID_LOG_DEFAULT,
+    ANDROID_LOG_VERBOSE,
+    ANDROID_LOG_DEBUG,
+    ANDROID_LOG_INFO,
+    ANDROID_LOG_WARN,
+    ANDROID_LOG_ERROR,
+    ANDROID_LOG_FATAL,
+    ANDROID_LOG_SILENT,
 * Android 各层中日志打印功能的应用
 ** KERNEL层
    prink()
@@ -29,6 +39,7 @@
    ERROR Slog.e()
    *方法*:Slog.d(TAG, "something to say.");
 ** JAVA层
+    frameworks/base/core/java/android/util/Log.java
    import android.util.Log;
    对应的级别 打印方法
    VERBOSE Log.v()
@@ -37,6 +48,12 @@
    WARN Log.w()
    ERROR Log.e()
    *方法*:Log.d(TAG, "something to say."); 
+** android debug
+    NDEBUG 是总开关，默认在编译参数中加入，如果要控制打印级别，如下：
+    打开ALOGV: #define LOG_NDEBUG 0  //允许Verbose级别打印
+    打开ALOGI：#define LOG_NIDEBUG 0    //允许Info级别打印
+    打开ALOGD：#define LOG_NDDEBUG 0    //允许Debug级别打印
+    打开全部LOG：#undef NDEBUG    //允许所有级别打印
 ** 特定宏
    | 宏名称       | 含义   |
    |--------------+--------|

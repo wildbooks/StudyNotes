@@ -1,3 +1,0 @@
-# 高通平台 Audio codec简介
-    高通codec分为内部codec和外部codec;内部codec以MSM8937/PM8940体系，外部codec以wcd9326;
-    MSM8937/PM8940是以MSM8937做数字解码器，PM8940做混合信号编码器

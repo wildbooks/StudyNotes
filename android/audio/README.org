@@ -49,7 +49,9 @@ obj-$(CONFIG_SND_SOC_MSM8X16) += snd-soc-msm8x16.o
     headphones      头戴耳机
     Echo Cancellation (EC)      回声消除
     Noise Suppression (NS)      噪声抑制
-
+    ANC                         主动噪声消除
+    AANC                        自适应主动噪声消除
+    Speaker Protection          喇叭保护
 #参考文档
 80_NL239_27_D_APPLICATION_NOTE__MULTIBUTTON_HEADSE.pdf      (Multibutton Headset Control)
 KBA-170109193748 How to check echo reference signal over MI2S

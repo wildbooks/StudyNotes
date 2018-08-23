@@ -133,3 +133,5 @@
   adb disable-verity 
   adb reboot
   adb remount
+* download模式
+  adb reboot edl

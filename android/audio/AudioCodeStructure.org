@@ -61,3 +61,19 @@
     * c files log in kernel
         echo -n "file FILENAME +p" > /sys/kernel/debug/dynamic_debug/control
         or defining "#define DEBUG"
+# 软件框架
+        audioflinger -> audio_hw    -> driver
+
+    AudioPolicyManager()                                        frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp
+    AudioFlinger::loadHwModule                                  frameworks/av/services/audioflinger/AudioFlinger.cpp 
+    DevicesFactoryHalLocal::openDevice                          frameworks/av/media/libaudiohal/DevicesFactoryHalLocal.cpp
+    load_audio_interface()  (通过AUDIO_HARDWARE_MODULE_ID匹配)  frameworks/av/media/libaudiohal/DevicesFactoryHalLocal.cpp
+    audio_hw_device_open                                        hardware/libhardware/include/hardware/audio.h
+    module->methods->open <=> adev_open                         hardware/qcom/audio/hal/audio_hw.c
+                                                                frameworks/av/media/libaudiohal/DeviceHalLocal.cpp      实际操作audio设备
+
+    AudioPolicyService
+    AudioPolicyService frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
+
+
+

@@ -3,3 +3,6 @@ repo forall -c 'ID=`Git log --before="2016-06-28 23:00" --after="2010-01-01" -1 
 
 2. repo 回退当前所有的修改，和服务器上代码拉下来一样
 repo forall -c "git clean -df" && repo forall -c "git checkout ." && repo sync -j8
+3. repo 下载未合入patch
+    http://222.76.241.154:30014/#/c/2028/
+    repo download -c SDM670/aosp 2028

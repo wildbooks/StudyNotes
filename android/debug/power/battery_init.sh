@@ -61,14 +61,15 @@ echo 0 > tracing_on; #关闭
 echo 100000 > buffer_size_kb;#设置缓存区大小
 echo "" > set_event #清空事件类型
 echo "" > trace #清空缓冲区
-
-echo "msm_low_power:* sched:sched_cpu_hotplug sched:sched_switch" >> set_event
-echo "sched:sched_wakeup sched:sched_wakeup_new sched:sched_enq_deq_task" >> set_event
+cat /sys/power/system_sleep/stats > rpm_stats00.log #判断modem是否睡眠
+cat /sys/power/rphm_sleep/master_stats > rpm_master_stats00.log #判断modem是否睡眠
+#echo "msm_low_power:* sched:sched_cpu_hotplug sched:sched_switch" >> set_event
+#echo "sched:sched_wakeup sched:sched_wakeup_new sched:sched_enq_deq_task" >> set_event
 echo "power:cpu_idle power:cpu_frequency power:cpu_frequency_switch_start" >> set_event
-#echo "msm_bus:bus_update_request" >> set_event
+##echo "msm_bus:bus_update_request" >> set_event
 echo "power:suspend_resume" >> set_event
 echo "power:wakeup_source_deactivate power:wakeup_source_activate" >> set_event
-
+#
 echo "power:clock_state power:clock_disable power:clock_enable power:clock_set_rate power:clock_enable power:clock_disable" >> set_event    #clock
 echo "irq:irq_handler_entry" >> set_event       # irq
 echo "gpio:*" >> set_event      # GPIO
@@ -79,6 +80,7 @@ echo "kgsl:kgsl_pwrlevel kgsl:kgsl_buslevel kgsl:kgsl_pwr_set_state" >> set_even
 #####################################
 ## clear log
 #####################################
+chmod +x /data/powertop
 dmesg -c
 logcat -c
 dumpsys batterystats --reset
