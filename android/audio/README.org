@@ -55,3 +55,6 @@ obj-$(CONFIG_SND_SOC_MSM8X16) += snd-soc-msm8x16.o
 #参考文档
 80_NL239_27_D_APPLICATION_NOTE__MULTIBUTTON_HEADSE.pdf      (Multibutton Headset Control)
 KBA-170109193748 How to check echo reference signal over MI2S
+
+
+# ALSA
