@@ -1,0 +1,72 @@
+* 参考文档
+  [[https://www.cnblogs.com/flankershen/p/7476415.html][<CentOS 7 安装 WordPress>]]
+* LAMP环境
+  LAMP 是 Linux、Apache、MySQL 和 PHP 的缩写，是 Wordpress 系统依赖的基础运行环境。
+* 最低配置
+  php
+  mysql版本5.6+或 MariaDB版本10.0+
+  HTTPS:Apache或Nginx
+  sudo dnf install php
+  wget https://dev.mysql.com/get/mysql80-community-release-fc27-1.noarch.rpm |rpm -ivh
+  sudo dnf install mysql
+* fedora
+  systemctl start nginx.service
+* 需要安装
+  Web服务器：Apache
+  数据库：MariaDB
+  数据库后台：phpMyAdmin
+  php
+  博客：WordPress
+** 安装Apache Web服务器
+   + 安装Apache web服务器
+     yum install -y httpd
+   + 启动Apache服务器
+     systemctl start httpd
+   + 测试是否搭建成功
+     http://127.0.0.1
+   + Apache服务器开机自动启动
+     systemctl enable httpd
+** 安装php
+   + 安装php
+     yum install -y php php-mysql
+   + 重启web服务器，使php环境生效
+     systemctl restart httpd
+   + 编写php测试用例hello.php
+     #+begin_src html
+       <html>
+       <body>
+       <div style="width: 100%; font-size: 40px; font-weight: bold; text-align: center;">
+       <?php
+       print Date("Y/m/d");
+       ?>
+       </div>
+       </body>
+       </html>
+     #+end_src
+     并把文件放在/var/www/html/目录下
+   + 测试是否搭建成功
+     http://127.0.0.1/hello.php
+** 安装phpMyAdmin
+   phpMyAdmin是一个MariaDB数据库的Web程序界面。
+   + 安装EPEL库
+     yum install -y epel-release
+   + 安装phpMyAdmin
+     yum install -y phpmyadmin
+   + 配置
+     设置phpMyAdmin的httpd设置，配置文件为/etc/httpd/conf.d/phpMyAdmin.conf.
+   + 重启web服务器，让配置生效
+     systemctl restart httpd
+   + 测试是否搭建成功
+     在浏览器中输入http://127.0.0.1/phpMyAdmin,会出现管理界面
+** 安装MariaDB数据库
+   MariaDB数据库是MySQL的一个分支，MySQL被Oracle公司收购后存在闭源风险。所以我们使用代替的MariaDB.
+   + 安装MariaDB数据库：
+     yum install mariadb-server mariadb
+   + 完成后启动数据库:
+     systemctl start mariadb
+   + 完成后安装一个数据库脚本，去掉一些危险的默认设置：
+     mysql_secure_installation
+   + MariaDB数据库开机自动启动
+     systemcrl enable mariadb
+   + MariaDB数据库使用
+** 安装WordPress
