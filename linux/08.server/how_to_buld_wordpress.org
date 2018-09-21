@@ -70,3 +70,7 @@
      systemcrl enable mariadb
    + MariaDB数据库使用
 ** 安装WordPress
+** ftp安装
+   systemctl restart vsftpd.service # 重启服务
+   systemctl start vsftpd.service  # 启动服务
+   systemctl status vsftpd.service  # 服务状态查看
