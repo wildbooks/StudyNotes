@@ -74,3 +74,11 @@
    systemctl restart vsftpd.service # 重启服务
    systemctl start vsftpd.service  # 启动服务
    systemctl status vsftpd.service  # 服务状态查看
+   systemctl start firewalld.service #启动一个服务
+   systemctl stop firewalld.service # 关闭一个服务
+   systemctl restart firewalld.service # 重启一个服务
+   systemctl status firewalld.service # 显示一个服务的状态
+   systemctl enable firewalld.service # 在开机时启用一个服务
+   systemctl disable firewalld.service # 在开机时禁用一个服务
+   systemctl is-enabled firewalld.service # 查看服务是否开机启动
+   systemctl list-unit-files|grep enabled # 查看已启动的服务列表

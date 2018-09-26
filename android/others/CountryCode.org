@@ -1,0 +1,22 @@
+# 设置方法
+    1.機台先更新Factory版本
+    2.開啟開發者模式USB Debugging
+    3.ADB Root
+    4.adb shell /data/data/PhoneInfoTest 6 1 WW     #此为写入Country Code命令,WW可以改TW/JP等
+    5.adb shell /data/data/PhoneInfoTest 6 0        #此为读取Country Code命令
+    6.adb shell /data/data/PhoneInfoTest 8 1 ASUS   #此为写入CID命令
+    7.adb shell /data/data/PhoneInfoTest 8 0        #此为读取CID命令
+    8.adb shell /data/data/PhoneInfoTest 7 1 1A     #此为写入Color ID命令
+    9.adb shell /data/data/PhoneInfoTest 7 0        #此为读取Color ID命令
+    10.  手机恢复出厂设置
+    Country Code、CID、Color ID一定要全部寫入後恢复出厂设置,才能生效,單獨改一個Country Code或CID是無法改成功的
+# 查看方法
+    [User版查詢Country Code&CID]
+    1. 進入adb mode
+    2. Adb shell getprop
+        [ro.config.versatility]:WW(表示目前機台Country Code為WW);TW(表示目前機台Country Code為TW)
+        [ro.config.CID]:ASUS表示CID為ASUS
+
+    adb shell /data/data/PhoneInfoTest 6 1 US     #此为写入Country Code命令,WW可以改TW/JP等
+    adb shell /data/data/PhoneInfoTest 8 1 ASUS   #此为写入CID命令
+    adb shell /data/data/PhoneInfoTest 7 1 1A     #此为写入Color ID命令
