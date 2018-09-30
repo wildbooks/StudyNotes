@@ -1,2 +1,0 @@
-# 耳机语音通话挂断
-    voice-headphones -> headphones -> speaker

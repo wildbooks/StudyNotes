@@ -46,7 +46,7 @@ obj-$(CONFIG_SND_SOC_MSM8X16) += snd-soc-msm8x16.o
     normally-open type          no      常关类型
     headset         耳机
     handset         听筒
-    headphones      头戴耳机
+    headphones      三段式耳机
     Echo Cancellation (EC)      回声消除
     Noise Suppression (NS)      噪声抑制
     ANC                         主动噪声消除

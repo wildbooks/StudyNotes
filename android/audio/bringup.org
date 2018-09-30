@@ -1,0 +1,12 @@
+# 检查ADSP是否正常
+  adsp_loader_probe: Q6/ADSP image is loaded
+# 检查SLIMbus是否正常
+  SLIM SAT: Received master capability
+# 检查sound是否注册
+# 用tinymix,tinycap,tinyplay验证playback/recording
+
+echo "file sound/soc/soc-dapm.c +p" >/sys/kernel/debug/dynamic_debug/control              #Dynamic Audio Power Management 动态音频电源管理
+echo "file sound/soc/msm/msm8952-slimbus.c +p" >/sys/kernel/debug/dynamic_debug/control   #SLIMbus相关
+echo "file sound/soc/msm/msm8952.c +p" >/sys/kernel/debug/dynamic_debug/control           #
+echo "file sound/soc/codecs/msm8x16-wcd.c +p" >/sys/kernel/debug/dynamic_debug/control    #内部codec
+echo "file sound/soc/codecs/msm8916-wcd-irq.c +p" >/sys/kernel/debug/dynamic_debug/control #内部声卡中断
