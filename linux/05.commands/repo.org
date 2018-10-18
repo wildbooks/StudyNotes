@@ -83,3 +83,15 @@
 
   #+end_src
 * init
+  repo init
+     -u：指定一个URL，其连接到一个maniest仓库
+     -m ：在manifest仓库中选择一个xml文件
+     -b：选择一个maniest仓库中的一个特殊的分支
+     --repo-url:设定repo的版本库地址。
+     --repo-branch:设定需要检出的分支。
+     --no-repo-verify:设定不要对repo的里程碑签名进行严格的验证。
+     --mirror：只在repo第一次初始化的时候使用，建立本地镜像
+** download
+  repo download
+** upload
+  repo upload

@@ -10,3 +10,6 @@ echo "file sound/soc/msm/msm8952-slimbus.c +p" >/sys/kernel/debug/dynamic_debug/
 echo "file sound/soc/msm/msm8952.c +p" >/sys/kernel/debug/dynamic_debug/control           #
 echo "file sound/soc/codecs/msm8x16-wcd.c +p" >/sys/kernel/debug/dynamic_debug/control    #内部codec
 echo "file sound/soc/codecs/msm8916-wcd-irq.c +p" >/sys/kernel/debug/dynamic_debug/control #内部声卡中断
+
+# 参考文档
+80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化

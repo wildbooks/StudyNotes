@@ -1,0 +1,15 @@
+# 系统音
+  frameworks/base/media/java/android/media/AudioSystem.java
+      public static final int STREAM_VOICE_CALL = 0;  #语音电话的声音
+      public static final int STREAM_SYSTEM = 1;    #手机系统的声音
+      public static final int STREAM_RING = 2;      #电话铃声和消息提醒的的声音
+      public static final int STREAM_MUSIC = 3;     #手机音乐播放的声音
+      public static final int STREAM_ALARM = 4;     #闹钟的铃声
+      public static final int STREAM_NOTIFICATION = 5; #系统提示的声音
+      public static final int STREAM_BLUETOOTH_SCO = 6; #蓝牙链接时拨打电话的声音
+      /* @hide The audio stream for enforced system sounds in certain countries (e.g camera in Japan) */
+      public static final int STREAM_SYSTEM_ENFORCED = 7;
+      /* @hide The audio stream for DTMF tones */
+      public static final int STREAM_DTMF = 8;
+      /* @hide The audio stream for text to speech (TTS) */
+      public static final int STREAM_TTS = 9;   #文件到语音的音频流(TTS)

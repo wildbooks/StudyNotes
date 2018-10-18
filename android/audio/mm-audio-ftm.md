@@ -1,7 +1,7 @@
 # help
 mm-audio-ftm
     -tc         Testcase number                 测试用例号
-    -d          Config file                     配置文件
+    -c          Config file                     配置文件
     -file       File name
     -v          Volume values                   音量
     -d          duration values                 测试时间
@@ -12,3 +12,11 @@ mm-audio-ftm
     -analyze    analyze swtich
     -fdiff      Allowed frequency difference
 mm-audio-ftm -tc 257 -c /vendor/etc/ftm_test_config -d 20 -v 60
+# ftm_test_config讲解
+  1. 类型
+    Playback
+    Capture
+    FM
+    CodecLoop       Codec回环测试
+    AfeLoop         AFE回环测试
+    ExternalLoop

@@ -101,3 +101,24 @@
     QCAT解析QXDM日志
     QXDM抓取Log
     QACT调试acdb
+# Codec register dumps and MBHC calibration data
+  adb shell cat /sys/kernel/debug/asoc/*snd-card/*codec/codec_reg >codecreg.txt
+    Read:cat codecreg
+    Write:echo "<Adress> <value>" > codec_reg
+  adb shell cat /sys/kernel/debug/wcd9xxx_mbhc > mbhc_data.txt
+# 用ADIE设置寄存器
+  使用adb命令配置ADIE寄存器
+  adb root
+  adb remount
+  adb shell "chmod 777 /sys/kernel/debug/asoc/*snd-card/*codec/codec_reg"
+  然后QACT ADIE，进行设置
+# 查看adsp版本
+  adb pull /firmware/image/adsp.b04
+  strings adsp.b04 | grep "Q6_BUILD"
+# 需要掌握的工具
+  qcat
+  qact
+  qxdm
+  tinymix/tinycap/tinyplay/tinypcminfo
+  mm-audio-ftm
+  Audition/CoolEdit

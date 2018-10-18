@@ -1,0 +1,61 @@
+# 屏类型
+  1. Video mode(视频模式)
+  2. Command mode(命令模式)
+# 参考文档
+  + lk
+    lk/dev/gcdb/display
+    lk/target/msm8952/oem_panel.c
+  + kernel
+    Documentation/devicetree/bindings/fb/mdss-mdp.txt
+    Documentation/devicetree/bindings/fb/mdss-dsi.txt
+    Documentation/devicetree/bindings/fb/mdss-dsi-panel.txt
+    + dts
+      arch/arm/boot/dts/qcom/msm8937-mdss.dtsi  ->  "qcom,mdss_mdp"
+      arch/arm/boot/dts/qcom/msm8937-mdss.dtsi  ->  "qcom,mdss-dsi"
+      arch/arm/boot/dts/qcom/dsi-panel-hx8394f-720p-video.dtsi    //panel
+    + src
+      drivers/video/msm/mdss/
+      drivers/video/msm/mdss/mdss_mdp.c         //qcom mdss架构相关
+      drivers/video/msm/mdss/mdss_dsi.c         //mipi协议中的dsi协议相关
+      drivers/video/msm/mdss/mdss_dsi_panel.c   //lcd屏驱动程序相关
+    + debug
+      /d/mdss_panel_fb0/
+# 问题
+  1. 如何通过ID1/ID2识别pianel
+    qcom,dsi-pref-prim-pan
+  2. gpio引脚,regulator配置
+    LCD_RST_N   重置引脚
+    LCD_TE0     撕裂效果输出引脚
+    LCD_ID      用于识别
+    LCM_VSN     供电
+    LCM_VSP     供电
+    LCD_BL_LED_A
+    LCD_BL_LED_K
+
+    qcom,platform-vsn-gpio
+    qcom,platform-vsp-gpio
+    qcom,regulator-ldo-mode
+    LCD_RST_N -> gpio_60
+
+    qcom,platform-te-gpio = <&tlmm 24 0>;         -> LCD_TE0
+	  qcom,platform-enable-gpio = <&tlmm 99 0>;     -> 没有
+	  qcom,platform-reset-gpio = <&tlmm 60 0>;      -> LCD_RST_N
+	  qcom,platform-bklight-en-gpio = <&tlmm 98 0>; -> 没有
+    qcom,platform-vsn-gpio = <&tlmm 45 0>;        -> 没有
+    qcom,platform-vsp-gpio = <&tlmm 46 0>;        -> 没有
+	  qcom,regulator-ldo-mode;
+  3. 背光灯设置
+      关键词：qcom,mdss-dsi-bl-pmic-control-type
+  4. 分辨率
+
+
+# 专业术语
+  MDSS(Mobile Display SubSystem)                移动显示子系统
+  MIPI(Mobile industry processor interface)     移动行业处理器接口
+  DBI(Display Bus Interface)                    显示总线接口
+  DSI(Display Serial Interface)                 显示串行接口，DSI也通常被称为MIPI
+  DPI(Display pixel Interface)
+  D-PHY(Physical layer)                         物理层
+MDSS is Mobile Display SubSystem which implements Linux framebuffer APIs to
+drive user interface to different panel interfaces. MDP driver is the core of
+MDSS which manage all data paths to different panel interfaces.

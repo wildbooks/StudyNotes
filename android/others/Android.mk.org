@@ -12,7 +12,7 @@
   | printconfig     | 	显示当前 Build 的配置信息         |
   | add_lunch_combo | 	在 lunch 函数的菜单中添加一个条目 |
   |                 |                                     |
-  
+
 * 变量含义
   | 变量名                               | 含义                            |
   |--------------------------------------+---------------------------------|
@@ -33,3 +33,5 @@
   + *方法二*: -D DEFINES=CONDITION
     gcc -DDEBUG1=1 hello.c //等价于 #define DEBUG1 1
 * 宏
+* 参考文档
+  http://android.mk
