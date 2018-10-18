@@ -21,3 +21,8 @@
     LNMP：Linux+Nginx+MySQL+PHP
     LAMP：Linux+Apache+MySQL/MariaDB/Percona+PHP
     LLsMP：Linux+LiteSpeed+MySQL+PHP
+# 下载
+	axel
+    aria2           下载工具
+	FileDownloader
+	coursera-dl

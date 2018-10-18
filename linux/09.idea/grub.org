@@ -1,0 +1,18 @@
+# 安装grub2
+	shell> grub2-install /dev/sda
+	shell> grub2-install --boot-dirctor=/mnt/boot /dev/sda
+	shell> grub2-mkconfig -o /boot/grub2/grub.cfg
+	grub2-mkconfig #生成grub.cfg
+# 基本知识
+	(fd0)	表示第一块软盘
+	(hd0,msdos2)	表示第一块硬盘的第二个mbr分区。
+	(hd0,msdos5)	表示第一块硬盘的第一个逻辑分区
+	(hd0,gpt1)	表示第一块硬盘的第一个gpt分区/boot/vmlinux:相对路径，基于根目录，表示根目录的boot目录下的vmlinuz
+			如果设置了根目录变量root为(hd0,msdos1)，则表示(hd0,msdos1)/boot/vmlinuz
+	(hd0,msdos1)/boot/vmlinux:绝对路径，表示第一硬盘第一分区的boot目录下的vmlinux文件
+# 基本命令
+lsmod
+insmod mod_name
+rmsmod mod_name
+help [command]
+ls [options][dir]

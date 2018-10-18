@@ -28,3 +28,4 @@ print(resp.read().decode("utf8"))
 
 # 方法三：模拟登录后用session保持登录状态登录
 # 方法四：使用无头浏览器访问
+## selenium或者phantomJS浏览器

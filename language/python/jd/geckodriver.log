@@ -1,0 +1,41 @@
+1539101647040	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.SiM2z1dLlY9L"
+1539101647314	addons.xpi	WARN	Can't get modified time of /usr/lib64/firefox/browser/features/aushelper@mozilla.org.xpi
+1539101647436	addons.xpi-utils	WARN	addMetadata: Add-on aushelper@mozilla.org is invalid: [Exception... "Component returned failure code: 0x80520006 (NS_ERROR_FILE_TARGET_DOES_NOT_EXIST) [nsIFile.isFile]"  nsresult: "0x80520006 (NS_ERROR_FILE_TARGET_DOES_NOT_EXIST)"  location: "JS frame :: resource://gre/modules/addons/XPIInstall.jsm :: get :: line 227"  data: no] Stack trace: get()@resource://gre/modules/addons/XPIInstall.jsm:227
+loadManifestFromFile()@resource://gre/modules/addons/XPIInstall.jsm:852
+syncLoadManifestFromFile()@resource://gre/modules/addons/XPIInstall.jsm:866
+addMetadata()@resource://gre/modules/addons/XPIDatabase.jsm:2386
+processFileChanges()@resource://gre/modules/addons/XPIDatabase.jsm:2727
+checkForChanges()@resource://gre/modules/addons/XPIProvider.jsm:2539
+startup()@resource://gre/modules/addons/XPIProvider.jsm:2120
+callProvider()@resource://gre/modules/AddonManager.jsm:206
+_startProvider()@resource://gre/modules/AddonManager.jsm:654
+startup()@resource://gre/modules/AddonManager.jsm:813
+startup()@resource://gre/modules/AddonManager.jsm:2811
+observe()@jar:file:///usr/lib64/firefox/omni.ja!/components/addonManager.js:66
+1539101647436	addons.xpi-utils	WARN	Could not uninstall invalid item from locked install location
+1539101648619	addons.xpi	WARN	Can't get modified time of /usr/lib64/firefox/browser/features/aushelper@mozilla.org.xpi
+1539101648793	Marionette	INFO	Listening on port 45539
+1539101648878	Marionette	WARN	TLS certificate errors will be ignored for this session
+1539101648931	Marionette	DEBUG	[2147483649] Frame script loaded
+1539101648936	Marionette	DEBUG	[2147483649] Frame script registered
+1539101648963	Marionette	DEBUG	[2147483649] Received DOM event beforeunload for about:blank
+1539101652962	Marionette	DEBUG	[2147483649] Received DOM event pagehide for about:blank
+JavaScript error: https://ss1.bdstatic.com/5eN1bjq8AAUYm2zgoY3K/r/www/cache/static/protocol/https/plugins/every_cookie_4644b13.js, line 4: ReferenceError: c is not defined
+1539101653352	Marionette	DEBUG	[2147483649] Received DOM event DOMContentLoaded for https://www.baidu.com/
+1539101653405	Marionette	DEBUG	[2147483649] Received DOM event pageshow for https://www.baidu.com/
+1539101653756	Marionette	DEBUG	[2147483649] Canceled page load listener because no navigation has been detected
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=MoonBr&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=6&pwd=MoonB&cb=jQuery110206847096711760428_1539101653270&_=1539101653277, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=Moo&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=3&pwd=Mo&cb=jQuery110206847096711760428_1539101653270&_=1539101653274, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=M&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=1&cb=jQuery110206847096711760428_1539101653270&_=1539101653272, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=Mo&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=2&pwd=M&cb=jQuery110206847096711760428_1539101653270&_=1539101653273, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=MoonB&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=5&pwd=Moon&cb=jQuery110206847096711760428_1539101653270&_=1539101653276, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=Moon&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=4&pwd=Moo&cb=jQuery110206847096711760428_1539101653270&_=1539101653275, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=MoonBre&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=7&pwd=MoonBr&cb=jQuery110206847096711760428_1539101653270&_=1539101653278, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=MoonBree&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=8&pwd=MoonBre&cb=jQuery110206847096711760428_1539101653270&_=1539101653279, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=MoonBreez&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=9&pwd=MoonBree&cb=jQuery110206847096711760428_1539101653270&_=1539101653280, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=MoonBreeze&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=10&pwd=MoonBreez&cb=jQuery110206847096711760428_1539101653270&_=1539101653281, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=MoonBreeze%E7%9A%84&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=11&pwd=MoonBreeze&cb=jQuery110206847096711760428_1539101653270&_=1539101653282, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=MoonBreeze%E7%9A%84%E5%8D%9A&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=12&pwd=MoonBreeze%E7%9A%84&cb=jQuery110206847096711760428_1539101653270&_=1539101653283, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=MoonBreeze%E7%9A%84%E5%8D%9A%E5%AE%A2&json=1&p=3&sid=26523_1453_21090_26350_22160&csor=13&pwd=MoonBreeze%E7%9A%84%E5%8D%9A&cb=jQuery110206847096711760428_1539101653270&_=1539101653284, line 1: TypeError: jQuery110206847096711760428_1539101653270 is not a function
+[Parent 6805, Gecko_IOThread] WARNING: pipe error (75): Connection reset by peer: file /builddir/build/BUILD/firefox-62.0.3/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 353
+1539101661269	Marionette	INFO	Stopped listening on port 45539
