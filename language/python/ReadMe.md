@@ -1,3 +1,50 @@
+# 环境篇
+  Python3+pip环境配置
+  MongoDB环境配置
+  Redis环境配置
+  MySQL环境配置
+  Python多版本共存配置
+  Python爬虫常用库的安装
+# 基础篇
+  爬虫基本原理(html,xml,json)
+  Urllib库基本使用
+  正则表达式基础
+  BeautifulSoup详解
+  PyQuery详解
+  Selenium详解
+# 实战篇
+  使用Requests+正则表达式爬取猫眼电影 https://github.com/Germey/MaoYan
+  分析Ajax请求并抓取今日头条街拍美图 https://github.com/Germey/TouTiao
+  使用Selenium模拟浏览器抓取淘宝商品美食信息 https://github.com/Germey/TaobaoProduct
+  使用Redis+Flask维护动态代理池
+  使用代理处理反爬抓取微信文章
+  使用Redis+Flask维护动态Cookies池
+# 框架篇
+  PySpider框架基本使用及抓取TripAdvisor实战
+  PySpider架构概述及用法详解
+  Scrapy框架的安装
+  Scrapy框架基本使用
+  Scrapy命令行详解
+  Scrapy中选择器的用法
+  Scrapy中Spiders的用法
+  Scrapy中Item Pipeline的用法
+  Scrapy中Download Middleware的用法
+  Scrapy爬取知乎用户信息实战
+  Scrapy+Cookies池抓取新浪微博
+  Scrapy+Tushare爬取微博股票数据
+# 数据库
+  MySql
+  MongoDB
+  Redis
+  pymysql 存储库。操作mysql数据的。
+  pymongo 操作MongoDB 数据库。
+  redis 非关系型数据库。
+# 分布式篇
+  Scrapy分布式原理及Scrapy-Redis源码解析
+  Scrapy分布式架构搭建抓取知乎
+  Scrapy分布式的部署详解
+# 可视化
+  https://github.com/tqdm/tqdm  一个快速，可扩展的Python和CLI 进度条
 # 常用库
 1. requests 做请求的时候用到。
   http://cn.python-requests.org/zh_CN/latest/
@@ -6,9 +53,6 @@
 3. lxml 解析网页
 4. beautiful soup 取代枯燥易错的正则表达式，简化数据匹配，快速清洗
 5. pyquery 网页解析库 说是比beautiful 好用，语法和jquery非常像。
-6. pymysql 存储库。操作mysql数据的。
-7. pymongo 操作MongoDB 数据库。
-8. redis 非关系型数据库。
 9. jupyter在线记事本。
 Requests库：主要是简化请求工作
 Beautiful Soup：取代枯燥易错的正则表达式，简化数据匹配，快速清洗
@@ -28,3 +72,5 @@ ChromDriver
   urllib.error 异常处理模块
   urllib.parse url解析模块  　　工具模块，如：拆分、合并
   urllib.robotparser robots.txt    解析模块　
+# 资源
+  https://github.com/geekcomputers/Python

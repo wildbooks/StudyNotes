@@ -1,0 +1,12 @@
+* python项目
+  | 项目               | 描述             |                                                   |
+  |--------------------+------------------+---------------------------------------------------|
+  | iScript            | 虾米网盘等等脚本 | https://github.com/PeterDing/iScript              |
+  | jd-autobuy         |                  | https://github.com/Adyzng/jd-autobuy              |
+  | jd_spider          | 京东分布式爬虫   | https://github.com/samrayleung/jd_spider          |
+  | JDPackage          | 京东抢购相关     | https://github.com/HiddenStrawberry/JDPackage     |
+  | JD-Coin            |                  | https://github.com/CaoZ/JD-Coin                   |
+  | jd_analysis        |                  | https://github.com/awolfly9/jd_analysis           |
+  | JD_AutoSubmit      |                  | https://github.com/zhangkai3110/JD_AutoSubmit     |
+  | jd_spider          |                  | https://github.com/xiaoquantou/jd_spider          |
+  | Taobao_order_robot |                  | https://github.com/localhost02/Taobao_order_robot |
