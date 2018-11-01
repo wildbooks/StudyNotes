@@ -1,32 +1,33 @@
 * 开源项目
-  | 项目名         | 描述                              | 地址        |
-  |----------------+-----------------------------------+-------------|
-  | Rocket.Chat    | 聊天工具，可以替代slack           |             |
-  | hubot          | 聊天机器人                        |             |
-  | netdata        | 分布式实时监控系统                |             |
-  | ZeroNet        | 零网，去中心化服务器              |             |
-  | Resilio Sync   | 去中心化同步工具                  |             |
-  | IPFS           |                                   |             |
-  | syncthing      |                                   |             |
-  | httpie         |                                   | [[https://github.com/jakubroztocil/httpie][httpie]]      |
-  | thefuck        |                                   |             |
-  | autojump       |                                   | [[https://github.com/wting/autojump][autojump]]    |
-  | emacs          |                                   |             |
-  | tmux           |                                   |             |
-  | neovim         |                                   |             |
-  | WebTorrent     | 流媒体                            |             |
-  | bat            | 最好的cat替代工具                 | [[https://github.com/sharkdp/bat][bat]]         |
-  | musicbox       | linux cli版网易音乐客户端         | [[https://github.com/darknessomi/musicbox][musicbox]]    |
-  | fzf            | fzf是一种通用的命令行模糊查找器。 | [[https://github.com/junegunn/fzf][fzf]]         |
-  | BaiduPCS-Go    | linux cli版百度云客户端           | [[https://github.com/iikira/BaiduPCS-Go][BaiduPCS-Go]] |
-  | aria2          | 下载工具                          | [[https://github.com/aria2/aria2][aria2]]       |
-  | axel           | 下载工具                          |             |
-  | rtorrent       | 种子下载工具                      | [[https://github.com/rakshasa/rtorrent][rtorrent]]    |
-  | ag             |                                   |             |
-  | youtube-dl     |                                   |             |
-  | coursera-dl    |                                   |             |
-  | FileDownloader |                                   |             |
-  | oh-my-zsh      |                                   |             |
+  | 项目名         | 描述                                   | 地址        |
+  |----------------+----------------------------------------+-------------|
+  | Rocket.Chat    | 聊天工具，可以替代slack                |             |
+  | hubot          | 聊天机器人                             |             |
+  | netdata        | 分布式实时监控系统                     |             |
+  | ZeroNet        | 零网，去中心化服务器                   |             |
+  | Resilio Sync   | 去中心化同步工具                       |             |
+  | IPFS           |                                        |             |
+  | syncthing      |                                        |             |
+  | httpie         |                                        | [[https://github.com/jakubroztocil/httpie][httpie]]      |
+  | thefuck        |                                        |             |
+  | autojump       |                                        | [[https://github.com/wting/autojump][autojump]]    |
+  | emacs          |                                        |             |
+  | tmux           |                                        |             |
+  | neovim         |                                        |             |
+  | WebTorrent     | 流媒体WebRTC                           | [[https://github.com/webtorrent/webtorrent][webtorrent]]  |
+  | bat            | 最好的cat替代工具                      | [[https://github.com/sharkdp/bat][bat]]         |
+  | musicbox       | linux cli版网易音乐客户端              | [[https://github.com/darknessomi/musicbox][musicbox]]    |
+  | fzf            | fzf是一种通用的命令行模糊查找器。      | [[https://github.com/junegunn/fzf][fzf]]         |
+  | BaiduPCS-Go    | linux cli版百度云客户端                | [[https://github.com/iikira/BaiduPCS-Go][BaiduPCS-Go]] |
+  | aria2          | 下载工具                               | [[https://github.com/aria2/aria2][aria2]]       |
+  | axel           | 下载工具                               | [[https://github.com/axel-download-accelerator/axel][axel]]        |
+  | rtorrent       | 种子下载工具                           | [[https://github.com/rakshasa/rtorrent][rtorrent]]    |
+  | ag             |                                        |             |
+  | youtube-dl     | 从youtube或其他视频平台下载视频        | [[https://github.com/rg3/youtube-dl][youtube-dl]]  |
+  | coursera-dl    | 下载Coursera.org教学视频并命名的脚本。 | [[https://github.com/coursera-dl/coursera-dl][coursera-dl]] |
+  | FileDownloader |                                        | [[https://github.com/lingochamp/okdownload][okdownload]]  |
+  | oh-my-zsh      |                                        | [[https://github.com/robbyrussell/oh-my-zsh][oh-my-zsh]]   |
+  |                |                                        |             |
 * 博客系统
   workpress
   jekyll

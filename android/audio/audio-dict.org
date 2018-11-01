@@ -1,0 +1,34 @@
+* 专业术语
+  | 简称 |                             |                    |
+  |------+-----------------------------+--------------------|
+  | MBHC | Multibutton Headset Control | 多按钮耳机控制     |
+  | nc   | normally-closed type        | 常闭类型           |
+  | no   | normally-open type          | 常关类型           |
+  |      | headset                     | 耳机               |
+  |      | handset                     | 听筒               |
+  |      | headphones                  | 三段式耳机         |
+  | EC   | Echo Cancellation           | 回声消除           |
+  | NS   | Noise Suppression           | 噪声抑制           |
+  |      | ANC                         | 主动噪声消除       |
+  |      | AANC                        | 自适应主动噪声消除 |
+  |      | Speaker Protection          | 喇叭保护           |
+  | CTIA |                             | 美标               |
+  | OMTP |                             | 国标/欧标          |
+  | ACDB | Audio calibration database  |                    |
+  | AANC | Adaptive ANC                |                    |
+  | APM  | Audio policy manager        | audio策略管理      |
+  | BE   | Back-end                    |                    |
+  | CE   | Customer engineering        |                    |
+  | DCE  | DC estimation               |                    |
+  | HAL  | Hardware abstraction layer  |                    |
+  | HFP  | Hands-free profile          |                    |
+  | IMS  | IP multimedia system        |                    |
+  | MPSS | Modem processor subsystem   |                    |
+  | MVS  | Multimode vocoder services  |                    |
+  | NGD  | Nonported generic device    |                    |
+  | PGD  | Ported generic device       |                    |
+  | PIL  | Peripheral image loader     |                    |
+  | QMI  | Qualcomm modem interface    |                    |
+  | SS   | Source selection            |                    |
+  | WFD  | Wi-Fi display               |                    |
+  | WS   | Word select                 |                    |

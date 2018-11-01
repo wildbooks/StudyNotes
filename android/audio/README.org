@@ -66,20 +66,12 @@
 * MBHC 按键配置
   static struct wcd_mbhc_config mbhc_cfg //主要配置按键值(KEY_MEDIA、 KEY_VOLUMEUP、KEY_VOLUMEDOWN)
 * MBHC 按键配置
-* 专业术语
-  | 简称 |                             |                    |
-  |------+-----------------------------+--------------------|
-  | MBHC | Multibutton Headset Control | 多按钮耳机控制     |
-  | nc   | normally-closed type        | 常闭类型           |
-  | no   | normally-open type          | 常关类型           |
-  |      | headset                     | 耳机               |
-  |      | handset                     | 听筒               |
-  |      | headphones                  | 三段式耳机         |
-  | EC   | Echo Cancellation           | 回声消除           |
-  | NS   | Noise Suppression           | 噪声抑制           |
-  |      | ANC                         | 主动噪声消除       |
-  |      | AANC                        | 自适应主动噪声消除 |
-  |      | Speaker Protection          | 喇叭保护           |
+* playback
+  | 名称                             | 场景             |
+  |----------------------------------+------------------|
+  | Deep Buffer mode playback        | 默认音乐播放模式 |
+  | Low Latency mode playback        |               |
+  | Compressed Offload mode playback |                  |
 * 参考文档
   80_NL239_27_D_APPLICATION_NOTE__MULTIBUTTON_HEADSE.pdf      (Multibutton Headset Control)
   KBA-170109193748 How to check echo reference signal over MI2S

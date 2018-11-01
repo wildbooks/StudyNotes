@@ -4,6 +4,7 @@
 ** 检查SLIMbus是否正常
    SLIM SAT: Received master capability
 ** 检查sound是否注册
+   cat /proc/asound/cards
 ** 用tinymix,tinycap,tinyplay验证playback/recording
    echo "file sound/soc/soc-dapm.c +p" >/sys/kernel/debug/dynamic_debug/control              #Dynamic Audio Power Management 动态音频电源管理
    echo "file sound/soc/msm/msm8952-slimbus.c +p" >/sys/kernel/debug/dynamic_debug/control   #SLIMbus相关
@@ -127,6 +128,30 @@
 ** audio Voice
 *** RX
 *** TX 
+* 与audio相关的系统属性
+  | 属性                                 | 说明 |
+  |--------------------------------------+------|
+  | ro.qc.sdk.audio.ssr                  |      |
+  | ro.qc.sdk.audio.fluencetype=none     |      |
+  | ersist.audio.fluence.voicecall=true  |      |
+  | persist.audio.fluence.voicerec=false |      |
+  | persist.audio.fluence.speaker=true   |      |
+  | tunnel.audio.encode=true             |      |
+  | af.resampler.quality=4               |      |
+  | audio.offload.buffer.size.kb=32      |      |
+  | av.offload.enable                    |      |
+  | use.voice.path.for.pcm.voip=true     |      |
+  | audio.offload.gapless.enabled=false  |      |
+  | persist.speaker.prot.enable=false    |      |
+  | qcom.hw.aac.encoder                  |      |
+  | audio.offload.disable                |      |
+  | persist.headset.anc.type             |      |
+  | ssr.pcmdump                          |      |
+  | persist.debug.sf.noaudio             |      |
+  | media.aac_51_output_enabled          |      |
+  | media.wfd.use-pcm-audio              |      |
+** 参考文档
+   80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化
 * 参考文档
   80_NL239_28_E_LINUX_AUDIO_DEVICE_MANAGEMENT.pdf
   

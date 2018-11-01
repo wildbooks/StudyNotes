@@ -1,0 +1,22 @@
+* help
+  git filter-branch 重写分支
+  | 选项                                | 描述                                                                        |
+  |-------------------------------------+-----------------------------------------------------------------------------|
+  | [--env-filter <command>]            | 修改环境，比如作者/提交者名称/电子邮件/时间环境,详情请看git-commit-tree     |
+  | [--tree-filter <command>]           | 重写树及其内容的过滤器                                                      |
+  | [--index-filter <command>]          | 这是用于重写索引的过滤器,经常与git rm --cached --ignore-unmatch ...一起使用 |
+  | [--parent-filter <command>]         | 这是用于重写提交的父列表的过滤器。                                          |
+  | [--msg-filter <command>]            | 这是用于重写提交消息的过滤器                                                |
+  | [--commit-filter <command>]         | 执行提交的过滤器                                                            |
+  | [--tag-name-filter <command>]       | 重写标记名称的过滤器                                                        |
+  | [--subdirectory-filter <directory>] | 只查看触及给定子目录的历史记录。                                            |
+  | [--prune-empty]                     | 某种过滤器会生成空提交                                                      |
+  | [--original <namespace>]            | 使用此选项可设置原始提交的名称空间 将被存储。 默认值为refs / original。     |
+  | [-d <directory>]                    | 设置用于的临时目录的路径 重写。                                             |
+  | [-f \ --force]                      | 拒绝以现有临时文件开头 目录或已经有refs开头的 refs / original /，除非被迫。 |
+  | [--]                                |                                                                             |
+  | [<rev-list options>...]             |                                                                             |
+* 彻底删除提交到github上的大文件，为git工程瘦身
+  git verify-pack -v .git/objects/pack/pack-xxx5342.idx | sort -k 3 -n | tail -3
+  git rev-list --objects --all
+  git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch *' --prune-empty --tag-name-filter cat -- --all
