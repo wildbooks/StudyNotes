@@ -1,0 +1,132 @@
+* bringup audio
+** 检查ADSP是否正常
+   adsp_loader_probe: Q6/ADSP image is loaded
+** 检查SLIMbus是否正常
+   SLIM SAT: Received master capability
+** 检查sound是否注册
+** 用tinymix,tinycap,tinyplay验证playback/recording
+   echo "file sound/soc/soc-dapm.c +p" >/sys/kernel/debug/dynamic_debug/control              #Dynamic Audio Power Management 动态音频电源管理
+   echo "file sound/soc/msm/msm8952-slimbus.c +p" >/sys/kernel/debug/dynamic_debug/control   #SLIMbus相关
+   echo "file sound/soc/msm/msm8952.c +p" >/sys/kernel/debug/dynamic_debug/control           #
+   echo "file sound/soc/codecs/msm8x16-wcd.c +p" >/sys/kernel/debug/dynamic_debug/control    #内部codec
+   echo "file sound/soc/codecs/msm8916-wcd-irq.c +p" >/sys/kernel/debug/dynamic_debug/control #内部声卡中断
+** 参考文档
+   80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化
+* 添加新的acdb文件
+** 目的
+   以msm8937为例子，在/vendor/etc/acdbdata/MTP/NonCE目录下添加新的acdb文件,NonCE目录不存在
+** 思路
+   1. 把acdb文件复制到vendor/qcom/proprietary/mm-audio-cal/audcal/acdbdata/8937/MTP/NonCE/
+   2. 让添加的acdb文件参加编译，使文件copy到对应的目录
+   3. 让android系统加载新的acdb文件
+** 需要修改以下文件
+   vendor/qcom/proprietary/mm-audio-cal/audcal/acdbdata/8937/MTP/NonCE/
+   vendor/qcom/proprietary/mm-audio-cal/audcal/acdbdata/8937/Android.mk
+   vendor/qcom/proprietary/vendor/qcom/proprietary/common/config/device-vendor.mk
+** 步骤如下
+   1. 将acdb文件拷贝到vendor/qcom/proprietary/mm-audio-cal/audcal/acdbdata/8937/MTP/NonCE/目录下
+   2. 在文件vendor/qcom/proprietary/mm-audio-cal/audcal/acdbdata/8937/Android.mk中建立编译规制，以下以拷贝MTP_NonCE_Bluetooth_cal.acdb为例
+      +include $(CLEAR_VARS)
+      +LOCAL_MODULE            := MTP_NonCE_Bluetooth_cal.acdb
+      +LOCAL_MODULE_FILENAME   := Bluetooth_cal.acdb
+      +LOCAL_MODULE_TAGS       := optional
+      +LOCAL_MODULE_CLASS      := ETC
+      +LOCAL_MODULE_PATH       := $(TARGET_OUT_VENDOR_ETC)/acdbdata/MTP/NonCE/
+      +LOCAL_SRC_FILES         := MTP/NonCE/Bluetooth_cal.acdb
+      +include $(BUILD_PREBUILT)
+   3. 将编译规则添加到vendor/qcom/proprietary/vendor/qcom/proprietary/common/config/device-vendor.mk文件中
+      +MM_AUDIO += MTP_NonCE_Bluetooth_cal.acdb
+   4. 让系统加载acdb文件,修改acdb-loader/src/acdb-loader.c
+** 总结
+   编译依赖关系
+   PRODUCT_PACKAGES -> MM_AUDIO -> MTP_NonCE_Bluetooth_cal.acdb
+* 添加新的音频设备
+** 的
+   添加新音频设备的过程。主要配置了xml文件、platform.c和acdb文件
+**  方法
+   添加设备、校准设备
+   1. 添加设备
+      1. 在音频校准数据库（ACDB）文件中添加设备条目并更新设备的校准数据
+      2. 如果新设备是在voice call，VoIP或VoLTE call中选择的Tx或Rx，请在ACDB文件中添加适当的设备对。
+      3. 将混音器控制(mixer control)定义和路径定义添加到具有所需序列的混音器路径XML文件中。
+      4. 在platform.h和platform.c中添加一个条目到device_table。
+      5. 将硬件中的设备ACDB设备ID包含在platform.c文件中的acdb_device_table
+      6. 将device_table中提到的设备名称映射到Android设备。这需要更改hardware/qcom/audio/hal/msm8916/platform.c文件中的platform_get_output_snd_device()函数。
+   2. Device table
+      hardware/qcom/audio/hal/msm8916/platform.h  #SND_DEVICE_OUT_BEGIN附近
+      hardware/qcom/audio/hal/msm8916/platform.c  #device_table
+   3. Mixer path XML
+      device/qcom/msm8916_32/mixer_paths.xml
+      hardware/qcom/audio/configs/msm8937/mixer_paths.xml
+   4. ACDB device ID table
+      hardware/qcom/audio/hal/msm8916/platform.c  #acdb_device_table
+      用到工具QACT™
+   5. LOG抓取
+** 专有名词
+   | ACDB | Audio Calibration Data Base | 音频校准数据库 |
+* 添加新的xml文件
+** 思路
+   1. 添加新的xml文件到hardware/qcom/audio/configs/msm8937/
+   2. 让xml文件参加编译，使文件copy到对应的目录
+   3. 让android系统加载新的xml文件
+      修改hardware/qcom/audio/hal/msm8916/platform.c
+* 查看具体使用哪个acdb、xml文件
+  mixer_paths_mtp.xml
+  adb logcat |grep -e mixer -e acdb #开机查看命令
+* audio tuning调试
+  需要听的几个点,确认audio tuning哪几个地方出现问题
+** audio audio
+*** audio Playback
+    + SPK:152E -> 152F -> 1530 -> 1531 -> 1586
+      # RX Audio decoder input signal, before POPP
+      .isf.0x152E.pcm.0x10101600.0x1.0x1.rx.wav
+      .isf.0x152E.pcm.0x10101600.0x1.0x2.rx.wav
+      .isf.0x152E.pcm.0x20101700.0x1.0x1.rx.wav
+      .isf.0x152E.pcm.0x20101700.0x1.0x2.rx.wav
+
+      # RX Audio POPP input signal, after audio decoder
+      .isf.0x152F.pcm.0x10101600.0x1.0x1.rx.wav
+      .isf.0x152F.pcm.0x10101600.0x1.0x2.rx.wav
+      .isf.0x152F.pcm.0x20101700.0x1.0x1.rx.wav
+      .isf.0x152F.pcm.0x20101700.0x1.0x2.rx.wav
+
+      # RX Audio COPP input signal, before entering into AFE, after Audio POPP
+      .isf.0x1530.pcm.0x20101700.0x1.0x1.rx.wav
+      .isf.0x1530.pcm.0x20101700.0x1.0x2.rx.wav
+
+      # RX Audio COPP input signal, before entering into AFE, after Audio POPP
+      .isf.0x1531.pcm.0xF0.0x1.0x3.rx.wav
+      .isf.0x1531.pcm.0xF1.0x1.0x3.rx.wav
+
+      # RX AFE output signal, before sending into Codec
+      .isf.0x1586.pcm.0xF.0x1100.0x1.rx.wav
+*** audio Recording
+    + MIC:1586 -> 1532 -> 1533 -> 1534 -> 1535 -> 1536
+      # Audio COPreP input(0x1532)
+      .isf.0x1532.pcm.0x8050.0x1.0x3.tx.wav
+
+      # Audio TX matrtx input(0x1533)
+      .isf.0x1533.pcm.0x8050.0x1.0x3.tx.wav
+
+      # TX Audio POPreP input signal, after Audio Common Pre-processing
+      .isf.0x1534.pcm.0x30101800.0x1.0x1.tx.wav
+      .isf.0x1534.pcm.0x30101800.0x1.0x2.tx.wav
+
+      # TX Audio encoder input signal, after Audio Record Pre-processing
+      .isf.0x1535.pcm.0x10101600.0x1.0x1.tx.wav
+      .isf.0x1535.pcm.0x10101600.0x1.0x2.tx.wav
+      .isf.0x1535.pcm.0x30101800.0x1.0x1.tx.wav
+      .isf.0x1535.pcm.0x30101800.0x1.0x2.tx.wav
+
+      # TX encoder output signal, after COPreP & POPreP
+      .isf.0x1536.pcm.0x30101800.0x2.0x1.tx.wav
+      .isf.0x1536.pcm.0x30101800.0x2.0x2.tx.wav
+
+      # TX AFE input signal, from Codec output
+      .isf.0x1586.pcm.0x5.0x1105.0x1.tx.wav
+** audio Voice
+*** RX
+*** TX 
+* 参考文档
+  80_NL239_28_E_LINUX_AUDIO_DEVICE_MANAGEMENT.pdf
+  

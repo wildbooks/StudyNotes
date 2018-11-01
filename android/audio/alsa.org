@@ -1,6 +1,6 @@
 * 参考文档
-ALSA声卡驱动的DAPM（一）-DPAM详解
-https://www.cnblogs.com/linhaostudy/archive/2018/03/05/8509899.html
+  ALSA声卡驱动的DAPM（一）-DPAM详解
+  https://www.cnblogs.com/linhaostudy/archive/2018/03/05/8509899.html
 * alsa
 * tinyalsa
   android中使用的是tinyalsa,android中集成的tinyalsa小工具位置为external/tinyalsa/
@@ -15,18 +15,17 @@ https://www.cnblogs.com/linhaostudy/archive/2018/03/05/8509899.html
       cat /proc/asound/cards
       cat /d/asoc/codecs
 * alsa设备文件
-    ls /dev/snd
-        controlC0   用于声卡的控制，例如通道选择，混音，麦克风的控制等
-        comprC0D15
-        midiC0D0    用于播放midi音频
-        pcmC0D0c    用于录音的pcm设备
-        pcmC0D0p    用于播放的pcm设备
-        pcmC0D1p
-        hwC0D10
-        seq         音序器
-        timer       定时器
-        其中，C0D0代表的是声卡0中的设备0，pcmC0D0c最后一个c代表capture，pcmC0D0p最后一个p代表playback，这些都是alsa-driver中的命名规则
-
+  ls /dev/snd
+    controlC0   用于声卡的控制，例如通道选择，混音，麦克风的控制等
+    comprC0D15
+    midiC0D0    用于播放midi音频
+    pcmC0D0c    用于录音的pcm设备
+    pcmC0D0p    用于播放的pcm设备
+    pcmC0D1p
+    hwC0D10
+    seq         音序器
+    timer       定时器
+    其中，C0D0代表的是声卡0中的设备0，pcmC0D0c最后一个c代表capture，pcmC0D0p最后一个p代表playback，这些都是alsa-driver中的命名规则
 * 声卡创建/注销
-    devm_snd_soc_register_card
-    snd_soc_unregister_card
+  devm_snd_soc_register_card
+  snd_soc_unregister_card

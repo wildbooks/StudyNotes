@@ -1,60 +1,86 @@
-# kernel
-    msm8x16_wcd_registers.h
-    kernel/msm-3.18/sound/soc/msm/msm8952.c  => qcom,msm8952-audio-codec
-    kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec    #内部解码器
-    kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec    #外部解码器
-    kernel/msm-3.18/sound/soc/codecs/wsa881x-analog.c => qcom,wsa881x-i2c-codec #放大器
-    kernel/msm-3.18/sound/soc/msm/qdsp6v2/msm-pcm-routing-v2.c => qcom,msm-pcm-routing #通道
-    kernel/msm-3.18/sound/soc/codecs/wcd-mbhc-v2.c       #Multibutton Headset Control
-    CONFIG_SND_SOC_MSM8X16
+* kernel
+  msm8x16_wcd_registers.h
+  kernel/msm-3.18/sound/soc/msm/msm8952.c  => qcom,msm8952-audio-codec
+  kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec    #内部解码器
+  kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec    #外部解码器
+  kernel/msm-3.18/sound/soc/codecs/wsa881x-analog.c => qcom,wsa881x-i2c-codec #放大器
+  kernel/msm-3.18/sound/soc/msm/qdsp6v2/msm-pcm-routing-v2.c => qcom,msm-pcm-routing #通道
+  kernel/msm-3.18/sound/soc/codecs/wcd-mbhc-v2.c       #Multibutton Headset Control
+  CONFIG_SND_SOC_MSM8X16
 
-snd-soc-msm8x16-objs := msm8952.o msm-audio-pinctrl.o
-snd-soc-msm8x16-objs += msm8952-slimbus.o msm8952-dai-links.o
-obj-$(CONFIG_SND_SOC_MSM8X16) += snd-soc-msm8x16.o
-
-# 手机audio
-    Microphone(MIC)     麦克风
-    Speaker(SPK)        扬声器
-     --Sub
-    MIC -- Main
-    RECEIVER    
-    headset 耳机
-    handset 听筒
-    jack耳机的意思
-
-# 多按钮耳机控制
-# jack 类型
+  snd-soc-msm8x16-objs := msm8952.o msm-audio-pinctrl.o
+  snd-soc-msm8x16-objs += msm8952-slimbus.o msm8952-dai-links.o
+  obj-$(CONFIG_SND_SOC_MSM8X16) += snd-soc-msm8x16.o
+* 手机audio
+  Microphone(MIC)     麦克风
+  Speaker(SPK)        扬声器
+  --Sub
+  MIC -- Main
+  RECEIVER    
+  headset 耳机
+  handset 听筒
+  jack耳机的意思
+* 多按钮耳机控制
+* jack 类型
     normally-closed type    nc
     normally-open type      no
     对于NC型插座，当没有插入插头时，HPH-L和HS-DET引脚通过插孔上的机械开关连接。
     对于NO型插座，当插头没有插入时，HPH-L和HS-DET引脚断开
-# MBHC检测来自耳机和耳机的事件，包括插入，移除和耳机按钮按下并释放
+    在常闭型（NC）中，不接耳机时，耳机座左声道和检测端HS-DET接触，HS-DET为低电平；插入耳机时，HS-DET与HPH-L不导通，HS-DET为高电平；
+    在常开型（NO）中，不接耳机时，耳机座左声道和检测端HS-DET不接触，HS-DET为高电平；插入耳机时，HS-DET与HPH-L导通，HS-DET为低电平；
+* 国标/美标
+  美标白色、欧标为黑色，国内为美标
+  | 美标(CTIA) | 国标/欧标(OMTP) |
+  |------------+-----------------|
+  | MIC        | GND             |
+  | GND        | MIC             |
+  | R          | R               |
+  | L  (尖头)  | L(尖头)         |
+* MBHC检测来自耳机和耳机的事件，包括插入，移除和耳机按钮按下并释放
     多按钮耳机控制(MBHC)是硬件编解码器的一项功能。MBHC检测来自耳机和耳机的事件，包括插入，移除和耳机按钮按下并释放;配置插入耳机类型
-
     机械插入/移除检测，无需额外的GPIO分配
     插头类型检测 （3极耳机/4极耳机）(美国/欧盟耳机)
-    复杂按钮检测
+    复杂按钮检测：通过检测GND和MIC引脚之间的阻抗，不同的按键类型对应不同的阻抗。
     耳机阻抗检测
-
-# 设置jack类型
+* 设置jack类型
     qcom,msm-mbhc-hphl-swh = <0>;   #(0 for NC, 1 for NO) 外部电容设置
-# MBHC 按键配置
-
-# 专业术语
-    Multibutton Headset Control (MBHC)  多按钮耳机控制
-    normally-closed type        nc      常闭类型
-    normally-open type          no      常关类型
-    headset         耳机
-    handset         听筒
-    headphones      三段式耳机
-    Echo Cancellation (EC)      回声消除
-    Noise Suppression (NS)      噪声抑制
-    ANC                         主动噪声消除
-    AANC                        自适应主动噪声消除
-    Speaker Protection          喇叭保护
-#参考文档
-80_NL239_27_D_APPLICATION_NOTE__MULTIBUTTON_HEADSE.pdf      (Multibutton Headset Control)
-KBA-170109193748 How to check echo reference signal over MI2S
-80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化
-
-# ALSA
+* 设置jack类型
+    qcom,msm-mbhc-hphl-swh = <0>;   #(0 for NC, 1 for NO)
+    #+begin_src cpp
+    enum snd_jack_types {
+        SND_JACK_HEADPHONE	= 0x0000001,    //三段式耳机
+        SND_JACK_MICROPHONE	= 0x0000002,    //耳麦
+        SND_JACK_HEADSET	= SND_JACK_HEADPHONE | SND_JACK_MICROPHONE,//四段式耳机(包含耳机和mic)
+        SND_JACK_LINEOUT	= 0x0000004,
+        SND_JACK_MECHANICAL	= 0x0000008, /* If detected separately */
+        SND_JACK_VIDEOOUT	= 0x0000010,
+        SND_JACK_AVOUT		= SND_JACK_LINEOUT | SND_JACK_VIDEOOUT,
+        SND_JACK_LINEIN		= 0x0000020,
+        SND_JACK_OC_HPHL	= 0x0000040,
+        SND_JACK_OC_HPHR	= 0x0000080,
+        SND_JACK_UNSUPPORTED	= 0x0000100,
+        SND_JACK_MICROPHONE2    = 0x0000200,
+        SND_JACK_ANC_HEADPHONE = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE | SND_JACK_MICROPHONE2, }
+    #+end_src
+* 外部电容设置
+* MBHC 按键配置
+  static struct wcd_mbhc_config mbhc_cfg //主要配置按键值(KEY_MEDIA、 KEY_VOLUMEUP、KEY_VOLUMEDOWN)
+* MBHC 按键配置
+* 专业术语
+  | 简称 |                             |                    |
+  |------+-----------------------------+--------------------|
+  | MBHC | Multibutton Headset Control | 多按钮耳机控制     |
+  | nc   | normally-closed type        | 常闭类型           |
+  | no   | normally-open type          | 常关类型           |
+  |      | headset                     | 耳机               |
+  |      | handset                     | 听筒               |
+  |      | headphones                  | 三段式耳机         |
+  | EC   | Echo Cancellation           | 回声消除           |
+  | NS   | Noise Suppression           | 噪声抑制           |
+  |      | ANC                         | 主动噪声消除       |
+  |      | AANC                        | 自适应主动噪声消除 |
+  |      | Speaker Protection          | 喇叭保护           |
+* 参考文档
+  80_NL239_27_D_APPLICATION_NOTE__MULTIBUTTON_HEADSE.pdf      (Multibutton Headset Control)
+  KBA-170109193748 How to check echo reference signal over MI2S
+  80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化
