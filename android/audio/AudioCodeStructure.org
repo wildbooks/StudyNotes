@@ -1,79 +1,75 @@
-# User space audio code
-    以下是用户空间中与音频相关的代码用于调试和定制的目录路径列表
-    * HAL
-        hardware/qcom/audio/hal/msm8974
-    * tinyalsa
-        external/tinyalsa/
-    * hardware/qcom/audio/mm-audio
-        包含用于音频编码器和解码器的QTI OMX组件的实现
-    * frameworks/av/media/libstagefright/
-        包含来自Google的Stagefright实施的源代码
-    * frameworks/av/services/audioflinger/
-        包含用于管理来自用户空间的音频流的AudioFlinger的源代码
-    * vendor/qcom/proprietary/mm-audio/
-        包含与音频校准数据库（ACDB）驱动程序相关的代码，用于DTS和AC3的解析器，环绕声等。
-    * external/bluetooth/bluedroid/
-        包含与QTI平台中使用的蓝牙A2DP相关的代码; android_audio_hw.c文件包含A2DP音频HAL实现
-    * hardware/libhardware/modules/usbaudio/
-        包含USB底座用例的USB HAL实现
-    * vendor/qcom/proprietary/wfd/mm/source/framework/src/
-        包含与Wi-Fi显示（WFD）框架相关的代码;包含与Wi-Fi显示（WFD）框架相关的代码; WFDMMSourceAudioSource.cpp通过ALSA API配置RT代理端口，并从音频层获取PCM数据
-    * system/core/include/system/
-        包含audio.h和audio_policy.h，它们包含在用户空间中用于音频的整个代码中使用的枚举定义和内联函数
-    * frameworks/base/media/java/android/media/
-        包含用于以Java编写的Android应用程序公开API的音频的.java文件
-# Kernel space audio code
-    以下是内核中与音频相关的代码用于调试和定制的目录路径列表：
-    * kernel/sound/soc/msm/
-        包含msm8974.c机器驱动程序
-    * kernel/sound/soc/msm/qdsp6v2
-        包含平台驱动程序，前端（FE）和后端（BE）DAI驱动程序的源代码，用于AFE，ADM和ASM的Hexagon DSP驱动程序，语音驱动程序等。
-    * kernel/sound/soc/soc-*.c
-        所有的SoC - *.c文件都提供了关于ALSA SoC框架的信息
-    * kernel/drivers/slimbus/
-        包含SLIMbus驱动程序的源码
-    * kernel/arch/arm/mach-msm/
-        包含一些文件，例如与MSM8974上的GPIO，时钟和电路板特定信息相关的一些文件，例如acpuclock-8974.c，board-8974-gpiomux.c，board-8974.c和clock-8974.c
-    * kernel/arch/arm/mach-msm/qdsp6v2/
-        包含基于DSP的编码器和解码器的驱动程序，aDSP加载程序的代码，APR驱动程序，离子存储器驱动程序和其他实用程序文件
-    * kernel/msm-3.18/arch/arm/boot/dts/qcom/
-    * kernel/sound/soc/codecs/
-        包含WCD9320的编解码器驱动程序的源代码; 编解码器驱动程序相关的源文件是wcd9320.c，wcd9xxx-mbhc.c，wcd9xxx-resmgr.c，wcd9xxx-common.c等。
-    * android/kernel/drivers/mfd/
-        包含编解码器驱动程序的源代码; wcd9xxx-core.c，wcd9xxx-slimslave.c和wcd9xxx-irq.c是与编解码器驱动程序相关的文件
+* User space audio code
+  以下是用户空间中与音频相关的代码用于调试和定制的目录路径列表
+  + HAL
+    hardware/qcom/audio/hal/msm8974
+  + tinyalsa
+    external/tinyalsa/
+  + hardware/qcom/audio/mm-audio
+    包含用于音频编码器和解码器的QTI OMX组件的实现
+  + frameworks/av/media/libstagefright/
+    包含来自Google的Stagefright实施的源代码
+  + frameworks/av/services/audioflinger/
+    包含用于管理来自用户空间的音频流的AudioFlinger的源代码
+  + vendor/qcom/proprietary/mm-audio/
+    包含与音频校准数据库（ACDB）驱动程序相关的代码，用于DTS和AC3的解析器，环绕声等。
+  + external/bluetooth/bluedroid/
+    包含与QTI平台中使用的蓝牙A2DP相关的代码; android_audio_hw.c文件包含A2DP音频HAL实现
+  + hardware/libhardware/modules/usbaudio/
+    包含USB底座用例的USB HAL实现
+  + vendor/qcom/proprietary/wfd/mm/source/framework/src/
+    包含与Wi-Fi显示（WFD）框架相关的代码;包含与Wi-Fi显示（WFD）框架相关的代码; WFDMMSourceAudioSource.cpp通过ALSA API配置RT代理端口，并从音频层获取PCM数据
+  + system/core/include/system/
+    包含audio.h和audio_policy.h，它们包含在用户空间中用于音频的整个代码中使用的枚举定义和内联函数
+  + frameworks/base/media/java/android/media/
+    包含用于以Java编写的Android应用程序公开API的音频的.java文件
+* Kernel space audio code
+  以下是内核中与音频相关的代码用于调试和定制的目录路径列表：
+  + kernel/sound/soc/msm/
+    包含msm8974.c机器驱动程序
+  + kernel/sound/soc/msm/qdsp6v2
+    包含平台驱动程序，前端（FE）和后端（BE）DAI驱动程序的源代码，用于AFE，ADM和ASM的Hexagon DSP驱动程序，语音驱动程序等。
+  + kernel/sound/soc/soc-*.c
+    所有的SoC - *.c文件都提供了关于ALSA SoC框架的信息
+  + kernel/drivers/slimbus/
+    包含SLIMbus驱动程序的源码
+  + kernel/arch/arm/mach-msm/
+    包含一些文件，例如与MSM8974上的GPIO，时钟和电路板特定信息相关的一些文件，例如acpuclock-8974.c，board-8974-gpiomux.c，board-8974.c和clock-8974.c
+  + kernel/arch/arm/mach-msm/qdsp6v2/
+    包含基于DSP的编码器和解码器的驱动程序，aDSP加载程序的代码，APR驱动程序，离子存储器驱动程序和其他实用程序文件
+  + kernel/msm-3.18/arch/arm/boot/dts/qcom/
+  + kernel/sound/soc/codecs/
+    包含WCD9320的编解码器驱动程序的源代码; 编解码器驱动程序相关的源文件是wcd9320.c，wcd9xxx-mbhc.c，wcd9xxx-resmgr.c，wcd9xxx-common.c等。
+  + android/kernel/drivers/mfd/
+    包含编解码器驱动程序的源代码; wcd9xxx-core.c，wcd9xxx-slimslave.c和wcd9xxx-irq.c是与编解码器驱动程序相关的文件
+* Customization guidelines
+  音频模块的自定义指南
+  * Audio policy manager
+    管理各种输入和输出设备接口。 根据Stream模式和方法选择并定义合适的路由策略。 管理每个数据流的音量/静音设置（因为它们处于活动状态或非活动状态）
+  * Audio HAL
+    将AudioFlinger调用映射到ASoC驱动程序的硬件抽象层
+  * XML
+    文件包含基于路由和基于设备的混音器控件，用于在开始播放/录制时设置音频路径和设备
+  * Machine driver
+    板子定制相关
+  * Device tree file
+    板子定制相关
+* Enabling logs
+  * c/c++
+    #define LOG_NDEBUG 0
+    #define LOG_NDDEBUG 0
+  * c files log in kernel
+    echo -n "file FILENAME +p" > /sys/kernel/debug/dynamic_debug/control
+    or defining "#define DEBUG"
+* 软件框架
+  audioflinger -> audio_hw    -> driver
+  
+  AudioPolicyManager()                                        frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp
+  AudioFlinger::loadHwModule                                  frameworks/av/services/audioflinger/AudioFlinger.cpp 
+  DevicesFactoryHalLocal::openDevice                          frameworks/av/media/libaudiohal/DevicesFactoryHalLocal.cpp
+  load_audio_interface()  (通过AUDIO_HARDWARE_MODULE_ID匹配)  frameworks/av/media/libaudiohal/DevicesFactoryHalLocal.cpp
+  audio_hw_device_open                                        hardware/libhardware/include/hardware/audio.h
+  module->methods->open <=> adev_open                         hardware/qcom/audio/hal/audio_hw.c
+  frameworks/av/media/libaudiohal/DeviceHalLocal.cpp      实际操作audio设备
 
-# Customization guidelines
-    音频模块的自定义指南
-    * Audio policy manager
-        管理各种输入和输出设备接口。 根据Stream模式和方法选择并定义合适的路由策略。 管理每个数据流的音量/静音设置（因为它们处于活动状态或非活动状态）
-    * Audio HAL
-        将AudioFlinger调用映射到ASoC驱动程序的硬件抽象层
-    * XML
-        文件包含基于路由和基于设备的混音器控件，用于在开始播放/录制时设置音频路径和设备
-    * Machine driver
-        板子定制相关
-    * Device tree file
-        板子定制相关
-# Enabling logs
-    * c/c++
-        #define LOG_NDEBUG 0
-        #define LOG_NDDEBUG 0
-    * c files log in kernel
-        echo -n "file FILENAME +p" > /sys/kernel/debug/dynamic_debug/control
-        or defining "#define DEBUG"
-# 软件框架
-        audioflinger -> audio_hw    -> driver
-
-    AudioPolicyManager()                                        frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp
-    AudioFlinger::loadHwModule                                  frameworks/av/services/audioflinger/AudioFlinger.cpp 
-    DevicesFactoryHalLocal::openDevice                          frameworks/av/media/libaudiohal/DevicesFactoryHalLocal.cpp
-    load_audio_interface()  (通过AUDIO_HARDWARE_MODULE_ID匹配)  frameworks/av/media/libaudiohal/DevicesFactoryHalLocal.cpp
-    audio_hw_device_open                                        hardware/libhardware/include/hardware/audio.h
-    module->methods->open <=> adev_open                         hardware/qcom/audio/hal/audio_hw.c
-                                                                frameworks/av/media/libaudiohal/DeviceHalLocal.cpp      实际操作audio设备
-
-    AudioPolicyService
-    AudioPolicyService frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
-
-
-
+  AudioPolicyService
+  AudioPolicyService frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp

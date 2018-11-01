@@ -1,0 +1,54 @@
+* audio tuning调试
+  需要听的几个点,确认audio tuning哪几个地方出现问题
+** audio audio
+*** audio Playback
+    + SPK:152E -> 152F -> 1530 -> 1531 -> 1586
+      # RX Audio decoder input signal, before POPP
+      .isf.0x152E.pcm.0x10101600.0x1.0x1.rx.wav
+      .isf.0x152E.pcm.0x10101600.0x1.0x2.rx.wav
+      .isf.0x152E.pcm.0x20101700.0x1.0x1.rx.wav
+      .isf.0x152E.pcm.0x20101700.0x1.0x2.rx.wav
+
+      # RX Audio POPP input signal, after audio decoder
+      .isf.0x152F.pcm.0x10101600.0x1.0x1.rx.wav
+      .isf.0x152F.pcm.0x10101600.0x1.0x2.rx.wav
+      .isf.0x152F.pcm.0x20101700.0x1.0x1.rx.wav
+      .isf.0x152F.pcm.0x20101700.0x1.0x2.rx.wav
+
+      # RX Audio COPP input signal, before entering into AFE, after Audio POPP
+      .isf.0x1530.pcm.0x20101700.0x1.0x1.rx.wav
+      .isf.0x1530.pcm.0x20101700.0x1.0x2.rx.wav
+
+      # RX Audio COPP input signal, before entering into AFE, after Audio POPP
+      .isf.0x1531.pcm.0xF0.0x1.0x3.rx.wav
+      .isf.0x1531.pcm.0xF1.0x1.0x3.rx.wav
+
+      # RX AFE output signal, before sending into Codec
+      .isf.0x1586.pcm.0xF.0x1100.0x1.rx.wav
+*** audio Recording
+    + MIC:1586 -> 1532 -> 1533 -> 1534 -> 1535 -> 1536
+      # Audio COPreP input(0x1532)
+      .isf.0x1532.pcm.0x8050.0x1.0x3.tx.wav
+
+      # Audio TX matrtx input(0x1533)
+      .isf.0x1533.pcm.0x8050.0x1.0x3.tx.wav
+
+      # TX Audio POPreP input signal, after Audio Common Pre-processing
+      .isf.0x1534.pcm.0x30101800.0x1.0x1.tx.wav
+      .isf.0x1534.pcm.0x30101800.0x1.0x2.tx.wav
+
+      # TX Audio encoder input signal, after Audio Record Pre-processing
+      .isf.0x1535.pcm.0x10101600.0x1.0x1.tx.wav
+      .isf.0x1535.pcm.0x10101600.0x1.0x2.tx.wav
+      .isf.0x1535.pcm.0x30101800.0x1.0x1.tx.wav
+      .isf.0x1535.pcm.0x30101800.0x1.0x2.tx.wav
+
+      # TX encoder output signal, after COPreP & POPreP
+      .isf.0x1536.pcm.0x30101800.0x2.0x1.tx.wav
+      .isf.0x1536.pcm.0x30101800.0x2.0x2.tx.wav
+
+      # TX AFE input signal, from Codec output
+      .isf.0x1586.pcm.0x5.0x1105.0x1.tx.wav
+** audio Voice
+*** RX
+*** TX 

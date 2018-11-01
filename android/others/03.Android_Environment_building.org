@@ -13,7 +13,6 @@
    chmod a+x /bin/repo
    repo init -u git@172.26.12.66:quicl/manifests -m m8939.xml  //公司拉代码
    repo sync        //拉代码
-
 * 编译源代码
 + 编译前奏
   source /build/envsetup.sh 这个脚本用来设置android的编译环境
@@ -21,7 +20,7 @@
   user等）。一般而言，手机厂商会设置自己特有的编译选项
 + 编译
   + make
-    | make               | 编译整个内核                                              |
+    | make               | 编译整个内核                                               |
     | make MediaProvider | 编译MediaProvider模块,会把该模块所依赖的其他模块也编译进来 |
   + mmm
     | make packages/providers/MediaProvider | 编译MediaProvider模块,而不编译它所依赖的模块 |

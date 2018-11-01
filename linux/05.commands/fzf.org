@@ -1,0 +1,11 @@
+* 安装
+  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+  ~/.fzf/install
+* 快捷键
+  | 快捷键 | 功能                             |
+  |--------+----------------------------------|
+  | CTRL-T | 将选定的文件路径粘贴到命令行中   |
+  | CTRL-R | 将所选命令从历史记录粘贴到命令行 |
+  | ALT-C  | cd进入所选目录                   |
+  | Ctrl-K | 上切换                           |
+  | Ctrl-J | 下切换                           |

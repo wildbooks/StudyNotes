@@ -1,124 +1,112 @@
 * kernel
-    echo -n "file msm-pcm-routing-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
-    echo -n "file msm-pcm-voice-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
-    echo -n "file msm-dai-q6-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
-    echo -n "file q6voice.c +p" > /sys/kernel/debug/dynamic_debug/control
-    echo -n "file q6adm.c +p" > /sys/kernel/debug/dynamic_debug/control
-    echo -n "file q6afe.c +p" > /sys/kernel/debug/dynamic_debug/control
-    echo -n "file q6asm.c +p" > /sys/kernel/debug/dynamic_debug/control
-    echo -n "file soc-core.c +p" > /sys/kernel/debug/dynamic_debug/control
-    echo -n "file soc-dapm.c +p" > /sys/kernel/debug/dynamic_debug/control
-    echo -n "file soc-pcm.c +p" > /sys/kernel/debug/dynamic_debug/control
-    echo -n "file msm8x16-wcd.c +p" > /sys/kernel/debug/dynamic_debug/control
-    或者在文件开始地方定义#define DEBUG,机子开机时就吐log
+  echo -n "file msm-pcm-routing-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
+  echo -n "file msm-pcm-voice-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
+  echo -n "file msm-dai-q6-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
+  echo -n "file q6voice.c +p" > /sys/kernel/debug/dynamic_debug/control
+  echo -n "file q6adm.c +p" > /sys/kernel/debug/dynamic_debug/control
+  echo -n "file q6afe.c +p" > /sys/kernel/debug/dynamic_debug/control
+  echo -n "file q6asm.c +p" > /sys/kernel/debug/dynamic_debug/control
+  echo -n "file soc-core.c +p" > /sys/kernel/debug/dynamic_debug/control
+  echo -n "file soc-dapm.c +p" > /sys/kernel/debug/dynamic_debug/control
+  echo -n "file soc-pcm.c +p" > /sys/kernel/debug/dynamic_debug/control
+  echo -n "file msm8x16-wcd.c +p" > /sys/kernel/debug/dynamic_debug/control
+  或者在文件开始地方定义#define DEBUG,机子开机时就吐log
 * logcat
-    Enable below logs and capture a logcat log
-
-
+  + Enable below logs and capture a logcat log
     #define LOG_NDEBUG 0
     #define VERY_VERY_VERBOSE_LOGGING ===> add these two definitions in these files.
-        frameworks/av/media/libmedia/AudioTrack.cpp or
-        frameworks/av/media/libaudioclient/AudioTrack.cpp (Android O)
-        frameworks/av/media/libmedia/AudioRecord.cpp or
-        frameworks/av/media/libaudioclient/AudioRecord.cpp (Android O)
+    frameworks/av/media/libmedia/AudioTrack.cpp or
+    frameworks/av/media/libaudioclient/AudioTrack.cpp (Android O)
+    frameworks/av/media/libmedia/AudioRecord.cpp or
+    frameworks/av/media/libaudioclient/AudioRecord.cpp (Android O)
     +#include <utils/CallStack.h>
     status_t AudioTrack::set(
     {
-        "frameworks/av/media/libaudioclient/AudioTrack.cpp"
-            ......
-        +android::CallStack stack;
-        +stack.update( );
-        +stack.log("XXX");
-        .........
+    "frameworks/av/media/libaudioclient/AudioTrack.cpp"
+    ......
+    +android::CallStack stack;
+    +stack.update( );
+    +stack.log("XXX");
+    .........
     }
-
-    APM
+  + APM
     #define LOG_NDEBUG 0
     #define VERY_VERBOSE_LOGGING
-        frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
-        frameworks/av/services/audiopolicy/service/AudioPolicyInterfaceImpl.cpp
-        frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp
-        frameworks/av/services/audiopolicy/enginedefault/src/Engine.cpp or
-        frameworks/av/services/audiopolicy/engineconfigurable/src/Engine.cpp
-        frameworks/av/services/audiopolicy/common/managerdefinitions/src/Gains.cpp
-        hardware/qcom/audio/policy_hal/AudioPolicyManager.cpp
-
-    HAL
+    frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
+    frameworks/av/services/audiopolicy/service/AudioPolicyInterfaceImpl.cpp
+    frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp
+    frameworks/av/services/audiopolicy/enginedefault/src/Engine.cpp or
+    frameworks/av/services/audiopolicy/engineconfigurable/src/Engine.cpp
+    frameworks/av/services/audiopolicy/common/managerdefinitions/src/Gains.cpp
+    hardware/qcom/audio/policy_hal/AudioPolicyManager.cpp
+  + HAL
     #define LOG_NDEBUG 0
     #define VERY_VERY_VERBOSE_LOGGING
-        hardware/qcom/audio/hal/audio_hw.c
-        hardware/qcom/audio/hal/msm8916/platform.c
-        hardware/qcom/audio/hal/platform_info.c
-        hardware/qcom/audio/hal/audio_extn/usb.c
-        hardware/qcom/audio/hal/audio_extn/audio_extn.c
-        hardware/qcom/audio/hal/audio_extn/spkr_protection.c
-        hardware/qcom/audio/hal/audio_extn/a2dp.c
-        system/media/audio_route/audio_route.c
-        @@ -579,6 +579,7 @@ int audio_route_apply_path(struct audio_route *ar, const char *name)
-        }
-        path_apply(ar, path);
-        + path_print(ar, path);
+    hardware/qcom/audio/hal/audio_hw.c
+    hardware/qcom/audio/hal/msm8916/platform.c
+    hardware/qcom/audio/hal/platform_info.c
+    hardware/qcom/audio/hal/audio_extn/usb.c
+    hardware/qcom/audio/hal/audio_extn/audio_extn.c
+    hardware/qcom/audio/hal/audio_extn/spkr_protection.c
+    hardware/qcom/audio/hal/audio_extn/a2dp.c
+    system/media/audio_route/audio_route.c
+    @@ -579,6 +579,7 @@ int audio_route_apply_path(struct audio_route *ar, const char *name)
+    }
+    path_apply(ar, path);
+    + path_print(ar, path);
 
-        return 0;
-        }
-
-* qxdm
-    default_V2.6_auddsp_btfmwlan_ril.dmc
+      return 0;
+      }
 * 特定应用场景，开启相应Log
-    * For debugging codec-related issues during audio bringup:
-        wcd9xxx-core.c
-        wcd9xxx-irq.c
-        wcd9xxx-mbhc.c
-        wcd9xxx-resmgr.c
-    * For debugging HDMI-related issues during audio bringup:
-        msm-dai-q6-hdmi-v2.c
-        q6afe.c
-    * For debugging AUX PCM-related issues during audio bringup:
-        msm-dai-q6-v2.c
-    * For debugging USB audio and WFD-related issues during audio bringup:
-        msm-pcm-afe-v2.c
-* Debugging checkpoints
-    在初始bringup音频期间，以下内容已得到验证：
+  + For debugging codec-related issues during audio bringup:
+    wcd9xxx-core.c
+    wcd9xxx-irq.c
+    wcd9xxx-mbhc.c
+    wcd9xxx-resmgr.c
+  + For debugging HDMI-related issues during audio bringup:
+    msm-dai-q6-hdmi-v2.c
+    q6afe.c
+  + For debugging AUX PCM-related issues during audio bringup:
+    msm-dai-q6-v2.c
+  + For debugging USB audio and WFD-related issues during audio bringup:
+    msm-pcm-afe-v2.c
+* Debugging技巧
+  + 在初始bringup音频期间，以下内容已得到验证:
     检查DSP是否启动
     检查SLIMbus是否启动
     检查声卡是否已注册
     使用tinymix，tinycap和tinyplay命令验证播放和录制
-# 使用adb命令读写codec寄存器
+  + 使用adb命令读写codec寄存器:
     adb root
     adb remount
     adb shell mount -t debugfs debugfs /sys/kernel/debug
     adb shell
-        cd /d/asoc/msm8952-sku2-snd-card/codec:msm8x16_wcd_codec-2
-        cat codec_reg   #读取
-        echo "0x121 0xA0" > codec_reg  #写入
-* 使acdb生效方法
-    重启手机，或重启媒体服务器
-        adb shell
-        ps -elf |grep mediaserver
-        kill <mediaserver pid>
-# tools
-    Adboe Audition或者CoolEdit等音频处理工具获取问题发生的时间戳
-    QCAT解析QXDM日志
-    QXDM抓取Log
-    QACT调试acdb
-# Codec register dumps and MBHC calibration data
-  adb shell cat /sys/kernel/debug/asoc/*snd-card/*codec/codec_reg >codecreg.txt
+    cd /d/asoc/msm8952-sku2-snd-card/codec:msm8x16_wcd_codec-2
+    cat codec_reg   #读取
+    echo "0x121 0xA0" > codec_reg  #写入
+  + Codec register dumps and MBHC calibration data:
+    adb shell cat /sys/kernel/debug/asoc/*snd-card/*codec/codec_reg >codecreg.txt
     Read:cat codecreg
     Write:echo "<Adress> <value>" > codec_reg
-  adb shell cat /sys/kernel/debug/wcd9xxx_mbhc > mbhc_data.txt
-# 用ADIE设置寄存器
-  使用adb命令配置ADIE寄存器
-  adb root
-  adb remount
-  adb shell "chmod 777 /sys/kernel/debug/asoc/*snd-card/*codec/codec_reg"
-  然后QACT ADIE，进行设置
-# 查看adsp版本
-  adb pull /firmware/image/adsp.b04
-  strings adsp.b04 | grep "Q6_BUILD"
-# 需要掌握的工具
-  qcat
-  qact
-  qxdm
+    adb shell cat /sys/kernel/debug/wcd9xxx_mbhc > mbhc_data.txt
+  + 使acdb生效方法
+    重启手机，或重启媒体服务器
+    adb shell
+    ps -elf |grep mediaserver
+    kill <mediaserver pid>
+  + 用ADIE设置寄存器
+    使用adb命令配置ADIE寄存器
+    adb root
+    adb remount
+    adb shell "chmod 777 /sys/kernel/debug/asoc/*snd-card/*codec/codec_reg"
+    然后QACT ADIE，进行设置
+  + 查看adsp版本
+    adb pull /firmware/image/adsp.b04
+    strings adsp.b04 | grep "Q6_BUILD"
+* tools
+  Adboe Audition或者CoolEdit等音频处理工具获取问题发生的时间戳
+  QCAT解析QXDM日志
+  QXDM抓取Log
+  QACT调试acdb
   tinymix/tinycap/tinyplay/tinypcminfo
   mm-audio-ftm
-  Audition/CoolEdit
