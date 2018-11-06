@@ -1,0 +1,43 @@
+* Table of Contents                     :TOC_4_gh:noexport:
+- [[#目的][目的]]
+- [[#方法][方法]]
+- [[#库安装][库安装]]
+- [[#总结][总结]]
+  - [[#beautifulsoup][BeautifulSoup]]
+- [[#d][d]]
+
+* 目的
+  通过抓取小说掌握requests、BeautifulSoup、MySQL使用
+* 方法
+  requests
+  BeautifulSoup
+  lxml
+* 库安装
+  sudo pip3 install requests
+  sudo pip3 install beautifulsoup4
+* 总结
+** BeautifulSoup
+   findAll(tag, attributes, recursive, text, limit, keywords)
+   | 参数       | 描述                        |
+   |------------+-----------------------------|
+   | tag        | 标签由(name+attributes)组成 |
+   | attributes | 标签成员                        |
+   | recursive  |                             |
+   | text       |                             |
+   | limit      |                             |
+   | keywords   |                             |
+
+   | 解析库              | 使用方法                             | 优势                             | 劣势                  |
+   |---------------------+--------------------------------------+----------------------------------+-----------------------|
+   | 	~Python标准库~    | BeautifulSoup(html,'html.parser')    | Python内置标准库；执行速度快	   | 容错能力较差          |
+   | 	~lxml HTML解析库~ | BeautifulSoup(html,'lxml')           | 速度快；容错能力强	             | 需要安装，需要C语言库 |
+   | 	~lxml XML解析库~  | BeautifulSoup(html,['lxml','xml'])	 | 速度快；容错能力强；支持XML格式  | 需要C语言库           |
+   | 	~htm5lib解析库~   | BeautifulSoup(html,'htm5llib')       | 以浏览器方式解析，最好的容错性	 | 速度慢                |
+* d
+  keywords
+  description
+  maininfo
+
+  url=https://www.biquge5.com
+  book_num=1_1
+  zhang_id=2.html ~ 205.html

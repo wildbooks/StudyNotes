@@ -1,3 +1,16 @@
+* Table of Contents                     :TOC_4_gh:noexport:
+- [[#环境篇][环境篇]]
+- [[#基础篇][基础篇]]
+- [[#框架篇][框架篇]]
+- [[#数据库][数据库]]
+- [[#分布式篇][分布式篇]]
+- [[#数据分析][数据分析]]
+- [[#可视化][可视化]]
+- [[#反爬虫][反爬虫]]
+- [[#常用库][常用库]]
+- [[#资源][资源]]
+- [[#python项目][python项目]]
+
 * 环境篇
   Python3+pip环境配置
   MongoDB环境配置
@@ -6,19 +19,12 @@
   Python多版本共存配置
   Python爬虫常用库的安装
 * 基础篇
-  爬虫基本原理(html,xml,json)
+  爬虫基本原理(html,xml,css,json,CSV)
   Urllib库基本使用
   正则表达式基础
   BeautifulSoup详解
   PyQuery详解
   Selenium详解
-* 实战篇
-  使用Requests+正则表达式爬取猫眼电影 https://github.com/Germey/MaoYan
-  分析Ajax请求并抓取今日头条街拍美图 https://github.com/Germey/TouTiao
-  使用Selenium模拟浏览器抓取淘宝商品美食信息 https://github.com/Germey/TaobaoProduct
-  使用Redis+Flask维护动态代理池
-  使用代理处理反爬抓取微信文章
-  使用Redis+Flask维护动态Cookies池
 * 框架篇
   PySpider框架基本使用及抓取TripAdvisor实战
   PySpider架构概述及用法详解
@@ -32,6 +38,16 @@
   Scrapy爬取知乎用户信息实战
   Scrapy+Cookies池抓取新浪微博
   Scrapy+Tushare爬取微博股票数据
+
+  | 库名      | 文档 | 功能                                                             |
+  |-----------+------+------------------------------------------------------------------|
+  | [[https://scrapy.org][Scrapy]]    |      |                                                                  |
+  | [[https://github.com/binux/pyspider][pyspider]]  |      |                                                                  |
+  | [[http://project.crawley-cloud.com][crawley]]   |      |                                                                  |
+  | [[https://github.com/scrapinghub/portia][portia]]    |      | 开源可视化爬虫工具                                               |
+  | [[https://github.com/codelucas/newspaper][Newspaper]] |      | 可以用来提取新闻、文章和内容分析。使用多线程，支持10多种语言等。 |
+  | [[http://docs.grablib.org/en/latest/#grab-spider-user-manual][Grab]]      |      | Grab是一个用于构建Web刮板的Python框架。                          |
+  | [[https://github.com/chineking/cola][cola]]      |      | Cola是一个分布式的爬虫框架                                       |
 * 数据库
   MySql
   MongoDB
@@ -43,47 +59,61 @@
   Scrapy分布式原理及Scrapy-Redis源码解析
   Scrapy分布式架构搭建抓取知乎
   Scrapy分布式的部署详解
+* 数据分析
 * 可视化
-  https://github.com/tqdm/tqdm  一个快速，可扩展的Python和CLI 进度条
+  | 库名 | 文档 | 功能                                |
+  |------+------+-------------------------------------|
+  | [[https://github.com/tqdm/tqdm][tqdm]] |      | 一个快速，可扩展的Python和CLI进度条 |
+* 反爬虫
+  |        |   |
+  |--------+---|
+  | Ajax   |   |
+  | js     |   |
+  | 验证码 |   |
+  |        |   |
 * 常用库
-1. requests 做请求的时候用到。
-   http://cn.python-requests.org/zh_CN/latest/
-  requests.get("url")
-2. selenium 自动化真正的浏览器（Chrome浏览器，火狐浏览器，Opera浏览器，IE浏览器）。
-3. lxml 解析网页
-4. beautiful soup 取代枯燥易错的正则表达式，简化数据匹配，快速清洗
-5. pyquery 网页解析库 说是比beautiful 好用，语法和jquery非常像。
-9. jupyter在线记事本。
-Requests库：主要是简化请求工作
-Beautiful Soup：取代枯燥易错的正则表达式，简化数据匹配，快速清洗
-Xpath语法lxml：主要了解文档结构，知己知彼，好下手
-PhantomJS：处理网页中的动态js请求，模拟浏览器完成js的渲染，等到异步情节，保证文档结构数据的完整性，所见即所得（这个我们后面也会用到）
-Selenium：模拟浏览事件，支持多步连续请求，减少人工手动触发［登录表单填写，触发表单发送，调整登录成功页等］
-pyQuery：顾名思义，用python语言复制一版jquery
-pandas: 表格处理库
-mysql.connector： python操作mysql
-
----------------------
-
-ChromDriver
-本文来自 vivianking68 的CSDN 博客 ，全文地址请点击：https://blog.csdn.net/vivian_king/article/details/79493897?utm_source=copy 
-二 什么是urllib
+  | 库名          | 文档          | 功能                                                                                   |
+  |---------------+---------------+----------------------------------------------------------------------------------------|
+  | [[http://cn.python-requests.org/zh_CN/latest/][requests]]      | [[http://cn.python-requests.org/zh_CN/latest][requests zh]]   | Requests 唯一的一个非转基因的 Python HTTP 库                                           |
+  | [[https://www.seleniumhq.org][selenium]]      |               | 自动化真正的浏览器（Chrome浏览器，火狐浏览器，Opera浏览器，IE浏览器                    |
+  | [[https://www.crummy.com/software/BeautifulSoup/bs4/doc.zh][BeautifulSoup]] | [[https://www.crummy.com/software/BeautifulSoup/bs4/doc.zh][BeautifulSoup]] | 可以从HTML或XML文件中提取数据的Python库                                                |
+  | [[https://lxml.de][lxml]]          | [[https://lxml.de][lxml]]          | 解析html                                                                               |
+  | [[https://pythonhosted.org/pyquery][PyQuery]]       |               | 解析网页库                                                                             |
+  | loging        |               | 日志系统                                                                               |
+  | logbook       |               | 日志系统                                                                               |
+  | pandas        |               | 表格处理库                                                                             |
+  | [[https://docs.python.org/3/library/configparser.html][configparser]]  |               | ConfigParser模块在python中用来读取配置文件，配置文件的格式跟windows下的ini配置文件相似 |
+  | [[https://www.twilio.com][twilio]]        |               | 免费发送短信                                                                           |
+  |               |               |                                                                                        |
+  jupyter在线记事本。
+  Xpath语法lxml：主要了解文档结构，知己知彼，好下手
+  mysql.connector： python操作mysql
+  本文来自 vivianking68 的CSDN 博客 ，全文地址请点击：https://blog.csdn.net/vivian_king/article/details/79493897?utm_source=copy
+  二 什么是urllib
   urllib.request 请求模块  　　模拟浏览器
   urllib.error 异常处理模块
   urllib.parse url解析模块  　　工具模块，如：拆分、合并
   urllib.robotparser robots.txt    解析模块　
-# 资源
+* 资源
   https://github.com/geekcomputers/Python
 * python项目
-  | 项目               | 描述             |                    |
-  |--------------------+------------------+--------------------|
-  | iScript            | 虾米网盘等等脚本 | [[https://github.com/PeterDing/iScript][iScript]]            |
-  | jd-autobuy         |                  | [[https://github.com/Adyzng/jd-autobuy][jd-autobuy]]         |
-  | jd_spider          | 京东分布式爬虫   | [[https://github.com/samrayleung/jd_spider][jd_spider]]          |
-  | JDPackage          | 京东抢购相关     | [[https://github.com/HiddenStrawberry/JDPackage][JDPackage]]          |
-  | JD-Coin            |                  | [[https://github.com/CaoZ/JD-Coin][JD-Coin]]            |
-  | jd_analysis        |                  | [[https://github.com/awolfly9/jd_analysis][jd_analysis]]        |
-  | JD_AutoSubmit      |                  | [[https://github.com/zhangkai3110/JD_AutoSubmit][JD_AutoSubmit]]      |
-  | jd_spider          |                  | [[https://github.com/xiaoquantou/jd_spider][jd_spider]]          |
-  | Taobao_order_robot |                  | [[https://github.com/localhost02/Taobao_order_robot][Taobao_order_robot]] |
-  | python             |                  | [[https://github.com/geekcomputers/Python][python]]             |
+  使用Redis+Flask维护动态代理池
+  使用代理处理反爬抓取微信文章
+  使用Redis+Flask维护动态Cookies池
+  | 项目               | 描述                                       |                    |
+  |--------------------+--------------------------------------------+--------------------|
+  | iScript            | 虾米网盘等等脚本                           | [[https://github.com/PeterDing/iScript][iScript]]            |
+  | jd-autobuy         |                                            | [[https://github.com/Adyzng/jd-autobuy][jd-autobuy]]         |
+  | jd_spider          | 京东分布式爬虫                             | [[https://github.com/samrayleung/jd_spider][jd_spider]]          |
+  | JDPackage          | 京东抢购相关                               | [[https://github.com/HiddenStrawberry/JDPackage][JDPackage]]          |
+  | JD-Coin            |                                            | [[https://github.com/CaoZ/JD-Coin][JD-Coin]]            |
+  | jd_analysis        |                                            | [[https://github.com/awolfly9/jd_analysis][jd_analysis]]        |
+  | JD_AutoSubmit      |                                            | [[https://github.com/zhangkai3110/JD_AutoSubmit][JD_AutoSubmit]]      |
+  | jd_spider          |                                            | [[https://github.com/xiaoquantou/jd_spider][jd_spider]]          |
+  | Taobao_order_robot |                                            | [[https://github.com/localhost02/Taobao_order_robot][Taobao_order_robot]] |
+  | python             |                                            | [[https://github.com/geekcomputers/Python][python]]             |
+  | [[https://github.com/Germey/TaobaoMM][TaobaoMM]]           | PySpider爬取淘宝MM                         |                    |
+  |                    | 爬取[[https://movie.douban.com/top250][<豆瓣电影Top 250>]]                      |                    |
+  |                    | 使用Requests+正则表达式爬取猫眼电影        | [[https://github.com/Germey/MaoYan][MaoYan]]             |
+  |                    | 分析Ajax请求并抓取今日头条街拍美图         | [[https://github.com/Germey/TouTiao][TouTiao]]            |
+  |                    | 使用Selenium模拟浏览器抓取淘宝商品美食信息 | [[https://github.com/Germey/TaobaoProduct][TaobaoProduct]]      |

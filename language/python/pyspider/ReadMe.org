@@ -1,0 +1,10 @@
+* Table of Contents                     :TOC_4_gh:noexport:
+- [[#pyspider简介][pyspider简介]]
+  - [[#安装][安装]]
+- [[#安葬][安葬]]
+
+* [[http://demo.pyspider.org][pyspider简介]]
+  PySpider：一个国人编写的强大的网络爬虫系统并带有强大的WebUI。采用Python语言编写，分布式架构，支持多种数据库后端，强大的WebUI支持脚本编辑器，任务监视器，项目管理器以及结果查看器。
+** 安装
+   sudo pip3 install pyspider
+* 安葬
