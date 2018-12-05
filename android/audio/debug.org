@@ -29,7 +29,7 @@
     +stack.log("XXX");
     .........
     }
-  + APM
+  + APM(Audio policy manager)
     #define LOG_NDEBUG 0
     #define VERY_VERBOSE_LOGGING
     frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
@@ -38,7 +38,8 @@
     frameworks/av/services/audiopolicy/enginedefault/src/Engine.cpp or
     frameworks/av/services/audiopolicy/engineconfigurable/src/Engine.cpp
     frameworks/av/services/audiopolicy/common/managerdefinitions/src/Gains.cpp
-    hardware/qcom/audio/policy_hal/AudioPolicyManager.cpp
+    hardware/qcom/audio/policy_hal/AudioPolicyManager.cpp or
+    vendor/qcom/opensource/audio/policy_hal/AudioPolicyManager.cpp
   + HAL
     #define LOG_NDEBUG 0
     #define VERY_VERY_VERBOSE_LOGGING
@@ -49,7 +50,7 @@
     hardware/qcom/audio/hal/audio_extn/audio_extn.c
     hardware/qcom/audio/hal/audio_extn/spkr_protection.c
     hardware/qcom/audio/hal/audio_extn/a2dp.c
-    system/media/audio_route/audio_route.c
+    system/media/audio_route/audio_route.c                    #audio_route
     @@ -579,6 +579,7 @@ int audio_route_apply_path(struct audio_route *ar, const char *name)
     }
     path_apply(ar, path);
@@ -57,6 +58,54 @@
 
       return 0;
       }
+  + HAL
+    vendor/qcom/proprietary/mm-audio/audio-log-utils
+    开启hal层bug的接口
+* deep buffer playback
+  #define LOG_NDEBUG 0
+  #define VERY_VERY_VERBOSE_LOGGING ===> add these two definitions in these files.
+  #define LOG_NDEBUG 0
+  #define VERY_VERBOSE_LOGGING
+  #define LOG_NDEBUG 0
+  #define VERY_VERY_VERBOSE_LOGGING
+  + Media
+    frameworks/base/media/java/android/media/MediaPlayer.java #MediaPlayer
+    frameworks/av/media/libaudioclient/AudioRecord.cpp #AudioRecord 录音
+    frameworks/av/media/libaudioclient/AudioSystem.cpp #AudioSystem
+    frameworks/av/media/libaudioclient/AudioTrack.cpp  #AudioTrack 播放音乐
+    frameworks/av/media/libmediaplayerservice/MediaPlayerService.cpp #MediaPlayerService
+    frameworks/av/media/libmedia/mediaplayer.cpp        #MediaPlayerNative
+    frameworks/av/media/libmedia/IOMX.cpp               #IOMX 编解码
+    frameworks/av/media/libstagefright/AudioPlayer.cpp  #AudioPlayer
+    frameworks/av/media/libstagefright/FileSource.cpp   #FileSource
+    frameworks/av/media/extractors/mp3/MP3Extractor.cpp #MP3Extractor
+    frameworks/av/media/libstagefright/OMXClient.cpp    #OMXClient
+  + AudioFlinger
+    frameworks/av/services/audioflinger/AudioFlinger.cpp #AudioFlinger
+    frameworks/av/media/libaudioprocessing/AudioMixer.cpp #AudioMixer
+  + APM
+    frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp #AudioPolicyService
+    frameworks/av/services/audiopolicy/service/AudioPolicyInterfaceImpl.cpp #AudioPolicyIntefaceImpl
+    frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp #APM_AudioPolicyManager
+    frameworks/av/services/audiopolicy/enginedefault/src/Engine.cpp or #APM::AudioPolicyEngine
+    frameworks/av/services/audiopolicy/engineconfigurable/src/Engine.cpp #APM::AudioPolicyEngine
+    frameworks/av/services/audiopolicy/common/managerdefinitions/src/Gains.cpp #APM::Gains
+  + hal
+    hardware/qcom/audio/hal/audio_hw.c #audio_hw_primary
+    hardware/qcom/audio/hal/msm8916/platform.c #msm8916_platform
+    hardware/qcom/audio/hal/msm8916/hw_info.c #hardware_info
+    vendor/qcom/opensource/audio/policy_hal/AudioPolicyManager.cpp #AudioPolicyManagerCustom
+  + kernel
+    echo file msm-pcm-q6-v2.c +p > /sys/kernel/debug/dynamic_debug/control
+    echo file msm-pcm-routing-v2.c +p > /sys/kernel/debug/dynamic_debug/control
+    echo file q6afe.c +p > /sys/kernel/debug/dynamic_debug/control
+    echo file q6adm.c +p > /sys/kernel/debug/dynamic_debug/control
+    echo file q6asm.c +p > /sys/kernel/debug/dynamic_debug/control
+    echo file audio_acdb.c +p > /sys/kernel/debug/dynamic_debug/control
+  + getlog
+    adb logcat –c && adb logcat –v threadtime | tee logcat.txt
+  + 参考文档
+    80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf
 * 特定应用场景，开启相应Log
   + For debugging codec-related issues during audio bringup:
     wcd9xxx-core.c
@@ -103,6 +152,10 @@
   + 查看adsp版本
     adb pull /firmware/image/adsp.b04
     strings adsp.b04 | grep "Q6_BUILD"
+* usb
+* Bluetooth
+    system/bt/audio_a2dp_hw/src/audio_a2dp_hw.cc #bt_a2dp_hw
+    bt_a2dp_hw MediaRouter
 * tools
   Adboe Audition或者CoolEdit等音频处理工具获取问题发生的时间戳
   QCAT解析QXDM日志
@@ -110,3 +163,16 @@
   QACT调试acdb
   tinymix/tinycap/tinyplay/tinypcminfo
   mm-audio-ftm
+* dumpsys
+  audio
+  media.audio_flinger
+  media.audio_policy
+  media.player
+* 关键log
+* LOG_TAG
+  + frameworks/av/services/audioflinger
+    "AudioFlinger"
+  + frameworks/av/services/audiopolicy
+    "APM"
+  + system/media/audio_route
+    "audio_route"

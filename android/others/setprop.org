@@ -1,11 +1,26 @@
-* setprop
-**  java
-   SystemProperties.set("dev.bootcomplete", "1");//等价于setprop dev.bootcomplete 1
-   SystemProperties.get("dev.bootcomplete");//等价于getprop  dev.bootcomplete
-   import android.os.SystemProperties
-** cpp
-   int8_t property_get_bool(const char *key, int8_t default_value)
-   int property_set(const char *key, const char *value)
-   int property_get(const char *key, char *value, const char *default_value)
-** 设置
-    device/qcom/msm8937_64/system.prop
+* Android Property
+  1. Property的使用方式
+  2. Property文件的加载
+  3. Property的存储
+* java
+  #+begin_src java
+  import android.os.SystemProperties
+  SystemProperties.set("dev.bootcomplete", "1");//等价于setprop dev.bootcomplete 1
+  SystemProperties.get("dev.bootcomplete");//等价于getprop  dev.bootcomplete
+  #+end_src
+* cpp
+  #+begin_src cpp
+  #include <cutils/properties.h>
+  int8_t property_get_bool(const char *key, int8_t default_value)
+  int property_set(const char *key, const char *value)
+  int property_get(const char *key, char *value, const char *default_value)
+  #+end_src
+* 设置
+  #+begin_src cpp
+  device/qcom/msm8937_64/system.prop
+  #+end_src
+* adb命令
+  #+begin_src cpp
+  adb shell getprop [proptery_name]
+  adb shell setprop propterty_name value
+  #+end_src

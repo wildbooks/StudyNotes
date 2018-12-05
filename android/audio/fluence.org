@@ -8,9 +8,17 @@
      adb shell setprop persist.audio.fluence.voicerec true
      adb shell setprop persist.audio.fluence.speaker true
   2. 代码修改
-     /device/qcom/msmxxxx/system.prop
-     rc.qc.sdk.audio.fluencetype= fluencepro   # select different fluence type
-     persist.audio.fluence.voicecall=true      # select true/false for your selection
-     persist.audio.fluence.voicerec =false     # select true/false for your selection
-     persist.audio.fluence.speaker =true       # select true/false for your selection
-    
+     + 方案一
+       /device/qcom/msmxxxx/build.prop
+       rc.qc.sdk.audio.fluencetype= fluencepro   # select different fluence type
+       persist.audio.fluence.voicecall=true      # select true/false for your selection
+       persist.audio.fluence.voicerec =false     # select true/false for your selection
+       persist.audio.fluence.speaker =true       # select true/false for your selection
+     + 方案二
+       hardware/qcom/audio/configs/msm8937/msm8937.mk
+       PRODUCT_PROPERTY_OVERRIDES += \
+       ro.vendor.audio.sdk.fluencetype=fluence\
+       persist.vendor.audio.fluence.voicecall=true\
+       persist.vendor.audio.fluence.voicerec=false\
+       persist.vendor.audio.fluence.speaker=false
+  3. 编译测试

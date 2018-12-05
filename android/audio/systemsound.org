@@ -1,5 +1,55 @@
+* Audio Application Framework：音频应用框架
+  AudioTrack：负责回放数据的输出，属 Android 应用框架 API 类
+  AudioRecord：负责录音数据的采集，属 Android 应用框架 API 类
+  AudioSystem： 负责音频事务的综合管理，属 Android 应用框架 API 类
+  + 代码
+    frameworks/base/media/java/android/media/AudioTrack.java
+* Audio Native Framework：音频本地框架
+  AudioTrack：负责回放数据的输出，属 Android 本地框架 API 类
+  AudioRecord：负责录音数据的采集，属 Android 本地框架 API 类
+  AudioSystem： 负责音频事务的综合管理，属 Android 本地框架 API 类
+* Audio Services：音频服务
+  AudioPolicyService：音频策略的制定者，负责音频设备切换的策略抉择、音量调节策略等
+  AudioFlinger：音频策略的执行者，负责输入输出流设备的管理及音频流数据的处理传输
+* Audio HAL：音频硬件抽象层
+  frameworks/base/media/java/android/media/AudioTrack.java
+  || new AudioTrack()
+  || native_setup()
+  \/
+
+  frameworks/base/core/jni/android_media_AudioTrack.cpp
+  || android_media_AudioTrack_setup()
+  || new AudioTrack()
+  \/
+
+  frameworks/av/media/libaudioclient/AudioTrack.cpp
+  || AudioTrack::set()
+  || createTrack_l()
+  \/
+  AudioFlinger()
+  ||
+  \/
+  AudioPolicyService
+
+  frameworks/av/include/media/AudioTrack.h
+  frameworks/av/include/media/IAudioTrack.h
+  frameworks/av/include/private/media/AudioTrackShared.h
+  frameworks/av/media/libaudioclient/AudioTrackShared.cpp
+  frameworks/av/media/libaudioclient/IAudioTrack.cpp
+  frameworks/av/media/libaudioclient/include/media/AudioTrack.h
+  frameworks/av/media/libaudioclient/include/media/IAudioTrack.h
+  frameworks/av/media/libmediaplayer2/JAudioTrack.cpp
+  frameworks/av/media/libmediaplayer2/include/mediaplayer2/JAudioTrack.h
+  frameworks/base/core/java/android/speech/tts/BlockingAudioTrack.java
+  frameworks/base/core/jni/android_media_AudioTrack.cpp
+  frameworks/base/core/jni/android_media_AudioTrack.h
+  frameworks/base/media/java/android/media/AudioTrackRoutingProxy.java
+  frameworks/base/media/tests/MediaFrameworkTest/src/com/android/mediaframeworktest/functional/audio/MediaAudioTrackTest.java
+  frameworks/base/tests/Camera2Tests/SmartCamera/SimpleCamera/src/androidx/media/filterfw/decoder/AudioTrackDecoder.java
+
 * 系统音
   + frameworks/base/media/java/android/media/AudioSystem.java
+    public static final int STREAM_DEFAULT = -1;
     public static final int STREAM_VOICE_CALL = 0;  #语音电话的声音
     public static final int STREAM_SYSTEM = 1;    #手机系统的声音
     public static final int STREAM_RING = 2;      #电话铃声和消息提醒的的声音
@@ -13,3 +63,235 @@
     public static final int STREAM_DTMF = 8;
     /* @hide The audio stream for text to speech (TTS) */
     public static final int STREAM_TTS = 9;   #文件到语音的音频流(TTS)
+
+* stream_type
+ |              |                                                                                                                       |
+ |--------------+-----------------------------------------------------------------------------------------------------------------------|
+ | stream_type  | 音频流的类型,一共定义了11种stream_type以供开发者使用。Android上层开发要想要发出声音，都必须先确定当前当前的音频类型。 |
+ | content_type |                                                                                                                       |
+ | device       |                                                                                                                       |
+
+* AudioTrack
+  #+begin_src java
+  AudioTrack audio = new AudioTrack(
+     AudioManager.STREAM_MUSIC, // 指定音频流的类型
+     32000, // 设置音频数据的採样率 32k，假设是44.1k就是44100
+     AudioFormat.CHANNEL_OUT_STEREO, // 设置输出声道为双声道立体声，而CHANNEL_OUT_MONO类型是单声道
+     AudioFormat.ENCODING_PCM_16BIT, // 设置音频数据块是8位还是16位。这里设置为16位。
+     AudioTrack.MODE_STREAM // 设置模式类型，在这里设置为流类型，第二种MODE_STATIC貌似没有什么效果
+     );
+  #+end_src
+  #+begin_src java
+   public AudioTrack(int streamType, int sampleRateInHz, int channelConfig, int audioFormat,
+            int bufferSizeInBytes, int mode)
+  #+end_src
+  + 流类型
+    | 流类型                       | 含义                                                            |
+    |------------------------------+-----------------------------------------------------------------|
+    | ~STREAM_DEFAULT=-1~          | 默认视频流声音                                                  |
+    | ~STREAM_VOICE_CALL = 0~      | 语音电话的声音                                                  |
+    | ~STREAM_SYSTEM = 1~          | 手机系统的声音                                                  |
+    | ~STREAM_RING = 2~            | 电话铃声和消息提醒的的声音                                      |
+    | ~STREAM_MUSIC = 3~           | 手机音乐播放的声音                                              |
+    | ~STREAM_ALARM = 4~           | 闹钟的铃声                                                      |
+    | ~STREAM_NOTIFICATION = 5~    | 系统通知的声音                                                  |
+    | ~STREAM_BLUETOOTH_SCO = 6~   | 用于在蓝牙连接时识别电话呼叫的音频流量                          |
+    | ~STREAM_SYSTEM_ENFORCED = 7~ | 用于识别某些国家/地区强制系统声音的音频流量（例如日本的摄像机） |
+    | ~STREAM_DTMF = 8~            | 用于识别DTMF音调的音频流量                                      |
+    | ~STREAM_TTS = 9~             | 用于识别通过设备扬声器（TTS）专门传输的音频流量                 |
+    | ~STREAM_ACCESSIBILITY = 10~  | 用于标识可访问性提示的音频流量                                  |
+    ~参考~: frameworks/base/media/java/android/media/AudioSystem.java
+  + 采样率
+    |                             |            |
+    |-----------------------------+------------|
+    | SAMPLE_RATE_HZ_MIN = 4000   | 最小采样率 |
+    | SAMPLE_RATE_HZ_MAX = 192000 | 最大采样率 |
+    | SAMPLE_RATE_UNSPECIFIED = 0 | 不明采样率 |
+    ~参考~: frameworks/base/media/java/android/media/AudioFormat.java
+  + 音频声道
+    | 通道名             | 含义   |
+    |--------------------+--------|
+    | CHANNEL_OUT_MONO   | 单声道 |
+    | CHANNEL_OUT_STEREO | 立体声 |
+    | CHANNEL_OUT_QUAD   |        |
+    | ...                | ...    |
+    ~参考~: frameworks/base/media/java/android/media/AudioFormat.java
+  + 音频数据格式
+    |                           |                                            |
+    |---------------------------+--------------------------------------------|
+    | ~ENCODING_INVALID = 0~    | 无效数据音频格式                           |
+    | ~ENCODING_DEFAULT = 1~    | 默认音频数据格式                           |
+    | ~ENCODING_PCM_16BIT = 2~  | PCM每个样本16位。 保证得到设备的支持。     |
+    | ~ENCODING_PCM_8BIT = 3~   | PCM每个样本8位。 不保证设备支持。          |
+    | ~ENCODING_PCM_FLOAT = 4~  | single-precision floating-point per sample |
+    | ~ENCODING_AC3 = 5~        | AC-3 compressed                            |
+    | ~ENCODING_E_AC3 = 6~      | E-AC-3 compressed                          |
+    | ~ENCODING_DTS = 7~        | DTS compressed                             |
+    | ~ENCODING_DTS_HD = 8~     | DTS HD compressed                          |
+    | ~ENCODING_MP3 = 9~        | MP3 compressed                             |
+    | ~ENCODING_AAC_LC = 10~    | AAC LC compressed                          |
+    | ~ENCODING_AAC_HE_V1 = 11~ | AAC HE V1 compressed                       |
+    | ~ENCODING_AAC_HE_V2 = 12~ | AAC HE V2 compressed                       |
+    ~参考~: frameworks/base/media/java/android/media/AudioFormat.java
+  + 模式类型
+    |                                |   |
+    |--------------------------------+---|
+    | ~MODE_INVALID            = -2~ |   |
+    | ~MODE_CURRENT            = -1~ |   |
+    | ~MODE_NORMAL             = 0~  |   |
+    | ~MODE_RINGTONE           = 1~  | d |
+    | ~MODE_IN_CALL            = 2~  |   |
+    | ~MODE_IN_COMMUNICATION   = 3~  |   |
+    | ~NUM_MODES               = 4~  |   |
+* audioserver
+  audioserver 进程会依次对 AudioFlinger、AudioPolicyService、RadioService、SoundTriggerHwService 进行实例化
+  代码：frameworks/av/media/audioserver/main_audioserver.cpp
+  /system/etc/init/audioserver.rc #开机时通过此文件启动audioserver程序
+** AudioFlinger
+*** init
+    #+begin_src cpp
+    audioserver实例化AudioFlinger时,通过binder调用AudioFlinger::AudioFlinger()进行实例化
+    frameworks/av/media/audioserver/main_audioserver.cpp
+    ||
+    || AudioFlinger::instantiate(); #实例化AudioFlinger：通过binder机制创建audioflinger对象
+    \/
+
+    frameworks/av/services/audioflinger/AudioFlinger.cpp
+    ||
+    || AudioFlinger::AudioFlinger()
+    || DevicesFactoryHalInterface::create()
+    \/
+
+    frameworks/av/media/libaudiohal/
+    ||
+    || DevicesFactoryHalInterface::create()
+    || new DevicesFactoryHalHybrid()
+    || new DevicesFactoryHalLocal()
+    ||
+    #+end_src
+*** open
+    #+begin_src cpp
+    frameworks/av/services/audioflinger/AudioFlinger.cpp
+    || loadHwModule()
+    || loadHwModule_l()
+    || mDevicesFactoryHal->openDevice()
+    \/
+
+    frameworks/av/media/libaudiohal/
+    || DevicesFactoryHalHybrid::openDevice()
+    || mLocalFactory->openDevice()
+    \/
+    frameworks/av/media/libaudiohal/4.0/DevicesFactoryHalLocal.cpp
+    ||
+    || DevicesFactoryHalLocal::openDevice()
+    || load_audio_interface()
+    || audio_hw_device_open()
+    \/
+    hardware/libhardware/include/hardware/audio.h
+    || audio_hw_device_open()
+    || module->methods->open()
+    ||
+    \/
+    hardware/qcom/audio/hal/audio_hw.c
+    ||
+    || HAL_MODULE_INFO_SYM
+    || adev_open()
+
+    hardware/interfaces/audio/ 另外一种
+    #+end_src
+** AudioPolicyService
+   + hal
+     frameworks/av/services/audiopolicy/common/managerdefinitions/src/
+   + configs
+     frameworks/av/services/audiopolicy/config
+     hardware/qcom/audio/configs/msm8937/audio_policy_configuration.xml
+*** init
+    vendor/qcom/opensource/audio/policy_hal
+    hardware/qcom/audio/hal
+    #+begin_src cpp
+    AudioPolicyService::instantiate()
+    audioserver实例化AudioPolicyService时,通过binder调用AudioFlinger::AudioFlinger()进行实例化
+    frameworks/av/media/audioserver/main_audioserver.cpp
+    ||
+    || AudioPolicyService::instantiate(); #实例化AudioPolicyService：通过binder机制创建AudioPolicyService对象
+    \/
+    frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
+    frameworks/av/services/audiopolicy/service/AudioPolicyClientImpl.cpp
+    ||
+    || BnAudioPolicyService()
+    ||
+    \/
+
+    IAudioPolicyService.h
+
+
+
+    ||
+    || AudioFlinger::AudioFlinger()
+    || DevicesFactoryHalInterface::create()
+    \/
+
+    frameworks/av/media/libaudiohal/
+    ||
+    || DevicesFactoryHalInterface::create()
+    || new DevicesFactoryHalHybrid()
+    || new DevicesFactoryHalLocal()
+    ||
+    #+end_src
+
+ AudioPolicyService::instantiate() -> BnAudioPolicyService()
+
+*** startOutput
+    以 ~AudioPolicyService::startOutput~ 作为突破口，研究函数调用流程
+    #+begin_src cpp
+    frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
+    frameworks/av/services/audiopolicy/service/AudioPolicyClientImpl.cpp
+    frameworks/av/services/audiopolicy/service/AudioPolicyInterfaceImpl.cpp
+    ||以上为AudioPolicyService类的所有代码
+    ||
+    || AudioPolicyService::startOutput
+    || mOutputCommandThread->startOutputCommand(output, stream, session);
+    \/
+    frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
+    || mOutputCommandThread->startOutputCommand(output, stream, session);
+    ||  new AudioCommand() => 命令封装
+    ||  new StartOutputData() => 数据封装
+    ||  return sendCommand(command); =>把分装好的命令数据，发送出去
+    ||
+    ||  AudioPolicyService::AudioCommandThread::sendCommand()
+    ||
+    ||
+    ||
+    ||
+    \/
+    frameworks/av/services/audiopolicy/enginedefault/src/Engine.cpp
+    ||
+    \/
+
+
+    #+end_src
+
+* BluetoothHeadset
+  frameworks/base/core/java/android/bluetooth/BluetoothHeadset.java #BluetoothHeadset
+  system/bt/audio_a2dp_hw/
+* 关键参数
+  Audio-base.h
+** 波特率
+** 音频格式(format)
+   audio_format_t
+** 音频通道(channel)
+   AUDIO_CHANNEL_OUT_MONO #只是其中一类
+** 音频流类型
+   audio_stream_type_t
+** 音频源
+   audio_source_t
+** session
+   audio_session_t
+** mode
+  audio_mode_t
+** handle
+   audio_io_handle_t
+** config
+   audio_config
+** devices
+   audio_devices_t => AUDIO_DEVICE_OUT_BLUETOOTH_SCO_HEADSET

@@ -1,0 +1,35 @@
+* Table of Contents :TOC_4_gh:noexport:
+- [[#inputmanagerservice][InputManagerService]]
+- [[#inputmanagerservice-1][InputManagerService]]
+- [[#专业术语][专业术语]]
+
+* InputManagerService
+  frameworks/base/services/core/java/com/android/server/input/InputManagerService.java
+  frameworks/base/services/core/jni/com_android_server_input_InputManagerService.cpp
+  frameworks/native/services/inputflinger
+
+  InputManagerService
+  inputflinger
+
+  主要在
+  frameworks/native/services/inputflinger/host
+  目录
+  inputflinger.rc 启动
+  main.cpp 入口
+  核心就是
+  InputFlinger.cpp
+ 了，其他的应该都是从这发散出去的，理解下来都是生产者，消费者模式
+ 和 surfaceflinger 差不多
+
+* InputManagerService
+  #+begin_src java
+  frameworks/base/services/java/com/android/server/SystemServer.java
+  || inputManager = new InputManagerService(context); => ServiceManager.addService(Context.INPUT_SERVICE, inputManager,
+  \/
+  #+end_src
+* 专业术语
+   | 简称 | 全称                 |
+   |------+----------------------|
+   | IMS  | InputManagerService  |
+   | WMS  | WindowManagerService |
+   | SM   |                      |

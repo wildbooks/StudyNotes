@@ -66,12 +66,27 @@
 * MBHC 按键配置
   static struct wcd_mbhc_config mbhc_cfg //主要配置按键值(KEY_MEDIA、 KEY_VOLUMEUP、KEY_VOLUMEDOWN)
 * MBHC 按键配置
+* 音质
+  信号异常这些
+  削波失真
+  爆音
+  削顶
+  擦音圈
+  箱声过重
+  漏气
+  频段塌陷
+  频率变形
 * playback
-  | 名称                             | 场景             |
-  |----------------------------------+------------------|
-  | Deep Buffer mode playback        | 默认音乐播放模式 |
-  | Low Latency mode playback        |               |
-  | Compressed Offload mode playback |                  |
+  | 名称                               | 场景                                                                                                    |
+  |------------------------------------+---------------------------------------------------------------------------------------------------------|
+  | ~Deep Buffer mode playback~        | 默认音乐播放模式                                                                                        |
+  | ~Low Latency mode playback~        | 触摸音，警报音等以最小延迟播放。 此模式用于游戏音调; 基本上任何使用OpenSL API的东西都可以通过这条路径。 |
+  | ~Compressed Offload mode playback~ | APSS将大量编码数据缓冲区（在DSP中进行解码）发送到DSP，然后进入低功耗状态，间歇性唤醒以提供更多数据      |
+* Audio recording
+  | 名称                              | 场景                                                                                                                  |
+  |-----------------------------------+-----------------------------------------------------------------------------------------------------------------------|
+  | ~Normal recording(正常录音)~      | 支持的默认录制模式，可以根据硬件功能使用软件或硬件编码器。                                                            |
+  | ~Tunnel mode recording(隧道录音)~ | 编码由硬件编码器执行，DSP在累积足够的记录介质后向用户空间发送大缓冲区。 目前，在QTI芯片组上，此模式仅支持AMR WB记录。 |
 * 参考文档
   80_NL239_27_D_APPLICATION_NOTE__MULTIBUTTON_HEADSE.pdf      (Multibutton Headset Control)
   KBA-170109193748 How to check echo reference signal over MI2S

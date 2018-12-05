@@ -1,0 +1,166 @@
+* systrace
+  external/chromium-trace/systrace.py
+  必须开启kernel中和ftrace相关的模块。
+  systrace是一个分析android性能问题的基础工具，但本质上是其他某些工具的封装，包括：PC端的atrace，设备端的可执行文件（用于控制用户控件的追踪以及配置ftrace,即Linux内核中的主要跟踪机制）。Systrace使用atrace开启追踪，然后读取ftrace的缓存，并且把它重新转换成HTML格式。
+* help
+  Example: systrace.py -b 32768 -t 15 gfx input view sched freq
+  + 基本选项
+    | options                                                | 描述                            |
+    |--------------------------------------------------------+---------------------------------|
+    | -h, --help                                             | show this help message and exit |
+    | -o FILE                                                | 将trace保存到文件中             |
+    | -j, --json                                             | 将trace输出保存JSON格式文件     |
+    | -e DEVICE_SERIAL_NUMBER, --serial=DEVICE_SERIAL_NUMBER | adb设备串口号                   |
+    | --timeout=TIMEOUT                                      | 开始和停止跟踪的超时超时（秒）  |
+    | --collection-timeout=COLLECTION_TIMEOUT                | 数据收集超时（秒）              |
+    | -t N, --time=N                                         | 跟踪N秒                         |
+    | --target=TARGET                                        | 选择跟踪目标（android或linux）  |
+    | -b N, --buf-size=N                                     | 使用N KB的跟踪缓冲区大小        |
+    | -l, --list-categories                                  | 列出可用的类别并退出            |
+    |                                                        |                                 |
+  + Atrace options
+    | options                               | 描述                                             |
+    |---------------------------------------+--------------------------------------------------|
+    | --atrace-categories=ATRACE_CATEGORIES | 选择带有逗号分隔列表的atrace类别                 |
+    |                                       | e.g. --atrace-categories=cat1,cat2,cat3          |
+    | -k KFUNCS, --ktrace=KFUNCS            | 指定要跟踪的以逗号分隔的内核函数列表             |
+    | --no-compress                         | 告诉设备不要以压缩形式发送跟踪数据               |
+    | -a APP_NAME, --app=APP_NAME           | 为逗号分隔的app cmdlines列表启用应用程序级别跟踪 |
+    | --from-file=FROM_FILE                 | 从文件中读取跟踪（压缩）而不是运行实时跟踪       |
+  + Atrace process dump options:
+    | options                                          | 描述                                                                                             |
+    |--------------------------------------------------+--------------------------------------------------------------------------------------------------|
+    | --process-dump                                   | 捕获定期的每进程内存转储。                                                                       |
+    | --process-dump-interval=PROCESS_DUMP_INTERVAL_MS | 内存转储之间的间隔（以毫秒为单位）。                                                             |
+    | --process-dump-full=PROCESS_DUMP_FULL_CONFIG     | 捕获某些进程的完整内存转储。 Value: all, apps or comma-separated process names.                  |
+    | --process-dump-mmaps                             | 捕获VM区域和内存映射文件。 它会显着增加转储大小，因此只有在--process-dump-full是白名单时才会生效 |
+  + BattOr trace options:
+      --battor-categories=BATTOR_CATEGORIES
+                          Select battor categories with a comma-delimited list,
+                          e.g. --battor-categories=cat1,cat2,cat3
+      --serial-map=SERIAL_MAP
+                          File containing pregenerated map of phone serial numbers to BattOr serial numbers.
+      --battor-path=BATTOR_PATH
+                          specify a BattOr path to use
+      --battor            Use the BattOr tracing agent.
+  + Ftrace options:
+      --ftrace-categories=FTRACE_CATEGORIES
+                          Select ftrace categories with a comma-delimited list,
+                          e.g. --ftrace-categories=cat1,cat2,cat3
+  + WALT trace options:
+      --walt              Use the WALT tracing agent. WALT is a device for
+                          measuring latency of physical sensors on phones and
+                          computers. See https://github.com/google/walt
+** 可跟踪类别
+   | options       | 描述                           | 作用                                                                                                  |
+   |---------------+--------------------------------+-------------------------------------------------------------------------------------------------------|
+   | gfx           | Graphics                       | Graphic系统的相关信息，包括SurfaceFlinger，VSYNC消息，Texture，RenderThread等；分析卡顿非常依赖这个。 |
+   | input         | Input                          |                                                                                                       |
+   | view          | View System                    |                                                                                                       |
+   | webview       | WebView                        |                                                                                                       |
+   | wm            | Window Manager                 |                                                                                                       |
+   | am            | Activity Manager               |                                                                                                       |
+   | sm            | Sync Manager                   |                                                                                                       |
+   | audio         | Audio                          |                                                                                                       |
+   | video         | Video                          |                                                                                                       |
+   | camera        | Camera                         |                                                                                                       |
+   | hal           | Hardware Modules               |                                                                                                       |
+   | res           | Resource Loading               |                                                                                                       |
+   | dalvik        | Dalvik VM                      |                                                                                                       |
+   | rs            | RenderScript                   |                                                                                                       |
+   | bionic        | Bionic C Library               |                                                                                                       |
+   | power         | Power Management               |                                                                                                       |
+   | pm            | Package Manager                |                                                                                                       |
+   | ss            | System Server                  |                                                                                                       |
+   | database      | Database                       |                                                                                                       |
+   | network       | Network                        |                                                                                                       |
+   | adb           | ADB                            |                                                                                                       |
+   | vibrator      | Vibrator                       |                                                                                                       |
+   | aidl          | AIDL calls                     |                                                                                                       |
+   | pdx           | PDX services                   |                                                                                                       |
+   | sched         | CPU Scheduling                 |                                                                                                       |
+   | irq           | IRQ Events                     |                                                                                                       |
+   | i2c           | I2C Events                     |                                                                                                       |
+   | freq          | CPU Frequency                  |                                                                                                       |
+   | idle          | CPU Idle                       |                                                                                                       |
+   | disk          | Disk I/O                       |                                                                                                       |
+   | mmc           | eMMC commands                  |                                                                                                       |
+   | load          | CPU Load                       |                                                                                                       |
+   | sync          | Synchronization                |                                                                                                       |
+   | workq         | Kernel Workqueues              |                                                                                                       |
+   | memreclaim    | Kernel Memory Reclaim          |                                                                                                       |
+   | regulators    | Voltage and Current Regulators |                                                                                                       |
+   | binder_driver | Binder Kernel driver           |                                                                                                       |
+   | binder_lock   | Binder global lock trace       |                                                                                                       |
+   | pagecache     | Page cache                     |                                                                                                       |
+* Example
+  手机链接到pc，然后执行以下命令,会生成一个 ~trace.html~ 文件，然后在chrome浏览器打开即可
+  #+begin_src shell
+  systrace.py -b 32768 -t 15 gfx input view sched freq
+  #+end_src
+  + 通过浏览器chrome，所使用的快捷键，见下图
+    | 类             | 快捷键         | 功能                         |
+    |----------------+----------------+------------------------------|
+    |                | ~1-4~          | 切换鼠标模式                 |
+    |                | ~shift~        | 的呢古代临时选择             |
+    |                | ~space~        | Hold for temporary pan       |
+    |                | ~/~            | 搜索                         |
+    |                | ~enter~        | 输入                         |
+    |                | ~f~            | 放大选择                     |
+    |                | ~z/0~          | 重置缩放和平移               |
+    | General        | ~g/G~          | 切换60hz网络                 |
+    |                | ~v~            | 突出显示VSync                |
+    |                | ~h~            | 切换低/高细节                |
+    |                | ~m~            | 标记当前选择                 |
+    |                | ~p~            | 在当前选择间隔内选择功率样本 |
+    |                | ~`~            | 显示或隐藏脚本控制台         |
+    |                | ~?~            | 显示帮助                     |
+    |----------------+----------------+------------------------------|
+    |                | ~w/s~          | 放大/缩小 (+ shift:更快)     |
+    | Navigation     | ~a/d~          | 面板左/右（+ shift:更快）    |
+    |                | ~→/shift-TAB~ | 选择上一个事件               |
+    |                | ~←/TAB~       | 选择下一个事件               |
+    |----------------+----------------+------------------------------|
+    | Mouse Controls | ~点击~         | 选择事件                     |
+    |                | ~ALT-鼠标滚轮~ | 放大/缩小                    |
+    |----------------+----------------+------------------------------|
+    | Select Mode    |                |                              |
+    |                |                |                              |
+    |----------------+----------------+------------------------------|
+    | Pan mode       | ~拖动~         | 平移视图                     |
+    |----------------+----------------+------------------------------|
+    | zoom mode      | ~向上/下拖动~  | 放大/缩小                    |
+    |----------------+----------------+------------------------------|
+    | timing mode    | ~拖动~         | 创建或移动标记               |
+    |                | ~双击~         | 将标记范围设置为切片         |
+    |----------------+----------------+------------------------------|
+* 自定义systrece
+** app层
+   #+begin_src java
+   import android.os.Trace;
+   Trace.beginSection(String sectionName)
+   Trace.EndSection()
+   #+end_src
+** java framework层
+   #+begin_src java
+   import android.os.Trace;
+   Trace.traceBegin(long traceTag, String methodName)
+   Trace.traceEnd(long traceTag)
+   #+end_src
+** native framework层
+   #+begin_src cpp
+   #include <cutils/trace.h>
+   ATRACE_CALL()
+   #+end_src
+   或者
+   #+begin_src cpp
+   #include <cutils/trace.h>
+   ATRACE_BEGIN("TEST");
+   ATRACE_END();
+   #+end_src
+** example
+        ATRACE_BEGIN("sthal:lsm: pcm_ioctl sndrv_lsm_set_session_data_v2");
+      status = pcm_ioctl(p_lsm_ses->pcm, SNDRV_LSM_SET_SESSION_DATA_V2, &ses_data);
+214      ATRACE_END();
+*  atrace
+  atrace -z -b 51200 irq audio sched freq idle workq -t 12 -s 3 > /data/local/tmp/trace_output &

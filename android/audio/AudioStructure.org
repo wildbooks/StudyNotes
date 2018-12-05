@@ -1,3 +1,20 @@
+* Table of Contents :TOC_4_gh:noexport:
+- [[#hardware][hardware]]
+  - [[#高通平台-audio-codec简介][高通平台 Audio codec简介]]
+  - [[#mi2s与其他厂家芯片链接][MI2S(与其他厂家芯片链接)]]
+  - [[#slimbusmsm链接wcd9335][SLIMbus(MSM链接WCD9335)]]
+  - [[#pdmmsm与pm8937链接][PDM（MSM与PM8937链接）]]
+  - [[#swrsoundwire接口主要控制wsa8810音频功放][SWR（SoundWire接口，主要控制WSA8810音频功放）]]
+  - [[#dmic数字mic接口][DMIC(数字Mic接口)]]
+- [[#software][software]]
+  - [[#user-space-audio-code][User space audio code]]
+  - [[#kernel-space-audio-code][Kernel space audio code]]
+  - [[#usb][USB]]
+  - [[#bluetooth][bluetooth]]
+  - [[#customization-guidelines][Customization guidelines]]
+  - [[#enabling-logs][Enabling logs]]
+  - [[#软件框架][软件框架]]
+
 * hardware 
 ** 高通平台 Audio codec简介
    高通codec分为内部codec和外部codec;内部codec以MSM8937/PM8940体系，外部codec以wcd9326;
@@ -79,6 +96,8 @@
      包含audio.h和audio_policy.h，它们包含在用户空间中用于音频的整个代码中使用的枚举定义和内联函数
    + frameworks/base/media/java/android/media/
      包含用于以Java编写的Android应用程序公开API的音频的.java文件
+   + system/media
+     system/media/audio_route/
 ** Kernel space audio code
    以下是内核中与音频相关的代码用于调试和定制的目录路径列表：
    + kernel/sound/soc/msm/
@@ -98,6 +117,10 @@
      包含WCD9320的编解码器驱动程序的源代码; 编解码器驱动程序相关的源文件是wcd9320.c，wcd9xxx-mbhc.c，wcd9xxx-resmgr.c，wcd9xxx-common.c等。
    + android/kernel/drivers/mfd/
      包含编解码器驱动程序的源代码; wcd9xxx-core.c，wcd9xxx-slimslave.c和wcd9xxx-irq.c是与编解码器驱动程序相关的文件
+** USB
+   audio.usb.<device>.so
+** bluetooth
+   audio.a2dp.<device>.so
 ** Customization guidelines
    音频模块的自定义指南
    * Audio policy manager

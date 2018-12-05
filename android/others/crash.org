@@ -1,0 +1,15 @@
+* Table of Contents :TOC_4_gh:noexport:
+- [[#android-native-crash日志分析][Android Native Crash日志分析]]
+  - [[#方案一ndk-stack][方案一：ndk-stack]]
+
+* Android Native Crash日志分析
+** 方案一：ndk-stack
+   prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-objdump
+   prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin
+   prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-gdb
+   prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
+   addr2line：用来分析单个pc地址对应的源码行数，比如示例log中的第13行中的#00 pc 0004097c，0004097c就是crash时pc调用的堆栈地址，用这个地址就可以分析出对应在源码中的行数；
+   objdump：用来把相应的so变成汇编语言的asm文件，然后根据地址信息（比如0004097c）就可以找到更加详细的相关函数信息；
+   addr2line和objdump结合一起使用，可以具体确认到某文件某函数发生crash
+   https://www.cnblogs.com/willhua/p/6718379.html
+

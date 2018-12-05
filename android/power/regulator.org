@@ -1,0 +1,74 @@
+``` c
+#结构体
+struct flash_regulator_data {
+	struct regulator	*regs;
+	const char		*reg_name;
+	u32			max_volt_uv;
+};
+struct flash_regulator_data	*reg_data;
+
+    # 解析设备树
+	flash_node->reg_data = devm_kzalloc(&led->pdev->dev,
+					sizeof(struct flash_regulator_data *) *
+						flash_node->num_regulators,
+						GFP_KERNEL);
+	if (!flash_node->reg_data) {
+		dev_err(&led->pdev->dev,
+				"Unable to allocate memory\n");
+		return -ENOMEM;
+	}
+
+
+
+	for_each_child_of_node(node, temp) {
+		rc = of_property_read_string(temp, "regulator-name",
+							&temp_string);
+		if (!rc)
+			flash_node->reg_data[i].reg_name = temp_string;
+		else {
+			dev_err(&led->pdev->dev,
+					"Unable to read regulator name\n");
+			return rc;
+		}
+
+		rc = of_property_read_u32(temp, "max-voltage", &val);
+		if (!rc) {
+			flash_node->reg_data[i].max_volt_uv = val;
+		} else if (rc != -EINVAL) {
+			dev_err(&led->pdev->dev,
+					"Unable to read max voltage\n");
+			return rc;
+		}
+
+		i++;
+	}
+
+
+# 初始化regulator
+		flash_node->reg_data[i].regs =
+			regulator_get(flash_node->cdev.dev,
+					flash_node->reg_data[i].reg_name);
+		if (IS_ERR(flash_node->reg_data[i].regs)) {
+			rc = PTR_ERR(flash_node->reg_data[i].regs);
+			dev_err(&led->pdev->dev,
+					"Failed to get regulator\n");
+			goto error_regulator_setup;
+		}
+
+		if (regulator_count_voltages(flash_node->reg_data[i].regs)
+									> 0) {
+			rc = regulator_set_voltage(flash_node->reg_data[i].regs,
+					flash_node->reg_data[i].max_volt_uv,
+					flash_node->reg_data[i].max_volt_uv);
+			if (rc) {
+				dev_err(&led->pdev->dev,
+					"regulator set voltage failed\n");
+				regulator_put(flash_node->reg_data[i].regs);
+				goto error_regulator_setup;
+			}
+		}
+
+# 使能
+		rc = regulator_enable(flash_node->reg_data[i].regs);
+		regulator_disable(flash_node->reg_data[i].regs);
+```

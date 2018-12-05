@@ -1,3 +1,11 @@
+* Table of Contents :TOC_4_gh:noexport:
+- [[#how-to-open-debug-log-in-qualcomm-platform][How to open debug log in Qualcomm platform]]
+- [[#lk-uart-log][lk uart log]]
+- [[#kernel-uart-log][kernel uart log]]
+- [[#如何打开某个文件的pr_debug][如何打开某个文件的pr_debug]]
+- [[#memdump的使用][memdump的使用]]
+- [[#minicom的使用][minicom的使用]]
+
 * How to open debug log in Qualcomm platform
   1 lk uart log
   2 kernel uart log

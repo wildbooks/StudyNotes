@@ -1,4 +1,4 @@
-* Table of Contents                     :TOC_4_gh:noexport:
+* Table of Contents :TOC_4_gh:noexport:
 - [[#环境篇][环境篇]]
 - [[#基础篇][基础篇]]
 - [[#框架篇][框架篇]]
