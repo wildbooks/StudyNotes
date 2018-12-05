@@ -13,7 +13,7 @@
   - [[#总结][总结]]
 - [[#添加新的音频设备][添加新的音频设备]]
   - [[#的][的]]
-  -  [[#方法][方法]]
+  - [[#方法][方法]]
   - [[#专有名词][专有名词]]
 - [[#添加新的xml文件][添加新的xml文件]]
   - [[#思路-1][思路]]
@@ -35,19 +35,29 @@
 
 * bringup audio
 ** 检查ADSP是否正常
+   #+begin_src cpp
    adsp_loader_probe: Q6/ADSP image is loaded
+   #+end_src
 ** 检查SLIMbus是否正常
+   #+begin_src cpp
    SLIM SAT: Received master capability
+   #+end_src
 ** 检查sound是否注册
+   #+begin_src cpp
    cat /proc/asound/cards
+   #+end_src
 ** 用tinymix,tinycap,tinyplay验证playback/recording
+   #+begin_src cpp
    echo "file sound/soc/soc-dapm.c +p" >/sys/kernel/debug/dynamic_debug/control              #Dynamic Audio Power Management 动态音频电源管理
    echo "file sound/soc/msm/msm8952-slimbus.c +p" >/sys/kernel/debug/dynamic_debug/control   #SLIMbus相关
    echo "file sound/soc/msm/msm8952.c +p" >/sys/kernel/debug/dynamic_debug/control           #
    echo "file sound/soc/codecs/msm8x16-wcd.c +p" >/sys/kernel/debug/dynamic_debug/control    #内部codec
    echo "file sound/soc/codecs/msm8916-wcd-irq.c +p" >/sys/kernel/debug/dynamic_debug/control #内部声卡中断
+   #+end_src
 ** 参考文档
+   #+begin_src cpp
    80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化
+   #+end_src
 * 添加新的acdb文件
 ** 目的
    以msm8937为例子，在/vendor/etc/acdbdata/MTP/NonCE目录下添加新的acdb文件,NonCE目录不存在
@@ -56,12 +66,15 @@
    2. 让添加的acdb文件参加编译，使文件copy到对应的目录
    3. 让android系统加载新的acdb文件
 ** 需要修改以下文件
+   #+begin_src cpp
    vendor/qcom/proprietary/mm-audio-cal/audcal/acdbdata/8937/MTP/NonCE/
    vendor/qcom/proprietary/mm-audio-cal/audcal/acdbdata/8937/Android.mk
    vendor/qcom/proprietary/vendor/qcom/proprietary/common/config/device-vendor.mk
+   #+end_src
 ** 步骤如下
    1. 将acdb文件拷贝到vendor/qcom/proprietary/mm-audio-cal/audcal/acdbdata/8937/MTP/NonCE/目录下
    2. 在文件vendor/qcom/proprietary/mm-audio-cal/audcal/acdbdata/8937/Android.mk中建立编译规制，以下以拷贝MTP_NonCE_Bluetooth_cal.acdb为例
+      #+begin_src cpp
       +include $(CLEAR_VARS)
       +LOCAL_MODULE            := MTP_NonCE_Bluetooth_cal.acdb
       +LOCAL_MODULE_FILENAME   := Bluetooth_cal.acdb
@@ -70,8 +83,11 @@
       +LOCAL_MODULE_PATH       := $(TARGET_OUT_VENDOR_ETC)/acdbdata/MTP/NonCE/
       +LOCAL_SRC_FILES         := MTP/NonCE/Bluetooth_cal.acdb
       +include $(BUILD_PREBUILT)
+      #+end_src
    3. 将编译规则添加到vendor/qcom/proprietary/vendor/qcom/proprietary/common/config/device-vendor.mk文件中
+      #+begin_src cpp
       +MM_AUDIO += MTP_NonCE_Bluetooth_cal.acdb
+      #+end_src
    4. 让系统加载acdb文件,修改acdb-loader/src/acdb-loader.c
 ** 总结
    编译依赖关系
@@ -79,7 +95,7 @@
 * 添加新的音频设备
 ** 的
    添加新音频设备的过程。主要配置了xml文件、platform.c和acdb文件
-**  方法
+** 方法
    添加设备、校准设备
    1. 添加设备
       1. 在音频校准数据库（ACDB）文件中添加设备条目并更新设备的校准数据
@@ -99,6 +115,7 @@
       用到工具QACT™
    5. LOG抓取
 ** 专有名词
+   |------+-----------------------------+----------------|
    | ACDB | Audio Calibration Data Base | 音频校准数据库 |
 * 添加新的xml文件
 ** 思路
@@ -214,24 +231,62 @@
   out/target/product/msm8937_64/system/lib64/android.hardware.bluetooth.a2dpy@1.0.so
   out/target/product/msm8937_64/system/lib64/hw/audio.a2dp.default.so
 * usb
-  hardware/libhardware/modules/usbaudio/audio_hal.c #modules.usbaudio.audio_hal
-  hardware/qcom/audio/hal/audio_extn/usb.c #audio_hw_usb
-  frameworks/av/media/libmediaplayerservice/MediaPlayerService.cpp #MediaPlayerService
-  frameworks/av/media/libaudioclient/AudioSystem.cpp #AudioSystem
-  frameworks/av/media/libaudioclient/AudioTrack.cpp #AudioTrack
-  frameworks/av/media/libmedia/mediaplayer.cpp #MediaPlayerNative
-  frameworks/av/media/libstagefright/AudioPlayer.cpp #AudioPlayer
-  frameworks/av/media/extractors/mp3/MP3Extractor.cpp #MP3Extractor
-  frameworks/av/media/libstagefright/OMXClient.cpp #OMXClient
-  frameworks/av/services/audioflinger/AudioFlinger.cpp #AudioFlinger
-  frameworks/av/media/libaudioprocessing/AudioMixer.cpp #AudioMixer
-  frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp #AudioPolicyService
-  frameworks/av/services/audiopolicy/service/AudioPolicyInterfaceImpl.cpp #AudioPolicyIntefaceImpl
-  hardware/qcom/audio/hal/audio_hw.c #audio_hw_primary
-  hardware/qcom/audio/hal/msm8916/platform.c #msm8916_platform
-  hardware/qcom/audio/hal/msm8916/hw_info.c #hardware_info
-  frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp #APM_AudioPolicyManager
-  vendor/qcom/opensource/audio/policy_hal/AudioPolicyManager.cpp #AudioPolicyManagerCustom
+  + AF
+    #+begin_src cpp
+    #define LOG_NDEBUG 0
+    #define VERY_VERBOSE_LOGGING 
+    frameworks/av/media/libmediaplayerservice/MediaPlayerService.cpp #MediaPlayerService
+    frameworks/av/media/libmedia/mediaplayer.cpp #MediaPlayerNative
+    frameworks/av/media/libstagefright/AudioPlayer.cpp #AudioPlayer
+    frameworks/av/media/extractors/mp3/MP3Extractor.cpp #MP3Extractor
+    frameworks/av/media/libstagefright/OMXClient.cpp #OMXClient
+    frameworks/av/media/libaudioclient/AudioSystem.cpp #AudioSystem
+    frameworks/av/media/libaudioclient/AudioTrack.cpp #AudioTrack
+    frameworks/av/media/libaudioclient/AudioRecord.cpp
+    frameworks/av/media/libaudioclient/AudioTrackShared.cpp
+    frameworks/av/media/libaudioprocessing/AudioMixer.cpp #AudioMixer
+    frameworks/av/services/audioflinger/AudioFlinger.cpp #AudioFlinger
+    frameworks/av/services/audioflinger/Threads.cpp
+    frameworks/av/services/audioflinger/Tracks.cpp 
+    #+end_src
+  + APM
+    #+begin_src cpp
+    #define LOG_NDEBUG 0
+    #define VERY_VERBOSE_LOGGING 
+    frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp #AudioPolicyService
+    frameworks/av/services/audiopolicy/service/AudioPolicyInterfaceImpl.cpp #AudioPolicyIntefaceImpl
+    frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp #APM_AudioPolicyManager
+    vendor/qcom/opensource/audio/policy_hal/AudioPolicyManager.cpp #AudioPolicyManagerCustom
+    frameworks/av/services/audiopolicy/enginedefault/src/Engine.cpp or
+    frameworks/av/services/audiopolicy/engineconfigurable/src/Engine.cpp
+    frameworks/av/services/audiopolicy/common/managerdefinitions/src/Gains.cpp
+    #+end_src
+  + HAL
+    #+begin_src cpp
+    /**
+    Check whether there is DYNAMIC_LOG_ENABLED in below codes.
+    Remove the DYNAMIC_LOG_ENABLED related codes，for example: 
+    #undef DYNAMIC_LOG_ENABLED
+    */
+    #define LOG_NDEBUG 0
+    #define VERY_VERY_VERBOSE_LOGGING 
+    hardware/libhardware/modules/usbaudio/audio_hal.c #modules.usbaudio.audio_hal
+    hardware/qcom/audio/hal/audio_extn/usb.c #audio_hw_usb
+    hardware/qcom/audio/hal/audio_hw.c #audio_hw_primary
+    hardware/qcom/audio/hal/msm8916/platform.c #msm8916_platform
+    hardware/qcom/audio/hal/msm8916/hw_info.c #hardware_info
+    hardware/qcom/audio/hal/audio_extn/utils.c #audio_hw_utils
+    hardware/qcom/audio/hal/audio_extn/audio_extn.c #audio_hw_extn
+    hardware/qcom/audio/hal/audio_extn/spkr_protection.c #audio_hw_spkr_prot
+    system/media/audio_route/audio_route.c #audio_route
+    @@ -579,6 +579,7 @@ int audio_route_apply_path(struct audio_route *ar, const char *name)
+    }
+    path_apply(ar, path);
+    + path_print(ar, path); //this prints the details device & audio route configuration
+
+    return 0;
+    } 
+    #+end_src
 * 与audio相关的系统属性
   | 属性                                 | 说明 |
   |--------------------------------------+------|
