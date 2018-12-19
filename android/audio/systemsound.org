@@ -288,7 +288,7 @@
 ** session
    audio_session_t
 ** mode
-  audio_mode_t
+  audio_mode_t => Audio-base.h
 ** handle
    audio_io_handle_t
 ** config

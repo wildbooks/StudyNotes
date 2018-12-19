@@ -25,6 +25,9 @@
   - [[#audio-voice][audio Voice]]
     - [[#rx][RX]]
     - [[#tx][TX]]
+- [[#音频问题分析][音频问题分析]]
+  - [[#track][track]]
+  - [[#a2dp][a2dp]]
 - [[#在speaker-and-headphones修改声音大小无效的解决方法][在"speaker-and-headphones"修改声音大小无效的解决方法]]
 - [[#fm][FM]]
 - [[#bt][bt]]
@@ -180,6 +183,9 @@
 ** audio Voice
 *** RX
 *** TX 
+* 音频问题分析
+** track
+** a2dp
 * 在"speaker-and-headphones"修改声音大小无效的解决方法
   #+begin_src html
   <!--修改文件audio_platform_info.xml -->
@@ -314,3 +320,4 @@
 * 参考文档
   80_NL239_28_E_LINUX_AUDIO_DEVICE_MANAGEMENT.pdf
   
+ logcat, tombstone, bugreport
