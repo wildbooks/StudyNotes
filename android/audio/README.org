@@ -91,3 +91,5 @@
   80_NL239_27_D_APPLICATION_NOTE__MULTIBUTTON_HEADSE.pdf      (Multibutton Headset Control)
   KBA-170109193748 How to check echo reference signal over MI2S
   80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化
+* test
+  [[./debug.org][debug]]
