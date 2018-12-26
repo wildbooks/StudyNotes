@@ -14,6 +14,7 @@
   - [[#customization-guidelines][Customization guidelines]]
   - [[#enabling-logs][Enabling logs]]
   - [[#软件框架][软件框架]]
+- [[#代码简单介绍][代码简单介绍]]
 
 * hardware 
 ** 高通平台 Audio codec简介
@@ -153,3 +154,13 @@
 
    AudioPolicyService
    AudioPolicyService frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
+* 代码简单介绍
+ret = mbhc->mbhc_cb->request_irq(codec, mbhc->intr_ids->mbhc_sw_intr,
+				  wcd_mbhc_mech_plug_detect_irq,
+				  "mbhc sw intr", mbhc);
+
+	ret = mbhc->mbhc_cb->request_irq(codec,
+					 mbhc->intr_ids->mbhc_btn_press_intr,
+					 wcd_mbhc_btn_press_handler,
+					 "Button Press detect",
+					 mbhc);

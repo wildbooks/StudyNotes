@@ -1,4 +1,0 @@
-Anbox 以基于容器的方式，在像 Ubuntu 这样的常规皀(deoplete_auto_refresh)<Plug>(deoplete_auto_refresh) GNU Linux 系统上启动一个完整的 Android 系统。
-
-* 下载地址：http://anbox.io/
-* 源码托管：https://github.com/anbox/anbox

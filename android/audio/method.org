@@ -31,7 +31,7 @@
 - [[#在speaker-and-headphones修改声音大小无效的解决方法][在"speaker-and-headphones"修改声音大小无效的解决方法]]
 - [[#fm][FM]]
 - [[#bt][bt]]
-- [[#usb][usb]]
+- [[#usb--af][usb + AF]]
 - [[#与audio相关的系统属性][与audio相关的系统属性]]
   - [[#参考文档-1][参考文档]]
 - [[#参考文档-2][参考文档]]
@@ -236,8 +236,7 @@
   vendor/etc/a2dp_audio_policy_configuration.xml
   out/target/product/msm8937_64/system/lib64/android.hardware.bluetooth.a2dpy@1.0.so
   out/target/product/msm8937_64/system/lib64/hw/audio.a2dp.default.so
-* usb
-  + AF
+* usb + AF
     #+begin_src cpp
     #define LOG_NDEBUG 0
     #define VERY_VERBOSE_LOGGING 

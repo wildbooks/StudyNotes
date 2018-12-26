@@ -5,6 +5,7 @@
 *.ko*
 *.cmd*
 *.mod*
+.#*
 #android/tools/bugreport/ChkBugReport/
 #android/tools/bugreport/battery-historian/
 ChkBugReport

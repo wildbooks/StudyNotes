@@ -1,0 +1,24 @@
+diff --git a/audio_a2dp_hw/audio_a2dp_hw.c b/audio_a2dp_hw/audio_a2dp_hw.c
+index a8dc4c7..7d22ecb 100644
+--- a/audio_a2dp_hw/audio_a2dp_hw.c
++++ b/audio_a2dp_hw/audio_a2dp_hw.c
+@@ -610,6 +610,17 @@ static ssize_t out_write(struct audio_stream_out *stream, const void* buffer,
+     {
+         ATRACE_BEGIN(trace_buf);
+     }
+-    #endif
++#endif
++
++    {
++        int tmpFd;
++        tmpFd = open("/data/misc/audioserver/dumpa2dp.pcm", O_WRONLY | O_APPEND );
++        if(tmpFd < 0)
++            ALOGE("Fail to open dumpHAL.pcm");
++        else {
++            write(tmpFd, buffer,  bytes);
++            close(tmpFd);
++        }
++    }
+
+     sent = skt_write(out->audio_fd, buffer,  bytes);
+

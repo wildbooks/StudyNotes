@@ -276,6 +276,7 @@
   system/bt/audio_a2dp_hw/
 * 关键参数
   Audio-base.h
+  system/media/audio/include/system/audio.h
 ** 波特率
 ** 音频格式(format)
    audio_format_t
