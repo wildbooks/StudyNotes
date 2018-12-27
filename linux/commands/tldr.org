@@ -1,0 +1,24 @@
+#+TITLE: tldr教程
+* Table of Contents :TOC_4_gh:noexport:
+- [[#install][Install]]
+- [[#配置][配置]]
+
+* Install
+  #+begin_src bash
+  #方法一
+  npm install -g tldr
+  #方法二:bash客户端
+  curl -o  /usr/bin/tldr https://raw.githubusercontent.com/raylee/tldr/master/tldr
+  chmod + x /usr/bin/tldr
+  #+end_src
+* 配置
+  配置bash客户端
+  #+begin_src bash
+  # ~/.bashrc
+  export TLDR_HEADER='magenta bold underline' #下划线
+  export TLDR_QUOTE='italic'                  #斜体
+  export TLDR_DESCRIPTION='green'             #描述
+  export TLDR_CODE='red'
+  export TLDR_PARAM='blue'
+  #可选择参数：black, red, green, yellow, blue, magenta, cyan, white, onblue, ongrey, reset, bold, underline, italic, eitalic, default
+  #+end_src

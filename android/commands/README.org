@@ -1,0 +1,556 @@
+* 命令目录
+  /sbin
+  /system/xbin
+  /system/bin
+  /system/vendor/bin
+* 常用
+  | 命令         | 简介       |
+  |--------------+------------|
+  | cal          | 日历       |
+  | file         |            |
+  | find         |            |
+  | ln           |            |
+  | kill         |            |
+  | killall      |            |
+  | sync         |            |
+  | tail         |            |
+  | reboot       |            |
+  | pgrep        |            |
+  | mv           |            |
+  | od           |            |
+  | mkdir        | 创建文件夹 |
+  | mkfifo       |            |
+  | mke2fs       |            |
+  | mkexfat      |            |
+  | make_f2fs    |            |
+  | fsck.f2fs    |            |
+  | fsck_msdos   |            |
+  | mkfs.ext2    |            |
+  | mkfs.ext3    |            |
+  | mkfs.ext4    |            |
+  | mknod        |            |
+  | mkntfs       |            |
+  | mkswap       |            |
+  | mktemp       |            |
+  | e2fsck       |            |
+  | lspci        |            |
+  | lsusb        |            |
+  | ifconfig     |            |
+  | hostname     |            |
+  | head         |            |
+  | du           |            |
+  | df           |            |
+  | fgrep        |            |
+  | dmesg        |            |
+  | diff         |            |
+  | dirname      |            |
+  | sh           |            |
+  | sleep        |            |
+  | false        |            |
+  | true         |            |
+  | xargs        |            |
+  | awk          |            |
+  | sed          |            |
+  | free         |            |
+  | sort         |            |
+  | ls           |            |
+  | lsmod        |            |
+  | lsof         |            |
+  | grep         |            |
+  | groups       |            |
+  | gunzip       |            |
+  | gzip         |            |
+  | pkill        |            |
+  | echo         |            |
+  | egrep        |            |
+  | env          |            |
+  | rm           |            |
+  | rmdir        |            |
+  | rmmod        |            |
+  | ps           |            |
+  | pwd          |            |
+  | dos2unix     |            |
+  | time         |            |
+  | tee          |            |
+  | tar          |            |
+  | ping         |            |
+  | date         |            |
+  | more         |            |
+  | umount       |            |
+  | mount        |            |
+  | mount_apd.sh |            |
+  | mountpoint   |            |
+  | dd           |            |
+  | chmod        |            |
+  | chown        |            |
+  | chgrp        |            |
+  | chroot       |            |
+  | which        |            |
+  | whoami       |            |
+  | cat          |            |
+  | clear        |            |
+  | cp           |            |
+  | curl         |            |
+  | cut          |            |
+  | uname        |            |
+  | usleep       |            |
+  | unix2dos     |            |
+  | uptime       |            |
+  | top          |            |
+  | touch        |            |
+* 特有
+  | 命令         | 简介                                      |
+  |--------------+-------------------------------------------|
+  | repo         | [[./repo.org][教程]]                                      |
+  | adb          | [[./adb.org][教程]]                                      |
+  | fastboot     | [[./fastboot.org][教程]]                                      |
+  | logcat       | [[./logcat.org][教程]]                    |
+  | moneky       | [[./moneky.org][教程]]                                      |
+  | pm           | [[./pm.org][教程]]                                      |
+  | am           | [[./am.org][教程]]                                      |
+  | wm           | [[./wm.org][教程]]                                      |
+  | tinyalsa     | tinycap tinymix tinypcminfo tinyplay [[./tinyalsa.org][教程]] |
+  | setenforce   | selinux命令                               |
+  | getenforce   | selinux命令                               |
+  | sendevent    |                                           |
+  | getevent     |                                           |
+  | setprop      |                                           |
+  | getprop      |                                           |
+  | setsid       |                                           |
+  | settings     |                                           |
+  | mm-audio-ftm | qcom的audio工厂测试命令 [[./mm-audio-ftm.org][教程]]              |
+  | start        |                                           |
+  | stop         |                                           |
+  | stat         |                                           |
+  | ip           |                                           |
+  | input        | [[./input.org][教程]]                                      |
+  | insmod       |                                           |
+  | installd     |                                           |
+  | screencap    | 录音                                      |
+  | screenrecord | 截屏                                      |
+  mm-adec-omxaac-test
+  mm-adec-omxamr-test
+  mm-adec-omxamrwbplus-test
+  mm-adec-omxwma-test
+  mm-aenc-omxaac-test
+  mm-aenc-omxamr-test
+  mm-aenc-omxevrc-test
+  mm-aenc-omxqcelp13-test
+  mm-audio-alsa-test
+* 日志
+  | 命令          | 简介 |
+  |---------------+------|
+  | strace        |      |
+  | atrace        |      |
+  | systrace      | [[./systrace.org][教程]] |
+  | modinfo       |      |
+  | modprobe      |      |
+  | monkey        |      |
+  | dumpstate     |      |
+  | dumpsys       |      |
+  | bugreport     |      |
+  | bugreportz    |      |
+  | crash_dump32  |      |
+  | crash_dump64  |      |
+  | debuggerd     |      |
+  | dex2oat       |      |
+  | dex2oatd      |      |
+  | dexdiag       |      |
+  | dexdump       |      |
+  | dexlist       |      |
+  | gdbserver     |      |
+  | gdbserver64   |      |
+  | getlog        |      |
+  | getpersistlog |      |
+  | getqxdmlog    |      |
+  | gettcpdump    |      |
+* 待处理命令
+  acpi
+  adbd
+  adpl
+  adsprpcd
+  android_usb.sh
+  applypatch
+  appops
+  app_process
+  app_process32
+  app_process64
+  appwidget
+  arping
+  ATFWD-daemon
+  athdiag
+  audioflacapp
+  audioserver
+  base64
+  basename
+  bcc
+  blank_screen
+  blkid
+  blockdev
+  block_rw_service
+  bmgr
+  bootanimation
+  bootstat
+  bpfloader
+  btconfig
+  bt_logger
+  btnvtool
+  bu
+  bunzip2
+  bzcat
+  bzip2
+  cameraserver
+  chcon
+  check_keybox
+  chrt
+  cksum
+  clatd
+  cmd
+  cmp
+  cnd
+  cnss-daemon
+  cnss_diag
+  comm
+  content
+  copy_fpdata
+  copy_ssn
+  cpio
+* fas
+  cplay
+  dalvikvm
+  dalvikvm32
+  dalvikvm64
+  dexoptanalyzer
+  dexoptanalyzerd
+  diag_callback_sample
+  diag_dci_sample
+  diag_klog
+  diag_mdlog
+  diag_socket_log
+  diag_uart_log
+  dnsmasq
+  dpm
+  dpmd
+  dpmQmiMgr
+  DR_AP_Service
+  drmserver
+  dun-server
+  e2fsdroid
+  e_loop
+  exfatck
+  exfatdebug
+  exfatlabel
+  exfatvsn
+  expand
+  expr
+  fallocate
+  flock
+  fmconfig
+  fmfactorytest
+  fmfactorytestserver
+  fm_qsoc_patches
+  fmt
+  ftmdaemon
+  GammaSetting
+  garden_app
+  gatekeeperd
+  hal_proxy_daemon
+  hal_ss_test_manual
+  hbtp_daemon
+  hci_qcomm_init
+  healthd
+  hid
+  hostapd_cli
+  hostapd_cmd
+  host_manager_11ad
+* fasf
+  hostname
+  hvdcp_opti
+  hw
+  hwclock
+  hwservicemanager
+  icm
+  id
+  idmap
+  ime
+  imsdatadaemon
+  imsqmidaemon
+  imsrcsd
+  ims_rtp_daemon
+  incident
+  incidentd
+  incident_helper
+  init.class_main.sh
+  init.crda.sh
+  init.mdm.sh
+  init.qcom.class_core.sh
+  init.qcom.coex.sh
+  init.qcom.crashdata.sh
+  init.qcom.debug-sdm660.sh
+  init.qcom.debug-sdm710.sh
+  init.qcom.debug.sh
+  init.qcom.early_boot.sh
+  init.qcom.efs.sync.sh
+  init.qcom.post_boot.sh
+  init.qcom.sdio.sh
+  init.qcom.sensors.sh
+  init.qcom.sh
+  init.qcom.syspart_fixup.sh
+  init.qcom.usb.sh
+  init.qcom.wifi.sh
+  init.qti.debug-msmnile-apps.sh
+  init.qti.debug-msmnile-modem.sh
+  init.qti.debug-msmnile.sh
+  init.qti.debug-msmnile-slpi.sh
+  init.qti.fm.sh
+  init.qti.ims.sh
+  init.qti.qseecomd.sh
+  inotifyd
+  ionice
+  iorenice
+  iotop
+  ip6tables
+  ip6tables-restore
+  ip6tables-save
+  ip6tables-wrapper-1.0
+* fasfaf
+  ipacm
+  ipacm-diag
+  iptables
+  iptables-restore
+  iptables-save
+  iptables-wrapper-1.0
+  ip-wrapper-1.0
+  irsc_util
+  iw
+  keystore
+  keystore_cli_v2
+  ld.mc
+  linker
+  linker64
+  linker_asan
+  linker_asan64
+  lmkd
+  load_policy
+  locksettings
+  loc_launcher
+  log
+  logcatd
+  logd
+  logname
+  logpersist.cat
+  logpersist.start
+  logpersist.stop
+  logwrapper
+  losetup
+  lowi-server
+  lowi_test
+  lshal
+  md5sum
+  mdnsd
+  media
+  mediadrmserver
+  mediaextractor
+  mediametrics
+  mediaserver
+  memory_replay32
+  memory_replay64
+  memtest
+  microcom
+* fsa
+  mlid
+  mmi
+  mmid
+  mmi_diag
+  mm-pp-dpps
+  mm-qcamera-app
+  mm-qcamera-daemon
+  mm-qjpeg-dec-test
+  mm-qjpeg-enc-test
+  mm-qomx-idec-test
+  mm-qomx-ienc-test
+  msm_irqbalance
+  mtpd
+  ndc
+  ndc-wrapper-1.0
+  netd
+  netmgrd
+  netstat
+  netutils-wrapper-1.0
+  newfs_msdos
+  nice
+  nl
+  nohup
+  nqnfcinfo
+  ntfsck
+  ntfsdebug
+  ntfslabel
+  nvram_country
+  oatdump
+  paste
+  patch
+  patchoat
+  patchoatd
+  perfetto
+  perflock_native_stress_test
+  perflock_native_test
+  perfprofd
+* df
+  perfservice
+  perfunittests
+  PhoneInfoTest
+  pidof
+  ping6
+  pktlogconf
+  PktRspTest
+  pmap
+  pm-proxy
+  pm-service
+  port-bridge
+  power_off_alarm
+  ppd
+  pppd
+  printenv
+  printf
+  profman
+  profmand
+  ptt_socket_app
+  qca6234-service.sh
+  qcat_unbuffered
+  qcom-system-daemon
+  qjpeg-dma-test
+  qmi-framework-tests
+  qrtr-cfg
+  qrtr-lookup
+  qrtr-ns
+  qseecomd
+  qseecom_sample_client
+  qti
+  racoon
+  readlink
+  realpath
+  renice
+  requestsync
+  resize2fs
+  restorecon
+  rmt_storage
+  rtspclient
+  rtspserver
+  run-as
+  runcon
+  schedtest
+  sdcard
+  secdiscard
+  secilc
+  sensorrdiag
+* fasf
+  sensorservice
+  sensors.qti
+  seq
+  service
+  servicemanager
+  sgdisk
+  sha1sum
+  sha224sum
+  sha256sum
+  sha384sum
+  sha512sum
+  sigma_dut
+  slim_daemon
+  sload_f2fs
+  sm
+  sns_ar_testapp
+  sns_cm_conc_test
+  sns_cm_test
+  sns_dsps_tc0001
+  sns_hal_batch
+  sns_oem_test
+  sns_regedit_ssi
+  SoterProvisioningTool
+  spectraltool
+  split
+  sqlite3
+  ss
+  ssgqmigd
+  ssgtzd
+  ssr_diag
+  ssr_setup
+  statsd
+  stopqxdmlog
+  storaged
+  StoreKeybox
+  strings
+  stty
+  subsystem_ramdump
+  surfaceflinger
+  svc
+  swapoff
+  swapon
+  sysctl
+  tac
+  taskset
+  tbaseLoader
+  tc
+  tc-wrapper-1.0
+* fasf
+  telecom
+  test_diag
+  test_module_pproc
+  tftp_server
+  thermal-engine
+  thermalserviced
+  time_daemon
+  timeout
+  tombstoned
+  toolbox
+  toybox
+  toybox_vendor
+  tr
+  traced
+  traced_probes
+  tracepath
+  tracepath6
+  traceroute6
+  truncate
+  tty
+  tune2fs
+  tzdatacheck
+  uiautomator
+  ulimit
+  umount_apd.sh
+  uncrypt
+  uniq
+  usbd
+  uudecode
+  uuencode
+  vdc
+  vendor_cmd_tool
+  vendor.qti.hardware.soter@1.0-provision
+  vmstat
+  vndservice
+  vndservicemanager
+  vold
+  vold_prepare_subdirs
+  vpplibraryfunctionaltest
+  vpplibraryunittest
+  vr
+  wait_for_keymaster
+  wc
+  wcnss_filter
+  wcnss_service
+  wdsdaemon
+  wfdservice
+  wificond
+  wifidisplayhalservice
+* fasf
+  wigig_logcollector
+  wigig_remoteserver
+  wigig_wiburn
+  wpa_cli
+  wprod
+  xtra-daemon
+  xtwifi-client
+  xtwifi-inet-agent
+  xxd
+  yes
+  zcat

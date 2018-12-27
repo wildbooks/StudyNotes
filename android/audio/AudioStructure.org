@@ -155,12 +155,42 @@
    AudioPolicyService
    AudioPolicyService frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
 * 代码简单介绍
-ret = mbhc->mbhc_cb->request_irq(codec, mbhc->intr_ids->mbhc_sw_intr,
+  #+begin_src cpp
+  /*申请初测耳机插拔中断*/
+	ret = mbhc->mbhc_cb->request_irq(codec, mbhc->intr_ids->mbhc_sw_intr,
 				  wcd_mbhc_mech_plug_detect_irq,
 				  "mbhc sw intr", mbhc);
 
+  /*申请注册耳机按键按下的中断*/
 	ret = mbhc->mbhc_cb->request_irq(codec,
 					 mbhc->intr_ids->mbhc_btn_press_intr,
 					 wcd_mbhc_btn_press_handler,
 					 "Button Press detect",
 					 mbhc);
+
+  /*申请注册耳机按键松开的中断*/
+	ret = mbhc->mbhc_cb->request_irq(codec,
+					 mbhc->intr_ids->mbhc_btn_release_intr,
+					 wcd_mbhc_release_handler,
+					 "Button Release detect", mbhc);
+
+  /*这个应该是注册检测高阻抗的耳机延长线设备的插入中断*/
+	ret = mbhc->mbhc_cb->request_irq(codec,
+					 mbhc->intr_ids->mbhc_hs_ins_intr,
+					 wcd_mbhc_hs_ins_irq,
+					 "Elect Insert", mbhc);
+
+  /*这个应该是注册检测高阻抗的耳机延长线设备的拔出中断*/
+	ret = mbhc->mbhc_cb->request_irq(codec,
+					 mbhc->intr_ids->mbhc_hs_rem_intr,
+					 wcd_mbhc_hs_rem_irq,
+					 "Elect Remove", mbhc);
+
+	ret = mbhc->mbhc_cb->request_irq(codec, mbhc->intr_ids->hph_left_ocp,
+				  wcd_mbhc_hphl_ocp_irq, "HPH_L OCP detect",
+				  mbhc);
+
+	ret = mbhc->mbhc_cb->request_irq(codec, mbhc->intr_ids->hph_right_ocp,
+				  wcd_mbhc_hphr_ocp_irq, "HPH_R OCP detect",
+				  mbhc);
+  #+end_src

@@ -1,0 +1,16 @@
+* 简介
+  由于Android中默认并没有使用标准alsa，而是使用的是tinyalsa，所以就算基于命令行的测试也要使用libtinyalsa。Android系统在上层Audio千变万化的时候,可以能这些个工具实时查看到,比如音频通道的切换等等.
+* 编译
+  external/tinyalsa
+  | 命令                   | 详解                |
+  |------------------------+---------------------|
+  | tinymix                | 查看配置混音器      |
+  | tinyplay               | 播放音频            |
+  | tinycap                | 录音                |
+  | tinypcminfo            | 查看pcm通道相关信息 |
+  | cat /proc/asound/cards | 查看所有声卡        |
+* tinypcminfo
+  #+begin_src bash
+  #查看pcm通道的相关信息
+  $ tinypcminfo -D /proc/asound/cards  
+  #+end_src

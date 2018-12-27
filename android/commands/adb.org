@@ -130,7 +130,7 @@
 * batterystats
   adb shell dumpsys batterystats  --reset
 * adb push失败解决方法
-  adb disable-verity 
+  adb disable-verity
   adb reboot
   adb remount
 * download模式

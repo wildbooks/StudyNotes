@@ -5,6 +5,8 @@
   | help |      |
   | info |      |
   | type |      |
+  | [[https://github.com/tldr-pages/tldr][tldr]] | [[./tldr.org][教程]] |
+  |      |      |
 * 目录操作(6个)
   | 命令 | 描述 |
   |------+------|
@@ -74,6 +76,7 @@
   | which   | [[./which][教程]] |
   | whereis |      |
   | locate  | [[./locate.org][教程]] |
+  | [[https://github.com/junegunn/fzf][fzf]]     |      |
 * 用户管理(10个)
   | 命令     | 描述 |
   |----------+------|
@@ -211,9 +214,11 @@
   | tmux     |      |
   | autojump |      |
 * 四剑客
-  | 命令  | 描述 |
-  |-------+------|
-  | grep  |      |
-  | egrep |      |
-  | sed   |      |
-  | awk   |      |
+  | 命令    | 描述               |
+  |---------+--------------------|
+  | grep    |                    |
+  | egrep   |                    |
+  | sed     |                    |
+  | awk     |                    |
+  | [[https://github.com/BurntSushi/ripgrep][ripgrep]] | rg > git grep > ag |
+  |         |                    |
