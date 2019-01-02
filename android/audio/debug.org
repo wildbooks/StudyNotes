@@ -1,3 +1,16 @@
+* Table of Contents :TOC_4_gh:noexport:
+- [[#kernel][kernel]]
+- [[#logcat][logcat]]
+- [[#deep-buffer-playback][deep buffer playback]]
+- [[#特定应用场景开启相应log][特定应用场景，开启相应Log]]
+- [[#debugging技巧][Debugging技巧]]
+- [[#usb][usb]]
+- [[#bluetooth][Bluetooth]]
+- [[#tools][tools]]
+- [[#dumpsys][dumpsys]]
+- [[#关键log][关键log]]
+- [[#log_tag][LOG_TAG]]
+
 * kernel
   echo -n "file msm-pcm-routing-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
   echo -n "file msm-pcm-voice-v2.c +p" > /sys/kernel/debug/dynamic_debug/control

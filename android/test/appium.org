@@ -1,0 +1,13 @@
+* appium
+  appium 是一个自动化测试开源工具，支持 iOS 平台和 Android 平台上的原生应用，web应用和混合应用。
+  | 语言   | github        |
+  |--------+---------------|
+  | python | [[https://github.com/appium/python-client][python-client]] |
+* install
+  #+begin_src python
+  pip install selenium
+  pip install Appium-Python-Client
+  #+end_src
+* [[https://github.com/appium/appium-desktop][appium-desktop]]安装
+  [[https://github.com/appium/appium-desktop/releases/download/v1.9.1/appium-desktop-setup-1.9.1.exe]
+  

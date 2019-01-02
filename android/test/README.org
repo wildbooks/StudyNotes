@@ -1,0 +1,9 @@
+* 自动化测试
+  | 测试工具     | 详解               |
+  |--------------+--------------------|
+  | Monkey       | 随机测试、压力测试 |
+  | MonkeyRunner |                    |
+  | UIAutomator  |                    |
+  | Robotium     |                    |
+  | [[http://appium.io][Appium]]       |                    |
+  | TestBird     |                    |

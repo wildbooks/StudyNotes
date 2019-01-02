@@ -213,6 +213,7 @@
   | xargs    |      |
   | tmux     |      |
   | autojump |      |
+  | [[https://jenkins.io][jenkins]]  | [[./jenkins.org][教程]] |
 * 四剑客
   | 命令    | 描述               |
   |---------+--------------------|

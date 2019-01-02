@@ -1,3 +1,20 @@
+* Table of Contents :TOC_4_gh:noexport:
+- [[#kernel][kernel]]
+- [[#手机audio][手机audio]]
+- [[#多按钮耳机控制][多按钮耳机控制]]
+- [[#jack-类型][jack 类型]]
+- [[#国标美标][国标/美标]]
+- [[#mbhc检测来自耳机和耳机的事件包括插入移除和耳机按钮按下并释放][MBHC检测来自耳机和耳机的事件，包括插入，移除和耳机按钮按下并释放]]
+- [[#设置jack类型][设置jack类型]]
+- [[#设置jack类型-1][设置jack类型]]
+- [[#外部电容设置][外部电容设置]]
+- [[#mbhc-按键配置][MBHC 按键配置]]
+- [[#mbhc-按键配置-1][MBHC 按键配置]]
+- [[#音质][音质]]
+- [[#playback][playback]]
+- [[#audio-recording][Audio recording]]
+- [[#参考文档][参考文档]]
+
 * kernel
   msm8x16_wcd_registers.h
   kernel/msm-3.18/sound/soc/msm/msm8952.c  => qcom,msm8952-audio-codec

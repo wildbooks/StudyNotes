@@ -1,0 +1,26 @@
+* help
+  input [<source>] <command> [<arg>...]
+  | source类型      | 含义                                 |
+  |-----------------+--------------------------------------|
+  | dpad            | ???                                  |
+  | keyboard        | 键盘                                 |
+  | mouse           | 鼠标                                 |
+  | touchpad        | 触摸板                               |
+  | gamepad         | 游戏手柄                             |
+  | touchnavigation | 触摸导航                             |
+  | joystick        | 操纵杆（玩过游戏手柄的同学应该懂吧） |
+  | touchscreen     | 触摸屏                               |
+  | stylus          | 触控笔（styluses）                   |
+  | trackball       | 轨迹球（啥意思？）                   |
+** trackball
+   press (Default: trackball)
+   roll <dx> <dy> (Default: trackball)
+** keyboard
+   keyevent [--longpress] <key code number or name> ... (Default: keyboard)
+** touchscreen
+   swipe <x1> <y1> <x2> <y2> [duration(ms)] (Default: touchscreen)
+   tap <x> <y> (Default: touchscreen)
+   text <string> (Default: touchscreen)
+   draganddrop <x1> <y1> <x2> <y2> [duration(ms)] (Default: touchscreen) #托放
+   input text "hello" 
+** keyevent 

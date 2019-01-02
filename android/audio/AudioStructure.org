@@ -14,7 +14,8 @@
   - [[#customization-guidelines][Customization guidelines]]
   - [[#enabling-logs][Enabling logs]]
   - [[#软件框架][软件框架]]
-- [[#代码简单介绍][代码简单介绍]]
+- [[#耳机识别相关][耳机识别相关]]
+- [[#参考文档][参考文档]]
 
 * hardware 
 ** 高通平台 Audio codec简介
@@ -154,7 +155,7 @@
 
    AudioPolicyService
    AudioPolicyService frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp
-* 代码简单介绍
+* 耳机识别相关
   #+begin_src cpp
   /*申请初测耳机插拔中断*/
 	ret = mbhc->mbhc_cb->request_irq(codec, mbhc->intr_ids->mbhc_sw_intr,
@@ -194,3 +195,7 @@
 				  wcd_mbhc_hphr_ocp_irq, "HPH_R OCP detect",
 				  mbhc);
   #+end_src
+* 参考文档
+  80_NL239_27_D_APPLICATION_NOTE__MULTIBUTTON_HEADSE.pdf      (Multibutton Headset Control)
+  KBA-170109193748 How to check echo reference signal over MI2S
+  80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化

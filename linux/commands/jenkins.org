@@ -1,0 +1,25 @@
+* 方案
+  |------+--------+---------------|
+  |      | 系统   | ubuntu        |
+  | LAMP | 服务器 | apache-tomcat |
+  |      | 服务   | jenkins       |
+  |------+--------+---------------|
+* 服务器安装
+* ubuntu安装
+  #+begin_src bash
+  wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | sudo apt-key add -
+  sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+  sudo apt-get update
+  sudo apt-get install jenkins
+  #+end_src
+* 配置 
+  systemctl start jenkins
+  | 默认配置        | /etc/default/jenkins  例如JENKINS_HOME |
+  | 守护进程        | /etc/init.d/jenkins                    |
+  | 日志输出文件    | /var/log/jenkins/jenkins.log           |
+  | jenkins用户目录 | /var/lib/jenkins                       |
+
+  /usr/share/tomcat8/.jenkins/secrets/initialAdminPassword
+  安装完成后便会自动创建一个名为 jenkins 的新用户
+  /usr/share/jenkins/jenkins.war
+  /etc/init.d/jenkins

@@ -1,3 +1,31 @@
+* Table of Contents :TOC_4_gh:noexport:
+- [[#audio-application-framework音频应用框架][Audio Application Framework：音频应用框架]]
+- [[#audio-native-framework音频本地框架][Audio Native Framework：音频本地框架]]
+- [[#audio-services音频服务][Audio Services：音频服务]]
+- [[#audio-hal音频硬件抽象层][Audio HAL：音频硬件抽象层]]
+- [[#系统音][系统音]]
+- [[#stream_type][stream_type]]
+- [[#audiotrack][AudioTrack]]
+- [[#audioserver][audioserver]]
+  - [[#audioflinger][AudioFlinger]]
+    - [[#init][init]]
+    - [[#open][open]]
+  - [[#audiopolicyservice][AudioPolicyService]]
+    - [[#init-1][init]]
+    - [[#startoutput][startOutput]]
+- [[#bluetoothheadset][BluetoothHeadset]]
+- [[#关键参数][关键参数]]
+  - [[#波特率][波特率]]
+  - [[#音频格式format][音频格式(format)]]
+  - [[#音频通道channel][音频通道(channel)]]
+  - [[#音频流类型][音频流类型]]
+  - [[#音频源][音频源]]
+  - [[#session][session]]
+  - [[#mode][mode]]
+  - [[#handle][handle]]
+  - [[#config][config]]
+  - [[#devices][devices]]
+
 * Audio Application Framework：音频应用框架
   AudioTrack：负责回放数据的输出，属 Android 应用框架 API 类
   AudioRecord：负责录音数据的采集，属 Android 应用框架 API 类

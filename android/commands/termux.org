@@ -1,0 +1,34 @@
+* termux之ssh使用
+** 安装ssh 
+   apt install openssh
+** 配置 
+   1. 获取Termux的用户名，home目录，ip地址
+      #+begin_src bash
+      # 在Termux中执行以下命令
+      # 获取用户名
+      $ whoami
+      u0_a130
+
+      # 获取home目录
+      $ cd ~
+      $ pwd
+      /data/data/com.termux/files/home/
+
+      # 获取ip
+      $ ifconfig
+      
+      # 开启sshd服务
+      $ sshd
+      #+end_src
+   2. linux系统配置(pc机)
+      #+begin_src bash
+      # 拷贝id_rsa.pub到android手机中
+      adb push ~/.ssh/id_rsa.pub /sdcard/
+      adb shell
+      cat /sdcard/id_rsa.pub >> /data/data/com.termux/files/home/.ssh/authorized_keys
+      rm /sdcard/id_rsa.pub
+      exit
+      
+      # 链接
+      ssh u0_a130@192.168.43.46 -p 8022
+      #+end_src

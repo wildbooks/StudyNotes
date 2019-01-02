@@ -1,3 +1,10 @@
+* Table of Contents :TOC_4_gh:noexport:
+- [[#参考文档][参考文档]]
+- [[#alsa][alsa]]
+- [[#tinyalsa][tinyalsa]]
+- [[#alsa设备文件][alsa设备文件]]
+- [[#声卡创建注销][声卡创建/注销]]
+
 * 参考文档
   ALSA声卡驱动的DAPM（一）-DPAM详解
   https://www.cnblogs.com/linhaostudy/archive/2018/03/05/8509899.html

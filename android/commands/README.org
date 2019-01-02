@@ -215,6 +215,10 @@
   copy_fpdata
   copy_ssn
   cpio
+* 第三方
+  | 命令   | 简介                     |
+  |--------+--------------------------|
+  | [[https://termux.com][termux]] | android linux模拟器 [[./termux.org][教程]] |
 * fas
   cplay
   dalvikvm
