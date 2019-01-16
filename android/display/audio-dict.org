@@ -1,0 +1,4 @@
+|      |                                   |
+|------+-----------------------------------|
+| QDCM | Qualcomm Display Color Management |
+| OLED | Organic Light-Emitting Diode      |

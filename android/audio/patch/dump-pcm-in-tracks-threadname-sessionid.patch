@@ -1,0 +1,54 @@
+diff --git a/services/audioflinger/Threads.h b/services/audioflinger/Threads.h
+index e8b59a4..0f81183 100644
+--- a/services/audioflinger/Threads.h
++++ b/services/audioflinger/Threads.h
+@@ -455,7 +455,6 @@ protected:
+                 Vector< sp<EffectChain> > mEffectChains;
+
+                 static const int        kThreadNameLength = 16; // prctl(PR_SET_NAME) limit
+-                char                    mThreadName[kThreadNameLength]; // guaranteed NUL-terminated
+                 sp<IPowerManager>       mPowerManager;
+                 sp<IBinder>             mWakeLockToken;
+                 const sp<PMDeathRecipient> mDeathRecipient;
+@@ -469,6 +468,8 @@ protected:
+                 bool                    mNotifiedBatteryStart;
+                 ExtendedTimestamp       mTimestamp;
+                 bool                    mIsDirectPcm; // flag to indicate unique Direct thread
++    public:
++                char                    mThreadName[kThreadNameLength]; // guaranteed NUL-terminated
+ };
+
+ // --- PlaybackThread ---
+diff --git a/services/audioflinger/Tracks.cpp b/services/audioflinger/Tracks.cpp
+index 364e339..aa2f014 100644
+--- a/services/audioflinger/Tracks.cpp
++++ b/services/audioflinger/Tracks.cpp
+@@ -25,6 +25,10 @@
+ #include <sys/syscall.h>
+ #include <utils/Log.h>
+
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
+ #include <private/media/AudioTrackShared.h>
+
+ #include "AudioMixer.h"
+@@ -569,6 +573,17 @@ status_t AudioFlinger::PlaybackThread::Track::getNextBuffer(
+     } else {
+         mAudioTrackServerProxy->tallyUnderrunFrames(0);
+     }
++    {
++        char fname[100];
++        sprintf(fname, "/data/misc/audioserver/%s-session-%d.pcm", mThread.promote()->mThreadName, mSessionId);
++        int tmpFd = ::open(fname, O_CREAT | O_WRONLY | O_APPEND, 0776);
++        if ( tmpFd < 0 ) {
++                ALOGE("Fail to open dumpTrack file");
++        } else {
++                ::write(tmpFd, buffer->raw, buffer->frameCount * TrackBase::mChannelCount * 2);
++                ::close(tmpFd);
++        }
++    }
+
+     return status;
+ }

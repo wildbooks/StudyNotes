@@ -10,26 +10,30 @@
       Documentation/devicetree/bindings/fb/mdss-mdp.txt
       Documentation/devicetree/bindings/fb/mdss-dsi.txt
       Documentation/devicetree/bindings/fb/mdss-dsi-panel.txt
-    + dts
-      arch/arm/boot/dts/qcom/msm8937-mdss.dtsi  ->  "qcom,mdss_mdp"
-      arch/arm/boot/dts/qcom/msm8937-mdss.dtsi  ->  "qcom,mdss-dsi"
-      arch/arm/boot/dts/qcom/dsi-panel-hx8394f-720p-video.dtsi    //panel
+    + dts arch/arm/boot/dts/qcom/msm8937-mdss.dtsi -> "qcom,mdss_mdp" -> mdss模
+      块下有很多dsi接口arch/arm/boot/dts/qcom/msm8937-mdss.dtsi ->
+      "qcom,mdss-dsi" -> 主要针对不同的panel配置相应的dsi接口
+      arch/arm/boot/dts/qcom/dsi-panel-hx8394f-720p-video.dtsi //panel属性描述
+      arch/arm/boot/dts/qcom/dsi-panel-nt36672-1080p-video.dtsi
+      arch/arm/boot/dts/qcom/msm8937-mdss.dtsi -> "qcom,mdss-fb"
     + src
       drivers/video/msm/mdss/
       drivers/video/msm/mdss/mdss_mdp.c         //qcom mdss架构相关
       drivers/video/msm/mdss/mdss_dsi.c         //mipi协议中的dsi协议相关
       drivers/video/msm/mdss/mdss_dsi_panel.c   //lcd屏驱动程序相关
-      drivers/video/msm/mdss/mdss_fb.c   //背光灯相关
+      drivers/video/msm/mdss/mdss_fb.c          //背光灯相关
     + debug
       /d/mdss_panel_fb0/
-      /sys/devices/virtual/graphics/fb0   <-  mdss_fb.c
-      /d/mdss_panel_fb0/                  <-  mdss_fb.c
+      /sys/devices/virtual/graphics/fb0   <- mdss_fb.c
+      /d/mdss_panel_fb0/                  <- mdss_fb.c
+      /d/mdp                              <- mdss_mdp_debug_init
+      /sys/devices/soc/xxx/caps           <- mdss_mdp.c
 * 代码讲解
   + backlight
     mdss_dsi_ctrl_probe -> mdss_panel_parse_bl_settings -> mdss_dsi_panel.c   #backlight初始化
     mdss_fb_set_bl_brightness -> mdss_fb_set_backlight -> (pdata->set_backlight) -> mdss_dsi_panel_bl_ctrl -> qpnp_wled_set  # backlight控制
     背光灯使用的驱动为leds_qpnp_wled.c，通过触发器"bkl-trigger"来控制灯,涉及的驱动mdss_dsi.c、mdss_fb.c、mdss_dsi_panel.c
-  + 的
+  + lcd
 * 问题
   1. 如何通过ID1/ID2识别pianel
     qcom,dsi-pref-prim-pan
@@ -58,12 +62,12 @@
      关键词：qcom,mdss-dsi-bl-pmic-control-type
   4. 分辨率
 * 专业术语
-  MDSS(Mobile Display SubSystem)                移动显示子系统
-  MIPI(Mobile industry processor interface)     移动行业处理器接口
-  DBI(Display Bus Interface)                    显示总线接口
-  DSI(Display Serial Interface)                 显示串行接口，DSI也通常被称为MIPI
-  DPI(Display pixel Interface)
-  D-PHY(Physical layer)                         物理层
-  MDSS is Mobile Display SubSystem which implements Linux framebuffer APIs to
-  drive user interface to different panel interfaces. MDP driver is the core of
-  MDSS which manage all data paths to different panel interfaces.
+  | 专业术语 | 全称                                | 含义                              |
+  |----------+-------------------------------------+-----------------------------------|
+  | MDSS     | Multimedia Display sub system       | 多媒体显示子系统                  |
+  | MDSS     | Mobile Display SubSystem            | 移动显示子系统                    |
+  | MIPI     | Mobile industry processor interface | 移动行业处理器接口                |
+  | DBI      | Display Bus Interface               | 显示总线接口                      |
+  | DSI      | Display Serial Interface            | 显示串行接口，DSI也通常被称为MIPI |
+  | DPI      | Display pixel Interface             |                                   |
+  | D-PHY    | Physical layer                      | 物理层                            |

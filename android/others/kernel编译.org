@@ -1,0 +1,31 @@
+使用make bootimage进行代码编译，会先进行各种预编译，这个过程有时候要耗费几分钟。
+
+/bin/bash -c "make -j24 -C kernel/msm-3.18/ O=../../out/target/product/msm8937_64/obj/kernel/msm-3.18 ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- KCFLAGS=-mno-android"
+/bin/bash -c "make -j24 -C kernel/msm-3.18/ O=../../out/target/product/msm8937_64/obj/kernel/msm-3.18 ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- KCFLAGS=-mno-android menuconfig"
+
+
+
+
+ TARGET_KERNEL_SOURCE:=kernel/msm-3.18/
+ BUILD_ROOT_LOC:=../../out/target/product/msm8937_64/
+ KERNEL_OUT:=obj/kernel/msm-3.18
+ ARCH:=arm64
+ KERNEL_CROSS_COMPILE
+
+kernelconfig: $(KERNEL_OUT) $(KERNEL_CONFIG)
+		echo	"$(MAKE) -C $(TARGET_KERNEL_SOURCE) O=$(BUILD_ROOT_LOC)$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) menuconfig"
+	env KCONFIG_NOTIMESTAMP=true \
+	     $(MAKE) -C $(TARGET_KERNEL_SOURCE) O=$(BUILD_ROOT_LOC)$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) menuconfig
+	echo "$(MAKE) -C $(TARGET_KERNEL_SOURCE) O=$(BUILD_ROOT_LOC)$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) savedefconfig"
+	env KCONFIG_NOTIMESTAMP=true \
+	     $(MAKE) -C $(TARGET_KERNEL_SOURCE) O=$(BUILD_ROOT_LOC)$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE=$(KERNEL_CROSS_COMPILE) savedefconfig
+	echo "cp $(KERNEL_OUT)/defconfig $(TARGET_KERNEL_SOURCE)/arch/$(KERNEL_ARCH)/configs/$(KERNEL_DEFCONFIG)"
+	cp $(KERNEL_OUT)/defconfig $(TARGET_KERNEL_SOURCE)/arch/$(KERNEL_ARCH)/configs/$(KERNEL_DEFCONFIG)
+
+* 快速编译bootimage
+* boot.img组成部分
+  kernel
+  ramdisk
+  second
+  cmdline
+  

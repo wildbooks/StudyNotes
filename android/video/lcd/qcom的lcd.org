@@ -1,7 +1,0 @@
-* 关键字
-  | 专业术语 | 全称                          | 含义             |
-  |----------+-------------------------------+------------------|
-  | MDSS     | Multimedia Display sub system | 多媒体显示子系统 |
-  | DSI      | Display Serial Interface      | 显示串行接口     |
-* 代码
-  高通平台：kernel/drivers/video/msm/mdss

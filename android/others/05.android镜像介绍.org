@@ -1,5 +1,6 @@
 * boot.img
   boot.img包含两部分kernel和ramdisk.img组成
+  ramdisk.img由root打包而来
   #+begin_src
    +-----------------+
    | boot header     | 1 page
@@ -11,9 +12,114 @@
    | second stage    | o pages
    +-----------------+
   #+end_src
+  #+begin_src shell
+  bootimage => build/make/core/main.mk
+  INSTALLED_BOOTIMAGE_TARGET => build/make/core/Makefile
+  # 主要是MkBOOTIMG进行处理
+  $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH)
+    $(call pretty,"Target boot image: $@")
+    $(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
+    $(hide) $(call assert-max-image-size,$@,$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
+    $(hide) $(AVBTOOL) add_hash_footer \
+      --image $@ \
+      --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
+      --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
+      $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
 
+
+
+	$(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
+
+  INTERNAL_BOOTIMAGE_ARGS := \
+   	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
+  	--kernel $(INSTALLED_KERNEL_TARGET)
+  INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
+  INTERNAL_BOOTIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
+  INTERNAL_BOOTIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+  INTERNAL_BOOTIMAGE_ARGS += --cmdline "$(INTERNAL_KERNEL_CMDLINE)"
+
+  INTERNAL_MKBOOTIMG_VERSION_ARGS := \
+    --os_version $(PLATFORM_VERSION) \
+    --os_patch_level $(PLATFORM_SECURITY_PATCH)
+
+  BOARD_MKBOOTIMG_ARGS := --header_version $(BOARD_BOOTIMG_HEADER_VERSION) 
+
+  INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
+
+
+  out/host/linux-x86/bin/mkbootimg  --kernel out/target/product/msm8937_64/kernel --base 0x80000000 --pagesize 2048 --cmdline console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 androidboot.bootdevice=7824900.sdhci earlycon=msm_hsl_uart,0x78B0000 firmware_class.path=/vendor/firmware_mnt/image loop.max_part=7 buildvariant=userdebug veritykeyid=id:7e4333f9bba00adfe0ede979e28ed1920492b40f --os_version 9 --os_patch_level 2018-08-05  --output out/target/product/msm8937_64/boot.img
+
+  unpack_bootimg --boot_img boot.img
+  bootimage-nodeps => build/make/core/Makefile
+
+  out/host/linux-x86/bin/mkbootimg
+  external/avb/avbtool
+  #+end_src
 * system.img
+  | 工具         | 功能 | 源码                             | 命令                                |
+  |--------------+------+----------------------------------+-------------------------------------|
+  | simg2img     |      | system/core/libsparse/simg2img.c | out/host/linux_x86/bin/simg2img     |
+  | img2simg     |      | system/core/libsparse/img2simg.c | out/host/linux_x86/bin/img2simg     |
+  | make_ext4fs  |      |                                  | out/host/linux_x86/bin/make_ext4fs  |
+  | mkusering.sh |      |                                  | out/host/linux_x86/bin/mkusering.sh |
+  #+begin_src shell
+  # 解压为ext4格式
+  simg2img  system.img  system.img.ext4
+  # 创建挂载目录tmp
+  mkdir tmp
+  # 挂载镜像到tmp目录
+  mount system.img.ext4 tmp
+  # 进入tmp目录，根据需求修改tmp中的目录
+  # 将tmp目录打包为新的system.img
+  make_ext4fs -s -l 239M -a system system.img tmp
+  #关于make_ext4fs、simg2img、mkusering.sh的参数含义可以在终端中直接输入命令，并回车查看。
+  #+end_src
+* vendor.img
+  #+begin_src shell
+  # 解压为ext4格式
+  simg2img  vendor.img  vendor.img.ext4
+  # 创建挂载目录tmp
+  mkdir tmp
+  # 挂载镜像到tmp目录
+  mount vendor.img.ext4 tmp
+  # 修改后，用img2sim再重新打包
+  #+end_src
 * userdata.img
 * ramdisk.img
+  out/host/linux-x86/bin/mkbootfs -d out/target/product/msm8937_64/system out/target/product/msm8937_64/root | out/host/linux-x86/bin/minigzip > out/target/product/msm8937_64/ramdisk.img
   ramdisk.img由root目录打包组成
+  
+  $ file ramdisk.img
+
+  ramdisk.img: gzip compressed data, from Unix
+
+  因此可以确认ramdisk.img是一个经gzip压缩的文件；
+
+  2.更改ramdisk.img的名字；
+
+  $ mv ramdisk.img ramdisk.img.gz
+
+  3.使用gunzip 解压缩ramdisk.img.gz
+
+  $ gunzip ramdisk.img.gz
+
+  说明：解压缩后的文件名字依然为ramdisk.img，但是文件类型已经改变；
+
+  4.使用file命令查看解压缩后的ramdisk.img
+
+  $ file ramdisk.img
+
+  ramdisk.img: ASCII cpio archive (SVR4 with no CRC)
+
+  因此可以确认经gunzip解压缩后的ramdisk.img是一个经CPIO压缩的文件
+
+  5.使用cpio工具对ramdisk.img解压缩
+  cpio -i -F ramdisk.img
+  
+  --------------------- 
+  作者：辛勤的摆渡人 
+  来源：CSDN 
+  原文：https://blog.csdn.net/hunter168_wang/article/details/52944269 
+  版权声明：本文为博主原创文章，转载请附上博文链接！
+
 * lk

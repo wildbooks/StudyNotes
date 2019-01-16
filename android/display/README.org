@@ -1,0 +1,16 @@
+* source
+  | kernel/drivers/video/msm/mdss           | Mobile Display Subsystem (MDSS) driver |
+  | kernel/arch/arm/boot/dts/qcom           | MDSS DTSI and panel DTSI files         |
+  | hardware/qcom/display                   | Display HALs                           |
+  | frameworks/base/services/surfaceflinger | SurfaceFlinger server                  |
+  | vendor/qcom/proprietary/mm-core/display | libraries and daemon                   |
+  mdss_fb – Top-level IOCTL/native FrameBuffer (FB) interface
+  mdss_mdp.c – Mobile Display Processor (MDP) resources such as clocks/irq/busbw/power
+  mdss_mdp_overlay – Overlay/DMA top-level API
+  mdss_mdp_ctl – Control is the hardware abstraction to club the (layer mixer + DSPP + ping-pong + interface)
+  mdss_mdp_pipe – SRC pipe-related handling
+  mdss_mdp_intf_**** – MDP panel interface-related handling
+  mdss_mdp_pp – Postprocessing-related implementation
+  mdss_mdp_rotator – Rotator APIs (overlay_set/overlay_play interface)
+* tools
+  qdcm

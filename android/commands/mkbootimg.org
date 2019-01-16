@@ -1,0 +1,47 @@
+* mkbootimg
+  制作bootimage的工具
+  src:system/core/mkbootimg
+  bin:out/host/linux-x86/bin/mkbootimg
+* help
+  #+begin_src shell
+  usage: mkbootimg [-h] --kernel KERNEL [--ramdisk RAMDISK] [--second SECOND]
+                   [--recovery_dtbo RECOVERY_DTBO] [--cmdline CMDLINE]
+                   [--base BASE] [--kernel_offset KERNEL_OFFSET]
+                   [--ramdisk_offset RAMDISK_OFFSET]
+                   [--second_offset SECOND_OFFSET] [--os_version OS_VERSION]
+                   [--os_patch_level OS_PATCH_LEVEL] [--tags_offset TAGS_OFFSET]
+                   [--board BOARD] [--pagesize {2048,4096,8192,16384}] [--id]
+                   [--header_version HEADER_VERSION] -o OUTPUT
+
+  optional arguments:
+    -h, --help            show this help message and exit
+    --kernel KERNEL       path to the kernel      内核文件
+    --ramdisk RAMDISK     path to the ramdisk     根文件系统文件
+    --second SECOND       path to the 2nd bootloader
+    --recovery_dtbo RECOVERY_DTBO
+                          path to the recovery DTBO
+    --cmdline CMDLINE     extra arguments to be passed on the kernel command
+                          line
+    --base BASE           base address
+    --kernel_offset KERNEL_OFFSET
+                          kernel offset
+    --ramdisk_offset RAMDISK_OFFSET
+                          ramdisk offset
+    --second_offset SECOND_OFFSET
+                          2nd bootloader offset
+    --os_version OS_VERSION
+                          operating system version
+    --os_patch_level OS_PATCH_LEVEL
+                          operating system patch level
+    --tags_offset TAGS_OFFSET
+                          tags offset
+    --board BOARD         board name
+    --pagesize {2048,4096,8192,16384}
+                          page size
+    --id                  print the image ID on standard output
+    --header_version HEADER_VERSION
+                          boot image header version
+    -o OUTPUT, --output OUTPUT
+                          output file name
+  #+end_src
+  

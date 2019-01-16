@@ -1,0 +1,136 @@
+* qti-logkit
+vendor/qcom/proprietary/prebuilt_HY11/target/product/msm8937_64/Android.mk
+vendor/qcom/proprietary/prebuilt_HY11/target/product/msm8937_64/vendor/app/qti-logkit/qti-logkit.apk
+vendor/qcom/proprietary/prebuilt_HY11/target/product/msm8937_64/vendor/bin/LKCore
+/work/za550/vendor/wind/custom_files/vendor/qcom/proprietary/A306/common/config/device-vendor.mk
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := LKCore
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := EXECUTABLES
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/bin/LKCore
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/bin
+LOCAL_PROPRIETARY_MODULE := true
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := qcom_logkit.xml
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/system/etc/permissions/qcom_logkit.xml
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/system/etc/permissions
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := qti-logkit
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := APPS
+LOCAL_CERTIFICATE   := platform
+LOCAL_MODULE_SUFFIX := .apk
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/app/qti-logkit/qti-logkit.apk
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/app
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := audiobasic.dmc
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/etc/qti-logkit/audiobasic.dmc
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/etc/qti-logkit
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := gnsslocationlogging.dmc
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/etc/qti-logkit/gnsslocationlogging.dmc
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/etc/qti-logkit
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := goldenlogmask.dmc
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/etc/qti-logkit/goldenlogmask.dmc
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/etc/qti-logkit
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := IMS.dmc
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/etc/qti-logkit/IMS.dmc
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/etc/qti-logkit
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := qti_logkit_command.xml
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/etc/qti-logkit/qti_logkit_command.xml
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/etc/qti-logkit
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := qti_logkit_config.xml
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/etc/qti-logkit/qti_logkit_config.xml
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/etc/qti-logkit
+include $(BUILD_PREBUILT)
+
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := bluetooth.png
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/etc/qti-logkit/scenarios/bluetooth.png
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/etc/qti-logkit/scenarios
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := default.png
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/etc/qti-logkit/scenarios/default.png
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/etc/qti-logkit/scenarios
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := IMS.png
+LOCAL_MODULE_OWNER  := qcom
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := ../../.././target/product/msm8937_64/vendor/etc/qti-logkit/scenarios/IMS.png
+LOCAL_MODULE_PATH   := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/etc/qti-logkit/scenarios
+include $(BUILD_PREBUILT)
+
+* sd
+vendor/qcom/proprietary/common/config/device-vendor.mk
+
+QTI_LOGKIT_BINS := LKCore
+QTI_LOGKIT_BINS += qcom_logkit.xml
+QTI_LOGKIT_BINS += qti_logkit_config.xml
+QTI_LOGKIT_BINS += qti_logkit_command.xml
+QTI_LOGKIT_BINS += goldenlogmask.dmc
+QTI_LOGKIT_BINS += gnsslocationlogging.dmc
+QTI_LOGKIT_BINS += audiobasic.dmc
+QTI_LOGKIT_BINS += IMS.dmc
+QTI_LOGKIT_BINS += default.png
+QTI_LOGKIT_BINS += bluetooth.png
+QTI_LOGKIT_BINS += IMS.png
+QTI_LOGKIT_APK := qti-logkit
+
+PRODUCT_PACKAGES += $(QTI_LOGKIT_BINS)
+PRODUCT_PACKAGES_DEBUG += $(QTI_LOGKIT_APK)

@@ -1,2 +1,2 @@
 * audio
-  [[audio/README.org][audio]]
+  [[./audio/README.org][audio]]

@@ -558,3 +558,4 @@
   xxd
   yes
   zcat
+https://www.cnblogs.com/huidaoli/p/3277319.html
