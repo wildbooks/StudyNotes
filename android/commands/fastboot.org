@@ -31,3 +31,11 @@
     fastboot flashing lock
     fastboot flashing lock_critical
   #+end_src
+* getvar
+  #+begin_src cpp
+  //fastboot getvar all
+  //fastboot命令注册
+  //bootable/bootloader/lk/app/aboot/fastboot.c
+  fastboot_register("getvar:", cmd_getvar); //注册getvar命令
+  fastboot_publish("platform", platform_is_msm8937() ? "8937" : "8917"); //注册platform参数到getvar中
+  #+end_src

@@ -29,12 +29,12 @@
   - [[#track][track]]
   - [[#a2dp][a2dp]]
 - [[#在speaker-and-headphones修改声音大小无效的解决方法][在"speaker-and-headphones"修改声音大小无效的解决方法]]
+- [[#audio-recording-1][Audio Recording]]
 - [[#fm][FM]]
 - [[#bt][bt]]
 - [[#usb--af][usb + AF]]
 - [[#与audio相关的系统属性][与audio相关的系统属性]]
-  - [[#参考文档-1][参考文档]]
-- [[#参考文档-2][参考文档]]
+- [[#参考文档-1][参考文档]]
 
 * bringup audio
 ** 检查ADSP是否正常
@@ -207,6 +207,22 @@
   下面的修改是给speaker,headphone双响时的audio route path 加一个后缀"speaker-and-headphones"。即原来是low-latency-playback，加了这个变为"low-latency-playback speaker-and-headphones"，在这个里面添加volume就可以了。
   + <device name="SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES" backend="speaker-and-headphones" interface="PRI_MI2S_RX-and-PRI_MI2S_RX"/>
   #+end_src
+* Audio Recording
+  #+begin_src cpp
+  #define LOG_NDEBUG 0
+  #define VERY_VERBOSE_LOGGING
+  frameworks/av/media/libmediaplayerservice/MediaPlayerService.cpp #MediaPlayerService
+  frameworks/av/media/libmediaplayerservice/StagefrightRecorder.cpp #StagefrightRecorder
+  frameworks/av/media/libaudioclient/AudioSystem.cpp #AudioSystem
+  frameworks/av/media/libaudioclient/AudioRecord.cpp #AudioRecord
+  frameworks/av/media/libmedia/IOMX.cpp #IOMX
+  frameworks/av/media/libstagefright/AudioSource.cpp #AudioSource
+  frameworks/av/media/libstagefright/MPEG4Writer.cpp #MPEG4Writer
+  frameworks/av/media/libstagefright/OMXClient.cpp #OMXClient
+  frameworks/av/services/audioflinger/AudioFlinger.cpp #AudioFlinger
+  frameworks/av/media/libaudioprocessing/AudioMixer.cpp #AudioMixer
+  frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp #AudioPolicyService
+  #+end_src
 * FM
   hardware/qcom/audio/hal/audio_extn/fm.c #audio_hw_fm
   frameworks/av/media/libmediaplayerservice/MediaPlayerService.cpp #MediaPlayerService
@@ -247,12 +263,12 @@
     frameworks/av/media/libstagefright/OMXClient.cpp #OMXClient
     frameworks/av/media/libaudioclient/AudioSystem.cpp #AudioSystem
     frameworks/av/media/libaudioclient/AudioTrack.cpp #AudioTrack
-    frameworks/av/media/libaudioclient/AudioRecord.cpp
-    frameworks/av/media/libaudioclient/AudioTrackShared.cpp
+    frameworks/av/media/libaudioclient/AudioRecord.cpp #AudioRecord
+    frameworks/av/media/libaudioclient/AudioTrackShared.cpp #AudioTrackShared
     frameworks/av/media/libaudioprocessing/AudioMixer.cpp #AudioMixer
     frameworks/av/services/audioflinger/AudioFlinger.cpp #AudioFlinger
-    frameworks/av/services/audioflinger/Threads.cpp
-    frameworks/av/services/audioflinger/Tracks.cpp 
+    frameworks/av/services/audioflinger/Threads.cpp #AudioFlinger
+    frameworks/av/services/audioflinger/Tracks.cpp #AudioFlinger
     #+end_src
   + APM
     #+begin_src cpp
@@ -262,9 +278,9 @@
     frameworks/av/services/audiopolicy/service/AudioPolicyInterfaceImpl.cpp #AudioPolicyIntefaceImpl
     frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp #APM_AudioPolicyManager
     vendor/qcom/opensource/audio/policy_hal/AudioPolicyManager.cpp #AudioPolicyManagerCustom
-    frameworks/av/services/audiopolicy/enginedefault/src/Engine.cpp or
-    frameworks/av/services/audiopolicy/engineconfigurable/src/Engine.cpp
-    frameworks/av/services/audiopolicy/common/managerdefinitions/src/Gains.cpp
+    frameworks/av/services/audiopolicy/enginedefault/src/Engine.cpp #or APM::AudioPolicyEngine
+    frameworks/av/services/audiopolicy/engineconfigurable/src/Engine.cpp #APM::AudioPolicyEngine
+    frameworks/av/services/audiopolicy/common/managerdefinitions/src/Gains.cpp #APM::Gains
     #+end_src
   + HAL
     #+begin_src cpp
@@ -314,9 +330,6 @@
   | persist.debug.sf.noaudio             |      |
   | media.aac_51_output_enabled          |      |
   | media.wfd.use-pcm-audio              |      |
-** 参考文档
-   80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化
 * 参考文档
   80_NL239_28_E_LINUX_AUDIO_DEVICE_MANAGEMENT.pdf
-  
- logcat, tombstone, bugreport
+  80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化
