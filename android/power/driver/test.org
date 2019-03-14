@@ -1,0 +1,12 @@
+* 功能
+  电池类型检测
+  电池属性配置
+  电池温度检测
+  电压检测
+  电流检测
+  充电状态检测
+
+* 中断
+
+get_prop_charge_type() //充电类型检测  (trickle、taper、fast、NONE、）
+get_prop_batt_health() //电池健康情况 (cold、cool、good、warm、overheat)

@@ -55,3 +55,4 @@
 * 终端工具
 * 远程工具
     teamviewer
+    Synergy   可以共享键盘

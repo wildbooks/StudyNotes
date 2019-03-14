@@ -1,0 +1,13 @@
+* 从sysfs抓取
+  #+begin_src bash
+  #抓取log并解析
+  adb pull /sys/kernel/debug/rpm_log .
+  python RPM.BF.2.2/rpm_proc/core/power/rpm/debug/scripts/rpm_log_bfam.py -f rpm_log >parsed.log
+  #+end_src
+* 从ramdump抓取
+  #+begin_src bash
+  RPM.BF.2.2/rpm_proc/core/bsp/rpm/scripts/hansei/hansei.py
+  python hansei.py -elf 
+  #+end_src
+  80-P9301-16SC rpm h
+ RPM 硬件固化与调试概述

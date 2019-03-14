@@ -1,0 +1,39 @@
+* ramdump
+* 
+* 抓取ramdump方法
+  ramdump模式：出现端口号“Qualcomm HS-USB Diagnostics 9091(COM24)”,为进入ramdump模式
+** 硬件触发dump模式的方法
+   一种触发dump模式的方法
+   有一种异常的情况：无法连ADB，串口log也没有，重启又可能破坏异常现象或者低概率无法复现，比如说定屏的情况，该如何是好？
+   高通提供了一种PS_HOLD短地的方式进入dump模式，从而抓取ramdump提供分析；具体做法如下：
+   1、找硬件确认ps_hold测试点，或者自行查找原理图
+   2、打开QPSTConfig工具，USB连接PC和手机
+   3、使用镊子短接ps_hold和GND，要特别注意短地时间要在200ms以内，也就是点一下地就好了，不能一直短地，这样会直接使手机重启；
+** 软件触发
+   adb shell echo c > /proc/sysrq-trigger
+** 抓取
+   qpst
+* 解析raddump
+** 利用脚本
+   git clone git://codeaurora.org/quic/la/platform/vendor/qcom-opensource/tools
+** 利用高通QCAP网站解析
+   https://cap.qti.qualcomm.com
+   Symbol文件路径：
+   KERNEL: 
+   out/target/product/msm8937_64/obj/KERNEL_OBJ/vmlinux 
+   TZ（Trustzone）: 
+   None-HLOS/TZ.BF.4.0.5/trustzone_images/core/bsp/qsee/build/ZALAANAA/qsee.elf 
+   MODEM: 
+   None-HLOS/MPSS.JO.3.0/modem_proc/build/ms/M89378937.genns.prodQ00258.elf 
+   None-HLOS/MPSS.JO.3.0/modem_proc/build/ms/orig_MODEM_PROC_IMG_8937.genns.prodQ.elf 
+   None-HLOS/MPSS.JO.3.0/modem_proc/build/myps/qshrink/msg_hash.txt
+   RPM:
+   None-HLOS/RPM.BF.2.2/rpm_proc/core/bsp/rpm/build/8917/RPM_AAAAANAAR.elf
+   None-HLOS/RPM.BF.2.2/rpm_proc/core/bsp/rpm/build/8937/RPM_AAAAANAAR.elf
+   ADSP:
+   None-HLOS/ADSP.8953.2.8.2/adsp_proc/build/ms/M8937AAAAAAAAQ1234_reloc.elf
+   None-HLOS/ADSP.8953.2.8.2/adsp_proc/build/ms/M8937AAAAAAAAQ1234_SENSOR_reloc.elf
+   WCNSS：
+   None-HLOS/CNSS.PR.4.0/wcnss_proc/build/ms/8937_PRONTO_MR.elf
+   None-HLOS/CNSS.PR.4.0/wcnss_proc/build/ms/8917_PRONTO_MR.elf
+   

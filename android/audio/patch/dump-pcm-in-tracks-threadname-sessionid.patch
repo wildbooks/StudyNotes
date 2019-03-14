@@ -43,7 +43,7 @@ index a7c4253..34e926f 100644
 +        sprintf(fname, "/data/misc/audioserver/%s-session-%d.pcm", mThread.promote()->mThreadName, mSessionId);
 +        int tmpFd = open(fname, O_CREAT | O_WRONLY | O_APPEND, 0776);
 +        if ( tmpFd < 0 ) {
-+                ALOGE("Fail to open dumpTrack file");
++                ALOGE("Fail to open dumpTrack file, error:%s", strerror(errno));
 +        } else {
 +                write(tmpFd, buffer->raw, buffer->frameCount * TrackBase::mChannelCount * 2);
 +                close(tmpFd);

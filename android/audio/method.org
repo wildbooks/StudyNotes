@@ -34,6 +34,7 @@
 - [[#bt][bt]]
 - [[#usb--af][usb + AF]]
 - [[#与audio相关的系统属性][与audio相关的系统属性]]
+- [[#fs][fs]]
 - [[#参考文档-1][参考文档]]
 
 * bringup audio
@@ -330,6 +331,31 @@
   | persist.debug.sf.noaudio             |      |
   | media.aac_51_output_enabled          |      |
   | media.wfd.use-pcm-audio              |      |
+* fs
+  //app
+  localAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE); //获取AudioManager服务
+  localAudioManager.setSpeakerphoneOn(true); //frameworks/base/media/java/android/media/AudioManager.java 设置Speaker
+
+  // setSpeakerphoneOn(boolean on)  frameworks/base/media/java/android/media/AudioManager.java
+  final IAudioService service = getService();
+  service.setSpeakerphoneOn(on);
+
+  //setSpeakerphoneOn  frameworks/base/services/core/java/com/android/server/audio/AudioService.java
+  sendMsg(mAudioHandler, MSG_SET_FORCE_USE, SENDMSG_QUEUE, AudioSystem.FOR_COMMUNICATION, mForcedUseForComm, eventSource, 0);
+  handleMessage()
+  setForceUse()
+  setForceUseInt_SyncDevices()
+
+  setForceUse()  frameworks/base/services/core/java/com/android/server/audio/AudioService.java
+  android_media_AudioSystem_setForceUse() //frameworks/base/core/jni/android_media_AudioSystem.cpp
+  AudioSystem::setForceUse()     frameworks/av/media/libaudioclient/AudioSystem.cpp
+  AudioPolicyService::setForceUse() frameworks/av/services/audiopolicy/service/AudioPolicyInterfaceImpl.cpp
+  AudioPolicyManagerCustom::setForceUse() vendor/qcom/opensource/audio/policy_hal/AudioPolicyManager.cpp
+  AudioPolicyManager::setForceUse() frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp
+
+  AudioTrack::set
+  AudioFlinger::createTrack
+
 * 参考文档
   80_NL239_28_E_LINUX_AUDIO_DEVICE_MANAGEMENT.pdf
   80-na157-193_f_linux_android_audio_customization_and_debugging_guide.pdf 客制化

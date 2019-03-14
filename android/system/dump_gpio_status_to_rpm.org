@@ -1,0 +1,29 @@
+* Dump Gpio status to RPM log
+  Dump GPIO status to RPM log KBA-180118231424
+* 通过/dev/mem读取寄存器值
+  + 条件
+    #+begin_src
+    //内核配置
+    +CONFIG_DEVMEM=y
+    //编译r命令
+    /system/core/toolbox
+    #+end_src
+  + Example
+    #+begin_src cpp
+    /system/core/toolbox
+    /system/bin/r <Address> <value>
+    #define TLMM_BA 0x1000000
+    TLMM_GPIO_CFGn 0x1000000 + 0x1000 * (n)
+    TLMM_GPIO_IN_OUTn 0x1000004 + 0x1000 * (n) //输入输出方向
+    TLMM_GPIO_INTR_CFGn 0x1000008 + 0x1000 * (n) //中断相关
+    TLMM_GPIO_INTR_STATUSn 0x100000C + 0x1000 * (n) //
+    Example:
+    + To read GPIO 19 config registers
+      #/system/bin/r 0x1013000
+      #/system/bin/r 0x1013004
+      #/system/bin/r 0x1013008
+      #/system/bin/r 0x101300C
+    + To configure GPIO 19 as output high
+      #/system/bin/r 0x1013000 0x201
+      #/system/bin/r 0x1013004 0x3
+    #+end_src
