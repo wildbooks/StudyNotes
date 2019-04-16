@@ -115,11 +115,4 @@
 
   5.使用cpio工具对ramdisk.img解压缩
   cpio -i -F ramdisk.img
-  
-  --------------------- 
-  作者：辛勤的摆渡人 
-  来源：CSDN 
-  原文：https://blog.csdn.net/hunter168_wang/article/details/52944269 
-  版权声明：本文为博主原创文章，转载请附上博文链接！
-
 * lk

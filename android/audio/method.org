@@ -256,7 +256,7 @@
 * usb + AF
     #+begin_src cpp
     #define LOG_NDEBUG 0
-    #define VERY_VERBOSE_LOGGING 
+    #define VERY_VERBOSE_LOGGING
     frameworks/av/media/libmediaplayerservice/MediaPlayerService.cpp #MediaPlayerService
     frameworks/av/media/libmedia/mediaplayer.cpp #MediaPlayerNative
     frameworks/av/media/libstagefright/AudioPlayer.cpp #AudioPlayer
@@ -274,11 +274,12 @@
   + APM
     #+begin_src cpp
     #define LOG_NDEBUG 0
-    #define VERY_VERBOSE_LOGGING 
+    #define VERY_VERBOSE_LOGGING
     frameworks/av/services/audiopolicy/service/AudioPolicyService.cpp #AudioPolicyService
     frameworks/av/services/audiopolicy/service/AudioPolicyInterfaceImpl.cpp #AudioPolicyIntefaceImpl
     frameworks/av/services/audiopolicy/managerdefault/AudioPolicyManager.cpp #APM_AudioPolicyManager
     vendor/qcom/opensource/audio/policy_hal/AudioPolicyManager.cpp #AudioPolicyManagerCustom
+    hardware/qcom/audio/policy_hal/AudioPolicyManager.cpp #AudioPolicyManagerCustom
     frameworks/av/services/audiopolicy/enginedefault/src/Engine.cpp #or APM::AudioPolicyEngine
     frameworks/av/services/audiopolicy/engineconfigurable/src/Engine.cpp #APM::AudioPolicyEngine
     frameworks/av/services/audiopolicy/common/managerdefinitions/src/Gains.cpp #APM::Gains
@@ -291,7 +292,7 @@
     #undef DYNAMIC_LOG_ENABLED
     */
     #define LOG_NDEBUG 0
-    #define VERY_VERY_VERBOSE_LOGGING 
+    #define VERY_VERY_VERBOSE_LOGGING
     hardware/libhardware/modules/usbaudio/audio_hal.c #modules.usbaudio.audio_hal
     hardware/qcom/audio/hal/audio_extn/usb.c #audio_hw_usb
     hardware/qcom/audio/hal/audio_hw.c #audio_hw_primary

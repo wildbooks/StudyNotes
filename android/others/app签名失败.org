@@ -1,0 +1,17 @@
+* 签名失败
+** 签名方法
+   build/make/target/product/security
+   #+begin_src bash
+   java -Djava.library.path="out/soong/host/linux-x86/lib64/" \
+   -jar out/host/linux-x86/framework/signapk.jar \
+   build/target/product/security/platform.x509.pem \
+   build/target/product/security/platform.pk8 \
+   test.apk test_sign.apk
+   #+end_src
+** 查看apk当前签名
+   jarsigner -certs -verify -verbose QSensorTest.apk
+** 查看
+   adb shell pm list packages -f | grep -i apt
+** 参考文档
+   [[https://blog.csdn.net/xct841990555/article/details/80993099][android系统源码中给apk签名的几种方式(包括有源码和无源码的apk)]]
+   [[https://www.cnblogs.com/blogs-of-lxl/p/9233285.html][Android : apk签名的多种方法以及key的配置]]

@@ -1,0 +1,14 @@
+* tools
+  | name             | 功能                            |
+  |------------------+---------------------------------|
+  | sns_regedit_ssi  |                                 |
+  | sns_ar_testapp   |                                 |
+  | sns_cm_test      |                                 |
+  | sns_hal_batch    |                                 |
+  | sns_regedit_ssi  |                                 |
+  | sns_cm_conc_test |                                 |
+  | sns_dsps_tc0001  | check which sensor init success |
+  | sns_oem_test     |                                 |
+  
+  
+

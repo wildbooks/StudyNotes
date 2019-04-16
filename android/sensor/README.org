@@ -1,0 +1,89 @@
+* sensor种类
+  | 全称             | 缩写  | 中文             |
+  |------------------+-------+------------------|
+  | *accelerometer*  | ACCEL | *加速度传感器*   |
+  | *magnetic field* | MAG   | *磁力传感器*     |
+  | *orientation*    |       | *方向传感器*     |
+  | *gyroscope*      | GYRO  | *陀螺仪*         |
+  | *light*          | LIGHT | *环境光照传感器* |
+  | *pressure*       |       | *压力传感器*     |
+  | *temperature*    |       | *温度传感器*     |
+  | *proximity*      | PROX  | *距离传感器*     |
+  | *gravity*        |       | *重力传感器*     |
+* hardware
+  80_NM328_44_E_Presentation__ADSP_BF_2_6_Sensors_Ov.pdf #sensor硬件gpio描述
+* 代码
+** fravework   
+   frameworks/native/services/sensorservice
+** jni
+   frameworks/base/core/java/android/hardware/SensorManager.java
+   frameworks/base/core/java/android/hardware/SystemSensorManager.java
+   frameworks/base/core/jni/android_hardware_SensorManager.cpp
+** hal 
+   vendor/qcom/proprietary/sensors/dsps/libhalsensors #"qti_sensors_hal"
+   hardware/interfaces/sensors/1.0/default/Sensors.cpp
+** Sensor daemon
+   vendor/qcom/proprietary/sensors/dsps/sensordaemon
+** 通讯库允许传感器客户端发送/接收传感器1 来自传感器守护程序的消息
+   vendor/qcom/proprietary/sensors/dsps/libsensor1
+** driver
+   ADSP.8953.2.8.4/adsp_proc/Sensors/ #bringup
+   kernel/arch/arm/mach-msm/sensors_adsp.c
+* 关键宏
+  USE_SENSOR_MULTI_HAL
+* framework
+  frameworks/base/core/java/android/hardware/Sensor.java
+* jni
+  frameworks/base/core/jni/android_hardware_SensorManager.cpp
+* code
+  frameworks/native/data/etc/
+* config
+  /system/etc/sensors/	
+  sensors/dsps/reg_defaults/sensor_def_qcomdev.conf	#config
+* tool
+  | 工具名            | 源码                                        |
+  |-------------------+---------------------------------------------|
+  | *QSensorTest*     | vendor/qcom/proprietary/sensors/QSensorTest |
+  | *sns_regedit_ssi* | vendor/qcom/proprietary/sensors/dsps/test   |
+  | *QXDM*            |                                             |
+* debug
+  | 属性                             |                                                                           |
+  |----------------------------------+---------------------------------------------------------------------------|
+  | persist.vendor.debug.sensors.hal | vendor/qcom/proprietary/sensors/dsps/libhalsensors                        |
+  | persist.vendor.debug.ar.hal      | vendor/qcom/proprietary/sensors/dsps/libar                                |
+  | debug.vendor.sns.libsensor1      | vendor/qcom/proprietary/sensors/dsps/libsensor1                           |
+  | debug.vendor.sns.daemon          | vendor/qcom/proprietary/sensors/dsps/sensordaemon                         |
+  | debug.vendor.sns.diag.tx.mode    | vendor/qcom/proprietary/sensors/dsps/sensordaemon/apps/common/sns_debug   |
+  | debug.sns.hal.ftrace             | vendor/qcom/proprietary/sensors/dsps/libhalsensors/src/SensorsContext.cpp |
+  | debug.sns.daemon.ftrace          | vendor/qcom/proprietary/sensors/dsps/sensordaemon/main/src/sns_main.c     |
+  开启bootup阶段log
+  #+begin_src bash
+  adb shell stop sensors
+  adb shell "echo 'related' > /sys/bus/msm_subsys/devices/subsys0/restart_level"
+  adb shell "echo 'restart' > /sys/kernel/debug/msm_subsys/adsp"
+  adb shell start sensors
+  #+end_src
+* 专业术语
+  |                                |       |              |
+  |--------------------------------+-------+--------------|
+  | Sensors manager                | SMGR  |              |
+  | Sensors Algorithm Manager      | SAM   |              |
+  | Device driver framework        | DDF   |              |
+  | Sensors calibration manager    | SCM   |              |
+  | Power manager                  | PM    |              |
+  | Operating systems abstraction  | OSA   |              |
+  | Qualcomm Message Interface     | QMI   |              |
+  | QMI Common Client interface    | QCCI  |              |
+  | QMI Common Service interface   | QCSI  |              |
+  | shared memory driver           | SMD   |              |
+  | Compatibility Test Suite       | CTS   |              |
+  | Plan of record                 | PoR   |              |
+  | Snapdragon sensors core        | SSC   |              |
+  | Multiprocessor communication   | Mproc | 多处理器通信 |
+  | Interface description language | IDL   | 接口描述语言 |
+  | External data representation   | XDR   |              |
+  | Sensor ID                      | SUID  |              |
+  | Absolute motion detect         | AMD   |              |
+  |                                |       |              |
+* 参考文档
+  80-NM328-74 G

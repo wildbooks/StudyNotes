@@ -1,19 +1,5 @@
-* 手机传感器分类
-  *加速度传感器 (accelerometer)*
-  *磁力传感器(magnetic field)*
-  *方向传感器(orientation)*
-  *陀螺仪(gyroscope)*
-  *环境光照传感器(light)*
-  *压力传感器(pressure)*
-  *温度传感器(temperature)*
-  *距离传感器(proximity)*
-  *重力传感器(gravity)*
-  + 工具: *android sensor box*
-* framework
-* JNI
-  frameworks/base/core/jni/android_hardware_SensorManager.cpp
 * native
-  frameworks/base/native/android/sensor.cpp
+  frameworks/native/services/sensorservice
   frameworks/native/services/sensorservice/tests/sensorservicetest.cpp
   frameworks/native/services/sensorservice/LinearAccelerationSensor.cpp
   frameworks/native/services/sensorservice/SensorRecord.cpp
@@ -29,23 +15,34 @@
   frameworks/native/services/sensorservice/SensorServiceUtils.cpp
   frameworks/native/services/sensorservice/OrientationSensor.cpp
   frameworks/native/services/sensorservice/SensorDevice.cpp
-  frameworks/native/libs/gui/SensorEventQueue.cpp
-  frameworks/native/libs/gui/ISensorEventConnection.cpp
-  frameworks/native/libs/gui/Sensor.cpp
-  frameworks/native/libs/gui/SensorManager.cpp
-  frameworks/native/libs/gui/ISensorServer.cpp
+* jni
+  frameworks/base/core/java/android/hardware/SensorManager.java # framework.jar
+  frameworks/base/core/jni/android_hardware_SensorManager.cpp # libandroid_runtime.so
 * HAL
-  hardware/qcom/sensors/
-  hardware/libhardware/
-  vendor/qcom/proprietary/sensors
+  hardware/interfaces/sensors/1.0/default/Sensors.cpp
+  vendor/qcom/proprietary/sensors/dsps/libhalsensors #"qti_sensors_hal"
 ** hal层库
-   /system/lib64/hw/sensors.msm8952.so
+   /system/lib64/hw/sensors.msm8937_64.so
    /system/vendor/lib64/sensors.ssc.so
 * kernel
 ** driver
    *SensorsFrameworks*:kernel/drivers/sensors/sensors_class.c
-   *VirtualProximityDriver*:kernel/drivers/input/touchscreen/ft5436_idol4/
    amss_8976/adsp_proc/adsp_proc/Sensors/dd/
 ** daemon
    vendor/qcom/proprietary/sensors/dsps/sensordaemon
    守护进程:sensors.qcom
+
+
+
+* 流程图
+  SensorManager.java  frameworks/base/core/java/android/hardware/SensorManager.java
+
+  getDefaultSensor() -> getSensorList() -> getFullSensorList() ->  #SensorManager.java
+  -> mFullSensorsList -> SystemSensorManager() -> nativeGetSensorAtIndex()  #SystemSensorManager.java
+  -> nativeGetSensorAtIndex() -> (mgr->getSensorList) #android_hardware_SensorManager.cpp
+  -> assertStateLocked() -> 
+
+
+
+* hal
+  sensors_flush -> SensorsContext::flush

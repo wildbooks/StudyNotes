@@ -1,0 +1,29 @@
+* BringUP
+  bringup包含camera、viber、eeprom、flashled
+  + kernel
+    vendor/qcom/proprietary/mm-camera
+    kernel/msm-3.18/arch/arm64/boot/dts/qcom/msm8917-mtp.dtsi
+    kernel/msm-3.18/arch/arm64/boot/dts/qcom/msm8917-camera-pinctrl.dtsi
+    kernel/msm-3.18/arch/arm64/boot/dts/qcom/msm8917-camera.dtsi
+    kernel/msm-3.18/arch/arm64/boot/dts/qcom/msm8917-camera-sensor-mtp.dtsi => "qcom,camera"
+    kernel/msm-3.18/arch/arm64/boot/dts/qcom/msm8917-pmi8940-mtp.dtsi => "qcom,camera-flash"
+
+
+
+
+
+    + Bayer 参考驱动程序
+      mm-camera2/media-controller/modules/sensors/sensor_libs/
+      imx135_lib.c/h
+      ov2680_lib.c
+      ov2720_lib.c
+      ov9724_lib.c
+      s5k3l1yx_lib.c
+    + YUV 参考驱动程序
+      mm-camera2/media-controller/modules/sensors/sensor_libs/
+    + 内核驱动程序位于
+      kernel/drivers/media/platform/msm/camera_v2/sensor
+    + Doc
+      Documentation/devicetree/bindings/media/video
+  + hal
+    hardware/qcom/camera/
