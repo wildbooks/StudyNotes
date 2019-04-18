@@ -5,33 +5,39 @@
      sudo update-alternatives --config java
      sudo update-alternatives --config javac
 * 安装依赖包
-   sudo apt-get install bison g++-multilib git gperf libxml2-utils make python-networkx zlib1g-dev:i386 zip
+  sudo apt-get install bison g++-multilib git gperf libxml2-utils make python-networkx zlib1g-dev:i386 zip
 * 安装gcc
-    sudo apt-get install gcc
+  sudo apt-get install gcc
 * 安装repo
-   curl https://storage.googleapis.com/git-repo-downloads/repo > /bin/repo
-   chmod a+x /bin/repo
-   repo init -u git@172.26.12.66:quicl/manifests -m m8939.xml  //公司拉代码
-   repo sync        //拉代码
+  curl https://storage.googleapis.com/git-repo-downloads/repo > /bin/repo
+  chmod a+x /bin/repo
+  repo init -u git@172.26.12.66:quicl/manifests -m m8939.xml  //公司拉代码
+  repo sync        //拉代码
 * 编译源代码
-+ 编译前奏
-  source /build/envsetup.sh 这个脚本用来设置android的编译环境
-  执行 choosecombo命令，这个命令用来选择编译目标（如目标硬件平台，eng还是
-  user等）。一般而言，手机厂商会设置自己特有的编译选项
-+ 编译
-  + make
-    | make               | 编译整个内核                                               |
-    | make MediaProvider | 编译MediaProvider模块,会把该模块所依赖的其他模块也编译进来 |
-  + mmm
-    | make packages/providers/MediaProvider | 编译MediaProvider模块,而不编译它所依赖的模块 |
-  + mm
-    | mm | 编译当前路径的模块，功能和mmm类似 |
-  + 各模块的编译实例
-    | 目标模块           | make命令             | mmm命令                                 |
-    | init               | make init            | mmm system/core/init                    |
-    | zygote             | make app_process     | mmm frameworks/base/cmds/app_process    |
-    | system_server      | make services        | mmm frameworks/base/libs/utils          |
-    | RefBase等          | make libutils        | mmm frameworks/base                     |
-    | AudioTrack         | make libmedia        | mmm frameworks/base/media/libmedia      |
-    | AudiaFlinger       | make libaudioflinger | mmm frameworks/base/libs/audioflinger   |
-    | AudioPolicyService | make libaudiopolicy  | mmm hardware/msm7k/libaudio-qsd8k(示例) |
+  + 编译前奏
+    source /build/envsetup.sh 这个脚本用来设置android的编译环境
+    执行 choosecombo命令，这个命令用来选择编译目标（如目标硬件平台，eng还是
+    user等）。一般而言，手机厂商会设置自己特有的编译选项
+  + 编译
+    + make
+      | make               | 编译整个内核                                               |
+      |--------------------+------------------------------------------------------------|
+      | make MediaProvider | 编译MediaProvider模块,会把该模块所依赖的其他模块也编译进来 |
+    + mmm
+      | make packages/providers/MediaProvider | 编译MediaProvider模块,而不编译它所依赖的模块 |
+    + mm
+      | mm | 编译当前路径的模块，功能和mmm类似 |
+    + 各模块的编译实例
+      | 目标模块           | make命令                | mmm命令                                 |
+      |--------------------+-------------------------+-----------------------------------------|
+      | init               | make init               | mmm system/core/init                    |
+      | zygote             | make app_process        | mmm frameworks/base/cmds/app_process    |
+      | system_server      | make services           | mmm frameworks/base/libs/utils          |
+      | RefBase等          | make libutils           | mmm frameworks/base                     |
+      | AudioTrack         | make libmedia           | mmm frameworks/base/media/libmedia      |
+      | AudiaFlinger       | make libaudioflinger    | mmm frameworks/base/libs/audioflinger   |
+      | AudioPolicyService | make libaudiopolicy     | mmm hardware/msm7k/libaudio-qsd8k(示例) |
+      | java framework     | make framework          | mmm frameworks/base                     |
+      | framework资源      | make framework-res      | mmm frameworks/base/core/res            |
+      | jni framework      | make libandroid_runtime | mmm frameworks/base/core/jni            |
+      | binder             | make libbinder          | mmm frameworks/native/libs/binder       |

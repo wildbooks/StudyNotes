@@ -1,4 +1,5 @@
-adb root &&adb remount
+adb root && adb wait-for-device
+adb remount
 
 # media
 adb push $ANDROID_PRODUCT_OUT/system/lib/libaudioclient.so /system/lib/

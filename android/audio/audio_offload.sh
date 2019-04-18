@@ -18,6 +18,8 @@
 # adb shell setprop audio.offload.multiple.enabled true
 # adb shell setprop audio.offload.min.duration.secs 60
 
+adb root && adb wait-for-device
+adb remount
 #echo 8 > /proc/sys/kernel/printk
 echo "file sound/soc/msm/qdsp6v2/msm-compress-q6-v2.c +p" >>/d/dynamic_debug/control
 echo "file sound/soc/msm/qdsp6v2/q6adm.c +p" >>/d/dynamic_debug/control

@@ -4,45 +4,45 @@
   SELinux不能完全适用于Android系统。为此，NSA针对Android系统，在SELinux
   基础上开发了SEAndroid。本文就对SEAndroid安全机制框架进行分析，
 ** 基本概念
-+ DAC(自主存取控制)
-  如传统的Linux　UID/GID机制
-+ MAC(强制存取控制)
-+ TE(类型强制)
-  访问控制都是以关联的客体和主体的某种类型的访问控制属性为基础的,在
-  SELinux中
-  + 客体指的是文件,进程间通讯通道,套接字等
-  + 主体指的是进程
-  + 控制属性指的是安全上下文
-    安全上下文由以下４部分组成
-    + 用户(user)
-    + 角色(role)
-    + 类型标识符(type)     这个对我们而言最重要
-      | 类型      | 功能                         |
-      |-----------+------------------------------|
-      | file_type | 用来标注文件的安全上下文类型 |
-      | domain    | 用来标注进程的安全上下文类型 |
-    + 安全上下文的解析由以下四个关键文件决定
-      mac_permissions.xml、
-      seapp_contexts、
-      file_contexts和
-      property_contexts 属性的安全上下文和file_contexts类似
-      位于目录system/sepolicy下
-      mac_permissions.xml ->  seapp_contexts  ->  file_contexts
-                                              ->  property_contexts
-    + Sensitivity(安全级别)
-  + 查看命令
-    #+begin_src shell
-    ls -Z //查看客体的安全上下文属性
-    ps -Z //查看主体的安全上下文属性
-    #+end_src
-+ SELINUX的三种模式
-  ENFORCING   ---SELinux security policy is enforced
-  PERMISSIVE---SELinux grants access but prints out error(avc denied)message
-  DISABLED--- No SELinux policy is loaded
-+ 规则添加神器audit2allow安装
-  sudo apt-get install policycoreutils
-+ 注意 ::
-     selinux的权限是由GID/UID机制　和　上下文控制的
+   + DAC(自主存取控制)
+     如传统的Linux　UID/GID机制
+   + MAC(强制存取控制)
+   + TE(类型强制)
+     访问控制都是以关联的客体和主体的某种类型的访问控制属性为基础的,在
+   SELinux中
+   + 客体指的是文件,进程间通讯通道,套接字等
+     + 主体指的是进程
+     + 控制属性指的是安全上下文
+       安全上下文由以下４部分组成
+       + 用户(user)
+       + 角色(role)
+       + 类型标识符(type)     这个对我们而言最重要
+         | 类型      | 功能                         |
+         |-----------+------------------------------|
+         | file_type | 用来标注文件的安全上下文类型 |
+         | domain    | 用来标注进程的安全上下文类型 |
+       + 安全上下文的解析由以下四个关键文件决定
+         mac_permissions.xml、
+         seapp_contexts、
+         file_contexts和
+         property_contexts 属性的安全上下文和file_contexts类似
+         位于目录system/sepolicy下
+         mac_permissions.xml ->  seapp_contexts  ->  file_contexts
+                                                 ->  property_contexts
+       + Sensitivity(安全级别)
+     + 查看命令
+       #+begin_src shell
+       ls -Z //查看客体的安全上下文属性
+       ps -Z //查看主体的安全上下文属性
+       #+end_src
+   + SELINUX的三种模式
+     ENFORCING   ---SELinux security policy is enforced
+     PERMISSIVE---SELinux grants access but prints out error(avc denied)message
+     DISABLED--- No SELinux policy is loaded
+   + 规则添加神器audit2allow安装
+     sudo apt-get install policycoreutils
+   + 注意 ::
+           selinux的权限是由GID/UID机制　和　上下文控制的
 * SEAndroid框架
   [[file:./picture/01.SEAndroid安全机制框架.png]]
   从图可以看到，以SELinux文件系统接口为边界，SEAndroid安全机制包含有内核空间
@@ -67,7 +67,20 @@
    #+end_src
 * Security Context(安全上下文)
 * SEAndroid Policy(安全策略)
-SEAndroid安全机制中的安全策略是在安全上下文的基础上进行描述的，也就是说，
-它通过主体和客体的安全上下文，定义主体是否有权限访问客体。
+  SEAndroid安全机制中的安全策略是在安全上下文的基础上进行描述的，也就是说，
+  它通过主体和客体的安全上下文，定义主体是否有权限访问客体。
+* 案例
+  | 关键文件             |                         |
+  |----------------------+-------------------------|
+  | te_macros            | 函数                    |
+  | file.te              | type定义                |
+  | file_contexts        | 文件的安全上下文        |
+  | port_contexts        | 网络端口安全上下文      |
+  | seapp_contexts       | APP数据文件的安全上下文 |
+  | genfs_contexts       | 虚拟文件安全上下文               |
+  | service_contexts     | service的安全上下文     |
+  | property_contexts    | 系统属性的安全上下文    |
+  | hwservice_contexts   | hal层的安全上下文       |
+  | initial_sid_contexts |                         |
 * 参考文档
 [[http://blog.csdn.net/luoshengyang/article/details/35392905][<<SEAndroid安全机制简要介绍和学习计划>>]]
