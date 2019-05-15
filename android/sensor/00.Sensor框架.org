@@ -1,3 +1,6 @@
+* java
+  frameworks/base/core/java/android/hardware/SensorManager.java # framework.jar
+  frameworks/base/core/jni/android_hardware_SensorManager.cpp # libandroid_runtime.so
 * native
   frameworks/native/services/sensorservice
   frameworks/native/services/sensorservice/tests/sensorservicetest.cpp
@@ -15,22 +18,6 @@
   frameworks/native/services/sensorservice/SensorServiceUtils.cpp
   frameworks/native/services/sensorservice/OrientationSensor.cpp
   frameworks/native/services/sensorservice/SensorDevice.cpp
-* jni
-  frameworks/base/core/java/android/hardware/SensorManager.java # framework.jar
-  frameworks/base/core/jni/android_hardware_SensorManager.cpp # libandroid_runtime.so
-* HAL
-  hardware/interfaces/sensors/1.0/default/Sensors.cpp
-  vendor/qcom/proprietary/sensors/dsps/libhalsensors #"qti_sensors_hal"
-** hal层库
-   /system/lib64/hw/sensors.msm8937_64.so
-   /system/vendor/lib64/sensors.ssc.so
-* kernel
-** driver
-   *SensorsFrameworks*:kernel/drivers/sensors/sensors_class.c
-   amss_8976/adsp_proc/adsp_proc/Sensors/dd/
-** daemon
-   vendor/qcom/proprietary/sensors/dsps/sensordaemon
-   守护进程:sensors.qcom
 
 
 

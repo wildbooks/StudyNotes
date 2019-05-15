@@ -1,8 +1,20 @@
 * Table of Contents :TOC_4_gh:noexport:
+- [[#source][Source]]
 - [[#inputmanagerservice][InputManagerService]]
 - [[#inputmanagerservice-1][InputManagerService]]
 - [[#专业术语][专业术语]]
 
+* Source
+  + api
+  + java
+    frameworks/base/services/core/java/com/android/server/input/
+  + jni
+    frameworks/base/services/core/jni/com_android_server_input_InputManagerService.cpp
+  + native
+    frameworks/native/services/inputflinger
+  + hal
+    hardware/libhardware/modules/input/evdev
+  + kernel
 * InputManagerService
   frameworks/base/services/core/java/com/android/server/input/InputManagerService.java
   frameworks/base/services/core/jni/com_android_server_input_InputManagerService.cpp
@@ -26,6 +38,19 @@
   frameworks/base/services/java/com/android/server/SystemServer.java
   || inputManager = new InputManagerService(context); => ServiceManager.addService(Context.INPUT_SERVICE, inputManager,
   \/
+  frameworks/base/services/core/java/com/android/server/input/InputManagerService.java
+  || this.mHandler = new InputManagerHandler(DisplayThread.get().getLooper());//和InputManagerService相关的消息的处理时在这个对象中完成的
+  || nativeInit() //通过JNI调用来启动native层的input系统，然后把返回值存放在mPtr中
+  \/
+  frameworks/base/services/core/jni/com_android_server_input_InputManagerService.cpp
+  || nativeStart()
+  || im->getInputManager()->start();
+  \/
+  frameworks/native/services/inputflinger/InputManager.cpp
+  || InputManager::start()
+  ||
+  \/
+
   #+end_src
 * 专业术语
    | 简称 | 全称                 |

@@ -2,7 +2,7 @@ adb root && adb wait-for-device
 adb remount
 
 # media
-adb push $ANDROID_PRODUCT_OUT/system/lib/libaudioclient.so /system/lib/
+adb push $ANDROID_PRODUCT_OUT/system/lib64/libaudioclient.so /system/lib64/
 
 adb push $ANDROID_BUILD_TOP/hardware/qcom/audio/configs/msm8937/mixer_paths_qrd_sku2.xml /vendor/etc/                                                                #xml
 adb push $ANDROID_BUILD_TOP/hardware/qcom/audio/configs/msm8937/audio_policy_configuration.xml /vendor/etc/                                                                #xml

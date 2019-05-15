@@ -1,18 +1,26 @@
 * 命令
-  | 命令            | 功能                                |
-  |-----------------+-------------------------------------|
-  | croot           | 切换到源码树的根目录                |
-  | m 	            | 在源码树的根目录执行 make           |
-  | mm              | 	Build当前目录下的模块             |
-  | mmm             | Build指定目录下的模块               |
-  | cgrep           | 	在所有C/C++ 文件上执行 grep       |
-  | jgrep           | 	在所有Java 文件上执行 grep        |
-  | resgrep         | 	在所有res/*.xml 文件上执行 grep   |
-  | godir           | 转到包含某个文件的目录路径          |
-  | printconfig     | 	显示当前 Build 的配置信息         |
-  | add_lunch_combo | 	在 lunch 函数的菜单中添加一个条目 |
-  |                 |                                     |
-
+  | 命令             | 功能                                     |
+  |------------------+------------------------------------------|
+  | croot            | 切换到源码树的根目录                     |
+  | m                | 在源码树的根目录执行 make                |
+  | mm               | Build当前目录下的模块                    |
+  | mmm              | Build指定目录下的模块                    |
+  | cgrep            | 在所有C/C++ 文件上执行 grep              |
+  | jgrep            | 在所有Java 文件上执行 grep               |
+  | ggrep            | 所有Gradle文件执行搜索操作               |
+  | mangrep          | 所有AndroidManifest.xml文件执行搜索操作  |
+  | sepgrep          | 所有sepolicy文件执行搜索操作             |
+  | resgrep          | 在所有res/*.xml 文件上执行 grep          |
+  | sgrep            | 所有资源文件执行搜索操作                 |
+  | godir            | 转到包含某个文件的目录路径               |
+  | printconfig      | 显示当前 Build 的配置信息                |
+  | add_lunch_combo  | 在 lunch 函数的菜单中添加一个条目        |
+  | hmm              | 查询所有的指令help信息                   |
+  | findmakefile     | 查询当前目录所在工程的Android.mk文件路径 |
+  | print_lunch_menu | 查询lunch可选的product                   |
+  | printconfig      | 查询各项编译变量值                       |
+  | gettop           | 查询Android源码的根目录                  |
+  | gettargetarch    | 获取TARGET_ARCH值                        |
 * 变量含义
   | 变量名                               | 含义                            |
   |--------------------------------------+---------------------------------|

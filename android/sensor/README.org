@@ -13,12 +13,13 @@
 * hardware
   80_NM328_44_E_Presentation__ADSP_BF_2_6_Sensors_Ov.pdf #sensor硬件gpio描述
 * 代码
-** fravework   
-   frameworks/native/services/sensorservice
-** jni
+** java
+   frameworks/base/core/java/android/hardware/Sensor.java
    frameworks/base/core/java/android/hardware/SensorManager.java
    frameworks/base/core/java/android/hardware/SystemSensorManager.java
    frameworks/base/core/jni/android_hardware_SensorManager.cpp
+** native
+   frameworks/native/services/sensorservice
 ** hal 
    vendor/qcom/proprietary/sensors/dsps/libhalsensors #"qti_sensors_hal"
    hardware/interfaces/sensors/1.0/default/Sensors.cpp
@@ -31,10 +32,6 @@
    kernel/arch/arm/mach-msm/sensors_adsp.c
 * 关键宏
   USE_SENSOR_MULTI_HAL
-* framework
-  frameworks/base/core/java/android/hardware/Sensor.java
-* jni
-  frameworks/base/core/jni/android_hardware_SensorManager.cpp
 * code
   frameworks/native/data/etc/
 * config
@@ -46,6 +43,8 @@
   | *QSensorTest*     | vendor/qcom/proprietary/sensors/QSensorTest |
   | *sns_regedit_ssi* | vendor/qcom/proprietary/sensors/dsps/test   |
   | *QXDM*            |                                             |
+  | *diag_mdlog*      | /vendor/qcom/proprietary/diag/mdlog         |
+  |                   |                                             |
 * debug
   | 属性                             |                                                                           |
   |----------------------------------+---------------------------------------------------------------------------|
