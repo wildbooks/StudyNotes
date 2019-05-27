@@ -32,11 +32,15 @@
    kernel/arch/arm/mach-msm/sensors_adsp.c
 * 关键宏
   USE_SENSOR_MULTI_HAL
+* API
+  sns_ddf_open_port
+  sns_ddf_read_port
+  sns_ddf_close_port
 * code
   frameworks/native/data/etc/
 * config
-  /system/etc/sensors/	
-  sensors/dsps/reg_defaults/sensor_def_qcomdev.conf	#config
+  /mnt/vendor/persist/sensors/sns.reg
+  vendor/qcom/proprietary/sensors/dsps/reg_defaults/sensor_def_qcomdev.conf #config
 * tool
   | 工具名            | 源码                                        |
   |-------------------+---------------------------------------------|
@@ -63,26 +67,67 @@
   adb shell start sensors
   #+end_src
 * 专业术语
-  |                                |       |              |
-  |--------------------------------+-------+--------------|
-  | Sensors manager                | SMGR  |              |
-  | Sensors Algorithm Manager      | SAM   |              |
-  | Device driver framework        | DDF   |              |
-  | Sensors calibration manager    | SCM   |              |
-  | Power manager                  | PM    |              |
-  | Operating systems abstraction  | OSA   |              |
-  | Qualcomm Message Interface     | QMI   |              |
-  | QMI Common Client interface    | QCCI  |              |
-  | QMI Common Service interface   | QCSI  |              |
-  | shared memory driver           | SMD   |              |
-  | Compatibility Test Suite       | CTS   |              |
-  | Plan of record                 | PoR   |              |
-  | Snapdragon sensors core        | SSC   |              |
-  | Multiprocessor communication   | Mproc | 多处理器通信 |
-  | Interface description language | IDL   | 接口描述语言 |
-  | External data representation   | XDR   |              |
-  | Sensor ID                      | SUID  |              |
-  | Absolute motion detect         | AMD   |              |
-  |                                |       |              |
+  |                                   |          |              |
+  |-----------------------------------+----------+--------------|
+  | Power manager                     | PM       |              |
+  | Sensors manager                   | SMGR     |              |
+  | PM Sensors power manager          | SNS      |              |
+  | Sensors Algorithm Manager         | SAM      |              |
+  | Sensors calibration manager       | SCM      |              |
+  | Application client manager        | ACM      |              |
+  | Device driver framework           | DDF      |              |
+  | Operating system abstraction      | OSA      |              |
+  | Qualcomm CDMA Analysis Toolkit    | QCAT     |              |
+  | Qualcomm Message Interface        | QMI      |              |
+  | QMI Common Client interface       | QCCI     |              |
+  | QMI Common Service interface      | QCSI     |              |
+  | Shared memory driver              | SMD      |              |
+  | Significant motion detection      | SMD      |              |
+  | Relative motion detection         | RMD      |              |
+  | Absolute motion detection         | AMD      |              |
+  | Indoor outdoor detection          | IOD      |              |
+  | Compatibility Test Suite          | CTS      |              |
+  | Plan of record                    | PoR      |              |
+  | Snapdragon sensors core           | SSC      |              |
+  | Multiprocessor communication      | Mproc    | 多处理器通信 |
+  | Interface description language    | IDL      | 接口描述语言 |
+  | External data representation      | XDR      |              |
+  | Sensor ID                         | SUID     |              |
+  | Device position classifier        | DPC      |              |
+  | Data ready interrupt              | DRI      |              |
+  | Hardware abstraction layer        | HAL      |              |
+  | Nonvolatile                       | NV       |              |
+  | Peripheral image loader           | PIL      |              |
+  | Qualcomm gyro calibration         | QGyroCal |              |
+  | Qualcomm magnetometer calibration | QMagCal  |              |
+  | Report handler                    | RH       |              |
+  | Society of Automotive Engineers   | SAE      |              |
+  | Sensors message router            | SMR      |              |
+  | Sensors single image              | SSI      |              |
+  | Snapdragon voice activation       | SVA      |              |
+
 * 参考文档
   80-NM328-74 G
+* 研究
+  A+G:BMI160
+  P L:LTR578
+  MAG:AKM09911
+
+  Registry ID Registry item Description Parameter source
+  | < base index > + 0         | UUID_HIGH            |                                                                                               |
+  | < base index > + 1         | UUID_LOW             |                                                                                               |
+  | < base index > + 2         | OFF_TO_IDLE          | 关闭空闲时间（SMGR的可配置延迟时间，以微秒为单位）,由传感器部件规格定义（来自供应商数据表）   |
+  | < base index > + 3         | IDLE_TO_READY        | 空闲到准备时间（SMGR的可配置延迟时间，以微秒为单位）,由传感器部件规格定义（来自供应商数据表） |
+  | < base index > + 4         | I2C_BUS I2C          | I2C总线客户硬件 - 传感器所连接的BLSP总线编号，例如MSM8994上的BLSP 1-12                        |
+  | < base index > + 5         | REG_GROUP_ID         | 与此驱动程序关联的注册表项,                                                                   |
+  | < base index > + 6         | CAL_PRI_GROUP_ID     |                                                                                               |
+  | < base index > + 7         | GPIO1 GPIO           | GPIO用于设备中断                                                                              |
+  | < base index > + 8         | GPIO2 GPIO           | GPIO用于第二个设备中断                                                                        |
+  | < base index > + 9         | SENSOR_ID            | 传感器类型,与传感器类型关联的SMGR ID,参考文档sns_smgr_common_v01.h                            |
+  | < base index > + 10        | I2C_ADDRESS          | 器件的I2C地址（7位）,由传感器部件规格定义（来自供应商数据表）                                 |
+  | < base index > + 11        | DATA_TYPE1           |                                                                                               |
+  | < base index > + 12        | DATA_TYPE2           |                                                                                               |
+  | < base index > + 13        | RELATED_SENSOR_INDEX |                                                                                               |
+  | < base index > + 14        | SENSITIVITY_DEFAULT  |                                                                                            |
+  | < base index > + 15        | FLAGS                |  工作模式：Polling(轮询) 0x00; DRI(中断) 0x80;FIFO(sensor必需带FIFO功能) 0xD0                                                             |
+  | 1982 to 1986; 3682 to 3686 | DEVICE_SELECT        |                                                                                               |

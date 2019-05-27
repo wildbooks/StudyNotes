@@ -1,0 +1,56 @@
+* regmap
+  内核3.1引入一套新的API regmap，目的是提取出关于I2C SPI irq等相关注册、使能以及读写的公共部分，以提高代码的可重用性，并且使得在使用如上内核基础组件时变得更为简单易用。
+* 源代码
+  #+begin_src cpp
+  include/linux/regmap.h
+  drivers/base/regmap/
+  #+end_src
+* API
+  #+begin_src cpp
+  struct regmap_config {
+        const char *name;
+
+        int reg_bits; // 寄存器地址的位数，必须配置，例如I2C寄存器地址位数为 8
+        int reg_stride;//寄存器地址对齐
+        int pad_bits; // 寄存器值的位数，必须配置
+        int val_bits; //寄存器值位数
+
+        bool (*writeable_reg)(struct device *dev, unsigned int reg); //判断寄存器是否可写
+        bool (*readable_reg)(struct device *dev, unsigned int reg); //判断寄存器是否可读
+        bool (*volatile_reg)(struct device *dev, unsigned int reg); //判断寄存器是否可立即生效
+        bool (*precious_reg)(struct device *dev, unsigned int reg); //要求寄存器数值维持在一个数值范围才正确，maintain一个数值准确表
+        regmap_lock lock;
+        regmap_unlock unlock;
+        void *lock_arg;
+
+        int (*reg_read)(void *context, unsigned int reg, unsigned int *val); //寄存器读函数
+        int (*reg_write)(void *context, unsigned int reg, unsigned int val); //寄存器写函数
+
+        bool fast_io;
+
+        unsigned int max_register; //最大寄存器地址
+        const struct regmap_access_table *wr_table;
+        const struct regmap_access_table *rd_table;
+        const struct regmap_access_table *volatile_table;
+        const struct regmap_access_table *precious_table;
+        const struct reg_default *reg_defaults;
+        unsigned int num_reg_defaults;
+        enum regcache_type cache_type; //regmap类型
+        const void *reg_defaults_raw;
+        unsigned int num_reg_defaults_raw;
+
+        u8 read_flag_mask; //读掩码
+        u8 write_flag_mask;//写掩码
+
+        bool use_single_rw;
+        bool can_multi_write;
+
+        enum regmap_endian reg_format_endian;//寄存器地址大小端
+        enum regmap_endian val_format_endian;//寄存器值大小端
+
+        const struct regmap_range_cfg *ranges;
+        unsigned int num_ranges;
+  };
+  #+end_src
+* 参考文档
+  [[https://blog.csdn.net/cc289123557/article/details/78391075][linux设备驱动模型 - regmap]]

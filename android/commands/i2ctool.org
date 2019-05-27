@@ -1,0 +1,13 @@
+* README
+  I2C tool 是一个开源工具，需自行下载进行交叉编译，代码下载地址：
+  #+begin_src cpp
+  https://www.kernel.org/pub/software/utils/i2c‐tools/
+  git clone git://git.kernel.org/pub/scm/utils/i2c‐tools/i2c‐tools.git
+  #+end_src
+  编译后会生成 i2cdetect，i2cdump，i2cset，i2cget 等工具，可以直接在命令行上调试使用：
+  i2cdetect – 用来列举 I2C bus 和上面所有的设备
+  i2cdump – 显示 i2c 设备所有 register 的值
+  i2cget – 读取 i2c 设备某个 register 的值
+  i2cset – 写入 i2c 设备某个 register 的值
+* 参考文档
+  [[https://blog.csdn.net/kai_zone/article/details/80491706][i2c-tools使用及调试]]

@@ -163,7 +163,7 @@
   |------+----------------------------+----------------|
   | BLSP | BAM Low-Speed Peripheral   |                |
   | TLMM | top-level mode multiplexer | 顶级模式复用器 |
-   |DAL|Device Abstraction Layer |                   | 
+  | DAL  | Device Abstraction Layer   |                |
 * 函数讲解
 ** pinctrl-msm.c
    主要功能是对pinctrl_ops,pinconf_ops,pinctrl_ops结构体类型变量进行填充,
