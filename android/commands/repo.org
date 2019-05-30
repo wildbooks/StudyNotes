@@ -83,6 +83,7 @@
 
   #+end_src
 * init
+  #+begin_src bash
   repo init
      -u：指定一个URL，其连接到一个maniest仓库
      -m ：在manifest仓库中选择一个xml文件
@@ -91,11 +92,16 @@
      --repo-branch:设定需要检出的分支。
      --no-repo-verify:设定不要对repo的里程碑签名进行严格的验证。
      --mirror：只在repo第一次初始化的时候使用，建立本地镜像
-** download
+  #+end_src
+* download
   repo download
-** upload
+* upload
   repo upload
-** diff
-** prune
-** start
-** status
+* diff
+* prune
+* start
+* status
+* forall
+  #+begin_src bash
+  repo forall -c 'ID=`Git log --before="2016-06-28 23:00" -1 --pretty=format:"%H"`;git reset --hard $ID;git clean -df' #回退到2016-06-28版本
+  #+end_src

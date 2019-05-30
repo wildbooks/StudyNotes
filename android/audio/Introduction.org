@@ -2,14 +2,11 @@
 - [[#kernel][kernel]]
 - [[#手机audio][手机audio]]
 - [[#多按钮耳机控制][多按钮耳机控制]]
-- [[#jack-类型][jack 类型]]
-- [[#国标美标][国标/美标]]
+- [[#jackheadset类型][jack&headset类型]]
 - [[#mbhc检测来自耳机和耳机的事件包括插入移除和耳机按钮按下并释放][MBHC检测来自耳机和耳机的事件，包括插入，移除和耳机按钮按下并释放]]
 - [[#设置jack类型][设置jack类型]]
-- [[#设置jack类型-1][设置jack类型]]
 - [[#外部电容设置][外部电容设置]]
 - [[#mbhc-按键配置][MBHC 按键配置]]
-- [[#mbhc-按键配置-1][MBHC 按键配置]]
 - [[#音质][音质]]
 - [[#playback][playback]]
 - [[#audio-recording][Audio recording]]
@@ -19,7 +16,7 @@
   msm8x16_wcd_registers.h
   kernel/msm-3.18/sound/soc/msm/msm8952.c  => qcom,msm8952-audio-codec
   kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec    #内部解码器
-  kernel/msm-3.18/sound/soc/codecs/msm8x16-wcd.c => qcom,msm8x16_wcd_codec    #外部解码器
+  kernel/msm-3.18/sound/soc/codecs/wcd9335.c => qcom,msm8x16_wcd_codec    #外部解码器
   kernel/msm-3.18/sound/soc/codecs/wsa881x-analog.c => qcom,wsa881x-i2c-codec #放大器
   kernel/msm-3.18/sound/soc/msm/qdsp6v2/msm-pcm-routing-v2.c => qcom,msm-pcm-routing #通道
   kernel/msm-3.18/sound/soc/codecs/wcd-mbhc-v2.c       #Multibutton Headset Control
@@ -38,21 +35,22 @@
   handset 听筒
   jack耳机的意思
 * 多按钮耳机控制
-* jack 类型
+* jack&headset类型
+  + jack类型
     normally-closed type    nc
     normally-open type      no
     对于NC型插座，当没有插入插头时，HPH-L和HS-DET引脚通过插孔上的机械开关连接。
     对于NO型插座，当插头没有插入时，HPH-L和HS-DET引脚断开
     在常闭型（NC）中，不接耳机时，耳机座左声道和检测端HS-DET接触，HS-DET为低电平；插入耳机时，HS-DET与HPH-L不导通，HS-DET为高电平；
     在常开型（NO）中，不接耳机时，耳机座左声道和检测端HS-DET不接触，HS-DET为高电平；插入耳机时，HS-DET与HPH-L导通，HS-DET为低电平；
-* 国标/美标
-  美标白色、欧标为黑色，国内为美标
-  | 美标(CTIA) | 国标/欧标(OMTP) |
-  |------------+-----------------|
-  | MIC        | GND             |
-  | GND        | MIC             |
-  | R          | R               |
-  | L  (尖头)  | L(尖头)         |
+  + 国标/美标
+    美标白色、欧标为黑色
+    | 国际标/美标(CTIA) | 国标/欧标(OMTP) |
+    |-------------------+-----------------|
+    | MIC               | GND             |
+    | GND               | MIC             |
+    | R                 | R               |
+    | L  (尖头)         | L(尖头)         |
 * MBHC检测来自耳机和耳机的事件，包括插入，移除和耳机按钮按下并释放
     多按钮耳机控制(MBHC)是硬件编解码器的一项功能。MBHC检测来自耳机和耳机的事件，包括插入，移除和耳机按钮按下并释放;配置插入耳机类型
     机械插入/移除检测，无需额外的GPIO分配
@@ -61,8 +59,6 @@
     耳机阻抗检测
 * 设置jack类型
     qcom,msm-mbhc-hphl-swh = <0>;   #(0 for NC, 1 for NO) 外部电容设置
-* 设置jack类型
-    qcom,msm-mbhc-hphl-swh = <0>;   #(0 for NC, 1 for NO)
     #+begin_src cpp
     enum snd_jack_types {
         SND_JACK_HEADPHONE	= 0x0000001,    //三段式耳机
@@ -82,17 +78,17 @@
 * 外部电容设置
 * MBHC 按键配置
   static struct wcd_mbhc_config mbhc_cfg //主要配置按键值(KEY_MEDIA、 KEY_VOLUMEUP、KEY_VOLUMEDOWN)
-* MBHC 按键配置
 * 音质
-  信号异常这些
-  削波失真
-  爆音
-  削顶
-  擦音圈
-  箱声过重
-  漏气
-  频段塌陷
-  频率变形
+  | 失真类型 | 详解 |
+  |----------+------|
+  | 削波失真 |      |
+  | 爆音     |      |
+  | 削顶     |      |
+  | 擦音圈   |      |
+  | 箱声过重 |      |
+  | 漏气     |      |
+  | 频段塌陷 |      |
+  | 频率变形 |      |
 * playback
   | 名称                               | 场景                                                                                                    |
   |------------------------------------+---------------------------------------------------------------------------------------------------------|
