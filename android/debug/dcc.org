@@ -1,0 +1,50 @@
+* DCC
+  DCC(Data Capture and Compare)数据捕获和比较。主要作用是dump寄存器的值，便于调试
+* DCC Linux driver
+  Kernel Config :   CONFIG_MSM_DCC
+  Source Location :  drivers/soc/qcom/dcc.c under config
+  Documentation :    Documentation/devicetree/bindings/soc/qcom/dcc.txt
+  Device Tree Node :    arch/arm64/boot/dts/qcom/<chipset_id>.dtsi  "dcc"
+  Init debug script : device/qcom/common/rootdir/etc/init.qcom.debug.sh
+* DCC sysfs and dev interface
+  V1 : /sys/bus/platform/devices/4b3000.dcc.
+  V2 : /sys/bus/platform/devices/10a2000.dcc_v2
+  DCC driver attributes
+  | sysfs             |                                                                         |
+  |-------------------+-------------------------------------------------------------------------|
+  | enable            | Enables/disables DCC                                                    |
+  | func_type         | Configures DCC mode (Cap or CRC)                                        |
+  | data_sink         | Configures data sink (SRAM or Advanced Trace Bus (ATB))                 |
+  | config            | Programs a linked list of memory-mapped addresses                       |
+  | config_reset      | Resets a  linked list                                                   |
+  | interrupt_disable | Disables CRC error interrupt reported to RPM as error fatal             |
+  | rpm_sw_trigger_on | Enables software trigger to DCC for CRC match on every DDR clock change |
+  | trigger           | Sends software trigger to DCC                                           |
+  | crc_error         | Checks status of CRC error signal                                       |
+
+ | DCC dev node to read SRAM – /dev/dcc_sram |                                                                         |
+* Configure DCC through sysfs
+  + Disable/Enable DCC
+    echo 0 > /sys/bus/platform/devices/4b3000.dcc/enable
+    echo 1 > /sys/bus/platform/devices/4b3000.dcc/enable
+  + Select DCC mode
+    echo cap > /sys/bus/platform/devices/4b3000.dcc/func_type
+    echo crc > /sys/bus/platform/devices/4b3000.dcc/func_type
+  + Select data sink
+    echo sram > /sys/bus/platform/devices/4b3000.dcc/data_sink
+    echo atb > /sys/bus/platform/devices/4b3000.dcc/data_sink – Need to configure trace sink and enable DCC TPDM using Coresight driver interface
+  + Reset previous configuration
+    echo 1 > /sys/bus/platform/devices/4b3000.dcc/config_reset
+  + Configure data
+    echo addr len > /sys/bus/platform/devices/4b3000.dcc/config
+  + Send software trigger
+    echo 1 > /sys/bus/platform/devices/4b3000.dcc/trigger
+  + captured data
+    echo 1 > /sys/bus/platform/devices/4b3000.dcc/trigger
+    cat /dev/dcc_sram > /data/sram.bin
+* DCC data parser
+  vendor/qcom/opensource/tools/dcc_parser/dcc_parser.py
+  python dcc_parser.py --sram-file sram.bin  --out-dir demo -f  dcc_captured_data.xml // for DCC v1
+  python dcc_parser.py --v2 -s dcc_sram.bin --config-offset=0x6000  // for DCC v2
+* 参考文档
+  80-P1727-1 B Data Capture and Compare User Guide

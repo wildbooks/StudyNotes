@@ -12,7 +12,12 @@
   | *gravity*        |       | *重力传感器*     |
 * hardware
   80_NM328_44_E_Presentation__ADSP_BF_2_6_Sensors_Ov.pdf #sensor硬件gpio描述
-* 代码
+* software
+  [[./img/sensor.png][软件框架]]
+* API
+  sns_ddf_open_port
+  sns_ddf_read_port
+  sns_ddf_close_port
 ** java
    frameworks/base/core/java/android/hardware/Sensor.java
    frameworks/base/core/java/android/hardware/SensorManager.java
@@ -21,26 +26,33 @@
 ** native
    frameworks/native/services/sensorservice
 ** hal 
-   vendor/qcom/proprietary/sensors/dsps/libhalsensors #"qti_sensors_hal"
+   vendor/qcom/proprietary/sensors/dsps/libhalsensors/src/sensors_hal.cpp #"qti_sensors_hal"
    hardware/interfaces/sensors/1.0/default/Sensors.cpp
+   get_sensors_list
+   dev->device.common.close     = sensors_close;
+   dev->device.activate         = sensors_activate;
+   dev->device.setDelay         = sensors_set_delay;
+   dev->device.poll             = sensors_poll;
+   dev->device.batch            = sensors_batch;
+   dev->device.flush            = sensors_flush;
 ** Sensor daemon
    vendor/qcom/proprietary/sensors/dsps/sensordaemon
 ** 通讯库允许传感器客户端发送/接收传感器1 来自传感器守护程序的消息
    vendor/qcom/proprietary/sensors/dsps/libsensor1
+   sensor1_open(sensor1_handle_s **hndl,sensor1_notify_data_cb_t data_cbf, intptr_t cb_data);
+   sensor1_close(sensor1_handle_s *hndl);
+   sensor1_write(sensor1_handle_s *hndl, sensor1_msg_header_s *msg_hdr, void *msg_ptr);
+   sensor1_alloc_msg_buf(sensor1_handle_s *hndl, uint16_t size, void **buffer);
 ** driver
    ADSP.8953.2.8.4/adsp_proc/Sensors/ #bringup
    kernel/arch/arm/mach-msm/sensors_adsp.c
-* 关键宏
-  USE_SENSOR_MULTI_HAL
-* API
-  sns_ddf_open_port
-  sns_ddf_read_port
-  sns_ddf_close_port
-* code
-  frameworks/native/data/etc/
-* config
-  /mnt/vendor/persist/sensors/sns.reg
-  vendor/qcom/proprietary/sensors/dsps/reg_defaults/sensor_def_qcomdev.conf #config
+** 关键宏
+   USE_SENSOR_MULTI_HAL
+** code
+   frameworks/native/data/etc/
+** config
+   /mnt/vendor/persist/sensors/sns.reg
+   vendor/qcom/proprietary/sensors/dsps/reg_defaults/sensor_def_qcomdev.conf #config
 * tool
   | 工具名            | 源码                                        |
   |-------------------+---------------------------------------------|
@@ -62,10 +74,68 @@
   开启bootup阶段log
   #+begin_src bash
   adb shell stop sensors
-  adb shell "echo 'related' > /sys/bus/msm_subsys/devices/subsys0/restart_level"
-  adb shell "echo 'restart' > /sys/kernel/debug/msm_subsys/adsp"
+  adb shell "echo 'related' > /sys/bus/msm_subsys/devices/subsys1/restart_level"
+  adb shell "echo 'restart' > /sys/kernel/debug/msm_subsys/adsp"#此方案已被取消,参考文档KBA-170605230412
+  send command "send_data 75 37 03 48 00" in QXDM tool
   adb shell start sensors
   #+end_src
+  #+begin_src bash
+  adb logcat -v time Sensors:* libsensor1:* qti_sensors_hal:* QSensorTest:* *:S
+  #+end_src
+  #+begin_src bash
+  Please enable AP sensors logging :
+  1) Add following to build.prop
+  adb root
+  adb wait-for-device
+  adb remount
+  adb pull /system/build.prop .
+  vi build.prop
+
+  <Make change to build.prop>
+  debug.qualcomm.sns.hal=1
+  debug.qualcomm.sns.daemon=1
+  debug.qualcomm.sns.libsensor1=1
+  <Make change to build.prop>
+
+  adb push build.prop /system
+  adb shell chmod 644 /system/build.prop
+  adb shell sync
+  adb reboot
+
+  2) Enable ADSP sensor log :
+  Change low level message to med level message, since the low level diag message disabled by modem :
+  adsp_proc/avs/elite/qurt_elite/inc/qurt_elite_diag.h
+  -#define DBG_LOW_PRIO   MSG_LEGACY_LOW    /**< Low priority debug message. */
+  +#define DBG_LOW_PRIO   MSG_LEGACY_MED    /**< Medium priority debug message. */
+  ---------------------
+  Enable smgr logs:
+  Sns_smgr_sensor.c (adsp_proc/sensors/smgr/src/common)
+  #define SNS_SMGR_DEPOT_DEBUG
+  #define SNS_SMGR_SAMPLING_DEBUG
+  #define SNS_SMGR_INTERPOLATOR_DEBUG
+  #define SNS_SMGR_SAMPLE_PROC_DEBUG
+  #define SNS_SMGR_FIFO_DEBUG
+
+  Sns_smgr_task.c (adsp_proc\sensors\smgr\src\common)
+  #define SNS_SMGR_B2B_IND_DEBUG
+  #define SNS_SMGR_REPORT_DEBUG
+  #define SNS_SMGR_QUERY_DEBUG
+  ---------------------
+  Enable ADSP sensor driver log:
+  adsp_proc/Sensors/ddf/inc/sns_ddf_util.h
+  +#define DD_DEBUG
+  #ifdef DDK
+  #define DDF_MSG_0(level,msg)          printf(msg)
+  #define DDF_MSG_1(level,msg,p1)       printf(msg,p1)
+
+  add debug log in sensor driver with API "DDF_MSG_x":
+  eg: DDF_MSG_1(MED, "TMG399 var1: %d", 1149);
+
+  in sensor driver, need enable the driver's Macro
+  eg: sns_dd_bma2x2.h (adsp_proc\sensors\dd\qcom\src)
+  #define BMA2X2_DEBUG
+  #+end_src
+
 * 专业术语
   |                                   |          |              |
   |-----------------------------------+----------+--------------|
@@ -127,7 +197,11 @@
   | < base index > + 10        | I2C_ADDRESS          | 器件的I2C地址（7位）,由传感器部件规格定义（来自供应商数据表）                                 |
   | < base index > + 11        | DATA_TYPE1           |                                                                                               |
   | < base index > + 12        | DATA_TYPE2           |                                                                                               |
-  | < base index > + 13        | RELATED_SENSOR_INDEX |                                                                                               |
-  | < base index > + 14        | SENSITIVITY_DEFAULT  |                                                                                            |
-  | < base index > + 15        | FLAGS                |  工作模式：Polling(轮询) 0x00; DRI(中断) 0x80;FIFO(sensor必需带FIFO功能) 0xD0                                                             |
-  | 1982 to 1986; 3682 to 3686 | DEVICE_SELECT        |                                                                                               |
+  | < base index > + 13        | RELATED_SENSOR_INDEX | 表示相关传感器; 适用于某些设备驱动程序                                                        |
+  | < base index > + 14        | SENSITIVITY_DEFAULT  | 灵度设，供应商软件实施                                                                        |
+  | < base index > + 15        | FLAGS                | 工作模式：Polling(轮询) 0x00; DRI(中断) 0x80;FIFO(sensor必需带FIFO功能) 0xD0                  |
+  | 1982 to 1986; 3682 to 3686 | DEVICE_SELECT        | 设备选择                                                                                      |
+* adsp编译签名
+  amss_codes/MSM8937.LA.3.1.2/contents.xml
+  python build.py -c msm8937
+  python MSM8937.LA.3.1.2/common/sectools/sectools.py secimage -i /work1/AOSP_pie_sku6-8_ZC554KL_dev/amss_codes/ADSP.VT.3.0/adsp_proc/obj/8937/adsp.mbn -c MSM8937.LA.3.1.2/common/sectools/config/8937/8937_secimage.xml -sa

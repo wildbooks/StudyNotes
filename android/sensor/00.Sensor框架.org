@@ -18,9 +18,6 @@
   frameworks/native/services/sensorservice/SensorServiceUtils.cpp
   frameworks/native/services/sensorservice/OrientationSensor.cpp
   frameworks/native/services/sensorservice/SensorDevice.cpp
-
-
-
 * 流程图
   SensorManager.java  frameworks/base/core/java/android/hardware/SensorManager.java
 
@@ -28,8 +25,15 @@
   -> mFullSensorsList -> SystemSensorManager() -> nativeGetSensorAtIndex()  #SystemSensorManager.java
   -> nativeGetSensorAtIndex() -> (mgr->getSensorList) #android_hardware_SensorManager.cpp
   -> assertStateLocked() -> 
-
-
-
 * hal
   sensors_flush -> SensorsContext::flush
+* API
+  sensor1_error_e sensor1_open(sensor1_handle_s**hndl, sensor1_notify_data_cb_t data_cbf,  intptr_t cb_data );
+
+  adb shell stop sensors
+  adb shell "echo 'related' > /sys/bus/msm_subsys/devices/subsys0/restart_level"
+  adb shell "echo 'restart' > /sys/kernel/debug/msm_subsys/adsp"
+  adb shell start sensors
+* 参考文档
+  [[https://blog.csdn.net/bob_fly1984/article/details/79365963][高通sensor架构实例分析之二(adsp驱动代码结构)]]
+  [[https://www.cnblogs.com/linhaostudy/archive/2018/03/16/8578414.html][高通adsp架构下sensor]]
