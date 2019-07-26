@@ -1,115 +1,284 @@
 * 概述
-init是Linux系统中用户空间的第一个进程
+  init是Linux系统中用户空间的第一个进程
 * 分析init
-+ init功能(由init.cpp中的main函数得到)
-  1) 初始化(包括建立/dev,/proc等目录；初始化属性，执行init.rc等初始化文
-     件的actio等)
-  2) 使用for循环无限循环建立子进程
-+ /system/core/init.cpp
-  + 解析配置文件init.rc
-  + 解析配置文件init.bravo.rc,这个文件名bravo,是通过查看/proc/cpuinfo得到
-    机器的hardware决定的
-  + 解析之后，执行Action(动作)分为４个阶段
-    early-init
-    init
-    early-boot
-    boot
+  + init功能(由init.cpp中的main函数得到)
+    1) 初始化(包括建立/dev,/proc等目录；初始化属性，执行init.rc等初始化文
+       件的actio等)
+    2) 使用for循环无限循环建立子进程
+  + /system/core/init.cpp
+    + 解析配置文件init.rc
+    + 解析配置文件init.bravo.rc,这个文件名bravo,是通过查看/proc/cpuinfo得到
+      机器的hardware决定的
+    + 解析之后，执行Action(动作)分为４个阶段
+      early-init
+      init
+      early-boot
+      boot
 * 分析配置文件
-+ android第一个执行的配置文件是init.rc(由init程序加载，细节看init.cpp),该
-  文件是内存映射到/init.rc文件上的，所以想修改它，唯一方法是修改android的
-  ROM中的内核镜像(boot.img)。其实boot.img名曰内核镜像，不过该文件除了包含
-  完整的linux内核文件(zImage)外，还包含一个镜像(ramdisk.img),ramdisk.img就
-  包含了init.rc文件和init命令。所以只有修改ramdisk.img文件中的init.rc文件，
-  重新打包boot.img文件，并刷机，才能彻底修改init.rc文件.Android源代码编译
-  后，就会看到out目录中的相关子目录会生成一个root目录，该目录实际上就是
-  ramdisk.img解压后的内容。会看到有init命令和init.rc文件
-+ init.rc分析
-  init.rc文件是由一种被称为"Android初始化语言"(Android Init Language,这里简称
-  AIL)的脚本写成的文件
-  由以下4部分组成
-  + 动作(Actions)
-    + 语法
-      on <trigger>
-         <command>
-         <command>
-         <command>
-      + Actions是一关键字on开头的，然后跟一个触发器，接下来是若干命令。
-        + (trigger)触发器分类
-          1) boot
-             这是init执行后第一个被触发Trigger,也就是在/init.rc被装载之
-             后执行该该Trigger
-          2) <name>=<value>
-             当属性<name>被设置成<value>时被触发。例如，
-             on property:vold.decrypt=trigger_reset_main
-                class_reset main
-          3) device-added-<path>
-             当设备节点被添加时触发
-          4) device-removed-<path>
-             当设备节点被移除时添加
-          5) service-exited-<name>
-             会在一个特定的服务退出时触发
-        + 命令有以下几种
-          1. exec <path> [<argument> ]*
-            创建和执行一个程序（<path>）。在程序完全执行前，init将会阻塞。由于它不是内置命令，应尽量避免使用exec ，它可能会引起init执行超时。
-          2. export <name> <value>
-             在全局环境中将 <name>变量的值设为<value>。（这将会被所有在这命令之后运行的进程所继承）
-          3. ifup <interface>
-             启动网络接口
-          4. import <filename>
-             指定要解析的其他配置文件。常被用于当前配置文件的扩展
-          5. hostname <name>
-            设置主机名
-          6. chdir <directory>
-             改变工作目录
-          7. chmod <octal-mode><path>
-             改变文件的访问权限
-          8. chown <owner><group> <path>
-             更改文件的所有者和组
-          9. chroot <directory>
-             改变处理根目录
-          10. class_start<serviceclass>
-              启动所有指定服务类下的未运行服务。
-          11. class_stop<serviceclass>
-             停止指定服务类下的所有已运行的服务。
-          12. domainname <name>
-              设置域名
-          13. insmod <path>
-              加载<path>指定的驱动模块
-          14. mkdir <path> [mode][owner] [group]
-              创建一个目录<path> ，可以选择性地指定mode、owner以及group。如果没有指定，默认的权限为755，并属于root用户和 root组。
-          15. mount <type> <device> <dir> [<mountoption> ]*
-              试图在目录<dir>挂载指定的设备。<device> 可以是mtd@name的形式指定一个mtd块设备。<mountoption>包括 "ro"、"rw"、"re
-          16. setkey
-              保留，暂时未用
-          17. setprop <name><value>
-              将系统属性<name>的值设为<value>。
-          18. setrlimit <resource> <cur> <max>
-              设置<resource>的rlimit （资源限制）
-          19. start <service>
-              启动指定服务（如果此服务还未运行）。
-          20. stop<service>
-              停止指定服务（如果此服务在运行中）。
-          21. symlink <target> <path>
-              创建一个指向<path>的软连接<target>。
-          22. sysclktz <mins_west_of_gmt>
-              设置系统时钟基准（0代表时钟滴答以格林威治平均时（GMT）为准）
-          23. trigger <event>
-              触发一个事件。用于Action排队
-          24. wait <path> [<timeout> ]
-              等待一个文件是否存在，当文件存在时立即返回，或到<timeout>指定的超时时间后返回，如果不指定<timeout>，默认超时时间是5秒。
-  + 命令(Commands)
-  + 服务(Services)
-    服务是一个程序，他在初始化时启动，并在退出时重启(可选)。services的形式如
-    下:
-    service <name> <pathname> [ <argument>]*
-            <option>
-            <option>
-            <option>
-  + 选项(Options)
-+ 系统启动阶段中第一个运行的进程是init,在这进程中会解析init.rc配置文件，
-  该配置文件启动Native Service(包括各种用户空间的Daemon),即在init第一阶
-  段启动Native Service,在解析文件中，我发现它启动Zygote，zygote启动
-  SystemServer建立Android service
+  + android第一个执行的配置文件是init.rc(由init程序加载，细节看init.cpp),该
+    文件是内存映射到/init.rc文件上的，所以想修改它，唯一方法是修改android的
+    ROM中的内核镜像(boot.img)。其实boot.img名曰内核镜像，不过该文件除了包含
+    完整的linux内核文件(zImage)外，还包含一个镜像(ramdisk.img),ramdisk.img就
+    包含了init.rc文件和init命令。所以只有修改ramdisk.img文件中的init.rc文件，
+    重新打包boot.img文件，并刷机，才能彻底修改init.rc文件.Android源代码编译
+    后，就会看到out目录中的相关子目录会生成一个root目录，该目录实际上就是
+    ramdisk.img解压后的内容。会看到有init命令和init.rc文件
+  + init.rc分析
+    init.rc文件是由一种被称为"Android初始化语言"(Android Init Language,这里简称
+    AIL)的脚本写成的文件
+    由以下4部分组成
+    + 动作(Actions)
+      + 语法
+        Actions是一关键字on开头的，然后跟一个触发器，接下来是若干命令。
+        on <trigger> [&& <trigger>]*
+        <command>
+        <command>
+        <command>
+      + (trigger)触发器分类
+        + boot
+          这是init执行后第一个被触发Trigger,也就是在/init.rc被装载之
+          后执行该该Trigger
+        + <name>=<value>
+          当属性<name>被设置成<value>时被触发。例如，
+          on property:vold.decrypt=trigger_reset_main
+          class_reset main
+        + device-added-<path>
+          当设备节点被添加时触发
+        + device-removed-<path>
+          当设备节点被移除时添加
+        + service-exited-<name>
+          会在一个特定的服务退出时触发
+    + 命令(Commands)
+      1. bootchart [start|stop]
+         > Start/stop bootcharting. These are present in the default init.rc files,
+         but bootcharting is only active if the file /data/bootchart/enabled exists;
+         otherwise bootchart start/stop are no-ops.
+      2. chmod <octal-mode><path>
+         改变文件的访问权限
+      3. chown <owner> <group> <path>
+         更改文件的所有者和用户组
+      4. class_start <serviceclass>
+         启动所有指定服务类下的未运行服务。
+      5. class_stop <serviceclass>
+         停止指定服务类下的所有已运行的服务。
+      6. class_reset <serviceclass>
+         如果当前正在运行，则停止指定类的所有服务，而不禁用它们。 可以稍后使用`class_start`重新启动它们。
+      7. class_restart <serviceclass>
+         重新启动指定类的所有服务。
+      8. copy <src> <dst>
+         复制文件．与write类似，但对二进制／大量数据有用
+         关于src文件，不允许为符号链接文件
+      9. domainname <name>
+         设置域名
+      10. enable <servicename>
+          将已禁用的服务转换为已启用的服务，就像服务未指定已禁用一样。
+          如果该服务应该正在运行，它将立即启动。 通常在引导加载程序设置指示特定服务的变量时使用，应在需要时启动。 例如。
+          on property:ro.boot.myfancyhardware=1
+          enable my_fancy_service_for_my_fancy_hardware
+      11. exec [ <seclabel> [ <user> [ <group>\* ] ] ] -- <command> [ <argument>\* ]
+          创建和执行一个程序（<path>）。在程序完全执行前，init将会阻塞。由于它不是内置命令，应尽量避免使用exec ，它可能会引起init执行超时。
+      12. exec_background [ <seclabel> [ <user> [ <group>\* ] ] ] -- <command> [ <argument>\* ]
+          > Fork and execute command with the given arguments. This is handled similarly
+          to the `exec` command. The difference is that init does not halt executing
+          commands until the process exits for `exec_background`.
+      13. exec_start <service>
+          > Start a given service and halt the processing of additional init commands
+          until it returns.  The command functions similarly to the `exec` command,
+          but uses an existing service definition in place of the exec argument vector.
+      14. export <name> <value>
+          在全局环境中将 <name>变量的值设为<value>。（这将会被所有在这命令之后运行的进程所继承）
+      15. hostname <name>
+          设置主机名
+      16. ifup <interface>
+          启动网络接口
+      17. insmod <path>
+          加载<path>指定的驱动模块
+      18. load_all_props
+          > Loads properties from /system, /vendor, et cetera.
+          This is included in the default init.rc.
+      19. load_persist_props
+          > Loads persistent properties when /data has been decrypted.
+          This is included in the default init.rc.
+      20. loglevel <level>
+          > Sets the kernel log level to level. Properties are expanded within _level_.
+      21. mkdir <path> [mode][owner] [group]
+          创建一个目录<path> ，可以选择性地指定mode、owner以及group。如果没有指定，默认的权限为755，并属于root用户和 root组。
+      22. mount_all <fstab> [ <path> ]\* [--<option>]
+          > Calls fs\_mgr\_mount\_all on the given fs\_mgr-format fstab and imports .rc files
+          at the specified paths (e.g., on the partitions just mounted) with optional
+          options "early" and "late".
+          Refer to the section of "Init .rc Files" for detail.
+      23. mount <type> <device> <dir> [<mountoption> ]*
+          试图在目录<dir>挂载指定的设备。<device> 可以是mtd@name的形式指定一个mtd块设备。<mountoption>包括 "ro"、"rw"、"re
+      24. restart <service>
+          > Stops and restarts a running service, does nothing if the service is currently
+          restarting, otherwise, it just starts the service.
+
+      25. restorecon <path> [ <path>\* ]
+          > Restore the file named by _path_ to the security context specified
+          in the file\_contexts configuration.
+          Not required for directories created by the init.rc as these are
+          automatically labeled correctly by init.
+      26. restorecon_recursive <path> [ <path>\* ]
+          > Recursively restore the directory tree named by _path_ to the
+          security contexts specified in the file\_contexts configuration.
+      27. rm <path>
+          > Calls unlink(2) on the given path. You might want to
+          use "exec -- rm ..." instead (provided the system partition is
+          already mounted).
+      28. rmdir <path>
+          > Calls rmdir(2) on the given path.
+      29. readahead <file|dir> [--fully]
+          > Calls readahead(2) on the file or files within given directory.
+          Use option --fully to read the full file content.
+      30. setprop <name> <value>
+          设置系统属性<name>的值为<value>。
+      31. setrlimit <resource> <cur> <max>
+          > Set the rlimit for a resource. This applies to all processes launched after
+          the limit is set. It is intended to be set early in init and applied globally.
+          _resource_ is best specified using its text representation ('cpu', 'rtio', etc
+          or 'RLIM_CPU', 'RLIM_RTIO', etc). It also may be specified as the int value
+          that the resource enum corresponds to.
+      32. start <service>
+          > Start a service running if it is not already running.
+          Note that this is _not_ synchronous, and even if it were, there is
+          no guarantee that the operating system's scheduler will execute the
+          service sufficiently to guarantee anything about the service's status.
+      33. start <service>
+          启动指定服务（如果此服务还未运行）。
+      34. stop <service>
+          如果服务当前正在运行，请停止运行。
+      35. swapon_all <fstab>
+          > Calls fs\_mgr\_swapon\_all on the given fstab file.
+
+      36. symlink <target> <path>
+          创建一个指向<path>的软连接<target>。
+      37. sysclktz <mins_west_of_gmt>
+          设置系统时钟基准（如果系统时钟以GMT为单位，则为0）
+      38. trigger <event>
+          触发一个事件。用于Action排队
+      39. umount <path>
+          卸载在该路径上挂载的文件系统。
+      40. verity_load_state
+          > Internal implementation detail used to load dm-verity state.
+      41. verity_update_state <mount-point>
+          > Internal implementation detail used to update dm-verity state and
+          set the partition._mount-point_.verified properties used by adb remount
+          because fs\_mgr can't set them directly itself.
+      42. wait <path> [ <timeout> ]
+          > Poll for the existence of the given file and return when found, or the timeout has been reached. If timeout is not specified it currently defaults to five seconds.
+      43. wait_for_prop <name> <value>
+          > Wait for system property _name_ to be _value_. Properties are expanded
+          within _value_. If property _name_ is already set to _value_, continue
+          immediately.
+      44. write <path> <content>
+          > Open the file at _path_ and write a string to it with write(2).
+          If the file does not exist, it will be created. If it does exist,
+          it will be truncated. Properties are expanded within _content_.
+    + 服务(Services)
+      服务是一个程序，他在初始化时启动，并在退出时重启(可选)。services的形式如
+      下:
+      service <name> <pathname> [ <argument>]*
+      <option>
+      <option>
+      <option>
+    + 选项(Options)
+      1. console
+         console [<console>]
+         Service需要控制台. 第二个参数console的意思是可以设置你想要的控制台类型，默认控制台是/dev/console ,
+         /dev 这个前缀通常是被忽略的，比如你要设置控制台 /dev/tty0 ,那么只需要设置为console tty0
+      2. critical
+         critical 表示Service是严格模式. 如果这个Service在4分钟内退出超过4次，那么设备将重启进入recovery模式
+      3. disabled
+         disabled表示Service不能以class的形式启动，只能以name的形式启动
+      4. setenv
+         setenv <name> <value> 在Service启动时设置name-value的环境变量
+      5. socket
+         socket <name> <type> <perm> [ <user> [ <group> [ <seclabel> ] ] ]
+         创建一个unix域的socket,名字叫/dev/socket/name , 并将fd返回给Service. type 只能是 "dgram", "stream" 
+         or "seqpacket".User 和 group 默认值是 0. 'seclabel' 是这个socket的SELinux安全上下文,它的默认值是
+         service安全策略或者基于其可执行文件的安全上下文.它对应的本地实现在libcutils的android_get_control_socket
+      6. enter_namespace
+         enter_namespace <type> <path>`
+         > Enters the namespace of type _type_ located at _path_. Only network namespaces are supported with
+         _type_ set to "net". Note that only one namespace of a given _type_ may be entered.
+      7. file
+         file <path> <type>
+         打开一个文件，并将fd返回给这个Service. type 只能是 "r", "w" or "rw". 它对应的本地实现在libcutils的android_get_control_file 
+      8. user
+         user <username>
+         在启动Service前将user改为username,默认启动时user为root(或许默认是无).在Android M版本，如果一个进程想拥有
+         Linux capabilities（相当于Android中的权限吧），也只能通过设置这个值. 以前，一个程序要想有Linux 
+         capabilities，必须先以root身份运行，然后再降级到所需的uid.现在已经有一套新的机制取而代之，
+         它通过fs_config允许厂商赋予特殊二进制文件Linux capabilities. 这套机制的说明文档在
+         http://source.android.com/devices/tech/config/filesystem.html.当使用这套新的机制时，
+         程序可以通过user参数选择自己所需的uid,而不需要以root权限运行. 在Android O版本，程序可以通过
+         capabilities参数直接申请所需的能力，参见下面的capabilities说明
+      9. group
+         group <groupname> [ <groupname>\* ]
+         在启动Service前将group改为第一个groupname,第一个groupname是必须有的，
+         默认值为root（或许默认值是无），第二个groupname可以不设置，用于追加组（通过setgroups）.
+      10. capabilities
+          capabilities <capability> [ <capability>\* ]
+          在启动Service时将capabilities设置为capability. 'capability' 不能是"CAP_" prefix, like "NET_ADMIN" 
+          or "SETPCAP". 参考http://man7.org/linux/man-pages/man7/capabilities.7.html ，
+          里面有capability的说明.
+      11. setrlimit
+          `setrlimit <resource> <cur> <max>`
+          > This applies the given rlimit to the service. rlimits are inherited by child
+          processes, so this effectively applies the given rlimit to the process tree
+          started by this service.
+          It is parsed similarly to the setrlimit command specified below.
+      12. seclabel
+          seclabel <seclabel>
+          在启动Service前将seclabel设置为seclabel. 主要用于在rootfs上启动的service，比如ueventd, adbd.
+          在系统分区上运行的service有自己的SELinux安全策略，如果不设置，默认使用init的安全策略.
+      13. oneshot
+          oneshot 退出后不再重启
+      14. class
+          class <name> [ <name>\* ]
+          为Service指定class名字. 同一个class名字的Service会被一起启动或退出,默认值是"default",第二个name可以不设置，用于service组.
+      15. animation
+          animation class
+          animation class 主要包含为开机动画或关机动画服务的service. 它们很早被启动，而且直到关机最后一步才退出.
+          它们不允许访问/data 目录，它们可以检查/data目录，但是不能打开/data目录，而且需要在/data不能用时也正常工作。
+      16. onrestart
+          onrestart 
+          在Service重启时执行命令.
+      17. writepid
+          writepid <file> [ <file>\* ]
+          当Service调用fork时将子进程的pid写入到指定文件. 用于cgroup/cpuset的使用，当/dev/cpuset/下面没有文件
+          但ro.cpuset.default的值却不为空时,将pid的值写入到/dev/cpuset/cpuset_name/tasks文件中
+      18. priority
+          priority <priority>
+          设置进程优先级. 在-20～19之间，默认值是0,能过setpriority实现
+      19. namespace
+          namespace <pid|mnt>
+          当fork这个service时，设置pid或mnt标记
+      20. oom_score_adjust
+          oom_score_adjust <value>
+          设置子进程的 /proc/self/oom_score_adj 的值为 value,在 -1000 ～ 1000之间.
+      21. memcg.swappiness <value>
+          > Sets the child's memory.swappiness to the specified value (only if memcg is mounted),
+          which must be equal or greater than 0.
+      22. memcg.soft_limit_in_bytes <value>
+          > Sets the child's memory.soft_limit_in_bytes to the specified value (only if memcg is mounted),
+          which must be equal or greater than 0.
+      23. memcg.limit_in_bytes <value>
+          > Sets the child's memory.limit_in_bytes to the specified value (only if memcg is mounted),
+          which must be equal or greater than 0.
+      24. shutdown <shutdown_behavior>
+          > Set shutdown behavior of the service process. When this is not specified,
+          the service is killed during shutdown process by using SIGTERM and SIGKILL.
+          The service with shutdown_behavior of "critical" is not killed during shutdown
+          until shutdown times out. When shutdown times out, even services tagged with
+          "shutdown critical" will be killed. When the service tagged with "shutdown critical"
+          is not running when shut down starts, it will be started.
+  + 系统启动阶段中第一个运行的进程是init,在这进程中会解析init.rc配置文件，
+    该配置文件启动Native Service(包括各种用户空间的Daemon),即在init第一阶
+    段启动Native Service,在解析文件中，我发现它启动Zygote，zygote启动
+    SystemServer建立Android service
 * 参考文档
-[[http://www.cnblogs.com/nokiaguy/archive/2013/04/14/3020774.html][android的init过程详解(一)]]
-[[http://www.cnblogs.com/nokiaguy/p/3164799.html][Android的init过程（二）：初始化语言（init.rc）解析]]
+  [[http://www.cnblogs.com/nokiaguy/archive/2013/04/14/3020774.html][android的init过程详解(一)]]
+  [[http://www.cnblogs.com/nokiaguy/p/3164799.html][Android的init过程（二）：初始化语言（init.rc）解析]]
+  system/core/init/README.md

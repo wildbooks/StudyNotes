@@ -20,7 +20,7 @@
   | fzf            | fzf是一种通用的命令行模糊查找器。      | [[https://github.com/junegunn/fzf][fzf]]         |
   | ag             |                                        |             |
   | oh-my-zsh      |                                        | [[https://github.com/robbyrussell/oh-my-zsh][oh-my-zsh]]   |
-  |                |                                        |             |
+  |     tig           |   git替代品                                     |             |
 * 博客系统
   workpress
   jekyll

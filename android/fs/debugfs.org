@@ -10,6 +10,7 @@
     *debugfs*:/sys/kernel/debug\\
     *proc*:\\
 * debugfs.h
+  + 创建
   #+begin_src cpp
   struct dentry *debugfs_create_file(const char *name, umode_t mode,
                      struct dentry *parent, void *data,
@@ -194,7 +195,46 @@
       返回值：ture已经注册，flase没有注册
   */
   #+end_src
-* de
+* debug
   #+begin_src cpp
   mount -t debugfs none /sys/kernel/debug
+  #+end_src
+* 案例
+  此例子为usb框架中的案例
+  #+begin_src cpp
+  struct dentry *usb_debug_root;
+  EXPORT_SYMBOL_GPL(usb_debug_root);
+
+
+  const struct file_operations usbfs_devices_fops = {
+    .llseek =	usb_device_lseek,
+    .read =		usb_device_read,
+    .poll =		usb_device_poll,
+  };
+
+  static struct dentry *usb_debug_devices;
+
+  static int usb_debugfs_init(void)
+  {
+    usb_debug_root = debugfs_create_dir("usb", NULL);
+    if (!usb_debug_root)
+      return -ENOENT;
+
+    usb_debug_devices = debugfs_create_file("devices", 0444,
+              usb_debug_root, NULL,
+              &usbfs_devices_fops);
+    if (!usb_debug_devices) {
+      debugfs_remove(usb_debug_root);
+      usb_debug_root = NULL;
+      return -ENOENT;
+    }
+
+    return 0;
+  }
+
+  static void usb_debugfs_cleanup(void)
+  {
+    debugfs_remove(usb_debug_devices);
+    debugfs_remove(usb_debug_root);
+  }
   #+end_src

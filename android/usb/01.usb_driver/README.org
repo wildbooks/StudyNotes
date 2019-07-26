@@ -1,0 +1,29 @@
+./arch/arm64/boot/dts/qcom/.msm8937-pmi8950-mtp.dtb.dts.tmp
+
+
+kernel/msm-3.18/drivers/usb/phy/phy-msm-usb.c compatible = "qcom,hsusb-otg";
+kernel/msm-3.18/drivers/platform/msm/usb_bam.c "qcom,usb-bam-msm"
+kernel/msm-3.18/drivers/usb/gadget/android.c qcom,android-usb
+CONFIG_USB_EXT_TYPE_C_PERICOM=y
+CONFIG_USB_NET_DRIVERS=y
+
+CONFIG_USB_USBNET=y
+CONFIG_USB_NET_AX8817X=y
+CONFIG_USB_NET_AX88179_178A=y
+CONFIG_USB_NET_CDCETHER=y
+CONFIG_USB_NET_CDC_NCM=y
+CONFIG_USB_NET_SMSC75XX=y
+CONFIG_USB_NET_NET1080=y
+CONFIG_USB_NET_CDC_SUBSET=y
+
+CONFIG_USB_BELKIN=y
+CONFIG_USB_ARMLINUX=y
+CONFIG_USB_NET_ZAURUS=y
+
+
+CONFIG_USB_HID=y
+# CONFIG_HID_PID is not set
+CONFIG_USB_HIDDEV=y
+
+
+CONFIG_USB_DEFAULT_PERSIST=y

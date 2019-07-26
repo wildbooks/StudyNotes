@@ -228,3 +228,12 @@
     Remove usb, then standby 5min.When current stable, catch logs:
     adb shell cat cat /sys/power/system_sleep/stats > rpm_stats11.log
     adb shell cat /sys/power/rphm_sleep/master_stats > rpm_master_stats11.log
+* 禁止/允许usb充电
+    #+begin_src bash
+    # Allow usb charging to be disabled peristently
+    on property:persist.usb.chgdisabled=1
+        write /sys/class/power_supply/battery/charging_enabled 0
+
+    on property:persist.usb.chgdisabled=0
+        write /sys/class/power_supply/battery/charging_enabled 1
+    #+end_src

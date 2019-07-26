@@ -1,0 +1,11 @@
+* Audio
+  | MediaPlayer | 能够播放多种格式的声音文件，比如MP3，AAC，WAV，OGG，MIDI等.MediaPlayer包括了AudioTrack。 |
+  | AudioTrack  | 仅仅能播放已经解码的PCM流，假设是文件的话仅仅支持wav格式的音频文件．                     |
+  | SoundPool   | 适合短促且对反应速度比较高的情况(游戏音效或按键声等)                                     |
+  |             |                                                                                          |
+* 音乐播放流程
+  MediaPlayer => MediaPlayer.cpp
+  IMediaPlayerService => MediaPlayerService
+  IMediaPlayer => MediaPlayerService::Client
+  MediaPlayerBase => NuPlayerDriver
+  NuPlayer

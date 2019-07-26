@@ -1,0 +1,22 @@
+* src
+  BOOT.XF.1.4/boot_images/QcomPkg/Sdm660Pkg
+  boot_images/QcomPkg/Sdm660Pkg/Settings
+* xbl打log
+  #+begin_src cpp
+  //A. Print char string
+  #include "boot_logger.h"
+  boot_log_message("Uart log in SBL/XBL");
+
+  //B. Print char string with parameter
+  #include "boot_logger.h"
+  char UartStrBuf[64] = {0};
+  memset(UartStrBuf, 0, 64);
+  snprintf(UartStrBuf, 64, "Uart log in SBL/XBL with parameter %x", Variable);
+  UartStrBuf[63] = 0;
+  boot_log_message(UartStrBuf);
+  #+end_src
+* 入口
+  sbl1_main_ctl
+* 杂项
+  [[https://blog.csdn.net/wangjun7121/article/details/88220688][高通 8917/37 SecueBoot 调试]]
+  kba-170922012113_2_options_for_blowing_efuse_in_factory_process.pdf
