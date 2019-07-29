@@ -92,20 +92,22 @@ set_build_env(){
     case $1 in
         sdm660)
             debug cmd "set_build_env sdm660"
-            export SD_LLVM_ROOT=$TOOLS_ROOT/LLVM
-            export CLANG38_BIN=$SD_LLVM_ROOT/3.8.4/bin/
-            export HEXAGON_ROOT=$TOOLS_ROOT/HEXAGON_Tools
+            export CLANG38LINUX_BIN=
+            #export SD_LLVM_ROOT=$TOOLS_ROOT/LLVM
+            #export CLANG38_BIN=$SD_LLVM_ROOT/3.8.4/bin/
+            #export HEXAGON_ROOT=$TOOLS_ROOT/HEXAGON_Tools
+            export HEXAGON_ROOT=/pkg/qct/software/hexagon/releases/tools
             # ARMTOOLS
             export ARMTOOLS=ARMCT5
-            export ARMHOME=$TOOLS_ROOT/ARM_Compiler_5.06u3
-            export ARMROOT=$ARMHOME
-            export ARMINC=$ARMHOME/include
-            export ARMLIB=$ARMHOME/lib
-            export ARMBIN=$ARMHOME/bin
-            export ARMPATH=$ARMHOME/bin
-            export ARMINCLUDE=$ARMHOME/include
-            export LM_LICENSE_FILE=8224@10.20.26.73
-            export ARMLMD_LICENSE_FILE=8224@10.20.26.73
+            #export ARMHOME=$TOOLS_ROOT/ARM_Compiler_5.06u3
+            #export ARMROOT=$ARMHOME
+            #export ARMINC=$ARMHOME/include
+            #export ARMLIB=$ARMHOME/lib
+            #export ARMBIN=$ARMHOME/bin
+            #export ARMPATH=$ARMHOME/bin
+            #export ARMINCLUDE=$ARMHOME/include
+            #export LM_LICENSE_FILE=8224@10.20.26.73
+            #export ARMLMD_LICENSE_FILE=8224@10.20.26.73
             #export LM_LICENSE_FILE=$ARMHOME/license.dat
             #export ARMLMD_LICENSE_FILE=$ARMHOME/license.dat
             ;;
@@ -223,6 +225,7 @@ function sectools()
             else
                 python $SECTOOLS_PATH/sectools.py secimage -m $META_PATH -p $ADSP_CHIPSET -sa
             fi
+            debug info "$SECTOOLS_PATH/secimage_output/sdm660"
             ;;
 
         debugpolicy) # qcom:80-P2485-39 E dp_AP_signed.mbn/dp_MSA_signed.mbn
@@ -361,6 +364,7 @@ function build_boot(){
 
      cd -
      #echo "root@123" | sudo -S ntpdate cn.pool.ntp.org
+
      return $retVal
  }
 
@@ -421,7 +425,6 @@ function confi_prop(){
 }
 
 function build_bp(){
-    build BP
     build_adsp $ADSP_CHIPSET all
     build_rpm
     build_boot
@@ -430,25 +433,46 @@ function build_bp(){
     build_meta
 }
 function build_cp(){
+    SECIMAGE_OUTPUT=$META_PATH/common/sectools/secimage_output/sdm660
     #BP
-    $META_PATH/common/build/emmc/bin/asic/NON-HLOS.bin
-    $META_PATH/common/build/bin/asic/dspso.bin
-    $META_PATH/common/sectools/resources/build/fileversion2/sec.dat
-    $META_PATH/common/build/emmc/rawprogram0.xml
-    $BOOT_PATH/boot_images/QcomPkg/Sdm660Pkg/Bin/660/LA/RELEASE/prog_emmc_ufs_firehose_Sdm660_ddr.elf
-    $BOOT_PATH/boot_images/QcomPkg/Sdm660Pkg/Bin/660/LA/RELEASE/pmic.elf
-    $RPM_PATH/rpm_proc/build/ms/bin/AAAAANAZR/rpm.mbn
-    $TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/tz.mbn
-    $TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/hyp.mbn
-    $TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/km4.mbn
-    $TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/cmnlib.mbn
-    $TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/cmnlib64.mbn
-    $TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/devcfg.mbn
-    $TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/storsec.mbn
+    #$META_PATH/common/build/emmc/bin/asic/NON-HLOS.bin
+    #$META_PATH/common/build/bin/asic/dspso.bin
+    #$META_PATH/common/sectools/resources/build/fileversion2/sec.dat
+    #$META_PATH/common/build/emmc/rawprogram0.xml
+    #$BOOT_PATH/boot_images/QcomPkg/Sdm660Pkg/Bin/660/LA/RELEASE/prog_emmc_ufs_firehose_Sdm660_ddr.elf
+    #$BOOT_PATH/boot_images/QcomPkg/Sdm660Pkg/Bin/660/LA/RELEASE/pmic.elf
+    #$RPM_PATH/rpm_proc/build/ms/bin/AAAAANAZR/rpm.mbn
+    #$TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/tz.mbn
+    #$TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/hyp.mbn
+    #$TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/km4.mbn
+    #$TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/cmnlib.mbn
+    #$TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/cmnlib64.mbn
+    #$TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/devcfg.mbn
+    #$TZ_PATH/trustzone_images/build/ms/bin/KAJAANAA/storsec.mbn
     #AP
     declare -A IMGDIC
     IMGDIC=(
-    [abl]="$OUT/abl.elf"
+    [prog]=$SECIMAGE_OUTPUT/prog_emmc_ufs_ddr/prog_emmc_ufs_firehose_Sdm660_ddr.elf
+    [xbl]="$SECIMAGE_OUTPUT/xbl/xbl.elf"
+    [tz]="$SECIMAGE_OUTPUT/tz/tz.mbn"
+    [rpm]="$SECIMAGE_OUTPUT/rpm/rpm.mbn"
+    [hyp]="$SECIMAGE_OUTPUT/hyp/hyp.mbn"
+    [pmic]="$SECIMAGE_OUTPUT/pmic/pmic.elf"
+    [km4]="$SECIMAGE_OUTPUT/keymaster/km4.mbn"
+    [cmnlib]="$SECIMAGE_OUTPUT/cmnlib/cmnlib.mbn"
+    [cmnlib64]="$SECIMAGE_OUTPUT/cmnlib64/cmnlib64.mbn"
+    #mdtpsecapp.mbn 没找到
+    # dspso.bin
+    [abl]="$SECIMAGE_OUTPUT/abl/abl.elf"
+    # sec.dat
+    #[sec]="$META_PATH/"
+    [BTFM]="$META_PATH/common/build/emmc/bin/BTFM.bin"
+    #[xml]="$META_PATH/common/build/emmc/rawprogram0.xml"
+    [patch]="$META_PATH/common/build/emmc/patch0.xml"
+    [devcfg]="$SECIMAGE_OUTPUT/devcfg/devcfg.mbn"
+    [storsec]="$SECIMAGE_OUTPUT/storsec/storsec.mbn"
+    [gpt_main0]="$META_PATH/common/build/emmc/gpt_main0.bin"
+    [gpt_backup0]="$META_PATH/common/build/emmc/gpt_backup0.bin"
     [boot]="$OUT/boot.img"
     [system]="$OUT/system.img"
     [vendor]="$OUT/vendor.img"
@@ -456,6 +480,21 @@ function build_cp(){
     [persist]="$OUT/persist.img"
     [mdtp]="$OUT/mdtp.img"
     )
+
+    QFILE=$OUT/qfile
+    #mkdir  $QFILE
+    for img in ${!IMGDIC[@]};
+    do
+        debug cmd "cp ${IMGDIC[$img]} $QFILE"
+        #cp ${IMGDIC[$img]} $QFILE || let 'total++'
+        scp ${IMGDIC[$img]} archermind@10.20.11.11:/work/Share/yhh || let 'total++'
+    done
+
+    if [ "$total" == '' ]; then
+        debug info "-------------- flash sucessful --------------"
+    else
+        debug error "-------------- flash fail:$total --------------"
+    fi
 }
 
 function flash_image(){
@@ -492,6 +531,7 @@ function adbpush(){
     adb push $META_PATH/common/sectools/secimage_output/$CHIPSET/adsp/* $FIRMWARE/image
     adb reboot
 }
+
 
 function main(){
     ##################################################################
@@ -593,6 +633,30 @@ function main(){
                 TZ="TZ.BF.4.0.7"
                 continue
                 ;;
+            zb630)
+                # if [ x$PRODUCT != x"" ];then continue; fi
+                PRODUCT="ZB630"
+                PRODUCT_DEVICE=sdm660_64
+                ARM=arm64
+                CONFIG_NAME=$command
+                DEPEND=''
+                CHIPSET=sdm663
+
+                # BP
+                AMSS="amss_codes"
+                META="SDM636.LA.3.0.1"
+                ADSP="ADSP.VT.4.1"
+                ADSP_CHIPSET="sdm660" #
+                BOOT="BOOT.XF.1.4"
+                CNSS=""
+                CPE=""
+                MPSS="MPSS.AT.3.1"
+                MPSS_CHIPSET="sdm660"
+                RPM="RPM.BF.1.8"
+                RPM_CHIPSET=660
+                TZ="TZ.BF.4.0.7"
+                continue
+                ;;
         esac
 
     done
@@ -606,9 +670,12 @@ function main(){
     RPM_PATH=$BP/$RPM
     TZ_PATH=$BP/$TZ
     OUT=$AP/out/target/product/$PRODUCT_DEVICE
-
     for command in ${command_array[*]}; do
         case $command in
+            boot)
+                build_boot
+                continue
+                ;;
             bp)
                 build_bp
                 continue
@@ -621,9 +688,20 @@ function main(){
                 build_meta
                 continue
                 ;;
-
+            tz)
+                build_tz
+                continue
+                ;;
             mpss)
                 build_mpss
+                continue
+                ;;
+            rpm)
+                build_rpm
+                continue
+                ;;
+            secimage)
+                sectools secimage
                 continue
                 ;;
             ap)
@@ -634,10 +712,15 @@ function main(){
                 flash_image $2
                 continue
                 ;;
+            cp)
+                build_cp
+                continue
+                ;;
         esac
     done
 }
 
 #main 8937 AOSP_pie_sku6-8_ZC554KL_dev
 #main 8917 zb555
-main sdm636 $@
+#main sdm636 $@
+main zb630 $@
