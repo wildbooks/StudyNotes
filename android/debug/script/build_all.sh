@@ -401,9 +401,18 @@ function build_adsp(){
     done
     debug cmd "python build/build.py $CHIPSET $OPTION"
     python build/build.py $CHIPSET $OPTION
+    debug info "$ADSP_PATH/adsp_proc/obj/qdsp6v5_ReleaseG/660.adsp.prod/signed"
     cd -
 }
 
+# build_adsp $ADSP_PATH 8937 all
+function build_cdsp(){
+    debug info "start build $CDSP"
+
+    cd $CDSP_PATH
+    python cdsp_proc/build/build.py -c sdm660 -f CDSP
+    cd -
+}
 #配置参数属性
 function confi_prop(){
     cd $WsRootDir
@@ -611,12 +620,12 @@ function main(){
                 ;;
             sdm636)
                 # if [ x$PRODUCT != x"" ];then continue; fi
-                PRODUCT="Q_SDM636_dev"
+                PRODUCT="ZB630"
                 PRODUCT_DEVICE=sdm660_64
                 ARM=arm64
                 CONFIG_NAME=$command
                 DEPEND=''
-                CHIPSET=sdm663
+                CHIPSET=sdm636
 
                 # BP
                 AMSS="amss_codes"
@@ -644,9 +653,10 @@ function main(){
 
                 # BP
                 AMSS="amss_codes"
-                META="SDM636.LA.3.0.1"
+                META="SDM660.LA.3.0.1"
                 ADSP="ADSP.VT.4.1"
                 ADSP_CHIPSET="sdm660" #
+                CDSP="CDSP.VT.1.1"
                 BOOT="BOOT.XF.1.4"
                 CNSS=""
                 CPE=""
@@ -665,6 +675,7 @@ function main(){
     BP=$PROJECT_ROOT/$PRODUCT/$AMSS
     META_PATH=$BP/$META
     ADSP_PATH=$BP/$ADSP
+    CDSP_PATH=$BP/$CDSP
     BOOT_PATH=$BP/$BOOT
     MPSS_PATH=$BP/$MPSS
     RPM_PATH=$BP/$RPM
@@ -682,6 +693,10 @@ function main(){
                 ;;
             adsp)
                 build_adsp $ADSP_CHIPSET all
+                continue
+                ;;
+            cdsp)
+		build_cdsp
                 continue
                 ;;
             meta)
@@ -722,5 +737,5 @@ function main(){
 
 #main 8937 AOSP_pie_sku6-8_ZC554KL_dev
 #main 8917 zb555
-#main sdm636 $@
-main zb630 $@
+main sdm636 $@
+#main zb630 $@
