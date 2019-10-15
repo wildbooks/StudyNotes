@@ -39,3 +39,16 @@ UsbDeviceManager在设备模式中管理USB状态
 * UsbDeviceConnection.java
 * UsbDisconnectedReceiver.java
 * UsbHostManager.java
+* usb默认配置
+    #usb功能默认设置
+    device/qcom/common/rootdir/etc/init.qcom.usb.sh
+        setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,adb
+    /vendor/etc/init/hw/init.qcom.usb.rc
+        on property:persist.vendor.usb.config=*
+            setprop persist.sys.usb.config ${persist.vendor.usb.config}
+
+    #usb文件系统默认设置
+        on boot && property:ro.boot.usbconfigfs=true
+            setprop sys.usb.configfs 1
+        on property:vendor.usb.configfs=1 && property:sys.usb.configfs=0
+            setprop sys.usb.configfs 1

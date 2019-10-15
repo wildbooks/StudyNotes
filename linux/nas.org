@@ -1,0 +1,48 @@
+* nas
+* 软件
+** 远程控制
+    1. 远程桌面
+        RemoteDesktop
+        TeamViewer
+        JumpDesktop
+    2. WebUI面板
+        群晖的DSM
+        Linux下的Cockpit/Webmin/kloxo
+** 私有云
+    nextcloud
+    seafile
+** 下载方案
+    PT
+    BT
+    电驴
+    aria2 + aria-NG
+    迅雷远程
+    云盘同步
+    onlyoffice
+** 虚拟机方案
+    VirtualBox
+    gnome Boxes
+    ESXI
+    Proxmox VE
+** 多媒体
+    视频/图片分享远程播放:Emby server
+    视频分享:plex Media Server
+    HTPC:KODI
+    + 自动化整理视频资源
+        sonarr:电视剧自动管理软件
+        radarr:电影自动化管理软件
+        sub-zero:字幕自动匹配和下载
+        SABnzbd:Usenet下载客户端
+        Transmission:bt下载客户端
+        imdb:互联网电影资料库
+** 本地及远程共享(个人/家庭云)
+** 文件备份
+
+** 办公用途
+ DNS Server/小型网站/虚拟化
+* docker
+    portainer面板
+* 内网穿透
+    公网IP+DDNS+端口映射
+    花生壳
+    Zerotier

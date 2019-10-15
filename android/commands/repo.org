@@ -95,8 +95,10 @@
   #+end_src
 * download
   repo download
+  repo download SW_ASUS_Q/platform/vendor/qcom/proprietary 2419 #项目名 CHANGEID
 * upload
   repo upload
+  repo upload SW_ASUS_Q/platform/vendor/qcom/proprietary 2419 #项目名 CHANGEID
 * diff
 * prune
 * start

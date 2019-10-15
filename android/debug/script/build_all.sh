@@ -364,7 +364,7 @@ function build_boot(){
 
      cd -
      #echo "root@123" | sudo -S ntpdate cn.pool.ntp.org
-
+     debug info "$BOOT_PATH/boot_images/QcomPkg/Sdm660Pkg/Bin/660/LA/RELEASE/sign/default/sbl1/xbl.elf"
      return $retVal
  }
 
@@ -403,16 +403,19 @@ function build_adsp(){
     python build/build.py $CHIPSET $OPTION
     debug info "$ADSP_PATH/adsp_proc/obj/qdsp6v5_ReleaseG/660.adsp.prod/signed"
     cd -
+    return $retVal
 }
 
 # build_adsp $ADSP_PATH 8937 all
 function build_cdsp(){
     debug info "start build $CDSP"
-
     cd $CDSP_PATH
-    python cdsp_proc/build/build.py -c sdm660 -f CDSP
+    python cdsp_proc/build/build.py -c $CDSP_CHIPSET -o all
+    #python cdsp_proc/build/build.py -c $CDSP_CHIPSET -o clean
+    retVal=$?
     cd -
 }
+
 #配置参数属性
 function confi_prop(){
     cd $WsRootDir
@@ -435,6 +438,7 @@ function confi_prop(){
 
 function build_bp(){
     build_adsp $ADSP_CHIPSET all
+    build_cdsp
     build_rpm
     build_boot
     build_mpss
@@ -541,6 +545,26 @@ function adbpush(){
     adb reboot
 }
 
+function RepoSync() {
+
+    echo $PRODUCT
+    if [ ! -d $PRODUCT ]; then
+        mkdir $PRODUCT
+        cd $PRODUCT
+        repo init -u ssh://10.20.25.77:29418/SW_ASUS_Q/platform/manifest -b  $PRODUCT
+        echo "repo init -u ssh://10.20.25.77:29418/SW_ASUS_Q/platform/manifest -b $PRODUCT"
+        cd -
+    fi
+    cd $PRODUCT
+    #repo forall -c "git clean -df && git reset --hard" 2>&1 > /dev/null
+    rm sync_* 2>&1 >/dev/null
+    repo sync -c --no-tags -j10 2>&1 >sync_$(date +%Y%m%d_%H:%M:%S).log
+    source build/envsetup.sh
+    lunch $LUNCH_CONFIG
+    rm ${PRODUCT}_* 2>&1 >/dev/null
+    make -j10 2>&1 > ${PRODUCT}_build_$(date +%Y%m%d_%H:%M:%S).log
+    cd ..
+}
 
 function main(){
     ##################################################################
@@ -564,7 +588,6 @@ function main(){
                 usage
                 ;;
             zb555)
-                #if [ x$PRODUCT != x"" ];then continue; fi
                 PRODUCT="Oreo_ZB555KL_MR"
                 ARM=arm64
                 CONFIG_NAME=$command
@@ -594,12 +617,10 @@ function main(){
                 continue
                 ;;
             AOSP_pie_sku6-8_ZC554KL_dev)
-                # if [ x$PRODUCT != x"" ];then continue; fi
                 PRODUCT=$command
                 ARM=arm64
                 CONFIG_NAME=$command
                 DEPEND=msm8937_64
-
                 # BP
                 if [ x$CHIPSET == x"8917" ];then
                     META="MSM8917.LA.3.1.2"
@@ -615,15 +636,16 @@ function main(){
                 CPE=""
                 MPSS=""
                 MPSS_CHIPSET=8937
-                RPM="RPM.BF.2.2" TZ=""
+                RPM="RPM.BF.2.2"
+                TZ=""
                 continue
                 ;;
-            sdm636)
-                # if [ x$PRODUCT != x"" ];then continue; fi
-                PRODUCT="ZB630"
+            Q_SDM636_Ara_dev)
+                PRODUCT=$command
                 PRODUCT_DEVICE=sdm660_64
                 ARM=arm64
                 CONFIG_NAME=$command
+                LUNCH_CONFIG="sdm660_64-userdebug"
                 DEPEND=''
                 CHIPSET=sdm636
 
@@ -631,7 +653,9 @@ function main(){
                 AMSS="amss_codes"
                 META="SDM636.LA.3.0.1"
                 ADSP="ADSP.VT.4.1"
-                ADSP_CHIPSET="sdm660" #
+                ADSP_CHIPSET="sdm660"
+                CDSP="CDSP.VT.1.1"
+                CDSP_CHIPSET="sdm660"
                 BOOT="BOOT.XF.1.4"
                 CNSS=""
                 CPE=""
@@ -642,21 +666,48 @@ function main(){
                 TZ="TZ.BF.4.0.7"
                 continue
                 ;;
-            zb630)
-                # if [ x$PRODUCT != x"" ];then continue; fi
-                PRODUCT="ZB630"
+            Q_SDM636_M1_dev)
+                PRODUCT=$command
                 PRODUCT_DEVICE=sdm660_64
                 ARM=arm64
                 CONFIG_NAME=$command
+                LUNCH_CONFIG="sdm660_64-userdebug"
                 DEPEND=''
-                CHIPSET=sdm663
+                CHIPSET=sdm636
+
+                # BP
+                AMSS="amss_codes"
+                META="SDM636.LA.3.0.1"
+                ADSP="ADSP.VT.4.1"
+                ADSP_CHIPSET="sdm660"
+                CDSP="CDSP.VT.1.1"
+                CDSP_CHIPSET="sdm660"
+                BOOT="BOOT.XF.1.4"
+                CNSS=""
+                CPE=""
+                MPSS="MPSS.AT.3.1"
+                MPSS_CHIPSET="sdm660"
+                RPM="RPM.BF.1.8"
+                RPM_CHIPSET=660
+                TZ="TZ.BF.4.0.7"
+                continue
+                ;;
+            Q_SDM636_M2_dev)
+                PRODUCT=$command
+                PRODUCT_DEVICE=sdm660_64
+                ARM=arm64
+                CONFIG_NAME=$command
+                LUNCH_CONFIG="sdm660_64-userdebug"
+                DEPEND=''
+                CHIPSET=sdm660
 
                 # BP
                 AMSS="amss_codes"
                 META="SDM660.LA.3.0.1"
                 ADSP="ADSP.VT.4.1"
-                ADSP_CHIPSET="sdm660" #
+                ADSP_CHIPSET="sdm660"
                 CDSP="CDSP.VT.1.1"
+                CDSP_CHIPSET="sdm660"
                 BOOT="BOOT.XF.1.4"
                 CNSS=""
                 CPE=""
@@ -667,75 +718,134 @@ function main(){
                 TZ="TZ.BF.4.0.7"
                 continue
                 ;;
-        esac
+            Q_ZA550KL_dev)
+                PRODUCT=$command
+                PRODUCT_DEVICE=sdm660_64
+                ARM=arm64
+                CONFIG_NAME=$command
+                LUNCH_CONFIG="msm8937_64-userdebug"
+                DEPEND=''
+                CHIPSET=sdm660
 
-    done
-    set_build_env $ADSP_CHIPSET
-    AP=$PROJECT_ROOT/$PRODUCT
-    BP=$PROJECT_ROOT/$PRODUCT/$AMSS
-    META_PATH=$BP/$META
-    ADSP_PATH=$BP/$ADSP
-    CDSP_PATH=$BP/$CDSP
-    BOOT_PATH=$BP/$BOOT
-    MPSS_PATH=$BP/$MPSS
-    RPM_PATH=$BP/$RPM
-    TZ_PATH=$BP/$TZ
-    OUT=$AP/out/target/product/$PRODUCT_DEVICE
-    for command in ${command_array[*]}; do
-        case $command in
-            boot)
-                build_boot
+                # BP
+                AMSS="amss_codes"
+                META="SDM660.LA.3.0.1"
+                ADSP="ADSP.VT.4.1"
+                ADSP_CHIPSET="sdm660"
+                CDSP="CDSP.VT.1.1"
+                CDSP_CHIPSET="sdm660"
+                BOOT="BOOT.XF.1.4"
+                CNSS=""
+                CPE=""
+                MPSS="MPSS.AT.3.1"
+                MPSS_CHIPSET="sdm660"
+                RPM="RPM.BF.1.8"
+                RPM_CHIPSET=660
+                TZ="TZ.BF.4.0.7"
                 continue
                 ;;
-            bp)
-                build_bp
-                continue
-                ;;
-            adsp)
-                build_adsp $ADSP_CHIPSET all
-                continue
-                ;;
-            cdsp)
-		build_cdsp
-                continue
-                ;;
-            meta)
-                build_meta
-                continue
-                ;;
-            tz)
-                build_tz
-                continue
-                ;;
-            mpss)
-                build_mpss
-                continue
-                ;;
-            rpm)
-                build_rpm
-                continue
-                ;;
-            secimage)
-                sectools secimage
-                continue
-                ;;
-            ap)
-                build_android
-                continue
-                ;;
-            flash)
-                flash_image $2
-                continue
-                ;;
-            cp)
-                build_cp
-                continue
-                ;;
-        esac
-    done
-}
+            Q_ZB555KL_dev)
+                PRODUCT=$command
+                PRODUCT_DEVICE=sdm660_64
+                ARM=arm64
+                CONFIG_NAME=$command
+                LUNCH_CONFIG="msm8937_64-userdebug"
+                DEPEND=''
+                CHIPSET=sdm660
 
-#main 8937 AOSP_pie_sku6-8_ZC554KL_dev
-#main 8917 zb555
-main sdm636 $@
-#main zb630 $@
+                # BP
+                AMSS="amss_codes"
+                META="SDM660.LA.3.0.1"
+                ADSP="ADSP.VT.4.1"
+                ADSP_CHIPSET="sdm660"
+                CDSP="CDSP.VT.1.1"
+                CDSP_CHIPSET="sdm660"
+                BOOT="BOOT.XF.1.4"
+                CNSS=""
+                CPE=""
+                MPSS="MPSS.AT.3.1"
+                MPSS_CHIPSET="sdm660"
+                RPM="RPM.BF.1.8"
+                RPM_CHIPSET=660
+                TZ="TZ.BF.4.0.7"
+                continue
+                ;;
+
+            esac
+
+        done
+        set_build_env $ADSP_CHIPSET
+        AP=$PROJECT_ROOT/$PRODUCT
+        BP=$PROJECT_ROOT/$PRODUCT/$AMSS
+        META_PATH=$BP/$META
+        ADSP_PATH=$BP/$ADSP
+        CDSP_PATH=$BP/$CDSP
+        BOOT_PATH=$BP/$BOOT
+        MPSS_PATH=$BP/$MPSS
+        RPM_PATH=$BP/$RPM
+        TZ_PATH=$BP/$TZ
+        OUT=$AP/out/target/product/$PRODUCT_DEVICE
+        for command in ${command_array[*]}; do
+            case $command in
+
+                sync)
+                    RepoSync
+                    continue
+                    ;;
+                boot)
+                    build_boot
+                    continue
+                    ;;
+                bp)
+                    build_bp
+                    continue
+                    ;;
+                adsp)
+                    build_adsp $ADSP_CHIPSET all
+                    continue
+                    ;;
+                cdsp)
+                    build_cdsp
+                    continue
+                    ;;
+                meta)
+                    build_meta
+                    continue
+                    ;;
+                tz)
+                    build_tz
+                    continue
+                    ;;
+                mpss)
+                    build_mpss
+                    continue
+                    ;;
+                rpm)
+                    build_rpm
+                    continue
+                    ;;
+                secimage)
+                    sectools secimage
+                    continue
+                    ;;
+                ap)
+                    build_android
+                    continue
+                    ;;
+                flash)
+                    flash_image $2
+                    continue
+                    ;;
+                cp)
+                    build_cp
+                    continue
+                    ;;
+            esac
+        done
+    }
+
+main Q_SDM636_Ara_dev $@ #620
+main Q_SDM636_M1_dev $@ #601
+main Q_SDM636_M2_dev $@ #630
+#main Q_ZA550KL_dev $@ #za550
+#main Q_ZB555KL_dev $@ #zb555

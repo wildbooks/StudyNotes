@@ -36,10 +36,9 @@
     status_t AudioTrack::set(
     {
     "frameworks/av/media/libaudioclient/AudioTrack.cpp"
+    #include <utils/CallStack.h>;
     ......
-    +android::CallStack stack;
-    +stack.update( );
-    +stack.log("XXX");
+    +android::CallStack cs("haha");
     .........
     }
   + APM(Audio policy manager)

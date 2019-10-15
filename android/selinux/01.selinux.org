@@ -82,5 +82,9 @@
   | property_contexts    | 系统属性的安全上下文    |
   | hwservice_contexts   | hal层的安全上下文       |
   | initial_sid_contexts |                         |
+* 案例
+  开机禁用selinux
+  -     BOARD_KERNEL_CMDLINE += console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 earlycon=msm_serial_dm,0xc170000
+  +     BOARD_KERNEL_CMDLINE += console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 earlycon=msm_serial_dm,0xc170000 androidboot.selinux=permissive
 * 参考文档
 [[http://blog.csdn.net/luoshengyang/article/details/35392905][<<SEAndroid安全机制简要介绍和学习计划>>]]

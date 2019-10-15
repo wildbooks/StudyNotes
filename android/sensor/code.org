@@ -1,0 +1,14 @@
+# app
+    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+    sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+    sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);//获取sensor服务
+    acc_sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);//获取acc类型sensor
+
+    sensorManager.registerListener(mAccListener, acc_sensor, SensorManager.SENSOR_DELAY_NORMAL);//注册acc类型sensor
+    sensorManager.unregisterListener(mAccListener);//注销acc类型sensor
+#
+    Sequence Diagram
+    Communication Diagram
+    Statechart Diagram
+    Activity Diagram

@@ -1,0 +1,85 @@
+* 源码
+  fs/open.c
+* linux内核对写文件
+
+#define TEST_FILE="/sdcard/test.txt"
+int test_read(void)
+{
+	struct file *fp = NULL;
+	mm_segment_t old_fs;
+	loff_t pos_lsts = 0;
+	char buf[8];
+	int cal_val = 0;
+	int readlen = 0;	
+	
+	fp = filp_open(TEST_FILE, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+	if (IS_ERR_OR_NULL(fp)) {
+		pr_err("open (%s) fail\n", TEST_FILE);
+		return -ENOENT;	/*No such file or directory*/
+	}
+
+	/*For purpose that can use read/write system call*/
+	old_fs = get_fs();
+	set_fs(KERNEL_DS);
+
+	if (fp->f_op != NULL) {
+		pos_lsts = 0;
+		readlen = vfs_read(fp, buf, 6, &pos_lsts);
+		buf[readlen] = '\0';		
+	} else {
+		pr_err("read file strlen: f_op=NULL or op->read=NULL\n");
+		set_fs(old_fs);
+		filp_close(fp, NULL);
+		return -ENXIO;	/*No such device or address*/
+	}
+	set_fs(old_fs);
+	filp_close(fp, NULL);
+
+	sscanf(buf, "%d", &cal_val);
+	if(cal_val < 0) {
+		pr_err("read file is FAIL. (%d)\n", cal_val);
+		return -EINVAL;	/*Invalid argument*/
+	} else {
+		pr_debug("value : %d\n", cal_val);
+	}
+	
+	return cal_val;
+}
+EXPORT_SYMBOL(test_read);
+
+bool test_write(int calvalue)
+{
+	struct file *fp = NULL;
+	mm_segment_t old_fs;
+	loff_t pos_lsts = 0;
+	char buf[8];	
+
+	sprintf(buf, "%d", calvalue);
+	
+	fp = filp_open(TEST_FILE, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
+	if (IS_ERR_OR_NULL(fp)) {
+		pr_err("open (%s) fail\n", TEST_FILE);
+		return false;
+	}
+
+	/*For purpose that can use read/write system call*/
+	old_fs = get_fs();
+	set_fs(KERNEL_DS);
+
+	if (fp->f_op != NULL) {
+		pos_lsts = 0;
+		vfs_write(fp, buf, strlen(buf), &fp->f_pos);				
+	} else {
+		pr_err("strlen: f_op=NULL or op->write=NULL\n");
+		set_fs(old_fs);
+		filp_close(fp, NULL);
+		return false;
+	}
+	set_fs(old_fs);
+	filp_close(fp, NULL);
+	
+	pr_info("write value : %s\n", buf);
+	
+	return true;
+}
+EXPORT_SYMBOL(test_write);

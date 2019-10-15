@@ -1,0 +1,11 @@
+* java
+* native c++
+    #include <utils/CallStack.h>;
+
+    android::CallStack cs("haha");
+* native c
+* linux kernel
+    Kernel里最简单，直接有几现成的函数可以使用：dump_stack() 这个函数打出当前堆栈和函数调用backtrace后接着运行WARN_ON(x) 这个函数跟dump_stack很像，它有个条件，如果条件满足了就把stack打出来。打印出来的结果都在kernel log里，一般dmesg命令就可以看到了
+
+* 参考文档
+[[Android下面打印进程函数调用堆栈(dump backtrace)的方法][https://blog.csdn.net/lyl278401555/article/details/51829268]]

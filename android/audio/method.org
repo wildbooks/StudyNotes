@@ -57,6 +57,15 @@
    echo "file sound/soc/msm/msm8952.c +p" >/sys/kernel/debug/dynamic_debug/control           #
    echo "file sound/soc/codecs/msm8x16-wcd.c +p" >/sys/kernel/debug/dynamic_debug/control    #内部codec
    echo "file sound/soc/codecs/msm8916-wcd-irq.c +p" >/sys/kernel/debug/dynamic_debug/control #内部声卡中断
+   echo -n "file soc-dapm.c +p" > /sys/kernel/debug/dynamic_debug/control
+   echo -n "file msm-analog-cdc.c +p" > /sys/kernel/debug/dynamic_debug/control
+   echo -n "file msm-digital-cdc.c +p" > /sys/kernel/debug/dynamic_debug/control
+   echo -n "file soc-pcm.c +p" > /sys/kernel/debug/dynamic_debug/control
+   echo -n "file sdm660-common.c +p" > /sys/kernel/debug/dynamic_debug/control
+   echo -n "file sdm660-internal.c +p" > /sys/kernel/debug/dynamic_debug/control
+   echo -n "file q6afe.c +p" > /sys/kernel/debug/dynamic_debug/control
+   echo -n "file q6adm.c +p" > /sys/kernel/debug/dynamic_debug/control
+   echo -n "file msm-pcm-routing-v2.c +p" > /sys/kernel/debug/dynamic_debug/control
    #+end_src
 ** 参考文档
    #+begin_src cpp

@@ -2,7 +2,7 @@
   | 全称             | 缩写  | 中文             |
   |------------------+-------+------------------|
   | *accelerometer*  | ACCEL | *加速度传感器*   |
-  | *magnetic field* | MAG   | *磁力传感器*     |
+  | *magnetic field* | MAG   | *磁力传感器*     | 指南针
   | *orientation*    |       | *方向传感器*     |
   | *gyroscope*      | GYRO  | *陀螺仪*         |
   | *light*          | LIGHT | *环境光照传感器* |

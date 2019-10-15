@@ -1,0 +1,11 @@
+* ssh服务配置
+    禁止密码登录
+    PasswordAuthentication no
+    禁止root登录
+    PermitRootLogin no
+    重启ssh服务
+    service sshd restart
+* 创建新用户并添加sudo权限
+    adduser wildbook
+    passwd wildbook
+    usermod -a -G whell wildbook
