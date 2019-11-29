@@ -77,7 +77,7 @@ function add_image(){
 function flash_image(){
     local img=$1
     debug cmd "fastboot flash $img ${IMGDIC[$img]}"
-    #fastboot flash $img ${IMGDIC[$img]}
+    fastboot flash $img ${IMGDIC[$img]}
     retVal=$?
 
     if [ $retVal -ne 0 ]; then

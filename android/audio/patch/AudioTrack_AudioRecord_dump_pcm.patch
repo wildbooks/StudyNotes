@@ -1,0 +1,112 @@
+diff --git a/media/libaudioclient/AudioRecord.cpp b/media/libaudioclient/AudioRecord.cpp
+index 86db39e..0385ad7 100644
+--- a/media/libaudioclient/AudioRecord.cpp
++++ b/media/libaudioclient/AudioRecord.cpp
+@@ -15,7 +15,7 @@
+ ** limitations under the License.
+ */
+ 
+-//#define LOG_NDEBUG 0
++#define LOG_NDEBUG 0
+ #define LOG_TAG "AudioRecord"
+ 
+ #include <inttypes.h>
+@@ -1014,6 +1014,20 @@ ssize_t AudioRecord::read(void* buffer, size_t userSize, bool blocking)
+ 
+         size_t bytesRead = audioBuffer.size;
+         memcpy(buffer, audioBuffer.i8, bytesRead);
++        {
++            {
++                char fname[100];
++                sprintf(fname, "/data/misc/audioserver/record_read-session-%d-rate-%d-channel-%d.pcm", mSessionId,mSampleRate,mChannelMask);
++                int tmpFd = ::open(fname, O_CREAT | O_WRONLY | O_APPEND, 0777);
++
++                if ( tmpFd < 0 ) {
++                ALOGE("%s: Fail to open dumpTrack file, error:%s", __func__, strerror(errno));
++                } else {
++                    ::write(tmpFd, audioBuffer.i8, bytesRead);
++                    ::close(tmpFd);
++                }
++            }
++        }
+         buffer = ((char *) buffer) + bytesRead;
+         userSize -= bytesRead;
+         read += bytesRead;
+@@ -1213,6 +1227,17 @@ nsecs_t AudioRecord::processAudioBuffer()
+         size_t reqSize = audioBuffer.size;
+         mCbf(EVENT_MORE_DATA, mUserData, &audioBuffer);
+         size_t readSize = audioBuffer.size;
++        {
++            char fname[100];
++            sprintf(fname, "/data/misc/audioserver/record_processAudioBuffer-session-%d-rate-%d-channel-%d.pcm", mSessionId,mSampleRate,mChannelMask);
++            int tmpFd = ::open(fname, O_CREAT | O_WRONLY | O_APPEND, 0777);
++            if ( tmpFd < 0 ) {
++                ALOGE("%s: Fail to open dumpTrack file, error:%s", __func__, strerror(errno));
++            } else {
++                ::write(tmpFd, audioBuffer.i8, readSize);
++                ::close(tmpFd);
++            }
++        }
+ 
+         // Sanity check on returned size
+         if (ssize_t(readSize) < 0 || readSize > reqSize) {
+diff --git a/media/libaudioclient/AudioTrack.cpp b/media/libaudioclient/AudioTrack.cpp
+index 06226c1..aaaa482 100644
+--- a/media/libaudioclient/AudioTrack.cpp
++++ b/media/libaudioclient/AudioTrack.cpp
+@@ -15,7 +15,7 @@
+ ** limitations under the License.
+ */
+ 
+-//#define LOG_NDEBUG 0
++#define LOG_NDEBUG 0
+ #define LOG_TAG "AudioTrack"
+ 
+ #include <inttypes.h>
+@@ -1895,6 +1895,22 @@ ssize_t AudioTrack::write(const void* buffer, size_t userSize, bool blocking)
+ 
+         size_t toWrite = audioBuffer.size;
+         memcpy(audioBuffer.i8, buffer, toWrite);
++
++        {
++            char fname[100];
++            sprintf(fname, "/data/misc/audioserver/write-session-%d-rate-%d-channel-%d.pcm", mSessionId,mSampleRate,mChannelMask);
++            int tmpFd;
++            const int8_t* p = static_cast<const int8_t*>(audioBuffer.i8);
++            size_t count = audioBuffer.size;
++            tmpFd = ::open(fname, O_CREAT | O_RDWR | O_APPEND,0666);
++            if ( tmpFd < 0 ) {
++                ALOGE("%s: Fail to open dumpTrack file, error:%s", __func__, strerror(errno));
++            }
++            else{
++                ::write(tmpFd, p, count);
++                ::close(tmpFd);
++            }
++        }
+         buffer = ((const char *) buffer) + toWrite;
+         userSize -= toWrite;
+         written += toWrite;
+@@ -2257,7 +2273,22 @@ nsecs_t AudioTrack::processAudioBuffer()
+         mCbf(mTransfer == TRANSFER_CALLBACK ? EVENT_MORE_DATA : EVENT_CAN_WRITE_MORE_DATA,
+                 mUserData, &audioBuffer);
+         size_t writtenSize = audioBuffer.size;
+-
++        {
++            char fname[100];
++            sprintf(fname, "/data/misc/audioserver/processAudioBuffer-session-%d-rate-%d-channel-%d.pcm", mSessionId,mSampleRate,mChannelMask);
++
++            int tmpFd;
++            const int16_t* p = static_cast<const int16_t*>(audioBuffer.i16);
++            size_t count = audioBuffer.size;
++            tmpFd = ::open(fname, O_CREAT|O_WRONLY | O_APPEND,0644);
++            if ( tmpFd < 0 ) {
++                ALOGE("%s: Fail to open dumpTrack file, error:%s", __func__, strerror(errno));
++            }
++            else{
++                ::write(tmpFd, p, count);
++                ::close(tmpFd);
++            }
++        }
+         // Sanity check on returned size
+         if (ssize_t(writtenSize) < 0 || writtenSize > reqSize) {
+             ALOGE("%s(%d): EVENT_MORE_DATA requested %zu bytes but callback returned %zd bytes",

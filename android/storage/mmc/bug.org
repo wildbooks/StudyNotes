@@ -2,3 +2,7 @@
     可能是sd_Data电流不足
 # SD卡不识别
     cd-gpios SD卡检测引脚配置不对,或者pmic配置不对
+# 查询emmc的厂商的方法
+    cat /sys/bus/mmc/devices/mmc0\:0001/manfid
+    相关代码:
+    kernel/msm-4.4/drivers/mmc/core/mmc.c

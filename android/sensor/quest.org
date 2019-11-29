@@ -1,0 +1,4 @@
+# 亮度调节相关(Brightening)
+    device/qcom/common/device/overlay/frameworks/base/core/res/res/values/config.xml
+    vendor/ims/overlays/common/frameworks/base/core/res/res/values/config.xml
+    packages/apps/Settings/res/xml/auto_brightness_detail.xml

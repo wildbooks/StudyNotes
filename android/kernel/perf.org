@@ -1,0 +1,30 @@
+* 系统性能优化
+    1. 关掉uart功能
+        -CONFIG_SERIAL_MSM_CONSOLE=y
+        -CONFIG_SERIAL_MSM_HS=y
+        -CONFIG_SERIAL_MSM_SMD=y
+    2. 关掉coresight调试模块
+        -CONFIG_CORESIGHT=y
+        -CONFIG_CORESIGHT_EVENT=y
+        -CONFIG_CORESIGHT_LINK_AND_SINK_TMC=y
+        -CONFIG_CORESIGHT_QCOM_REPLICATOR=y
+        -CONFIG_CORESIGHT_STM=y
+        -CONFIG_CORESIGHT_HWEVENT=y
+        -CONFIG_CORESIGHT_CTI=y
+        -CONFIG_CORESIGHT_CTI_SAVE_DISABLE=y
+        -CONFIG_CORESIGHT_TPDA=y
+        -CONFIG_CORESIGHT_TPDM=y
+        -CONFIG_CORESIGHT_QPDI=y
+        -CONFIG_CORESIGHT_SOURCE_DUMMY=y
+    3. 禁掉控制组（Cgroup）框架的调试信息
+        -CONFIG_CGROUP_DEBUG=y
+    4. 禁止掉slab调试功能
+        -CONFIG_SLUB_DEBUG=y
+        -CONFIG_SLUB_DEBUG_ON=y
+    5. 禁止收集调度程序调试信息
+        +CONFIG_SCHED_DEBUG=n
+        /proc/sched_debug
+
+        +CONFIG_DEBUG_BUGVERBOSE=n
+* 参考文档
+    80-PJ035-1 Kernel Configuration for Optimal Performance Application Note

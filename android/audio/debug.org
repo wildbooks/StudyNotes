@@ -189,3 +189,9 @@
     "APM"
   + system/media/audio_route
     "audio_route"
+* 抓取audio相关的ftrace
+    Example to collect traces having audio tag:
+    $>adb shell atrace -z -b 8196 audio sched freq load idle irq -t 10 > atrace_output
+    Parse atrace_output to get systrace logs:
+    $>python systrace/systrace.py --from-file=atrace_output -o trace.html
+    external/chromium-trace/systrace.py -b 32768 -t 15 audio sched freq load idle irq

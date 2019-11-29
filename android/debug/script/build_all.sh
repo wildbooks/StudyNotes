@@ -828,6 +828,10 @@ function main(){
                     sectools secimage
                     continue
                     ;;
+                debugpolicy)
+                    sectools debugpolicy
+                    continue
+                    ;;
                 ap)
                     build_android
                     continue
@@ -844,8 +848,8 @@ function main(){
         done
     }
 
+main Q_SDM636_M2_dev $@ #630
 main Q_SDM636_Ara_dev $@ #620
 main Q_SDM636_M1_dev $@ #601
-main Q_SDM636_M2_dev $@ #630
 #main Q_ZA550KL_dev $@ #za550
 #main Q_ZB555KL_dev $@ #zb555

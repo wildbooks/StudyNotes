@@ -1,0 +1,7 @@
+* 查看内核配置
+方法一:
+adb pull /proc/config.gz
+方法二
+./kernel/scripts/extract-ikconfig vmlinux > kernel_config.txt:
+方法三:
+ls -a /out/target/product/msm<chipset>/obj/KERNEL_OBJ/.config

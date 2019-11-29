@@ -43,6 +43,9 @@
      sudo apt-get install policycoreutils
    + 注意 ::
            selinux的权限是由GID/UID机制　和　上下文控制的
+* 工具
+   chcon
+   restorecon
 * SEAndroid框架
   [[file:./picture/01.SEAndroid安全机制框架.png]]
   从图可以看到，以SELinux文件系统接口为边界，SEAndroid安全机制包含有内核空间

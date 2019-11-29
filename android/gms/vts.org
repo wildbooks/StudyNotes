@@ -1,0 +1,71 @@
+* gsi
+    gsi测试环境和vts是同一个环境
+    run cts-on-gsi -m CtsCameraTestCases -t
+* vts
+    
+l(?:ist)? help:
+    i[nvocations]           列出所有调用线程
+    d[evices]               列出所有检测到的或已知的设备
+    d[devices all]          列出所有设备，包括占位符
+    c[ommands]              列出当前等待执行的所有命令
+    c[ommands] [pattern]    列出所有与该模式匹配且当前正在等待执行的命令
+    configs                 列出所有已知的配置
+
+
+
+    ----- Vendor Test Suite specific options ----- 
+    p[lans]                 列出所有计划可用的
+    m[odules]               列出所有模块可用的
+    r[esults]               列出所有结果
+
+d(?:ump)? help:
+    s[tack]                 转储所有线程的堆栈跟踪
+    l[ogs]                  将所有调用的日志转储到文件中
+    b[ugreport]             转储正在运行的Tradefed实例的错误报告
+    c[onfig] <config>       转储指定配置的内容
+    commandQueue            转储命令执行队列的内容
+    commands                转储等待执行的命令的所有配置XML
+    commands [pattern]      转储与模式匹配并等待执行的命令的所有配置XML
+    e[nv]                   转储可用于测试工具流程的环境变量
+    u[ptime]                转储TradeFed进程已运行多长时间
+
+r(?:un)? help:
+    command <config> [options]        Run the specified command
+    <config> [options]                Shortcut for the above: run specified command
+    cmdfile <cmdfile.txt>             Run the specified commandfile
+    commandAndExit <config> [options] Run the specified command, and run 'exit -c' immediately afterward
+    cmdfileAndExit <cmdfile.txt>      Run the specified commandfile, and run 'exit -c' immediately afterward
+
+    ----- Vendor Test Suite specific options ----- 
+    <plan> --module/-m <module>       Run a test module
+    <plan> --module/-m <module> --test/-t <test_name>    Run a specific test from the module. Test name can be <package>.<class>, <package>.<class>#<method> or <native_binary_name>
+        Available Options:
+            --serial/-s <device_id>: The device to run the test on
+            --abi/-a <abi>         : The ABI to run the test against
+            --logcat-on-failure    : Capture logcat when a test fails
+            --bugreport-on-failure : Capture a bugreport when a test fails
+            --screenshot-on-failure: Capture a screenshot when a test fails
+            --shard-count <shards>: Shards a run into the given number of independent chunks, to run on multiple devices in parallel.
+     ----- In order to retry a previous run -----
+    retry --retry <session id to retry> [--retry-type <FAILED | NOT_EXECUTED>]
+        Without --retry-type, retry will run both FAIL and NOT_EXECUTED tests
+
+s(?:et)? help:
+    log-level-display <level>  Sets the global display log level to <level>
+
+remove help:
+    remove allCommands  Remove all commands currently waiting to be executed
+
+debug help:
+    gc      Attempt to force a GC
+
+i(?:nvocation)? help:
+    i[nvocation] [Command Id]        Information of the invocation thread
+    i[nvocation] [Command Id] stop   Notify to stop the invocation
+
+a(?:dd)? help:
+    add s[ubplan]: create a subplan from a previous session
+        Available Options:
+            --session <session_id>: The session used to create a subplan
+            --name/-n <subplan_name>: The name of the new subplan
+            --result-type <status>: Which results to include in the subplan. One of passed, failed, not_executed. Repeatable

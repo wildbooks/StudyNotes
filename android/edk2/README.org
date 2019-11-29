@@ -1,0 +1,61 @@
+# xbl
+# abl
+QcomModulePkg.dec #package declaration file 定义了不同模块的GUID信息
+QcomModulePkg.dsc #description file of package 程序包的描述符文件 主要包含需要用到的所有inf文件
+QcomModulePkg.fdf #Flash description file 描述flash分区地址范围
+inf:单个模块的编译信息，类似makefile
+efi :最终编译生成的UEFI可执行文件
+
+|ABL    |Application bootloader
+|DXE    |Driver execution environment
+|EDK    |Enterprise development kit
+|GUID   |Globally unique identifier
+|IRQ    |Interrupt request
+|ISR    |Interrupt service routine
+|MP     |Multi processing
+|PMIC   |Power management integrated circuit
+|TPL    |Task priority level
+|SPI    |Shared peripheral interrupts
+|UART   |Universal asynchronous receiver/transmitter
+|UEFI   |Unified extensible firmware interface
+|XBL    |Secondary bootloader
+
+# 4.1 UEFI应用
+    UEFI应用程序用于：
+        平台诊断
+        工厂诊断
+        公共事业
+        驱动程序原形
+        平台应用
+     Android版本上有两个UEFI应用程序：
+        Linux Loader-加载Linux映像
+        Fastboot-通过USB从主机更新软件映像
+# 4.2 编译和添加UEFI应用程序
+    Add application in description file of package
+        .inf文件
+            [Defines]
+            [Sources]
+            [Packages]
+            [LibraryClasses]
+            [Protocols]
+            [Guids]
+        描述文件(.dsc):文件组成
+    Add application in Flash description file
+# 4.3 Build a new protocol
+# 4.4 Implement UEFI/DXE driver
+#
+    添加协议 + 添加应用 + 添加驱动
+# 5 UEFI multithreading(UEFI多线程)
+# 5.1 Multithreading services
+    Mutex
+    LockLib
+    Semaphores
+    Events
+    Interrupts
+    Timers
+    Spinlocks
+    Threads
+    MP core services
+# 5.2 Multithreading configuration(多线程配置)
+# 5.3 Multithreading components(多线程组件)
+# 5.4 Multithreading recommendations(多线程建议)

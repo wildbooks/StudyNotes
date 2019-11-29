@@ -55,6 +55,10 @@
   out/host/linux-x86/bin/mkbootimg
   external/avb/avbtool
   #+end_src
+* boot-debug.img
+   make bootimage_debug
+   build/make/core/Makefile:2133:.PHONY: bootimage_debug-nodeps
+   build/make/core/main.mk:1610:.PHONY: bootimage_debug
 * system.img
   | 工具         | 功能 | 源码                             | 命令                                |
   |--------------+------+----------------------------------+-------------------------------------|
@@ -82,7 +86,11 @@
   mkdir tmp
   # 挂载镜像到tmp目录
   mount vendor.img.ext4 tmp
-  # 修改后，用img2sim再重新打包
+  #查看块大小为4096
+  file vendor.img
+  vendor.img: Android sparse image, version: 1.0, Total of 204800 4096-byte output blocks in 21 input chunks.
+  # 修改后，用img2simg再重新打包
+  img2simg vendor.img.ext4  vendor_new.img  4096
   #+end_src
 * userdata.img
 * ramdisk.img
