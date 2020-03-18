@@ -1,0 +1,6 @@
+#1. 查看依赖的库：
+objdump -x xxoo.so | grep NEEDED
+
+#2. 查看缺失的库：
+ldd xxoo.so
+#如果某个依赖的库不存在，会输出类似 OOXX.so not found 字样。

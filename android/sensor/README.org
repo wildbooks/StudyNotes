@@ -152,9 +152,9 @@
   | QMI Common Client interface       | QCCI     |              |
   | QMI Common Service interface      | QCSI     |              |
   | Shared memory driver              | SMD      |              |
-  | Significant motion detection      | SMD      |              |
+  | Significant motion detection      | SMD      |  重大运动检测            |
   | Relative motion detection         | RMD      |              |
-  | Absolute motion detection         | AMD      |              |
+  | Absolute motion detection         | AMD      |       绝对运动探测       |
   | Indoor outdoor detection          | IOD      |              |
   | Compatibility Test Suite          | CTS      |              |
   | Plan of record                    | PoR      |              |
@@ -175,6 +175,12 @@
   | Sensors message router            | SMR      |              |
   | Sensors single image              | SSI      |              |
   | Snapdragon voice activation       | SVA      |              |
+  | Pedometer       |       |     计步器         |
+  |  Tilt      |       |     倾斜        |
+  |  Rotation vector      |  RV     |     旋转矢量       |
+  |  Geo-mag RV     |       |     Geo-mag RV      |
+  |  Gravity/linear acceleration     |       |    重力/线性加速度        |
+
 
 * 参考文档
   80-NM328-74 G

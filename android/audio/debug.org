@@ -193,5 +193,5 @@
     Example to collect traces having audio tag:
     $>adb shell atrace -z -b 8196 audio sched freq load idle irq -t 10 > atrace_output
     Parse atrace_output to get systrace logs:
-    $>python systrace/systrace.py --from-file=atrace_output -o trace.html
-    external/chromium-trace/systrace.py -b 32768 -t 15 audio sched freq load idle irq
+    $>python external/chromium-trace/systrace.py --from-file=atrace_output -o trace.html
+    external/chromium-trace/systrace.py -b 32768 -t 15 audio hal sched freq load idle irq disk

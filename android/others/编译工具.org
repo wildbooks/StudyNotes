@@ -1,0 +1,28 @@
+arm-linux-androideabi-addr2line     地址翻译工具
+arm-linux-androideabi-ar            这是一个程序，可通过从文档中增加、删除和析取文件来维护库文件。通常使用该工具是为了创建和管理连接程序使用的目标库文档。
+arm-linux-androideabi-as            GNU汇编器。实际上它是一族汇编器，因为它可以被编译或能够在各种不同平台上工作。
+arm-linux-androideabi-c++        
+arm-linux-androideabi-c++filt       程序接受被 C++编译程序转换过的名字（不是被重载的） ，而且将该名字翻译成初始形式。 
+arm-linux-androideabi-cpp        
+arm-linux-androideabi-dwp        
+arm-linux-androideabi-elfedit       更新 ELF 文件的 ELF 头。
+arm-linux-androideabi-g++        
+arm-linux-androideabi-gcc        
+arm-linux-androideabi-gcc-4.9.x   
+arm-linux-androideabi-gcc-ar      
+arm-linux-androideabi-gcc-nm      
+arm-linux-androideabi-gcc-ranlib  
+arm-linux-androideabi-gcov        
+arm-linux-androideabi-gcov-tool   
+arm-linux-androideabi-gprof     该程序会监督编译程序的执行过程，并报告程序中各个函数的运行时间，可以根据所提供的配置文件来优化程序。  
+arm-linux-androideabi-ld        GNU连接程序。该程序将目标文件的集合组合成可执行程序。 
+arm-linux-androideabi-ld.bfd      
+arm-linux-androideabi-ld.gold     
+arm-linux-androideabi-nm        列出目标文件中定义的符号。
+arm-linux-androideabi-objcopy   将目标文件从一种二进制格式复制和翻译到另外一种。
+arm-linux-androideabi-objdump   显示一个或多个目标文件中保存的多种不同信息。  
+arm-linux-androideabi-ranlib    创建和添加到 ar 文档的索引。该索引被 ld 使用来定位库中的模块。
+arm-linux-androideabi-readelf   从ELF格式的目标文件显示信息 
+arm-linux-androideabi-size      列出目标文件中每个部分的名字和尺寸。
+arm-linux-androideabi-strings   浏览所有类型的文件，析取出用于显示的字符串。
+arm-linux-androideabi-strip     从目标文件或文档库中去掉符号表，以及其他调试所需的信息。

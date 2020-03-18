@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+declare -A IMGDIC
 
 function debug(){
     case $1 in
@@ -49,7 +50,6 @@ function scp_file(){
 
     if [ $retVal -ne 0 ]; then
         #local msg=$(perror $retVal)
-        #debug error "===============$img : ${msg#*:}============="
         debug error "===============$img : ${msg#*:}============="
     fi
     return $retVal
@@ -66,6 +66,7 @@ function sensor(){
     #vendor/amt/config/common/init.amt.rc
     #vendor/amt/sepolicy/zb630kl_m2/file.te
     #vendor/amt/sepolicy/zb630kl_m2/file_contexts
+    #vendor/amt/sepolicy/ze620kl_ara/system_server.te
     #hal
     vendor/qcom/proprietary/sensors/dsps/libhalsensors/src/SAMSensor.cpp
     vendor/qcom/proprietary/sensors/dsps/libhalsensors/src/SensorsContext.cpp
@@ -76,6 +77,7 @@ function sensor(){
     #device/qcom/sdm660_64/sensors/hals.conf
     #vendor/qcom/proprietary/native_sensors
     #kernel
+    $DEFCONFIG
     #kernel/msm-4.4/drivers/sensors/stk3x3x/stk3x3x.c
     )
     for img in ${files[@]};
@@ -92,8 +94,8 @@ function sensor(){
 
 function cp_other(){
     local files=(
-    kernel/msm-4.4/arch/arm64/configs/ql1820-perf_defconfig
-    kernel/msm-4.4/arch/arm64/configs/ql1820_defconfig
+    $DEFCONFIG
+    #device/qcom/sdm660_64/AndroidBoard.mk
     )
     for img in ${files[@]};
     do
@@ -112,17 +114,26 @@ function audio(){
     #device/qcom/sdm660_64/BoardConfig.mk
     #vendor/amt/config/zb630kl_m2/init.amt.target.rc
     #vendor/amt/config/common/init.amt.rc
+
     #selinux
     #device/qcom/sdm660_64/BoardConfig.mk
     #vendor/amt/config/zb630kl_m2/init.amt.target.rc
     #vendor/amt/config/common/init.amt.rc
     #vendor/amt/sepolicy/zb630kl_m2/file.te
     #vendor/amt/sepolicy/zb630kl_m2/file_contexts
+
+    #framework
+    #frameworks/av/media/libaudioclient/AudioRecord.cpp
+    #frameworks/av/media/libaudioclient/AudioTrack.cpp
+    #frameworks/av/services/audioflinger/Threads.cpp
+
     #hal
-    vendor/qcom/opensource/audio-hal/primary-hal/hal/audio_extn/audio_extn.h
-    vendor/qcom/opensource/audio-hal/primary-hal/hal/audio_extn/fm.c
-    vendor/qcom/opensource/audio-hal/primary-hal/hal/audio_hw.c
+    #vendor/qcom/opensource/audio-hal/primary-hal/hal/audio_extn/audio_extn.h
+    #vendor/qcom/opensource/audio-hal/primary-hal/hal/audio_extn/fm.c
+    #vendor/qcom/opensource/audio-hal/primary-hal/hal/audio_hw.c
+
     #kernel
+    #$DEFCONFIG
     )
     for img in ${files[@]};
     do
@@ -136,26 +147,69 @@ function audio(){
     fi
 }
 
-function cp_imgs(){
-    local imgs=(
-    #out/target/product/sdm660_64/boot.img
-    out/target/product/sdm660_64/boot-debug.img
-    #out/target/product/sdm660_64/vendor.img
-    #out/target/product/sdm660_64/system.img
-    #out/target/product/sdm660_64/persist.img
-    #out/target/product/sdm660_64/recovery.img
-    #out/target/product/sdm660_64/vendor/etc/selinux
-    #out/target/product/sdm660_64/vendor/lib/hw/audio.primary.sdm660.so
+function selinux(){
+    local files=(
+    vendor/amt/sepolicy/ze620kl_ara/system_server.te
     )
-    for img in ${imgs[@]};
+    for img in ${files[@]};
     do
-        scp_file $img 1 || let 'total++'
+        scp_file $img 0 || let 'total++'
     done
 
     if [ "$total" == '' ]; then
         debug info "-------------- cp imgs sucessful --------------"
     else
         debug error "-------------- cp imgs fail:$total --------------"
+    fi
+}
+
+function add_image(){
+    IMGDIC[boot]='boot.img'
+    #IMGDIC[boot]='boot-debug.img'
+    IMGDIC[system]='system.img'
+    IMGDIC[vendor]='vendor.img'
+    #IMGDIC[persist]='persist.img'
+    #IMGDIC[recovery]='recovery.img'
+}
+
+function cp_imgs(){
+    add_image
+    for img in ${IMGDIC[@]};
+    do
+        scp_file $OUT/$img 1 || let 'total++'
+    done
+
+    if [ "$total" == '' ]; then
+        debug info "-------------- cp imgs sucessful --------------"
+    else
+        debug error "-------------- cp imgs fail:$total --------------"
+    fi
+}
+
+function flash_image(){
+    local img=$1
+    debug cmd "fastboot flash $img $OUT/${IMGDIC[$img]}"
+    fastboot flash $img $OUT/${IMGDIC[$img]}
+    retVal=$?
+
+    if [ $retVal -ne 0 ]; then
+        local msg=$(perror $retVal)
+        debug error "===============${IMGDIC[$img]} : ${msg#*:}============="
+    fi
+    return $retVal
+}
+
+function flash_imgs(){
+    add_image
+    for img in ${!IMGDIC[@]};
+    do
+        flash_image $img || let 'total++'
+    done
+    if [ "$total" == '' ]; then
+        debug info "-------------- flash sucessful --------------"
+        fastboot reboot
+    else
+        debug error "-------------- flash fail:$total --------------"
     fi
 }
 
@@ -169,22 +223,30 @@ function main(){
         Q_SDM636_Ara_dev)
             TARGET_PRODUCT='sdm660_64'
             DEST_PROJECT='/work/ASUS/ZE620KL_Q'
+            PRODUCT_DEVICE=sdm660_64
+            DEFCONFIG="kernel/msm-4.4/arch/arm64/configs/sdm660-perf_defconfig"
             ;;
         Q_SDM636_M1_dev)
             TARGET_PRODUCT='sdm660_64'
             DEST_PROJECT='/work/ASUS/ZB601KL_Q'
+            PRODUCT_DEVICE=sdm660_64
+            DEFCONFIG="kernel/msm-4.4/arch/arm64/configs/ql1650-perf_defconfig"
             ;;
         Q_SDM636_M2_dev)
             TARGET_PRODUCT='sdm660_64'
             DEST_PROJECT='/work/ASUS/ZB630KL_Q'
+            PRODUCT_DEVICE=sdm660_64
+            DEFCONFIG="kernel/msm-4.4/arch/arm64/configs/ql1820-perf_defconfig"
             ;;
         Q_ZA550KL_dev)
             TARGET_PRODUCT='msm8937_64'
             DEST_PROJECT='/work/ASUS/ZA550KL_Q'
+            PRODUCT_DEVICE=msm8937_64
             ;;
         Q_ZB555KL_dev)
             TARGET_PRODUCT='msm8937_64'
             DEST_PROJECT='/work/ASUS/ZB555KL_Q'
+            PRODUCT_DEVICE=msm8937_64
             ;;
     esac
 
@@ -210,6 +272,10 @@ function main(){
                 ;;
             img)
                 cp_imgs
+                continue
+                ;;
+            flash)
+                flash_imgs
                 continue
                 ;;
             other)

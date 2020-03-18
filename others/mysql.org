@@ -1,0 +1,24 @@
+* 链接数据库
+    [root@host]# mysql -h 127.0.0.1 -P 3306 -uroot -proot@123
+* 创建数据库test
+    mysql> create DATABASE test;
+* 查询有哪些数据库
+    mysql> show databases;
+* 删除数据库test
+    mysql> drop database test;
+* 选择数据库test
+    mysql> use test;
+* 查询当前数据库所有表格
+    mysql> show tables;
+* 创建表格
+    mysql> CREATE TABLE table_name (column_name column_type);
+* 查看表格详情
+    mysql> desc table_name;
+    mysql> select * from runoob_tbl;
+* 删除数据库表格
+    mysql> DROP TABLE table_name;
+* 表格中插入数据
+	INSERT INTO table_name ( field1, field2,...fieldN )
+                       VALUES
+                       ( value1, value2,...valueN );
+* 查询数据

@@ -504,9 +504,9 @@ function build_cp(){
     done
 
     if [ "$total" == '' ]; then
-        debug info "-------------- flash sucessful --------------"
+        debug info "-------------- scp sucessful --------------"
     else
-        debug error "-------------- flash fail:$total --------------"
+        debug error "-------------- scp fail:$total --------------"
     fi
 }
 
@@ -720,12 +720,12 @@ function main(){
                 ;;
             Q_ZA550KL_dev)
                 PRODUCT=$command
-                PRODUCT_DEVICE=sdm660_64
+                PRODUCT_DEVICE=msm8937_64
                 ARM=arm64
                 CONFIG_NAME=$command
                 LUNCH_CONFIG="msm8937_64-userdebug"
                 DEPEND=''
-                CHIPSET=sdm660
+                CHIPSET=msm8937
 
                 # BP
                 AMSS="amss_codes"
@@ -746,12 +746,12 @@ function main(){
                 ;;
             Q_ZB555KL_dev)
                 PRODUCT=$command
-                PRODUCT_DEVICE=sdm660_64
+                PRODUCT_DEVICE=msm8937_64
                 ARM=arm64
                 CONFIG_NAME=$command
                 LUNCH_CONFIG="msm8937_64-userdebug"
                 DEPEND=''
-                CHIPSET=sdm660
+                CHIPSET=msm8937
 
                 # BP
                 AMSS="amss_codes"

@@ -1,0 +1,54 @@
+diff --git a/hal/audio_hw.c b/hal/audio_hw.c
+index 1aed75b..2b83d23 100644
+--- a/hal/audio_hw.c
++++ b/hal/audio_hw.c
+@@ -54,6 +54,7 @@
+ #include <dlfcn.h>
+ #include <sys/resource.h>
+ #include <sys/prctl.h>
++#include <fcntl.h>
+ 
+ #include <log/log.h>
+ #include <cutils/trace.h>
+@@ -5701,7 +5702,20 @@ static ssize_t out_write(struct audio_stream_out *stream, const void *buffer,
+             bool use_mmap = is_mmap_usecase(out->usecase) || out->realtime;
+ 
+             if (use_mmap)
++            {
++                {
++                    int tmpFd= open("/data/misc/audioserver/dumpTrack_mmap_hal.pcm", O_CREAT | O_WRONLY | O_APPEND, 0600);
++                    ALOGD("%s: mmap DUMP",__func__);
++                    if ( tmpFd< 0 ) {
++                        ALOGE("%s: Fail to open dumpTrack_halfile error:%s", __func__, strerror(errno));
++                    } else {
++                        write(tmpFd, buffer, bytes_to_write);
++                        close(tmpFd);
++                    }
++
++                }
+                 ret = pcm_mmap_write(out->pcm, (void *)buffer, bytes_to_write);
++            }
+             else if (out->hal_op_format != out->hal_ip_format &&
+                        out->convert_buffer != NULL) {
+ 
+@@ -5738,7 +5752,20 @@ static ssize_t out_write(struct audio_stream_out *stream, const void *buffer,
+                     if (out->usecase == USECASE_AUDIO_PLAYBACK_WITH_HAPTICS)
+                         ret = split_and_write_audio_haptic_data(out, buffer, bytes);
+                     else
++                    {
++                        {
++                            int tmpFd= open("/data/misc/audioserver/dumpTrack_hal.pcm", O_CREAT | O_WRONLY | O_APPEND, 0600);
++                            ALOGD("%s: DUMP",__func__);
++                            if ( tmpFd< 0 ) {
++                                ALOGE("%s: Fail to open dumpTrack_halfile error:%s", __func__, strerror(errno));
++                            } else {
++                                write(tmpFd, buffer, bytes_to_write);
++                                close(tmpFd);
++                            }
++
++                        }
+                         ret = pcm_write(out->pcm, (void *)buffer, bytes_to_write);
++                    }
+                 }
+             }
+ 
