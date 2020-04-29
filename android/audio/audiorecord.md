@@ -7,6 +7,7 @@ Android系统在实现录音以及录像的功能均是通过使用MediaRecorder
 # 关键api
 
 ```c++
+//frameworks/base/media/java/android/media/AudioRecord.java
 //获取最小buffer
 public int getMinBufferSize(int sampleRateInHz, int channelConfig, int audioFormat)
 //创建AudioRecord对象
@@ -14,12 +15,16 @@ public AudioRecord(int audioSource, int sampleRateInHz, int channelConfig, int a
                    int bufferSizeInBytes)
 //开始录音
 public void startRecording()
+public int read(@NonNull ByteBuffer audioBuffer, int sizeInBytes)
+public void stop()
+public void release()
 ```
 
 # app
 
 ```c++
-  public class LoopbackRunnable extends BaseRunnable {
+//vendor/qcom/proprietary/commonsys/fastmmi/qmmi/src/com/qualcomm/qti/qmmi/testcase/Audio/LoopbackRunnable.java
+public class LoopbackRunnable extends BaseRunnable {
   
       final static int SAMPLE_RATE = 8000;//采样率
       private AudioRecord audioRecord = null;
@@ -74,6 +79,14 @@ public void startRecording()
   
   }
 ```
+
+```
+AudioStreamOut
+mOutput->audioHwDev->hwDevice
+hwDevice->createAudioPatch
+```
+
+
 
 ## getMinBufferSize
 
@@ -353,8 +366,97 @@ status_t AudioRecord::start(AudioSystem::sync_event_t event, audio_session_t tri
 ## read
 
 ```c++
-AudioRecord.java -> android_media_AudioRecord.cpp -> AudioRecord.cpp
+AudioRecord.java -> android_media_AudioRecord.cpp -> AudioRecord.cpp -> AudioTrackShared.cpp
 read() -> android_media_AudioRecord_readInArray() -> read()
+```
+
+```c++
+
+ssize_t AudioRecord::read(void* buffer, size_t userSize, bool blocking)
+{
+    if (mTransfer != TRANSFER_SYNC) {
+        return INVALID_OPERATION;
+    }
+
+    if (ssize_t(userSize) < 0 || (buffer == NULL && userSize != 0)) {
+        // sanity-check. user is most-likely passing an error code, and it would
+        // make the return value ambiguous (actualSize vs error).
+        ALOGE("%s(%d) (buffer=%p, size=%zu (%zu)",
+                __func__, mPortId, buffer, userSize, userSize);
+        return BAD_VALUE;
+    }
+
+    ssize_t read = 0;
+    Buffer audioBuffer;
+
+    while (userSize >= mFrameSize) {
+        audioBuffer.frameCount = userSize / mFrameSize;
+
+        //获取一个缓冲区地址，具体实现原理不懂，再分析
+        status_t err = obtainBuffer(&audioBuffer,
+                blocking ? &ClientProxy::kForever : &ClientProxy::kNonBlocking);
+        if (err < 0) {
+            if (read > 0) {
+                break;
+            }
+            if (err == TIMED_OUT || err == -EINTR) {
+                err = WOULD_BLOCK;
+            }
+            return ssize_t(err);
+        }
+		//读取音频数据
+        size_t bytesRead = audioBuffer.size;
+        memcpy(buffer, audioBuffer.i8, bytesRead);
+        buffer = ((char *) buffer) + bytesRead;
+        userSize -= bytesRead;
+        read += bytesRead;
+
+        releaseBuffer(&audioBuffer);
+    }
+    if (read > 0) {
+        mFramesRead += read / mFrameSize;
+        // mFramesReadTime = systemTime(SYSTEM_TIME_MONOTONIC); // not provided at this time.
+    }
+    return read;
+}
+```
+
+## stop
+
+```c++
+AudioRecord.java -> android_media_AudioRecord.cpp -> AudioRecord.cpp
+stop() -> native_stop() -> stop()
+```
+
+```c++
+void AudioRecord::stop()
+{
+    AutoMutex lock(mLock);
+    ALOGV("%s(%d): mActive:%d\n", __func__, mPortId, mActive);
+    if (!mActive) {
+        return;
+    }
+
+    mActive = false;
+    mProxy->interrupt();
+    mAudioRecord->stop();
+    mTracker->recordingStopped();
+
+    // Note: legacy handling - stop does not clear record marker and
+    // periodic update position; we update those on start().
+
+    sp<AudioRecordThread> t = mAudioRecordThread;
+    if (t != 0) {
+        t->pause();//暂停
+    } else {
+        setpriority(PRIO_PROCESS, 0, mPreviousPriority);
+        set_sched_policy(0, mPreviousSchedulingGroup);
+    }
+
+    // we've successfully started, log that time
+    mMediaMetrics.logStop(systemTime());
+}
+
 ```
 
 

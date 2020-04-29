@@ -11,6 +11,24 @@
 java|MediaPlayer audiorecord MediaRecorder AudioService AudioEffect MediaCodec
 native|MediaPlayer MediaRecorder AudioSystem
 native|AudioTrack AudioRecord AudioSystem AudioEffect AudioMixer AudioResampler
+```mermaid
+graph LR
+    c1-->a2
+    subgraph hal
+    a1-->a2
+    end
+ 
+    subgraph app
+    MediaPlayer
+    SoundRecorder
+    Phone
+    Game
+    3rdAPPs
+    end
+```
+
+
+
 # app
 
 - [Android 录音实现--MediaRecorder](./soundrecorder.md)

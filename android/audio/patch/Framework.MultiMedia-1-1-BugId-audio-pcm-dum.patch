@@ -1,0 +1,1138 @@
+From 5bba2db4d3741cd42104ff9da60e8b02d1bbdfa1 Mon Sep 17 00:00:00 2001
+From: yangyuchun <yangyuchun@vanyol.com>
+Date: Mon, 2 Mar 2020 18:15:17 +0800
+Subject: [PATCH] =?UTF-8?q?[19771][Framework.MultiMedia][=E6=8F=90?=
+ =?UTF-8?q?=E4=BA=A4=E5=AE=8C=E6=95=B4=E6=80=A7(1/1)][BugId:=E6=97=A0][?=
+ =?UTF-8?q?=E6=97=A0=E9=A3=8E=E9=99=A9][=E6=97=A0=E4=BE=9D=E8=B5=96][?=
+ =?UTF-8?q?=E8=87=AA=E7=84=B6=E9=9B=86=E6=88=90]{audio=E4=B8=8A=E5=B1=82pc?=
+ =?UTF-8?q?m=20dum=E6=96=B9=E6=B3=95}?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+分析：{dump上层各阶段的pcm数据}
+方案：{dump上层各阶段的pcm数据}
+风险及影响[快/稳/省/功能]：{debug}
+测试建议：{XXXXXX}
+跨组依赖(提交链接)：{http://XXXXXX}
+移植适用范围：{XXXXXX}
+
+Change-Id: I135fe6ded0de485bebc9485e3409b5de21cccf97
+---
+ AudioDump/Android.bp                               |  19 ++
+ AudioDump/oppo_pcm_dump.c                          | 264 +++++++++++++++++++++
+ AudioDump/oppo_pcm_dump.h                          |  85 +++++++
+ media/libaudioprocessing/AudioMixer.cpp            | 153 ++++++++++++
+ .../include/media/AudioResampler.h                 |   6 +
+ services/audioflinger/Android.bp                   |   5 +
+ services/audioflinger/AudioFlinger.cpp             |  21 +-
+ services/audioflinger/AudioFlinger.h               |  12 +
+ services/audioflinger/FastMixer.cpp                |  24 ++
+ services/audioflinger/FastMixer.h                  |  12 +
+ services/audioflinger/Threads.cpp                  |  85 +++++++
+ services/audioflinger/Threads.h                    |   8 +
+ services/audioflinger/TrackBase.h                  |   8 +
+ services/audioflinger/Tracks.cpp                   |  39 +++
+ 14 files changed, 740 insertions(+), 1 deletion(-)
+ create mode 100755 AudioDump/Android.bp
+ create mode 100755 AudioDump/oppo_pcm_dump.c
+ create mode 100755 AudioDump/oppo_pcm_dump.h
+ mode change 100644 => 100755 media/libaudioprocessing/AudioMixer.cpp
+ mode change 100644 => 100755 media/libaudioprocessing/include/media/AudioResampler.h
+ mode change 100644 => 100755 services/audioflinger/Android.bp
+ mode change 100644 => 100755 services/audioflinger/AudioFlinger.cpp
+ mode change 100644 => 100755 services/audioflinger/AudioFlinger.h
+ mode change 100644 => 100755 services/audioflinger/FastMixer.cpp
+ mode change 100644 => 100755 services/audioflinger/FastMixer.h
+ mode change 100644 => 100755 services/audioflinger/Threads.cpp
+ mode change 100644 => 100755 services/audioflinger/Threads.h
+ mode change 100644 => 100755 services/audioflinger/TrackBase.h
+ mode change 100644 => 100755 services/audioflinger/Tracks.cpp
+
+diff --git a/AudioDump/Android.bp b/AudioDump/Android.bp
+new file mode 100755
+index 0000000..208bd25
+--- /dev/null
++++ b/AudioDump/Android.bp
+@@ -0,0 +1,19 @@
++
++cc_library_shared {
++    name: "libaudioDump",
++
++    srcs: [
++         "oppo_pcm_dump.c",
++    ],
++    shared_libs: [
++        "libcutils",
++        "liblog",
++        "libdl",
++    ],
++    cflags: [
++        "-DVENDOR_EDIT",
++        "-Werror",
++        "-Wall",
++        "-Wno-error=deprecated-declarations",
++    ],
++}
+diff --git a/AudioDump/oppo_pcm_dump.c b/AudioDump/oppo_pcm_dump.c
+new file mode 100755
+index 0000000..ecbb877
+--- /dev/null
++++ b/AudioDump/oppo_pcm_dump.c
+@@ -0,0 +1,264 @@
++/************************************************************************************
++** VENDOR_EDIT
++** Copyright (C), 2008-2015, OPPO Mobile Comm Corp., Ltd
++** File: oppo_pcm_dump.c
++** Description:
++**      pcm dump api
++**
++** Version: 2.0
++** Date : 17:01:37,22/12/2015
++** Author: Zhihao.Li@PSW.MM.AudioServer.FrameWork.1067244
++**
++** --------------------------- Revision History: --------------------------------
++**  <author>    <data>          <desc>
++**  Zhihao.Li   2015.12.22      create 1.0 pcm dump api
++**  Zhihao.Li   2016.07.20      change path to sdcard and add audio format info
++**  Zhihao.Li   2017.08.09      dumpPcm api write a pcm file each 2 minute
++************************************************************************************/
++
++//#define LOG_NDEBUG 0
++#define LOG_TAG "audio_pcm_dump"
++
++#include <errno.h>
++#include <stdint.h>
++#include <stdlib.h>
++
++#include <fcntl.h>
++#include <string.h>
++#include <system/audio.h>
++#include <oppo_pcm_dump.h>
++#include <time.h>
++
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <unistd.h>
++#include <cutils/log.h>
++
++
++#define PCM_DATA_PATH "/sdcard/oppo_log/pcm_dump"
++
++#define MAX_FILE_SIZE 100 * 1024 * 1024 //100M
++
++// convert audio format to string
++static inline const char * get_pcm_suffix(audio_format_t format) {
++    switch (format & AUDIO_FORMAT_MAIN_MASK) {
++    case AUDIO_FORMAT_PCM:
++        switch (format) {
++        case AUDIO_FORMAT_PCM_16_BIT: return "16b.pcm";   /* no need break when case/return */
++        case AUDIO_FORMAT_PCM_8_BIT: return "8b.pcm";    /* no need break when case/return */
++        case AUDIO_FORMAT_PCM_32_BIT: return "32b.pcm";    /* no need break when case/return */
++        case AUDIO_FORMAT_PCM_8_24_BIT: return "8_24b.pcm";   /* no need break when case/return */
++        case AUDIO_FORMAT_PCM_FLOAT: return "float.pcm";   /* no need break when case/return */
++        case AUDIO_FORMAT_PCM_24_BIT_PACKED: return "24b.pcm";   /* no need break when case/return */
++        default:
++            return "raw";
++            break;
++        }    /* no need break when case/return */
++    case AUDIO_FORMAT_MP3:
++        return "mp3";   /* no need break when case/return */
++    case AUDIO_FORMAT_AAC:
++        return "aac";   /* no need break when case/return */
++    case AUDIO_FORMAT_AC3:
++        return "ac3";   /* no need break when case/return */
++    case AUDIO_FORMAT_FLAC:
++        return "flac";   /* no need break when case/return */
++/*
++    case AUDIO_FORMAT_PCM_OFFLOAD:
++        switch (format) {
++        case AUDIO_FORMAT_PCM_16_BIT_OFFLOAD: return "16b.offload.pcm";
++        case AUDIO_FORMAT_PCM_24_BIT_OFFLOAD: return "24b.offload.pcm";
++        default:
++            return "raw";
++            break;
++        } */
++    default :
++        return "raw";
++    }
++}
++
++// check pcm path (directory) exist or not
++// create pcm path if it is not exist
++static inline int check_pcm_path(void) {
++    struct stat state;
++    if (stat(PCM_DATA_PATH, &state)) {
++        ALOGV("check_pcm_path : pcm path did not exist %d, create it!", errno);
++        char dirName[64] = PCM_DATA_PATH;
++        strcat(dirName, "/");
++        ALOGV("check_pcm_path : dirName %s", dirName);
++        for (unsigned int i=1; i < strlen(dirName); i++) {
++            if (dirName[i] == '/') {
++                dirName[i] = 0;
++                if (stat(dirName, &state)) {
++                    ALOGV("check_pcm_path : path %s not exist, create it", dirName);
++                    int status = mkdir(dirName, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
++                    if (status != 0) {
++                        ALOGE("check_pcm_path : create path %s fail %d", dirName, errno);
++                        return status;
++                    } else {
++                        ALOGV("check_pcm_path : created path %s", dirName);
++                    }
++                } else {
++                    ALOGV("check_pcm_path : path %s exist", dirName);
++                }
++                dirName[i] = '/';
++            }
++        }
++    }
++    return 0;
++}
++
++// dump mode 1
++// usage : just add dumpPcm to where you want to dump pcm
++int dumpPcm(char *buf,
++            int len,
++            const char *name,
++            int channel,
++            int sample_rate,
++            int id,
++            audio_format_t format) {
++    time_t timep;
++    time(&timep);
++    struct tm *p = localtime(&timep);
++
++    char filename[512];
++    int ret = 0;
++    snprintf(filename, sizeof(filename), "%s/%s_%d_%dch_%dHz_%d%02d%02d_%02d%02d.%s",
++            PCM_DATA_PATH, name, id, channel, sample_rate,
++            1900+p->tm_year, 1+p->tm_mon, p->tm_mday, p->tm_hour, p->tm_min & ~1, get_pcm_suffix(format));
++
++    if (check_pcm_path()) {
++        return -1;
++    }
++
++    int fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0666);
++    if (fd < 0) {
++        ALOGE("dumpPcm : failed to open pcm dump file!");
++        return -1;
++    }
++    int size = lseek(fd, 0, SEEK_END);
++
++    if (size < 0) {
++        ALOGE("dumpPcm : failed to seek to the end!");
++        close(fd);
++        return -1;
++    } else if (size < MAX_FILE_SIZE) {
++        ret = write(fd, buf, len);
++    } else {
++        ALOGE("dumpPcm : file size is out of rang: %dM", MAX_FILE_SIZE / 1024 / 1024);
++    }
++    close(fd);
++
++    return 0;
++}
++
++// dump mode 2
++// usage : init -> write ... write -> end
++// feature : added dump time info
++PCM_DATA * pcm_dump_init(const char *name,
++                         int id,
++                         int channel,
++                         int sample_rate,
++                         audio_format_t format) {
++    PCM_DATA *pcm = (PCM_DATA *)calloc(1, sizeof(PCM_DATA));
++    if (!pcm) {
++        ALOGE("pcm_dump_init : out of memory error !");
++        return NULL;
++    }
++
++    pcm->name = strdup(name);
++    if (!pcm->name) {
++        ALOGE("pcm_dump_init : out of memory error !");
++        free(pcm);
++        return NULL;
++    }
++
++    pcm->channel = channel;
++    pcm->sample_rate = sample_rate;
++    pcm->id = id;
++    pcm->format = format;
++    pcm->fd = -1;
++
++    ALOGV("pcm_dump_init : %s_%d_%dch_%dHz 0x%x", name, id, channel, sample_rate, format);
++
++    return pcm;
++}
++
++void pcm_dump_end(PCM_DATA **p_pcm) {
++    PCM_DATA *pcm = *p_pcm;
++    if (pcm) {
++        if (pcm->name) {
++            free(pcm->name);
++            pcm->name = NULL;
++        }
++
++        if (pcm->fd >= 0) {
++            close(pcm->fd);
++        }
++
++        ALOGV("pcm_dump_end : %s", pcm->filename);
++        free(pcm);
++        pcm = NULL;
++        *p_pcm = NULL;
++    }
++}
++
++static void pcm_file_create(PCM_DATA *pcm) {
++    time_t timep;
++    time(&timep);
++    struct tm *p;
++    pcm->begin_time = p = localtime(&timep);
++
++    const char *suffix = get_pcm_suffix(pcm->format);
++
++    snprintf(pcm->filename, sizeof(pcm->filename), "%s/%s_%d_%dch_%dHz_%d%02d%02d_%02d%02d%02d.%s", PCM_DATA_PATH,
++                pcm->name, pcm->id, pcm->channel, pcm->sample_rate,
++                1900+p->tm_year, 1+p->tm_mon, p->tm_mday, p->tm_hour, p->tm_min, p->tm_sec, suffix);
++
++    int fd = open(pcm->filename, O_WRONLY | O_CREAT | O_APPEND, 0666);
++    if (fd < 0) {
++        ALOGE("pcm_file_create : failed to create pcm dump file!");
++    }
++
++    pcm->fd = fd;
++
++    ALOGV("pcm_file_create : %s", pcm->filename);
++}
++
++int pcm_dump_write(PCM_DATA *pcm, char *buf, int len) {
++    if (!pcm) {
++        ALOGE("pcm_dump_write : pcm is null");
++        return -1;
++    }
++
++    if (len <= 0) {
++        ALOGW("pcm_dump_write : data len = %d", len);
++        return -1;
++    }
++
++    // confirm pcm dump path exist
++    if (check_pcm_path()) {
++        return -1;
++    }
++
++    if (pcm->fd < 0) {
++        // create pcm file at first write
++        pcm_file_create(pcm);
++    }
++
++    struct stat state;
++    if (fstat(pcm->fd, &state) == -1) {
++        ALOGE("pcm_dump_write : check fstat fail");
++        return -1;
++    }
++    if (state.st_nlink == 0) {
++        // the file was deleted, create it again
++        close(pcm->fd);
++        pcm_file_create(pcm);
++        ALOGE("pcm_dump_write : pcm file not exist create it again");
++    }
++    int ret = 0;
++    ret = write(pcm->fd, buf, len);
++
++    return 0;
++}
++
+diff --git a/AudioDump/oppo_pcm_dump.h b/AudioDump/oppo_pcm_dump.h
+new file mode 100755
+index 0000000..225f49a
+--- /dev/null
++++ b/AudioDump/oppo_pcm_dump.h
+@@ -0,0 +1,85 @@
++/************************************************************************************
++** VENDOR_EDIT
++** Copyright (C), 2008-2015, OPPO Mobile Comm Corp., Ltd
++** File: oppo_pcm_dump.h
++** Description:
++**      pcm dump api
++**
++** Version: 2.0
++** Date : 17:01:37,22/12/2015
++** Author: Zhihao.Li@PSW.MM.AudioServer.FrameWork.1067244
++**
++** --------------------------- Revision History: --------------------------------
++**  <author>    <data>          <desc>
++**  Zhihao.Li   2015.12.22      create 1.0 pcm dump api
++**  Zhihao.Li   2016.07.20      change path to sdcard and add audio format info
++************************************************************************************/
++
++#ifndef ANDROID_AUDIO_PCM_DUMP_H
++#define ANDROID_AUDIO_PCM_DUMP_H
++
++#include <stdint.h>
++#include <stdlib.h>
++#include <sys/cdefs.h>
++#include <time.h>
++
++#include <system/audio.h>
++
++#if __cplusplus
++extern "C" {
++#endif
++
++typedef struct pcm_data_s {
++    int sample_rate;
++    int channel;
++    char* name;
++    int id;
++    struct tm *begin_time;
++    char filename[512];
++    int fd;
++    audio_format_t format;
++} PCM_DATA;
++
++enum {
++    PCM_DUMP_TRACK_ORIGINAL = 0,
++    PCM_DUMP_TRACK_RESAMPLED,
++    PCM_DUMP_TRACK_MIXED,
++    PCM_DUMP_THREAD_WRITE,
++    PCM_DUMP_FAST_TRACK_ORIGINAL,
++    PCM_DUMP_FAST_THREAD_WRITE,
++    PCM_DUMP_RECORD,
++    PCM_DUMP_HAL_IN,
++    PCM_DUMP_HAL_OUT,
++    PCM_DUMP_A2DP_OUT,
++};
++
++// dump mode 1
++// usage : just add dumpPcm to where you want to dump pcm
++int dumpPcm(char *buf,
++            int len,
++            const char *name,
++            int channel,
++            int sample_rate,
++            int id,
++            audio_format_t format);
++
++// dump mode 2
++// usage : init -> write ... write -> end
++// feature : added dump time info
++PCM_DATA * pcm_dump_init(const char *name,
++                        int id,
++                        int channel,
++                        int sample_rate,
++                        audio_format_t format);
++
++void pcm_dump_end(PCM_DATA **p_pcm);
++
++int pcm_dump_write(PCM_DATA *pcm, char *buf, int len);
++
++#if __cplusplus
++}  // extern "C"
++#endif
++
++#endif  // ANDROID_AUDIO_PCM_DUMP_H
++
++
+diff --git a/media/libaudioprocessing/AudioMixer.cpp b/media/libaudioprocessing/AudioMixer.cpp
+old mode 100644
+new mode 100755
+index 0694b60..d9dc378
+--- a/media/libaudioprocessing/AudioMixer.cpp
++++ b/media/libaudioprocessing/AudioMixer.cpp
+@@ -37,6 +37,12 @@
+ #include <media/AudioMixer.h>
+ 
+ #include "AudioMixerOps.h"
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++#include <oppo_pcm_dump.h>
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ 
+ // The FCC_2 macro refers to the Fixed Channel Count of 2 for the legacy integer mixer.
+ #ifndef FCC_2
+@@ -81,6 +87,20 @@ using TYPE_AUX = int32_t; // q4.27
+ 
+ // Set to default copy buffer size in frames for input processing.
+ static const size_t kCopyBufferFrameCount = 256;
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++static const char PCM_TRACK_RESAMPLED[] = "AF20_Track_Resampled";
++// pcm name for process__OneTrack16BitsStereoNoResampling()
++static const char PCM_TRACK_MIXED_1[] = "AF31_Track_Mixed";
++// pcm name for process__genericNoResampling()
++static const char PCM_TRACK_MIXED_2[] = "AF32_Track_Mixed";
++// pcm name for process__genericResampling()
++static const char PCM_TRACK_MIXED_3[] = "AF33_Track_Mixed";
++// pcm name for fast mixed
++static const char PCM_TRACK_FAST_MIXED[] = "AF50_Track_FastMixed";
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ 
+ #ifdef QTI_RESAMPLER
+ #define QTI_RESAMPLER_MAX_SAMPLERATE 192000
+@@ -88,6 +108,10 @@ static const size_t kCopyBufferFrameCount = 256;
+ namespace android {
+ 
+ // ----------------------------------------------------------------------------
++//#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++int AudioMixer::mAudioMixerPcmDumpSwitch = 0;
++//#endif /* OPPO_PCM_DUMP */
+ 
+ static inline audio_format_t selectMixerInFormat(audio_format_t inputFormat __unused) {
+     return kUseFloat && kUseNewMixer ? AUDIO_FORMAT_PCM_FLOAT : AUDIO_FORMAT_PCM_16_BIT;
+@@ -1153,6 +1177,31 @@ void AudioMixer::Track::track__genericResample(
+             mResampler->resample(out, outFrameCount, bufferProvider);
+         }
+     }
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    if (mAudioMixerPcmDumpSwitch & 1<<PCM_DUMP_TRACK_RESAMPLED) {
++        char *tempbuffer = NULL;
++        if (mMixerInFormat == AUDIO_FORMAT_PCM_16_BIT) {
++            // we can not read q4_27 data, so convert it to float
++            tempbuffer = (char *)calloc(outFrameCount, mMixerChannelCount * sizeof(float));
++            convertMixerFormat((void *)tempbuffer, AUDIO_FORMAT_PCM_FLOAT,
++                    out, AUDIO_FORMAT_PCM_16_BIT, outFrameCount * mMixerChannelCount);
++        }
++        ALOGD("track__genericResample dumpPcm len = %zu", outFrameCount * mMixerChannelCount * sizeof(float));
++        dumpPcm(tempbuffer ? tempbuffer : (char *)out,
++                outFrameCount * mMixerChannelCount * sizeof(float),
++                PCM_TRACK_RESAMPLED,
++                mMixerChannelCount,
++                mResampler->getSampleRate(),
++                sessionId,
++                AUDIO_FORMAT_PCM_FLOAT);
++        if (tempbuffer) {
++            free(tempbuffer);
++        }
++    }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ }
+ 
+ void AudioMixer::Track::track__nop(int32_t* out __unused,
+@@ -1513,6 +1562,22 @@ void AudioMixer::process__genericNoResampling()
+                     * audio_bytes_per_sample(t1->mMixerFormat));
+             numFrames += frameCount;
+         } while (numFrames < mFrameCount);
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++        //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++        if (mAudioMixerPcmDumpSwitch & 1<<PCM_DUMP_TRACK_MIXED) {
++            const std::shared_ptr<Track> &t1 = mTracks[group[0]];
++            ALOGD("process__genericNoResampling dumpPcm len = %zu", numFrames * t1->mMixerChannelCount * audio_bytes_per_sample(t1->mMixerFormat));
++            dumpPcm((char *)pair.first,
++                    numFrames * t1->mMixerChannelCount * audio_bytes_per_sample(t1->mMixerFormat),
++                    PCM_TRACK_MIXED_2,
++                    t1->mMixerChannelCount,
++                    t1->sampleRate,
++                    t1->sessionId,
++                    t1->mMixerFormat);
++        }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ 
+         // release each track's buffer
+         for (const int name : group) {
+@@ -1571,6 +1636,21 @@ void AudioMixer::process__genericResampling()
+         }
+         convertMixerFormat(t1->mainBuffer, t1->mMixerFormat,
+                 outTemp, t1->mMixerInFormat, numFrames * t1->mMixerChannelCount);
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++        //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++        if (mAudioMixerPcmDumpSwitch & 1<<PCM_DUMP_TRACK_MIXED) {
++            //ALOGD("process__genericResampling dumpPcm len = %zu", numFrames * t1.mMixerChannelCount * audio_bytes_per_sample(t1.mMixerFormat));
++            dumpPcm((char *)t1->mainBuffer,
++                    numFrames * t1->mMixerChannelCount * audio_bytes_per_sample(t1->mMixerFormat),
++                    PCM_TRACK_MIXED_3,
++                    t1->mMixerChannelCount,
++                    t1->mResampler != NULL ? t1->mResampler->getSampleRate() : t1->sampleRate,
++                    t1->sessionId,
++                    t1->mMixerFormat);
++        }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+     }
+ }
+ 
+@@ -1661,6 +1741,31 @@ void AudioMixer::process__oneTrack16BitsStereoNoResampling()
+         numFrames -= b.frameCount;
+         t->bufferProvider->releaseBuffer(&b);
+     }
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++    //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    if (mAudioMixerPcmDumpSwitch & 1<<PCM_DUMP_TRACK_MIXED) {
++        ALOGD("process__OneTrack16BitsStereoNoResampling dumpPcm = %zu", numFrames * t->mMixerChannelCount * audio_bytes_per_sample(t->mMixerFormat));
++        if ((t->sessionId == 0) && !(mAudioMixerPcmDumpSwitch & 1<<PCM_DUMP_FAST_THREAD_WRITE)) {
++            // do nothing if it is called in fast mixer and fast dump switch did not open
++        } else {
++            const char * name = NULL;
++            if (t->sessionId == 0) { // name for fast mix
++                name = PCM_TRACK_FAST_MIXED;
++            } else {
++                name = PCM_TRACK_MIXED_1;
++            }
++            dumpPcm((char *)t->mainBuffer,
++                    numFrames * t->mMixerChannelCount * audio_bytes_per_sample(t->mMixerFormat),
++                    name,
++                    t->mMixerChannelCount,
++                    t->sampleRate,
++                    t->sessionId,
++                    t->mMixerFormat);
++        }
++    }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ }
+ 
+ /*static*/ pthread_once_t AudioMixer::sOnceControl = PTHREAD_ONCE_INIT;
+@@ -1865,6 +1970,30 @@ void AudioMixer::process__noResampleOneTrack()
+     if (ramp) {
+         t->adjustVolumeRamp(aux != NULL, is_same<TI, float>::value);
+     }
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++    //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    if (mAudioMixerPcmDumpSwitch & 1<<PCM_DUMP_TRACK_MIXED) {
++        if ((t->sessionId == 0) && !(mAudioMixerPcmDumpSwitch & 1<<PCM_DUMP_FAST_THREAD_WRITE)) {
++            // do nothing if it is called in fast mixer and fast dump switch did not open
++        } else {
++            const char * name = NULL;
++            if (t->sessionId == 0) { // name for fast mix
++                name = PCM_TRACK_FAST_MIXED;
++            } else {
++                name = PCM_TRACK_MIXED_1;
++            }
++            dumpPcm((char *)t->mainBuffer,
++                    mFrameCount * t->mMixerChannelCount * audio_bytes_per_sample(t->mMixerFormat),
++                    name,
++                    t->mMixerChannelCount,
++                    t->sampleRate,
++                    t->sessionId,
++                    t->mMixerFormat);
++        }
++    }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ }
+ 
+ void AudioMixer::processHapticData()
+@@ -1930,6 +2059,30 @@ void AudioMixer::Track::track__Resample(TO* out, size_t outFrameCount, TO* temp,
+         mResampler->setVolume(mVolume[0], mVolume[1]);
+         mResampler->resample((int32_t*)out, outFrameCount, bufferProvider);
+     }
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++    //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    if (mAudioMixerPcmDumpSwitch & 1<<PCM_DUMP_TRACK_RESAMPLED) {
++        char *tempbuffer = NULL;
++        if (mMixerInFormat == AUDIO_FORMAT_PCM_16_BIT) {
++            // we can not read q4_27 data, so convert it to float
++            tempbuffer = (char *)calloc(outFrameCount, mMixerChannelCount * sizeof(float));
++            convertMixerFormat((void *)tempbuffer, AUDIO_FORMAT_PCM_FLOAT,
++                    out, AUDIO_FORMAT_PCM_16_BIT, outFrameCount * mMixerChannelCount);
++        }
++        dumpPcm(tempbuffer ? tempbuffer : (char *)out,
++                outFrameCount * mMixerChannelCount * sizeof(float),
++                PCM_TRACK_RESAMPLED,
++                mMixerChannelCount,
++                mResampler->getSampleRate(),
++                sessionId,
++                AUDIO_FORMAT_PCM_FLOAT);
++        if (tempbuffer) {
++            free(tempbuffer);
++        }
++    }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ }
+ 
+ /* This track hook is called to mix a track, when no resampling is required.
+diff --git a/media/libaudioprocessing/include/media/AudioResampler.h b/media/libaudioprocessing/include/media/AudioResampler.h
+old mode 100644
+new mode 100755
+index d81f696..a8e6d1d
+--- a/media/libaudioprocessing/include/media/AudioResampler.h
++++ b/media/libaudioprocessing/include/media/AudioResampler.h
+@@ -85,6 +85,12 @@ public:
+ 
+     // called from destructor, so must not be virtual
+     src_quality getQuality() const { return mQuality; }
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++    //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    int32_t getSampleRate() const { return mSampleRate; }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ 
+ protected:
+     // number of bits for phase fraction - 30 bits allows nearly 2x downsampling
+diff --git a/services/audioflinger/Android.bp b/services/audioflinger/Android.bp
+old mode 100644
+new mode 100755
+index 96ad54b..4548e44
+--- a/services/audioflinger/Android.bp
++++ b/services/audioflinger/Android.bp
+@@ -31,6 +31,8 @@ cc_library_shared {
+     include_dirs: [
+         "frameworks/av/services/audiopolicy",
+         "frameworks/av/services/medialog",
++        //#Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++        "frameworks/av/AudioDump",
+     ],
+ 
+     shared_libs: [
+@@ -65,6 +67,9 @@ cc_library_shared {
+         "-fvisibility=hidden",
+         "-Werror",
+         "-Wall",
++        //#ifdef VENDOR_EDIT
++        "-DOPPO_PCM_DUMP",
++        //#endif /* VENDOR_EDIT */
+     ],
+     sanitize: {
+         integer_overflow: true,
+diff --git a/services/audioflinger/AudioFlinger.cpp b/services/audioflinger/AudioFlinger.cpp
+old mode 100644
+new mode 100755
+index 2eb2251..11cf881
+--- a/services/audioflinger/AudioFlinger.cpp
++++ b/services/audioflinger/AudioFlinger.cpp
+@@ -95,7 +95,13 @@ static const char kDeadlockedString[] = "AudioFlinger may be deadlocked\n";
+ static const char kHardwareLockedString[] = "Hardware lock is taken\n";
+ static const char kClientLockedString[] = "Client lock is taken\n";
+ static const char kNoEffectsFactory[] = "Effects Factory is absent\n";
+-
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++int AudioFlinger::mPcmDumpSwitch = 0;
++#define AUDIO_PROPERTY_PCMDUMP "persist.oppo.mm.pcmdump"
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ 
+ nsecs_t AudioFlinger::mStandbyTimeInNsecs = kDefaultStandbyTimeInNsecs;
+ 
+@@ -190,6 +196,13 @@ AudioFlinger::AudioFlinger()
+     mEffectsFactoryHal = EffectsFactoryHalInterface::create();
+ 
+     mMediaLogNotifier->run("MediaLogNotifier");
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++    //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    property_get(AUDIO_PROPERTY_PCMDUMP, pValue, "0");
++    mPcmDumpSwitch = atoi(pValue);
++#endif
++#endif /* VENDOR_EDIT */
+ }
+ 
+ void AudioFlinger::onFirstRef()
+@@ -476,6 +489,12 @@ bool AudioFlinger::dumpTryLock(Mutex& mutex)
+ 
+ status_t AudioFlinger::dump(int fd, const Vector<String16>& args)
+ {
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++    //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    oppoDump(args);
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+     if (!dumpAllowed()) {
+         dumpPermissionDenial(fd, args);
+     } else {
+diff --git a/services/audioflinger/AudioFlinger.h b/services/audioflinger/AudioFlinger.h
+old mode 100644
+new mode 100755
+index 72e669a..adef5eb
+--- a/services/audioflinger/AudioFlinger.h
++++ b/services/audioflinger/AudioFlinger.h
+@@ -94,6 +94,12 @@
+ 
+ #include "android/media/BnAudioRecord.h"
+ 
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//#Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++#include <oppo_pcm_dump.h>
++#endif /* OPPO_PCM_DUMP */
++#endif /*VENDOR_EDIT*/
+ namespace android {
+ 
+ class AudioMixer;
+@@ -885,6 +891,12 @@ public:
+     bool    isLowRamDevice() const { return mIsLowRamDevice; }
+     size_t getClientSharedHeapSize() const;
+ 
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//#Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    static int mPcmDumpSwitch;
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */ 
+ private:
+     std::atomic<bool> mIsLowRamDevice;
+     bool    mIsDeviceTypeKnown;
+diff --git a/services/audioflinger/FastMixer.cpp b/services/audioflinger/FastMixer.cpp
+old mode 100644
+new mode 100755
+index c5b9953..15c892a
+--- a/services/audioflinger/FastMixer.cpp
++++ b/services/audioflinger/FastMixer.cpp
+@@ -43,6 +43,12 @@
+ #include <media/AudioMixer.h>
+ #include "FastMixer.h"
+ #include "TypedLogger.h"
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Yunmang.Xiao@PSW.MM.AudioServer.FrameWork.1067244, 2019/10/22, Add for pcm dump
++#include <oppo_pcm_dump.h>
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ 
+ namespace android {
+ 
+@@ -505,6 +511,24 @@ void FastMixer::onWork()
+             //if ((size_t) framesWritten == frameCount) {
+             //    didFullWrite = true;
+             //}
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++            //Yunmang.Xiao@PSW.MM.AudioServer.FrameWork.1067244, 2019/10/22, Add for pcm dump
++            //ALOGD("mAudioChannelCount %d mFormat.mFormat %d mSampleRate %d framesWritten %d frameCount %d",
++                //mAudioChannelCount, (int)mFormat.mFormat, (int)mSampleRate, (int)framesWritten, (int)frameCount);
++            if (getDebugMode()) {
++                if (framesWritten >= 0) {
++                    dumpPcm((char *)buffer,
++                            framesWritten * mAudioChannelCount * audio_bytes_per_sample(mFormat.mFormat),
++                            "AF50_ThreadFast_Write",
++                            mAudioChannelCount,
++                            mSampleRate,
++                            0,
++                            mFormat.mFormat);
++                }
++             }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+         } else {
+             dumpState->mWriteErrors++;
+         }
+diff --git a/services/audioflinger/FastMixer.h b/services/audioflinger/FastMixer.h
+old mode 100644
+new mode 100755
+index 97ab635..968412a
+--- a/services/audioflinger/FastMixer.h
++++ b/services/audioflinger/FastMixer.h
+@@ -47,6 +47,12 @@ public:
+     virtual void setBoottimeOffset(int64_t boottimeOffset) {
+         mBoottimeOffset.store(boottimeOffset); /* memory_order_seq_cst */
+     }
++#ifdef VENDOR_EDIT
++    #ifdef OPPO_PCM_DUMP
++    void setDebugMode(bool isDebug) { mDebugMode = isDebug;}
++    bool getDebugMode() { return mDebugMode;}
++    #endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ private:
+             FastMixerStateQueue mSQ;
+ 
+@@ -111,6 +117,12 @@ private:
+ #ifdef TEE_SINK
+     NBAIO_Tee       mTee;
+ #endif
++    #ifdef VENDOR_EDIT
++    //Yunmang.Xiao@MM.AudioServer.FrameWork, 2019/10/22, Add for pcm dump
++    #ifdef OPPO_PCM_DUMP
++    bool             mDebugMode;
++    #endif /* OPPO_PCM_DUMP */
++    #endif /* VENDOR_EDIT */
+ };  // class FastMixer
+ 
+ }   // namespace android
+diff --git a/services/audioflinger/Threads.cpp b/services/audioflinger/Threads.cpp
+old mode 100644
+new mode 100755
+index 9dd61e6..5fbb7bc
+--- a/services/audioflinger/Threads.cpp
++++ b/services/audioflinger/Threads.cpp
+@@ -1812,6 +1812,14 @@ AudioFlinger::PlaybackThread::PlaybackThread(const sp<AudioFlinger>& audioFlinge
+     // Audio patch volume is always max
+     mStreamTypes[AUDIO_STREAM_PATCH].volume = 1.0f;
+     mStreamTypes[AUDIO_STREAM_PATCH].mute = false;
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++    //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    if (mType != MIXER) {
++        mPcmDump = pcm_dump_init("AF40_ThreadWrite", id, mChannelCount, mSampleRate, mFormat);
++    }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ }
+ 
+ AudioFlinger::PlaybackThread::~PlaybackThread()
+@@ -1820,6 +1828,12 @@ AudioFlinger::PlaybackThread::~PlaybackThread()
+     free(mSinkBuffer);
+     free(mMixerBuffer);
+     free(mEffectBuffer);
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    pcm_dump_end(&mPcmDump);
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ }
+ 
+ // Thread virtuals
+@@ -2953,6 +2967,15 @@ ssize_t AudioFlinger::PlaybackThread::threadLoop_write()
+         } else {
+             bytesWritten = framesWritten;
+         }
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++        //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++        if (AudioFlinger::mPcmDumpSwitch & 1<<PCM_DUMP_THREAD_WRITE) {
++            pcm_dump_write(mPcmDump, (char *)mSinkBuffer + offset, bytesWritten);
++        }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
++
+     // otherwise use the HAL / AudioStreamOut directly
+     } else {
+         // Direct output and offload threads
+@@ -2967,6 +2990,14 @@ ssize_t AudioFlinger::PlaybackThread::threadLoop_write()
+         // FIXME We should have an implementation of timestamps for direct output threads.
+         // They are used e.g for multichannel PCM playback over HDMI.
+         bytesWritten = mOutput->write((char *)mSinkBuffer + offset, mBytesRemaining);
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++        //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++        if (AudioFlinger::mPcmDumpSwitch & 1<<PCM_DUMP_THREAD_WRITE) {
++            pcm_dump_write(mPcmDump, (char *)mSinkBuffer + offset, bytesWritten);
++        }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ 
+         if (mUseAsyncWrite &&
+                 ((bytesWritten < 0) || (bytesWritten == (ssize_t)mBytesRemaining))) {
+@@ -4307,6 +4338,13 @@ AudioFlinger::MixerThread::MixerThread(const sp<AudioFlinger>& audioFlinger, Aud
+         break;
+     }
+ 
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++    //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    mPcmDump = pcm_dump_init("AF40_ThreadWrite", id, mChannelCount, mSampleRate, mFormat);
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
++
+     mIdleTimeOffsetUs = 0;
+ }
+ 
+@@ -4800,6 +4838,21 @@ AudioFlinger::PlaybackThread::mixer_state AudioFlinger::MixerThread::prepareTrac
+                 gain_minifloat_packed_t vlr = proxy->getVolumeLR();
+                 float vlf = volume * float_from_gain(gain_minifloat_unpack_left(vlr));
+                 float vrf = volume * float_from_gain(gain_minifloat_unpack_right(vlr));
++
++                #ifdef VENDOR_EDIT
++                //Yunmang.Xiao@MultiMedia.AudioServer.FrameWork, 2019/10/22, Add for pcm dump
++                #ifdef OPPO_PCM_DUMP
++                if (mFastMixer != 0) {
++                    if (AudioFlinger::mPcmDumpSwitch & 1<<PCM_DUMP_THREAD_WRITE) {
++                        mFastMixer->setDebugMode(true);
++                    } else {
++                        mFastMixer->setDebugMode(false);
++                    }
++                } else {
++                    mFastMixer->setDebugMode(false);
++                }
++                #endif /* OPPO_PCM_DUMP */
++                #endif /* VENDOR_EDIT */
+                 track->setFinalVolume((vlf + vrf) / 2.f);
+                 ++fastTracks;
+             } else {
+@@ -6904,6 +6957,12 @@ AudioFlinger::RecordThread::RecordThread(const sp<AudioFlinger>& audioFlinger,
+     mTee.set(mInputSource->format(), NBAIO_Tee::TEE_FLAG_INPUT_THREAD);
+     mTee.setId(std::string("_") + std::to_string(mId) + "_C");
+ #endif
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//YunMang.Xiao@MultiMedia.AudioServer.FrameWork, 2019/07/08, Add for pcm dump
++    mPcmDump = pcm_dump_init("AudioRecord_ThreadRead", id, mChannelCount, mSampleRate, mFormat);
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ failed: ;
+ 
+     // FIXME mNormalSource
+@@ -6929,6 +6988,12 @@ AudioFlinger::RecordThread::~RecordThread()
+     mAudioFlinger->unregisterWriter(mFastCaptureNBLogWriter);
+     mAudioFlinger->unregisterWriter(mNBLogWriter);
+     free(mRsmpInBuffer);
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//YunMang.Xiao@MultiMedia.AudioServer.FrameWork, 2019/07/08, Add for pcm dump
++    pcm_dump_end(&mPcmDump);
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ }
+ 
+ void AudioFlinger::RecordThread::onFirstRef()
+@@ -7179,6 +7244,18 @@ reacquire_wakelock:
+                 ALOGW_IF(retries > 0, "overrun on read from pipe, retry #%d", retries);
+                 framesRead = mPipeSource->read((uint8_t*)mRsmpInBuffer + rear * mFrameSize,
+                         framesToRead);
++                #ifdef VENDOR_EDIT
++                #ifdef OPPO_PCM_DUMP
++                //Yunmang.Xiao@MM.AudioServer.FrameWork, 2019/10/22, Add for pcm dump
++                //ALOGD("mPcmDumpSwitch %d framesRead %d mFrameSize %d framesToRead %d",
++                    //AudioFlinger::mPcmDumpSwitch , (int)framesRead, (int)mFrameSize, (int)framesToRead);
++                if (AudioFlinger::mPcmDumpSwitch & 1<<PCM_DUMP_HAL_IN) {
++                    if (framesRead >= 0) {
++                        pcm_dump_write(mPcmDump, (char *)mRsmpInBuffer + rear * mFrameSize, framesRead * mFrameSize);
++                    }
++                }
++                #endif /* OPPO_PCM_DUMP */
++                #endif /* VENDOR_EDIT */
+                 if (framesRead != OVERRUN) break;
+             }
+ 
+@@ -7222,6 +7299,14 @@ reacquire_wakelock:
+             } else {
+                 framesRead = bytesRead / mFrameSize;
+             }
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//YunMang.Xiao@MM.AudioServer.FrameWork, 2019/07/08, Add for pcm dump
++            if (AudioFlinger::mPcmDumpSwitch & 1<<PCM_DUMP_HAL_IN) {
++                pcm_dump_write(mPcmDump, (char *)mRsmpInBuffer + rear * mFrameSize, bytesRead);
++            }
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+         }
+ 
+         const int64_t lastIoEndNs = systemTime(); // end IO timing
+diff --git a/services/audioflinger/Threads.h b/services/audioflinger/Threads.h
+old mode 100644
+new mode 100755
+index ba65609..a5ac849
+--- a/services/audioflinger/Threads.h
++++ b/services/audioflinger/Threads.h
+@@ -523,6 +523,14 @@ protected:
+                  */
+                 audio_port_handle_t     mDeviceId = AUDIO_PORT_HANDLE_NONE;
+                 audio_source_t          mAudioSource;
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++                //Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++                PCM_DATA               *mPcmDump;
++                //YunMang.Xiao@PSW.MM.AudioServer.FrameWork.1101753, 2019/07/01, Add for report no more track
++                pid_t                   mCurMaxTrackPid;
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ 
+                 const audio_io_handle_t mId;
+                 Vector< sp<EffectChain> > mEffectChains;
+diff --git a/services/audioflinger/TrackBase.h b/services/audioflinger/TrackBase.h
+old mode 100644
+new mode 100755
+index 8f720b5..017f66f
+--- a/services/audioflinger/TrackBase.h
++++ b/services/audioflinger/TrackBase.h
+@@ -315,6 +315,14 @@ protected:
+     std::atomic<FrameTime> mKernelFrameTime{};     // last frame time on kernel side.
+     const pid_t         mCreatorPid;  // can be different from mclient->pid() for instance
+                                       // when created by NuPlayer on behalf of a client
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    PCM_DATA            *mPcmDump;
++//YaJun.Li@PSW.MM.AudioServer.FrameWork.1574878, 2019/09/17, Add for voip enhancement
++    PCM_DATA            *mPrePcmDump;
++#endif /* OPPO_PCM_DUMP */
++#endif
+ };
+ 
+ // PatchProxyBufferProvider interface is implemented by PatchTrack and PatchRecord.
+diff --git a/services/audioflinger/Tracks.cpp b/services/audioflinger/Tracks.cpp
+old mode 100644
+new mode 100755
+index ab9b10f..4c05b1b
+--- a/services/audioflinger/Tracks.cpp
++++ b/services/audioflinger/Tracks.cpp
+@@ -104,6 +104,14 @@ AudioFlinger::ThreadBase::TrackBase::TrackBase(
+         mPortId(portId),
+         mIsInvalid(false),
+         mCreatorPid(creatorPid)
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++        ,mPcmDump(NULL)
++        //YaJun.Li@PSW.MM.AudioServer.FrameWork.1574878, 2019/09/17, Add for voip enhancement
++        ,mPrePcmDump(NULL)
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ {
+     const uid_t callingUid = IPCThreadState::self()->getCallingUid();
+     if (!isAudioServerOrMediaServerUid(callingUid) || clientUid == AUDIO_UID_INVALID) {
+@@ -591,6 +599,21 @@ AudioFlinger::PlaybackThread::Track::Track(
+         mExternalVibration = new os::ExternalVibration(
+                 mUid, "" /* pkg */, mAttr, mAudioVibrationController);
+     }
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++#define PCM_NAME_PRE_LEN 40
++    char *name = (char *)calloc(sizeof(char), PCM_NAME_PRE_LEN);
++    snprintf(name, PCM_NAME_PRE_LEN, "AF10_Track_output_%d_session", thread->mId);
++    mPcmDump = pcm_dump_init(name, sessionId, popcount(channelMask), sampleRate, format);
++    free(name);
++    //YaJun.Li@PSW.MM.AudioServer.FrameWork.1574878, 2019/09/17, Add for voip enhancement
++    char *name_pre = (char *)calloc(sizeof(char), PCM_NAME_PRE_LEN);
++    snprintf(name_pre, PCM_NAME_PRE_LEN, "PRE_AF10_Track_output_%d_session", thread->mId);
++    mPrePcmDump = pcm_dump_init(name_pre, sessionId, popcount(channelMask), sampleRate, format);
++    free(name_pre);
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ }
+ 
+ AudioFlinger::PlaybackThread::Track::~Track()
+@@ -604,6 +627,14 @@ AudioFlinger::PlaybackThread::Track::~Track()
+     if (mSharedBuffer != 0) {
+         mSharedBuffer.clear();
+     }
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    pcm_dump_end(&mPcmDump);
++    //YaJun.Li@PSW.MM.AudioServer.FrameWork.1574878, 2019/09/17, Add for voip enhancement
++    pcm_dump_end(&mPrePcmDump);
++#endif /* OPPO_PCM_DUMP */
++#endif /* VENDOR_EDIT */
+ }
+ 
+ status_t AudioFlinger::PlaybackThread::Track::initCheck() const
+@@ -792,6 +823,14 @@ status_t AudioFlinger::PlaybackThread::Track::getNextBuffer(AudioBufferProvider:
+     status_t status = mServerProxy->obtainBuffer(&buf);
+     buffer->frameCount = buf.mFrameCount;
+     buffer->raw = buf.mRaw;
++#ifdef VENDOR_EDIT
++#ifdef OPPO_PCM_DUMP
++//Zhicheng.Luo@PSW.MM.AudioServer.FrameWork.1067244, 2019/06/21, Add for pcm dump
++    if (AudioFlinger::mPcmDumpSwitch & 1<<PCM_DUMP_TRACK_ORIGINAL) {
++        pcm_dump_write(mPcmDump, (char *)buffer->i8, buffer->frameCount * mFrameSize);
++    }
++#endif /* OPPO_PCM_DUMP */
++#endif
+     if (buf.mFrameCount == 0 && !isStopping() && !isStopped() && !isPaused()) {
+         ALOGV("%s(%d): underrun,  framesReady(%zu) < framesDesired(%zd), state: %d",
+                 __func__, mId, buf.mFrameCount, desiredFrames, mState);
+-- 
+2.7.4
+
