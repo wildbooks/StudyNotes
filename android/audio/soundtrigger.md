@@ -1,0 +1,2 @@
+hardware/interfaces/soundtrigger
+frameworks/av/soundtrigger

@@ -95,6 +95,8 @@
   | ~Deep Buffer mode playback~        | 默认音乐播放模式                                                                                        |
   | ~Low Latency mode playback~        | 触摸音，警报音等以最小延迟播放。 此模式用于游戏音调; 基本上任何使用OpenSL API的东西都可以通过这条路径。 |
   | ~Compressed Offload mode playback~ | APSS将大量编码数据缓冲区（在DSP中进行解码）发送到DSP，然后进入低功耗状态，间歇性唤醒以提供更多数据      |
+  |Low Latency|LL|
+  |Ultra-Low Latency|ULL|
 * Audio recording
   | 名称                              | 场景                                                                                                                  |
   |-----------------------------------+-----------------------------------------------------------------------------------------------------------------------|
