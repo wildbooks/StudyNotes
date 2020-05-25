@@ -1,0 +1,88 @@
+From a1fc694a986571572bd0c18119fd550745e088bc Mon Sep 17 00:00:00 2001
+From: "yuchun.yang" <yuchun.yang@archermind.com>
+Date: Fri, 22 May 2020 19:33:11 +0800
+Subject: [PATCH] =?UTF-8?q?hal=E5=B1=82callstack=E6=96=B9=E6=B3=95?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I59390369fbda3e66b2b542e9adc4778f88989454
+---
+ hal/Android.mk    |  3 +++
+ hal/audio_hw.c    |  2 ++
+ hal/callstack.cpp |  7 +++++++
+ hal/callstack.h   | 14 ++++++++++++++
+ 4 files changed, 26 insertions(+)
+ create mode 100644 hal/callstack.cpp
+ create mode 100644 hal/callstack.h
+
+diff --git a/hal/Android.mk b/hal/Android.mk
+index 0886356..6cd59eb 100644
+--- a/hal/Android.mk
++++ b/hal/Android.mk
+@@ -215,6 +215,9 @@ ifeq ($(strip $(AUDIO_FEATURE_ENABLED_QAF)),true)
+     LOCAL_SRC_FILES += audio_extn/qaf.c
+ endif
+ 
++LOCAL_SHARED_LIBRARIES += libutilscallstack
++LOCAL_SRC_FILES += callstack.cpp
++
+ # Hardware specific feature
+ ifeq ($(strip $(AUDIO_FEATURE_ENABLED_QAP)),true)
+ LOCAL_CFLAGS += -DQAP_EXTN_ENABLED -Wno-tautological-pointer-compare
+diff --git a/hal/audio_hw.c b/hal/audio_hw.c
+index 92d23b8..e6d5600 100644
+--- a/hal/audio_hw.c
++++ b/hal/audio_hw.c
+@@ -78,6 +78,7 @@
+ 
+ #include "sound/compress_params.h"
+ #include "sound/asound.h"
++#include "callstack.h"
+ 
+ #ifdef DYNAMIC_LOG_ENABLED
+ #include <log_xml_parser.h>
+@@ -3492,6 +3493,7 @@ int start_output_stream(struct stream_out *out)
+     bool a2dp_combo = false;
+     bool is_haptic_usecase = (out->usecase == USECASE_AUDIO_PLAYBACK_WITH_HAPTICS) ? true: false;
+ 
++    dumping_callstack();
+     ATRACE_BEGIN("start_output_stream");
+     if ((out->usecase < 0) || (out->usecase >= AUDIO_USECASE_MAX)) {
+         ret = -EINVAL;
+diff --git a/hal/callstack.cpp b/hal/callstack.cpp
+new file mode 100644
+index 0000000..885f7a1
+--- /dev/null
++++ b/hal/callstack.cpp
+@@ -0,0 +1,7 @@
++#include <utils/CallStack.h>
++#include "callstack.h"
++
++void dumping_callstack(void)
++{
++    android::CallStack CallStack("wildbook");
++}
+diff --git a/hal/callstack.h b/hal/callstack.h
+new file mode 100644
+index 0000000..1f45594
+--- /dev/null
++++ b/hal/callstack.h
+@@ -0,0 +1,14 @@
++#ifndef __CALLSTACK_H__
++#define __CALLSTACK_H__
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++void dumping_callstack(void);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif //__CALLSTACK_H__
+-- 
+2.7.4
+

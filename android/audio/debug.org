@@ -150,6 +150,10 @@
     Read:cat codecreg
     Write:echo "<Adress> <value>" > codec_reg
     adb shell cat /sys/kernel/debug/wcd9xxx_mbhc > mbhc_data.txt
+  + For digital codec
+    adb shell cat /d/regmap/msm_digital_codec/registers > digital_codec_660_reg.txt
+    For Analog codec
+        adb shell cat /d/regmap/spmi0-03/registers > analog_codec_660_reg.txt
   + 使acdb生效方法
     重启手机，或重启媒体服务器
     adb shell
