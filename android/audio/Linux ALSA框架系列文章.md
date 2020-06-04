@@ -1,4 +1,4 @@
-[Linux ALSA声卡驱动之一：alsa架构及asoc架构介绍](./Linux ALSA声卡驱动之一：alsa架构及asoc架构介绍.md)
+[Linux ALSA声卡驱动之一：alsa架构及asoc架构介绍](Linux\ ALSA声卡驱动之一：alsa架构及asoc架构介绍.md)
 
 [Linux ALSA声卡驱动之二：platform驱动](./Linux ALSA声卡驱动之二：platform驱动.md)
 
