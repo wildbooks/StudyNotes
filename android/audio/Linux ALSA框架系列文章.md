@@ -1,20 +1,20 @@
-[Linux ALSA声卡驱动之一：alsa架构及asoc架构介绍](Linux ALSA声卡驱动之一：alsa架构及asoc架构介绍.md)
+[Linux ALSA声卡驱动之一：alsa架构及asoc架构介绍](./Linux ALSA声卡驱动之一：alsa架构及asoc架构介绍.md)
 
-[Linux ALSA声卡驱动之二：platform驱动](Linux ALSA声卡驱动之二：platform驱动.md)
+[Linux ALSA声卡驱动之二：platform驱动](./Linux ALSA声卡驱动之二：platform驱动.md)
 
-[Linux ALSA声卡驱动之三：platform之CPU_DAI](Linux ALSA声卡驱动之三：platform之CPU_DAI.md)
+[Linux ALSA声卡驱动之三：platform之CPU_DAI](./Linux ALSA声卡驱动之三：platform之CPU_DAI.md)
 
-[Linux ALSA声卡驱动之四：Codec 以及Codec_dai](Linux ALSA声卡驱动之四：Codec 以及Codec_dai.md)
+[Linux ALSA声卡驱动之四：Codec 以及Codec_dai](./Linux ALSA声卡驱动之四：Codec 以及Codec_dai.md)
 
-[Linux ALSA声卡驱动之五：Machine 以及ALSA声卡的注册](Linux ALSA声卡驱动之五：Machine 以及ALSA声卡的注册.md)
+[Linux ALSA声卡驱动之五：Machine 以及ALSA声卡的注册](./Linux ALSA声卡驱动之五：Machine 以及ALSA声卡的注册.md)
 
-[Linux ALSA声卡驱动之六：DPCM](Linux ALSA声卡驱动之六：DPCM.md)
+[Linux ALSA声卡驱动之六：DPCM](,.Linux ALSA声卡驱动之六：DPCM.md)
 
-[Linux ALSA声卡驱动之七：kcontrol讲解及注册](Linux ALSA声卡驱动之七：kcontrol讲解及注册.md)
+[Linux ALSA声卡驱动之七：kcontrol讲解及注册](./Linux ALSA声卡驱动之七：kcontrol讲解及注册.md)
 
-[Linux ALSA声卡驱动之八：dapm_widgets和dapm_routes讲解及注册](Linux ALSA声卡驱动之八：dapm_widgets和dapm_routes讲解及注册.md)
+[Linux ALSA声卡驱动之八：dapm_widgets和dapm_routes讲解及注册](./Linux ALSA声卡驱动之八：dapm_widgets和dapm_routes讲解及注册.md)
 
-[Linux ALSA声卡驱动之十：headset & button](Linux ALSA声卡驱动之十：headset.md)
+[Linux ALSA声卡驱动之十：headset & button](./Linux ALSA声卡驱动之十：headset.md)
 
 
 
