@@ -191,9 +191,13 @@ void AudioMixer::process__validate()
 track__nop() //静音
 track__genericResample() //重采样，修改音量
 track__16BitsMono() //
-track__16BitsStereo
-track__Resample
-track__NoResample
-process__nop
+track__16BitsStereo()
+track__Resample()
+track__NoResample()
+process__nop()  //静音
+process__genericNoResampling() //不需要重采样
+process__genericResampling() //需要重采样
+process__oneTrack16BitsStereoNoResampling() //16bit立体音不需要重采样
+
 ```
 

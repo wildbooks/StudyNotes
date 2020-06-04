@@ -501,3 +501,4 @@ frameworks/av/media/libaudioclient/aidl/android/media/IAudioRecord.aidl
 - java和native通过jni通信
 - 进程间通过binder通信 (/dev/binder)
 - aldl通信通话(/devvndbinder)
+- processAudioBuffer：实际录音地方
