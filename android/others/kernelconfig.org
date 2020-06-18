@@ -5,6 +5,15 @@
 	cp ../../out/target/product/msm8937_64/obj/kernel/msm-3.18/defconfig kernel/msm-3.18/arch/arm64/configs/msm8937_defconfig
 
 
+* 编译内核
+rm -rf out/target/product/sdm660_64/obj/kernel/msm-4.4/arch/arm64/boot/dts
+/work1/Q_SDM636_M1_dev/prebuilts/build-tools/linux-x86/bin/make -j4 -C kernel/msm-4.4 O=../../out/target/product/sdm660_64/obj/kernel/msm-4.4 HOSTCC=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-gcc HOSTAR=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-ar HOSTLD=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-ld HOSTCFLAGS=-I/usr/include -I/usr/include/x86_64-linux-gnu -L/usr/lib -L/usr/lib/x86_64-linux-gnu HOSTLDFLAGS=-L/usr/lib -L/usr/lib/x86_64-linux-gnu ARCH=arm64 CROSS_COMPILE=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android- KCFLAGS=-mno-android
+/work1/Q_SDM636_M1_dev/prebuilts/build-tools/linux-x86/bin/make -j4 -C kernel/msm-4.4 O=../../out/target/product/sdm660_64/obj/kernel/msm-4.4 HOSTCC=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-gcc HOSTAR=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-ar HOSTLD=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-ld HOSTCFLAGS=-I/usr/include -I/usr/include/x86_64-linux-gnu -L/usr/lib -L/usr/lib/x86_64-linux-gnu HOSTLDFLAGS=-L/usr/lib -L/usr/lib/x86_64-linux-gnu ARCH=arm64 CROSS_COMPILE=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android- KCFLAGS=-mno-android modules
+/work1/Q_SDM636_M1_dev/prebuilts/build-tools/linux-x86/bin/make -j4 -C kernel/msm-4.4 O=../../out/target/product/sdm660_64/obj/kernel/msm-4.4 INSTALL_MOD_PATH=../../../dlkm INSTALL_MOD_STRIP=1 HOSTCC=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-gcc HOSTAR=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-ar HOSTLD=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-ld HOSTCFLAGS=-I/usr/include -I/usr/include/x86_64-linux-gnu -L/usr/lib -L/usr/lib/x86_64-linux-gnu HOSTLDFLAGS=-L/usr/lib -L/usr/lib/x86_64-linux-gnu ARCH=arm64 CROSS_COMPILE=/work1/Q_SDM636_M1_dev/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android- modules_install
+
+
+
+
 
  TARGET_KERNEL_SOURCE:=kernel/msm-3.18/
  BUILD_ROOT_LOC:=../../out/target/product/msm8937_64/

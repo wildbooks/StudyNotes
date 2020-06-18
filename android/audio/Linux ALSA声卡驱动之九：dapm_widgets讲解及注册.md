@@ -8,9 +8,7 @@ codec:
 
 方式一：
 
-snd_soc_register_codec();该方法会把snd_soc_codec_driver中的controls、dapm_widgets、dapm_routes链接到codec->component。
-
-方式一虽然没有显示的调用snd_soc_dapm_new_controls和snd_soc_dapm_add_routes注册dapm widgets和dapm route，但是在将struct snd_soc_codec_driver注册到asoc core里的时候会通过这两个函数注册。
+snd_soc_register_codec();该方法会把snd_soc_codec_driver中的controls、dapm_widgets、dapm_routes链接到codec->component。虽然没有显示的调用`snd_soc_dapm_new_controls()`和`snd_soc_dapm_add_routes()`注册dapm widgets和dapm route，但是创建声卡时会通过该`snd_soc_register_card()`函数中的某个函数调用`snd_soc_dapm_new_controls()`和`snd_soc_dapm_add_routes()`
 方式二
 
 ```
@@ -19,6 +17,19 @@ snd_soc_dapm_new_controls
 ```
 
 machine:
+
+
+
+|              | platform                        | codec                                                     | machine                                                 |
+| ------------ | ------------------------------- | --------------------------------------------------------- | ------------------------------------------------------- |
+| kcontrol     | snd_soc_add_platform_controls() | `snd_soc_register_codec()`/`snd_soc_add_codec_controls()` | `snd_soc_register_card()`/`snd_soc_add_card_controls()` |
+| dapm widgets |                                 | `snd_soc_register_codec()`/`snd_soc_dapm_new_widgets()`   | `snd_soc_register_card()`                               |
+| dapm route   |                                 | `snd_soc_register_codec()`/snd_soc_dapm_add_routes()      | `snd_soc_register_card()`/snd_soc_dapm_add_routes()     |
+|              |                                 |                                                           |                                                         |
+
+
+
+
 
 # routes
 

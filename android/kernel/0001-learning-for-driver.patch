@@ -1,0 +1,231 @@
+From 5d8df88f4f60970c0b4a00957cc1a9c5df539d94 Mon Sep 17 00:00:00 2001
+From: "yuchun.yang" <yuchun.yang@archermind.com>
+Date: Thu, 18 Jun 2020 15:07:22 +0800
+Subject: [PATCH] learning for driver
+
+Change-Id: I74e00548da3bef555c9587985cfc087550e2d7b8
+---
+ drivers/misc/Kconfig                |  1 +
+ drivers/misc/Makefile               |  1 +
+ drivers/misc/test/Kconfig           | 33 +++++++++++++++++
+ drivers/misc/test/Makefile          |  6 ++++
+ drivers/misc/test/file/Makefile     |  2 ++
+ drivers/misc/test/file/hello_file.c | 71 +++++++++++++++++++++++++++++++++++++
+ drivers/misc/test/hello/Makefile    |  1 +
+ drivers/misc/test/hello/hellos.c    | 37 +++++++++++++++++++
+ 8 files changed, 152 insertions(+)
+ create mode 100644 drivers/misc/test/Kconfig
+ create mode 100644 drivers/misc/test/Makefile
+ create mode 100644 drivers/misc/test/file/Makefile
+ create mode 100644 drivers/misc/test/file/hello_file.c
+ create mode 100644 drivers/misc/test/hello/Makefile
+ create mode 100644 drivers/misc/test/hello/hellos.c
+
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index b077935..761746a 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -593,4 +593,5 @@ source "drivers/misc/genwqe/Kconfig"
+ source "drivers/misc/echo/Kconfig"
+ source "drivers/misc/cxl/Kconfig"
+ source "drivers/misc/amt/Kconfig"
++source "drivers/misc/test/Kconfig"
+ endmenu
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index 57d7220..d020ffe 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -67,3 +67,4 @@ obj-y				+= qcom/
+ obj-$(CONFIG_QPNP_MISC) 	+= qpnp-misc.o
+ obj-$(CONFIG_MEMORY_STATE_TIME) += memory_state_time.o
+ obj-y                           += amt/
++obj-$(CONFIG_TEST)				+= test/
+diff --git a/drivers/misc/test/Kconfig b/drivers/misc/test/Kconfig
+new file mode 100644
+index 0000000..c5bec97
+--- /dev/null
++++ b/drivers/misc/test/Kconfig
+@@ -0,0 +1,33 @@
++#
++# test for learn
++#
++
++
++menu "Test for learn kernel driver"
++
++config TEST
++	bool "TEST"
++        default n
++	help
++	  Test for learn kernel driver
++
++	  If unsure, say N.
++
++config TEST_HELLO
++	tristate "1 test hello"
++    select TEST
++        default n
++	help
++	  test for hello module
++
++	  If unsure, say N.
++
++config TEST_FILE
++	tristate "2 test file"
++    select TEST
++        default n
++	help
++	  test for hello module
++
++	  If unsure, say N.
++endmenu
+diff --git a/drivers/misc/test/Makefile b/drivers/misc/test/Makefile
+new file mode 100644
+index 0000000..d8963f1
+--- /dev/null
++++ b/drivers/misc/test/Makefile
+@@ -0,0 +1,6 @@
++#
++# test for learning
++#
++
++obj-$(CONFIG_TEST_HELLO)   += hello/
++obj-$(CONFIG_TEST_FILE)   += file/
+diff --git a/drivers/misc/test/file/Makefile b/drivers/misc/test/file/Makefile
+new file mode 100644
+index 0000000..4d3464a
+--- /dev/null
++++ b/drivers/misc/test/file/Makefile
+@@ -0,0 +1,2 @@
++obj-$(CONFIG_TEST_FILE) := hello_file.o
++
+diff --git a/drivers/misc/test/file/hello_file.c b/drivers/misc/test/file/hello_file.c
+new file mode 100644
+index 0000000..9a6e5e7
+--- /dev/null
++++ b/drivers/misc/test/file/hello_file.c
+@@ -0,0 +1,71 @@
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/fs.h>
++#include <linux/cdev.h>
++
++static dev_t devno;
++static  struct cdev cdev;
++
++static int hello_open(struct inode *inode, struct file *file)
++{
++    printk("hello_open\n");
++    return 0;
++}
++static int hello_release(struct inode *inode, struct file *file)
++{
++    printk("hello_release\n");
++    return 0;
++}
++
++struct file_operations hello_ops ={
++    .owner		= THIS_MODULE,
++    .open		= hello_open,        		//open();
++    .release	       = hello_release,    //close();
++};
++
++static int hello_init(void)
++{
++    int ret;
++
++    printk("hello_init()\n");
++
++    /*1. 动态注册设备号*/
++    ret = alloc_chrdev_region(&devno, 0, 1, "hello");
++    if(ret<0)
++    {
++        printk("fail \n");
++        return ret;
++    }
++
++    /*2. 字符设备初始化 */
++    cdev_init(&cdev, &hello_ops);
++
++    /*3. 注册字符设备*/
++    ret = cdev_add(&cdev, devno, 1);
++    if(ret<0)
++    {
++        unregister_chrdev_region(devno, 1);
++        return ret;
++    }
++    /*4. 自动创建设备节点*/
++
++    /*5. 初始化硬件*/
++
++    return ret;
++}
++static void hello_exit(void)
++{
++    printk("hello_exit()\n");
++
++    /*1. 释放设备节点*/
++
++    /*2. 释放设备*/
++    cdev_del(&cdev);
++
++    /*3. 释放设备号*/
++    unregister_chrdev_region(devno, 1);
++    return;
++}
++MODULE_LICENSE("GPL");
++module_init(hello_init);
++module_exit(hello_exit);
+diff --git a/drivers/misc/test/hello/Makefile b/drivers/misc/test/hello/Makefile
+new file mode 100644
+index 0000000..d975a92
+--- /dev/null
++++ b/drivers/misc/test/hello/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_TEST_FILE)   +=hellos.o
+diff --git a/drivers/misc/test/hello/hellos.c b/drivers/misc/test/hello/hellos.c
+new file mode 100644
+index 0000000..a5d9bfb
+--- /dev/null
++++ b/drivers/misc/test/hello/hellos.c
+@@ -0,0 +1,37 @@
++#include <linux/init.h>
++#include <linux/sched.h>
++#include <linux/interrupt.h>
++#include <linux/console.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/tty.h>
++#include <linux/tty_driver.h>
++#include <linux/pci.h>
++#include <linux/mutex.h>
++#include <linux/miscdevice.h>
++#include <linux/pti.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++
++static int __init hello_init(void)
++{
++	pr_info("%s(%d): PCI registration failed of pti driver\n",
++			__func__, __LINE__);
++
++	return 0;
++}
++
++static void __exit hello_exit(void)
++{
++	pr_info("%s(%d): PCI registration failed of pti driver\n",
++			__func__, __LINE__);
++
++}
++
++module_init(hello_init);
++module_exit(hello_exit);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Ken Mills, Jay Freyensee");
++MODULE_DESCRIPTION("PTI Driver");
++
+-- 
+2.7.4
+

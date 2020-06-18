@@ -17,7 +17,6 @@ graph LR
     subgraph hal
     a1-->a2
     end
- 
     subgraph app
     MediaPlayer
     SoundRecorder
@@ -45,7 +44,12 @@ graph LR
 
 ## audiopolicy
 
+- [Android audio 输出设备选择过程分析(上)](https://blog.csdn.net/bberdong/article/details/80484568?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522159178455119725222457699%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=159178455119725222457699&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v3~pc_rank_v3-1-80484568.first_rank_ecpm_v3_pc_rank_v3&utm_term=audio+%E8%AE%BE%E5%A4%87%E9%80%89%E6%8B%A9)
+- [Android audio 输出设备选择过程分析(下)](https://blog.csdn.net/bberdong/article/details/81210600?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522159178455119725247664650%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D&request_id=159178455119725247664650&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v3~pc_rank_v3-3-81210600.first_rank_ecpm_v3_pc_rank_v3&utm_term=audio+%E8%AE%BE%E5%A4%87%E9%80%89%E6%8B%A9)
+
 ## audiofliner
+
+设备使用流程。adev_open_output_stream()  open_output_stream()使用
 
 ## AudioEffect
 * [什么是AudioEffect](https://blog.csdn.net/Qidi_Huang/article/details/53741788?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522158367735419725247664573%2522%252C%2522scm%2522%253A%252220140713.130056874..%2522%257D&request_id=158367735419725247664573&biz_id=0&utm_source=distribute.pc_search_result.none-task)

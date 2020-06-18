@@ -73,26 +73,7 @@ snd_soc_add_card_controls
 
 snd_soc_add_dai_controls
 
-# dapm routes注册方法
 
-platform注册方法
-
-codec注册方法
-
-1、snd_soc_codec_driver结构体中的num_controls和controls。进行注册进去
-
-2、snd_soc_add_codec_controls(codec, impedance_detect_controls,
-				   ARRAY_SIZE(impedance_detect_controls));
-
-machine注册方法
-
-		snd_soc_add_card_controls(card, card->controls, card->num_controls);
-
-snd_soc_add_component_controls
-
-snd_soc_add_card_controls
-
-snd_soc_add_dai_controls
 
 
 ```c

@@ -59,7 +59,7 @@ static struct snd_pcm_ops msm_pcm_ops = {
 static int msm_pcm_voice_probe(struct snd_soc_platform *platform)
 {
 	snd_soc_add_platform_controls(platform, msm_voice_controls,
-					ARRAY_SIZE(msm_voice_controls));
+					ARRAY_SIZE(msm_voice_controls));//把controls添加到platform->component中。
 
 	return 0;
 }
